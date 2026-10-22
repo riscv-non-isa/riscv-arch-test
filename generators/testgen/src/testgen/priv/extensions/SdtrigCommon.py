@@ -18,14 +18,10 @@ from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.InterruptsCommon import guard_symbol
 from testgen.priv.registry import add_priv_test_generator
 
-# data
-PERM_XSL = ("exec", "store", "load")
-SIZE_ALL = ("any", "b8", "b16", "b32", "b48", "b64", "b128")
+### DATA
+
+# ── Trigger module ──────────────────────────────────────────────────────────
 UDB_NUM_TRIGGERS = 2  # TODO: Relate to UDB
-NOP = 0x00000013
-C_NOP = 0x0001
-ADDI_HINT = 0x00008013  # TODO Uses because U mode calls trigger on nops emitted by tsbi callss
-TDATA2_NOFIRE = 0x2
 TDATA_CSRS = ("tdata1", "tdata2", "tdata3")
 # tdata1.type values
 TRIG_TYPE_ICOUNT = 3
@@ -35,19 +31,24 @@ MCONTROL6_TYPE = 6
 TDATA1_TYPE_DISABLED = 15
 # types cp_csr_access_common bins (the testplan's {3, 4, 5, 6, 15}); the others are legacy, reserved or custom
 ACCESS_TYPES = (TRIG_TYPE_ICOUNT, TRIG_TYPE_ITRIGGER, TRIG_TYPE_ETRIGGER, MCONTROL6_TYPE, TDATA1_TYPE_DISABLED)
-# mcontrol6 mode bits; with all five set, bits 26:0 match priv_bits in SdtrigSm_trig_module_reg_cg
+MODE_PRIVBIT = {"Sm": 0b10000, "S": 0b01000, "U": 0b00100, "Vs": 0b00010, "Vu": 0b00001}
+MODE_UDB_LETTER = {"Sm": "M", "S": "S", "U": "U", "Vs": "VS", "Vu": "VU"}
+
+# ── mcontrol6 ───────────────────────────────────────────────────────────────
+# mode bits; with all five set, bits 26:0 match priv_bits in SdtrigSm_trig_module_reg_cg
 MCONTROL6_VS = 1 << 24
 MCONTROL6_VU = 1 << 23
 MCONTROL6_M = 1 << 6
 MCONTROL6_S = 1 << 4
 MCONTROL6_U = 1 << 3
 MCONTROL6_ALL_PRIV = MCONTROL6_VS | MCONTROL6_VU | MCONTROL6_M | MCONTROL6_S | MCONTROL6_U
-MODE_PRIVBIT = {"Sm": 0b10000, "S": 0b01000, "U": 0b00100, "Vs": 0b00010, "Vu": 0b00001}
-MODE_UDB_LETTER = {"Sm": "M", "S": "S", "U": "U", "Vs": "VS", "Vu": "VU"}
-# tdata2 values for the CBO tests, which operate on the block at scratch. scratch is .p2align 8 (rvtest_setup.h),
-# so for any cache block of at most 256 bytes it is the block base, and the three compare values that
-# norm:Sdtrig_cache_compare allows (every byte of the block / block base / effective address) all match
-# tdata2=scratch and none matches scratch-1 or the next block.
+XSL_UDB_NAMES = ("LOAD", "STORE", "EXECUTE")  # xsl bits 0, 1, 2
+SIZE_ALL = ("any", "b8", "b16", "b32", "b48", "b64", "b128")
+C_NOP = 0x0001
+ADDI_HINT = 0x00008013  # TODO: used because U-mode fires triggers on the nops that T-SBI calls emit
+TDATA2_NOFIRE = 0x2
+# CBO tdata2 values. scratch is .p2align 8, so it is the base of any block <= 256 bytes: every compare value
+# norm:Sdtrig_cache_compare allows (any byte / block base / effective address) matches scratch and no other row.
 CBO_TDATA2 = (
     ("scratch", "scratch"),
     ("below", "scratch-1"),
@@ -55,34 +56,49 @@ CBO_TDATA2 = (
     ("0", 0),
 )
 
-_PAGE_FAULT_CODES = (12, 13, 15)
-# Page faults need translation: Sv39 on RV64, Sv32 on RV32. A hart without it may have no satp (no S-mode), and
-# VA_TARGET is then a physical address that may be RAM (it is on rv32 harts), so no page fault can be raised.
-_PAGING_GUARD = "#if (__riscv_xlen == 64 && defined(SV39_SUPPORTED)) || (__riscv_xlen == 32 && defined(SV32_SUPPORTED))"
+# ── Load/store instructions ─────────────────────────────────────────────────
+ZAAMO_OPS = ("amoswap", "amoadd", "amoand", "amoor", "amoxor", "amomax", "amomaxu", "amomin", "amominu")
+_RV64_ONLY = ["#if __riscv_xlen == 64"]
+# instruction -> the #if/#ifdef lines it needs
+INSTR_IFDEFS: dict[str, list[str]] = {
+    **{i: [] for i in ("sb", "sh", "sw", "lb", "lbu", "lh", "lhu", "lw", "lr.w", "sc.w")},
+    **{f"{op}.w": [] for op in ZAAMO_OPS},
+    **{i: _RV64_ONLY for i in ("lr.d", "sc.d", "sd", "lwu", "ld")},
+    **{f"{op}.d": _RV64_ONLY for op in ZAAMO_OPS},
+    **{
+        i: [f"#ifdef {ext}_SUPPORTED"]
+        for ext, instrs in (
+            ("F", ("fsw", "flw")),
+            ("D", ("fsd", "fld")),
+            ("ZFH", ("fsh", "flh")),
+            ("Q", ("fsq", "flq")),
+            ("ZCA", ("c.sw", "c.lw", "c.swsp", "c.lwsp")),
+            ("ZCB", ("c.sb", "c.sh", "c.lbu", "c.lh", "c.lhu")),
+            ("ZCF", ("c.fsw", "c.flw", "c.fswsp", "c.flwsp")),
+            ("ZCD", ("c.fsd", "c.fld", "c.fsdsp", "c.fldsp")),
+        )
+        for i in instrs
+    },
+    **{i: ["#ifdef ZCA_SUPPORTED", *_RV64_ONLY] for i in ("c.sd", "c.ld", "c.sdsp", "c.ldsp")},
+}
+LRSC_SENTINEL = 0xBAD5EED  # preloaded into the lr/sc rd: no load of scratch or SC result writes it
+LRSC_SIG_KEY = 0x5A5A5A5A  # xor'd into recorded lr/sc words so none equals 0 or dataval, which a data trigger may watch
 
-# MPRV=1, MPP=U: next M-mode load/store is translated as U-mode (needed for codes 13/15 when mode="Sm").
-_MSTATUS_MPP_MASK = 0x1800
-_MSTATUS_MPRV = 0x20000
-
-VA_TARGET_RV32 = 0x90407000
-VA2_TARGET_RV32 = 0x90807000
-VA_TARGET_RV64 = 0x140802000
-VA2_TARGET_RV64 = 0x180802000
-
-_PTE_INVALID = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R"  # no PTE_V
+# ── Address translation ─────────────────────────────────────────────────────
+# cp_tdata2_translate: (name, XLEN, VA width, satp setup, superpage PTE macro, root level, alias VA, superpage shift).
+# The alias is the last root slot, so it is a negative (sign-extended) VA and never the boot identity map's slot.
+_XLATE_MODES = (
+    ("sv39", 64, 39, "SATP_SETUP_RV64(sv39)", "SUPERPAGE_PTE_SETUP_SV39", "LEVEL2", 0xFFFFFFFFC0000000, 30),
+    ("sv48", 64, 48, "SATP_SETUP_RV64(sv48)", "SUPERPAGE_PTE_SETUP_SV48", "LEVEL3", 0xFFFFFF8000000000, 39),
+    ("sv57", 64, 57, "SATP_SETUP_RV64(sv57)", "SUPERPAGE_PTE_SETUP_SV57", "LEVEL4", 0xFFFF000000000000, 48),
+    ("sv32", 32, 32, "SATP_SETUP_SV32", "SUPERPAGE_PTE_SETUP_SV32", "LEVEL1", 0xFFC00000, 22),
+)
+_PTE_SPAGE = "PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V"
 _PTE_UPAGE = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V"
+_PTE_INVALID = "PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R"  # no PTE_V
 
-# Codes where the exception itself is raised (match case) in every mode. ipf is not raisable in Sm.
-_ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)
-# Codes tested with a mismatch case only (an illegal instruction is raised while tdata2 selects the code),
-# because the code itself cannot be raised portably:
-#   0 iam: jalr clears bit 0, and with Zca it cannot occur. 3 bp: medeleg[3]=0 sends ebreak to M.
-#   4/6 lam/sam: Spike, Sail and Whisper handle misaligned accesses in hardware.
-_ETRIGGER_MISMATCH_ONLY_CODES = (0, 3, 4, 6)
-_ETRIGGER_ECALL_CODE = {"Sm": 11, "S": 9, "U": 8}  # each mode raises only its own ecall
-_ETRIGGER_NOT_DELEGATABLE = (3, 11)  # medeleg[3] must stay 0 (trigger breakpoint goes to M); medeleg[11] is read-only 0
-
-# maps mcause exception code -> short mnemonic used in binnames / ifdef names
+# ── Exceptions (etrigger) ───────────────────────────────────────────────────
+# mcause exception code -> short mnemonic used in binnames / ifdef names
 ETRIGGER_EXCODE_NAMES = {
     0: "iam",  # instruction address misaligned
     1: "iacc",  # instruction access fault
@@ -99,7 +115,70 @@ ETRIGGER_EXCODE_NAMES = {
     13: "lpf",  # load page fault
     15: "spf",  # store/AMO page fault
 }
+# Codes where the exception itself is raised (match case) in every mode. ipf is not raisable in Sm.
+_ETRIGGER_BASE_CODES = (1, 2, 5, 7, 12, 13, 15)
+# Codes tested with a mismatch case only (an illegal instruction is raised while tdata2 selects the code),
+# because the code itself cannot be raised portably:
+#   0 iam: jalr clears bit 0, and with Zca it cannot occur. 3 bp: medeleg[3]=0 sends ebreak to M.
+#   4/6 lam/sam: Spike, Sail and Whisper handle misaligned accesses in hardware.
+_ETRIGGER_MISMATCH_ONLY_CODES = (0, 3, 4, 6)
+_ETRIGGER_ECALL_CODE = {"Sm": 11, "S": 9, "U": 8}  # each mode raises only its own ecall
+_ETRIGGER_NOT_DELEGATABLE = (3, 11)  # medeleg[3] must stay 0 (trigger breakpoint goes to M); medeleg[11] is read-only 0
+_PAGE_FAULT_CODES = (12, 13, 15)
+# Page faults need translation: Sv39 on RV64, Sv32 on RV32. A hart without it may have no satp (no S-mode), and
+# VA_TARGET is then a physical address that may be RAM (it is on rv32 harts), so no page fault can be raised.
+_PAGING_GUARD = "#if (__riscv_xlen == 64 && defined(SV39_SUPPORTED)) || (__riscv_xlen == 32 && defined(SV32_SUPPORTED))"
+VA_TARGET_RV32 = 0x90407000
+VA2_TARGET_RV32 = 0x90807000
+VA_TARGET_RV64 = 0x140802000
+VA2_TARGET_RV64 = 0x180802000
+# Backing page the invalid target PTE points at
+_PF_DATA_SECTION = (".pushsection .data", ".p2align 12", "pf_target_page:", "jr ra", ".zero 4096", ".popsection")
+# MPRV=1, MPP=U: next M-mode load/store is translated as U-mode (needed for codes 13/15 when mode="Sm").
+_MSTATUS_MPP_MASK = 0x1800
+_MSTATUS_MPRV = 0x20000
 
+# ── Interrupts (itrigger) ───────────────────────────────────────────────────
+INTERRUPT_CODES = (1, 3, 5, 7, 9, 11, 13)  # SSI, MSI, STI, MTI, SEI, MEI, LCOFI
+LOWER_MODE_INTERRUPT_CODES = (1, 5, 9, 13)
+TIMER_INTERRUPT_CODE = 7
+# interrupt code -> ACT4 RVTEST_{SET,CLR}_<macro>_INT name, and the interrupt type guard_symbol() takes
+_INT_MACRO = {1: "SSW", 3: "MSW", 5: "STIME", 7: "MTIME", 9: "SEXT", 11: "MEXT", 13: "LCOFI"}
+_INT_TYPE = {1: "SSI", 3: "MSI", 5: "STI", 7: "MTI", 9: "SEI", 11: "MEI", 13: "LCOFI"}
+
+# ── textra (tdata3) ─────────────────────────────────────────────────────────
+_TEXTRA_DATA = 0x12345678  # the textra mcontrol6 cases' store data match (_xlen_value widens it on RV64)
+_MCONTEXT_TEST_VALUE_RV32 = 0b010101
+_MCONTEXT_TEST_VALUE_RV64 = 0x1AAA
+_SCONTEXT_TEST_VALUE_RV32 = 0x1234
+_SCONTEXT_TEST_VALUE_RV64 = 0x12345678
+# (case name, rv32 mhvalue, rv64 mhvalue), per the test plan
+_TEXTRA_MCONTEXT_CASES = (("match", 0b010101, 0x1AAA), ("zero", 0b000000, 0x0000), ("other", 0b111111, 0x0AAA))
+# cp_textra_scontext (#2591): svalue x sbytemask; a masked byte is ignored in the compare
+_TEXTRA_SCONTEXT_RV32 = [(sv, m) for sv in (0x0000, 0x0034, 0x1200, 0x1234) for m in (0b00, 0b01, 0b10, 0b11)]
+_TEXTRA_SCONTEXT_RV64 = [
+    (sv, m)
+    for sv in (0x00000000, 0x12345600, 0x12340078, 0x12005678, 0x00345678, 0x12345678)
+    for m in (0b0000, 0b0001, 0b0010, 0b0100, 0b1000, 0b1111)
+]
+# cp_textra_double_context (#2646): mcontext and scontext matched together
+_DOUBLE_MCONTEXT = (0b111111, 0x1FFF)
+_DOUBLE_SCONTEXT = (0xFFFF, 0xFFFFFFFF)
+# cp_textra_asid: satp.ASID = X = 2^ASID_WIDTH - 2, and svalue (an assembler expression in X and ASIDMAX, which
+# is 9 on RV32 and 16 on RV64) gives a match, a miss, a near miss, and a match whose svalue bits above ASIDMAX
+# are ignored (norm:Sdtrig_textra32_sselect_asid3)
+_ASID_X = "((1 << UDB_ASID_WIDTH) - 2)"
+_TEXTRA_ASID_CASES = (
+    ("match", "X", False),
+    ("zero", "0", False),
+    ("bit0_flipped", "(X ^ 1)", False),
+    ("above_asidmax", "(X | (1 << ASIDMAX))", False),
+    # sbytemask = all ones is ignored with sselect=2 (norm:Sdtrig_textra32_byte_mask_applies), so it hides no mismatch
+    ("match_sbytemask", "X", True),
+    ("bit0_flipped_sbytemask", "(X ^ 1)", True),
+)
+
+# ── UDB parameters ──────────────────────────────────────────────────────────
 # TODO: replace this with UDB-autogenerated parameters.
 UDB_DEFINES = [
     f"#define UDB_NUM_TRIGGERS {UDB_NUM_TRIGGERS}",
@@ -128,8 +207,6 @@ UDB_DEFINES = [
     # ICOUNT params
     *[f"#define UDB_ICOUNT_TRIG{n}_AVAILABLE" for n in range(UDB_NUM_TRIGGERS)],
     "//#define UDB_ICOUNT_HARDWIRED_1",
-    # ICOUNT params
-    *[f"#define UDB_ICOUNT_TRIG{n}_AVAILABLE" for n in range(UDB_NUM_TRIGGERS)],
     # TODO: Replace with UDB supported Etrigger and Exceptions parameters
     *[f"#define UDB_SDTRIG_ETRIGGER_SUPPORTED{i}" for i in range(UDB_NUM_TRIGGERS)],
     *[f"#define UDB_EXCEPTION_{name.upper()}_SUPPORTED" for name in ETRIGGER_EXCODE_NAMES.values()],
@@ -141,56 +218,8 @@ UDB_DEFINES = [
     "#define UDB_ITRIGGER_TRIG1_AVAILABLE",
 ]
 
-XSL_UDB_NAMES = ("LOAD", "STORE", "EXECUTE")  # mcontrol6 xsl bits 0, 1, 2
 
-# Per-trigger type availability for the textra cases. TODO: replace with UDB parameters.
-_TEXTRA_TYPE_GUARDS = {
-    "icount": ["#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"],
-    # the mcontrol6 cases use a data (select=1) store (xsl=010) match enabled in the running mode
-    "mcontrol6": [
-        "#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
-        "#ifdef UDB_SDTRIG_{mode_letter}_AVAILABLE",
-        "#ifdef UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE",
-        "#ifdef UDB_SDTRIG_MCONTROL6_STORE_AVAILABLE",
-    ],
-}
-
-_TEXTRA_DATA = 0x12345678  # the textra mcontrol6 cases' store data match (_xlen_value widens it on RV64)
-_MCONTEXT_TEST_VALUE_RV32 = 0b010101
-_MCONTEXT_TEST_VALUE_RV64 = 0x1AAA
-_SCONTEXT_TEST_VALUE_RV32 = 0x1234
-_SCONTEXT_TEST_VALUE_RV64 = 0x12345678
-# cp_textra_scontext (#2591): svalue x sbytemask; a masked byte is ignored in the compare
-_TEXTRA_SCONTEXT_RV32 = [(sv, m) for sv in (0x0000, 0x0034, 0x1200, 0x1234) for m in (0b00, 0b01, 0b10, 0b11)]
-_TEXTRA_SCONTEXT_RV64 = [
-    (sv, m)
-    for sv in (0x00000000, 0x12345600, 0x12340078, 0x12005678, 0x00345678, 0x12345678)
-    for m in (0b0000, 0b0001, 0b0010, 0b0100, 0b1000, 0b1111)
-]
-# cp_textra_double_context (#2646): mcontext and scontext matched together
-_DOUBLE_MCONTEXT = (0b111111, 0x1FFF)
-_DOUBLE_SCONTEXT = (0xFFFF, 0xFFFFFFFF)
-
-# cp_textra_asid: satp.ASID = X = 2^ASID_WIDTH - 2, and svalue (an assembler expression in X and ASIDMAX, which
-# is 9 on RV32 and 16 on RV64) gives a match, a miss, a near miss, and a match whose svalue bits above ASIDMAX
-# are ignored (norm:Sdtrig_textra32_sselect_asid3)
-_ASID_X = "((1 << UDB_ASID_WIDTH) - 2)"
-_TEXTRA_ASID_CASES = (
-    ("match", "X", False),
-    ("zero", "0", False),
-    ("bit0_flipped", "(X ^ 1)", False),
-    ("above_asidmax", "(X | (1 << ASIDMAX))", False),
-    # sbytemask = all ones is ignored with sselect=2 (norm:Sdtrig_textra32_byte_mask_applies), so it hides no mismatch
-    ("match_sbytemask", "X", True),
-    ("bit0_flipped_sbytemask", "(X ^ 1)", True),
-)
-
-# (case name, rv32 mhvalue, rv64 mhvalue), per the test plan
-_TEXTRA_MCONTEXT_CASES = (
-    ("match", 0b010101, 0x1AAA),
-    ("zero", 0b000000, 0x0000),
-    ("other", 0b111111, 0x0AAA),
-)
+### HELPERS
 
 
 def _type_guard(trig_type: int, trig_num: int) -> str | None:
@@ -203,11 +232,21 @@ def _type_guard(trig_type: int, trig_num: int) -> str | None:
     }.get(trig_type)
 
 
-def _mcontrol6_gates(trig_num: int, mode: str, *, select: int = 0) -> list[str]:
-    """``#ifdef``s for an mcontrol6 arm on ``trig_num`` from ``mode``: the trigger supports mcontrol6, the mode's
-    m/s/u bit is implemented and, for select=1, data matching is. Close them with _close_gates().
+def _fire_guards(trig_type: str, trig_num: int, mode: str, *, select: int = 0) -> list[str]:
+    """``#ifdef``s for firing trig_num as "icount" or as "mcontrol6" (a store match in ``mode``; data if select)."""
+    if trig_type == "icount":
+        return [f"#ifdef {_type_guard(TRIG_TYPE_ICOUNT, trig_num)}"]
+    gates = [f"{_type_guard(MCONTROL6_TYPE, trig_num)}", f"UDB_SDTRIG_{MODE_UDB_LETTER[mode]}_AVAILABLE"]
+    if select:
+        gates.append("UDB_SDTRIG_MCONTROL6_SELECT_AVAILABLE")
+    gates.append("UDB_SDTRIG_MCONTROL6_STORE_AVAILABLE")
+    return [f"#ifdef {g}" for g in gates]
 
-    Writing an unsupported WARL value has an unpredictable result, so no field value is written outside its gate.
+
+def _mcontrol6_gates(trig_num: int, mode: str, *, select: int = 0) -> list[str]:
+    """``#ifdef``s for an mcontrol6 arm on trig_num from ``mode`` (and select=1); close with _close_gates().
+
+    Writing an unsupported WARL value is unpredictable, so no field value is written outside its gate.
     """
     gates = [f"UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}", f"UDB_SDTRIG_{MODE_UDB_LETTER[mode]}_AVAILABLE"]
     if select:
@@ -222,100 +261,15 @@ def _close_gates(gates: list[str]) -> list[str]:
 
 def _xsl_ifdefs(xsl: int) -> list[str]:
     """One ``#ifdef`` per mcontrol6 x/s/l capability ``xsl`` uses; empty list when xsl == 0."""
-    ifdefs: list[str] = []
-    if xsl > 0:
-        for i, name in enumerate(XSL_UDB_NAMES):
-            if xsl >> i & 1:
-                prefix = "\n" if not ifdefs else ""
-                ifdefs.append(f"{prefix}#ifdef UDB_SDTRIG_MCONTROL6_{name}_AVAILABLE")
-    return ifdefs
-
-
-INSTR_IFDEFS = {
-    "sb": [],
-    "sh": [],
-    "sw": [],
-    "lb": [],
-    "lbu": [],
-    "lh": [],
-    "lhu": [],
-    "lw": [],
-    "lr.w": [],
-    "sc.w": [],
-    "amoswap.w": [],
-    "amoadd.w": [],
-    "amoand.w": [],
-    "amoor.w": [],
-    "amoxor.w": [],
-    "amomax.w": [],
-    "amomaxu.w": [],
-    "amomin.w": [],
-    "amominu.w": [],
-    "lr.d": ["#if __riscv_xlen == 64"],
-    "sc.d": ["#if __riscv_xlen == 64"],
-    "amoswap.d": ["#if __riscv_xlen == 64"],
-    "amoadd.d": ["#if __riscv_xlen == 64"],
-    "amoand.d": ["#if __riscv_xlen == 64"],
-    "amoor.d": ["#if __riscv_xlen == 64"],
-    "amoxor.d": ["#if __riscv_xlen == 64"],
-    "amomax.d": ["#if __riscv_xlen == 64"],
-    "amomaxu.d": ["#if __riscv_xlen == 64"],
-    "amomin.d": ["#if __riscv_xlen == 64"],
-    "amominu.d": ["#if __riscv_xlen == 64"],
-    "sd": ["#if __riscv_xlen == 64"],
-    "lwu": ["#if __riscv_xlen == 64"],
-    "ld": ["#if __riscv_xlen == 64"],
-    "fsw": ["#ifdef F_SUPPORTED"],
-    "flw": ["#ifdef F_SUPPORTED"],
-    "fsd": ["#ifdef D_SUPPORTED"],
-    "fld": ["#ifdef D_SUPPORTED"],
-    "fsh": ["#ifdef ZFH_SUPPORTED"],
-    "flh": ["#ifdef ZFH_SUPPORTED"],
-    "fsq": ["#ifdef Q_SUPPORTED"],
-    "flq": ["#ifdef Q_SUPPORTED"],
-    "c.sw": ["#ifdef ZCA_SUPPORTED"],
-    "c.lw": ["#ifdef ZCA_SUPPORTED"],
-    "c.swsp": ["#ifdef ZCA_SUPPORTED"],
-    "c.lwsp": ["#ifdef ZCA_SUPPORTED"],
-    "c.sd": ["#ifdef ZCA_SUPPORTED", "#if __riscv_xlen == 64"],
-    "c.ld": ["#ifdef ZCA_SUPPORTED", "#if __riscv_xlen == 64"],
-    "c.sdsp": ["#ifdef ZCA_SUPPORTED", "#if __riscv_xlen == 64"],
-    "c.ldsp": ["#ifdef ZCA_SUPPORTED", "#if __riscv_xlen == 64"],
-    "c.sb": ["#ifdef ZCB_SUPPORTED"],
-    "c.sh": ["#ifdef ZCB_SUPPORTED"],
-    "c.lbu": ["#ifdef ZCB_SUPPORTED"],
-    "c.lh": ["#ifdef ZCB_SUPPORTED"],
-    "c.lhu": ["#ifdef ZCB_SUPPORTED"],
-    "c.fsw": ["#ifdef ZCF_SUPPORTED"],
-    "c.flw": ["#ifdef ZCF_SUPPORTED"],
-    "c.fswsp": ["#ifdef ZCF_SUPPORTED"],
-    "c.flwsp": ["#ifdef ZCF_SUPPORTED"],
-    "c.fsd": ["#ifdef ZCD_SUPPORTED"],
-    "c.fld": ["#ifdef ZCD_SUPPORTED"],
-    "c.fsdsp": ["#ifdef ZCD_SUPPORTED"],
-    "c.fldsp": ["#ifdef ZCD_SUPPORTED"],
-}
-
-ZAAMO_OPS = (
-    "amoswap",
-    "amoadd",
-    "amoand",
-    "amoor",
-    "amoxor",
-    "amomax",
-    "amomaxu",
-    "amomin",
-    "amominu",
-)
+    names = [name for i, name in enumerate(XSL_UDB_NAMES) if xsl >> i & 1]
+    return [("" if i else "\n") + f"#ifdef UDB_SDTRIG_MCONTROL6_{name}_AVAILABLE" for i, name in enumerate(names)]
 
 
 def _add_tc(test_data: TestData, binname: str, coverpoint: str, covergroup: str) -> str:
-    """Register a testcase with a new line in front of it.
+    """Register a testcase, preceded by a blank line in the asm.
 
-    Labels name a covergroup and coverpoint that exist. SdtrigS/U have only Sdtrig{S,U}_cg, so the tests they
-    repeat from SdtrigSm are labelled with the SdtrigSm covergroup (random seeds keep the per-suite name).
+    SdtrigS/U have only Sdtrig{S,U}_cg, so tests they repeat from SdtrigSm use the SdtrigSm covergroup label.
     """
-    # Leading newline gives every testcase a blank separator line in the emitted asm.
     return "\n" + test_data.add_testcase(binname, coverpoint, covergroup)
 
 
@@ -326,24 +280,17 @@ def _csr_access(instr: str, mode: str) -> str:
 
 def _load_tdata1(reg: int, trig_type: int, mode: str, lowfields: int = 0) -> list[str]:
     """Load tdata1 = (type << top) | lowfields into x{reg} and write it to tdata1."""
-    lines = [
-        "#if __riscv_xlen == 64",
-        f"LI(x{reg}, 0x{(trig_type << 60) | lowfields:x})",
-        "#else",
-        f"LI(x{reg}, 0x{(trig_type << 28) | lowfields:x})",
-        "#endif",
+    return [
+        *_xlen_li(reg, (trig_type << 28) | lowfields, (trig_type << 60) | lowfields),
+        _csr_access(f"csrw tdata1, x{reg} # write trigger type", mode),
     ]
-    lines.append(_csr_access(f"csrw tdata1, x{reg} # write trigger type", mode))
-    return lines
 
 
 def _arm_type(reg: int, trig_type: int, mode: str) -> list[str]:
     """Set tdata1.type = trig_type the way Sdtrig.adoc says a debugger should.
 
-    Write 0 to tdata1, then a tdata2 legal for every type, then tdata1. A trigger
-    that already holds another type may legally ignore a direct type change
-    (Sail keeps it), and an access to tdata1 itself changes the type, so the
-    type is re-armed before every access that the coverage samples.
+    Write 0 to tdata1, then a tdata2 legal for every type, then tdata1. A trigger may ignore a direct type change
+    (Sail does), and an access to tdata1 itself changes the type, so it is re-armed before every sampled access.
     """
     return [
         _csr_access("csrw tdata1, x0 # disable trigger", mode),
@@ -355,8 +302,8 @@ def _arm_type(reg: int, trig_type: int, mode: str) -> list[str]:
 def _global_ie(mode: str, enable: bool) -> list[str]:
     """Arm or disarm action=0 triggers in ``mode``.
 
-    Harts gate these triggers on mstatus.MIE/SIE or, in M-mode, on tcontrol.mte (the two Sdtrig
-    reentrancy options). Set the bit each option uses; the DUT defines RVMODEL_SDTRIG_USE_TCONTROL for the second.
+    Harts gate them on mstatus.MIE/SIE or, in M-mode, on tcontrol.mte (the two reentrancy options); the DUT
+    defines RVMODEL_SDTRIG_USE_TCONTROL for the second.
     """
     op, why = ("csrsi", "arm") if enable else ("csrci", "disarm")
     if mode == "Sm":
@@ -371,9 +318,28 @@ def _global_ie(mode: str, enable: bool) -> list[str]:
     return []
 
 
-def _load_reg(reg: int, val: int | str) -> str:
-    """Emit a load of ``val`` into x{reg}: ints via LI (constant), symbols via LA (address)."""
-    return f"LA(x{reg}, {val})" if isinstance(val, str) else f"LI(x{reg}, 0x{val:x})"
+def _load_reg(reg: int, val: int | str | list[str]) -> list[str]:
+    """Load ``val`` into x{reg}: ints via LI (constant), symbols via LA (address); a list of lines is used as-is."""
+    if isinstance(val, list):
+        return val
+    return [f"LA(x{reg}, {val})" if isinstance(val, str) else f"LI(x{reg}, 0x{val:x})"]
+
+
+def _xlen_li(reg: int, val32: int, val64: int, comment: str = "") -> list[str]:
+    """XLEN-guarded LI of val64 (RV64) or val32 (RV32)."""
+    note = f" # {comment}" if comment else ""
+    return [
+        "#if __riscv_xlen == 64",
+        f"LI(x{reg}, 0x{val64:x}){note}",
+        "#else",
+        f"LI(x{reg}, 0x{val32:x}){note}",
+        "#endif",
+    ]
+
+
+def _priv_fields(privbits: int) -> tuple[int, int, int, int, int]:
+    """Split a MODE_PRIVBIT-style mask into its (m, s, u, vs, vu) bits."""
+    return (privbits >> 4) & 1, (privbits >> 3) & 1, (privbits >> 2) & 1, (privbits >> 1) & 1, privbits & 1
 
 
 def _sigupd_masked(data_reg: int, temp_reg: int, mask: int, test_data: TestData, comment: str = "") -> list[str]:
@@ -405,54 +371,18 @@ def _ifdef_guard(instr: str, closing: bool = False) -> list[str]:
 
 def _disable_trigger(reg: int, trig_num: int, mode: str) -> list[str]:
     """Disable a trigger by zeroing tdata1/2/3."""
-    lines: list[str] = [f"\n# disable trigger {trig_num}"]
-    lines.extend(
-        [
-            _load_reg(reg, trig_num),
-            _csr_access(f"csrw tselect, x{reg}", mode),
-            _csr_access("csrw tdata1, x0", mode),
-        ]
-    )
-    return lines
-
-
-def _mprv_as_umode_setup(scratch_reg: int) -> list[str]:
-    """MPRV=1, MPP=U: next load/store is translated as if from U-mode."""
     return [
-        f"LI(x{scratch_reg}, {hex(_MSTATUS_MPP_MASK)})",
-        f"csrc mstatus, x{scratch_reg} # MPP=U",
-        f"LI(x{scratch_reg}, {hex(_MSTATUS_MPRV)})",
-        f"csrs mstatus, x{scratch_reg} # MPRV=1",
-    ]
-
-
-def _mprv_as_umode_clear(scratch_reg: int) -> list[str]:
-    """Clear MPRV, restoring normal M-mode (untranslated) access."""
-    return [
-        f"LI(x{scratch_reg}, {hex(_MSTATUS_MPRV)})",
-        f"csrc mstatus, x{scratch_reg} # MPRV=0",
+        f"\n# disable trigger {trig_num}",
+        *_load_reg(reg, trig_num),
+        _csr_access(f"csrw tselect, x{reg}", mode),
+        _csr_access("csrw tdata1, x0", mode),
     ]
 
 
 def _set_medeleg(reg: int, code: int, enable: bool) -> list[str]:
     """Set or clear medeleg[code]."""
     op = "csrs" if enable else "csrc"
-    return [
-        f"LI(x{reg}, 0x{1 << code:x})",
-        f"{op} medeleg, x{reg} # medeleg[{code}]={int(enable)}",
-    ]
-
-
-def pf_data_section() -> list[str]:
-    """Backing page the invalid target PTE points at."""
-    return [
-        ".pushsection .data",
-        ".p2align 12",
-        "pf_target_page:",
-        "jr ra",
-        ".zero 4096",
-        ".popsection",
-    ]
+    return [f"LI(x{reg}, 0x{1 << code:x})", f"{op} medeleg, x{reg} # medeleg[{code}]={int(enable)}"]
 
 
 def pf_mode_arm(mode: str) -> list[str]:
@@ -490,12 +420,7 @@ def pf_mode_arm(mode: str) -> list[str]:
             "LA(a0, Mtramptbl_sv)",
             f"SAVE_AREA_SETUP(0x{VA2_TARGET_RV32:x}, rvtest_code_begin, code, LEVEL1)",
         ]
-    lines += [
-        "SATP_SETUP_SV32",
-        "sfence.vma",
-        "#endif",
-        "#endif",
-    ]
+    lines += ["SATP_SETUP_SV32", "sfence.vma", "#endif", "#endif"]
     if mode == "U":
         lines.append("RVTEST_TSBI_GOTO_UMODE")
     lines.append("#endif // paging")
@@ -510,12 +435,7 @@ def pf_mode_disarm(mode: str) -> list[str]:
     lines = [f"\n# pf_mode_disarm: clear page tables for {mode}-mode", _PAGING_GUARD]
     if mode == "U":
         lines.append("RVTEST_TSBI_GOTO_SMODE")
-    lines.extend(
-        [
-            "csrwi satp, 0",
-            "sfence.vma",
-        ]
-    )
+    lines.extend(["csrwi satp, 0", "sfence.vma"])
     if mode == "U":
         lines.extend(
             [
@@ -530,11 +450,7 @@ def pf_mode_disarm(mode: str) -> list[str]:
 
 
 def _etrigger_codes_to_test(mode: str, cross_priv: bool = False) -> dict[int, bool]:
-    """Return {code: raisable} for every exception code tested from ``mode``.
-
-    raisable=True : match case and mismatch case.
-    raisable=False: the code cannot be raised here, so mismatch case only.
-    """
+    """{code: raisable} for every exception code tested from ``mode``; unraisable codes get only a mismatch case."""
     valid_modes = ("S", "U") if cross_priv else ("Sm", "S", "U")
     if mode not in valid_modes:
         raise ValueError(f"Unsupported {'target ' if cross_priv else ''}mode: {mode}")
@@ -562,7 +478,7 @@ def _cause_exception(
             raise ValueError("addr_reg is required for instruction access fault")
 
         return [
-            f"la x{addr_reg}, RVMODEL_ACCESS_FAULT_ADDRESS",
+            f"LA(x{addr_reg}, RVMODEL_ACCESS_FAULT_ADDRESS)",
             f"jalr ra, 0(x{addr_reg})",
             "nop # spacer; trap handler returns here",
         ]
@@ -574,10 +490,7 @@ def _cause_exception(
         if addr_reg is None:
             raise ValueError("addr_reg is required for load access fault")
 
-        return [
-            f"LA(x{addr_reg}, RVMODEL_ACCESS_FAULT_ADDRESS)",
-            f"lw x{data_reg}, 0(x{addr_reg}) # load access fault",
-        ]
+        return [f"LA(x{addr_reg}, RVMODEL_ACCESS_FAULT_ADDRESS)", f"lw x{data_reg}, 0(x{addr_reg}) # load access fault"]
 
     if code == 7:
         if addr_reg is None or data_reg is None:
@@ -601,57 +514,35 @@ def _cause_exception(
             )
 
         return [
-            "#if __riscv_xlen == 64",
-            f"LI(x{addr_reg}, 0x{VA_TARGET_RV64:x})",
-            "#else",
-            f"LI(x{addr_reg}, 0x{VA_TARGET_RV32:x})",
-            "#endif",
+            *_xlen_li(addr_reg, VA_TARGET_RV32, VA_TARGET_RV64),
             f"jalr ra, 0(x{addr_reg}) # instruction page fault",
             "nop # spacer; trap handler returns here",
         ]
 
-    if code == 13:  # load page fault
+    if code in (13, 15):  # load / store/AMO page fault
+        kind, op = ("load", "lw") if code == 13 else ("store", "sw")
         if addr_reg is None or data_reg is None:
-            raise ValueError("addr_reg and data_reg are required for load page fault")
+            raise ValueError(f"addr_reg and data_reg are required for {kind} page fault")
 
-        lines = [
-            "#if __riscv_xlen == 64",
-            f"LI(x{addr_reg}, 0x{VA_TARGET_RV64:x})",
-            "#else",
-            f"LI(x{addr_reg}, 0x{VA_TARGET_RV32:x})",
-            "#endif",
+        lines = _xlen_li(addr_reg, VA_TARGET_RV32, VA_TARGET_RV64)
+        if code == 15:
+            lines.append(f"LI(x{data_reg}, 0xDEADBEEF)")
+        access = [f"{op} x{data_reg}, 0(x{addr_reg}) # {kind} page fault", "nop # spacer; trap handler returns here"]
+        if mode != "Sm":
+            return lines + access
+        # M-mode accesses are untranslated: MPRV=1, MPP=U translates this one as if from U-mode
+        assert mprv_scratch_reg is not None
+        r = mprv_scratch_reg
+        return [
+            *lines,
+            f"LI(x{r}, {hex(_MSTATUS_MPP_MASK)})",
+            f"csrc mstatus, x{r} # MPP=U",
+            f"LI(x{r}, {hex(_MSTATUS_MPRV)})",
+            f"csrs mstatus, x{r} # MPRV=1",
+            *access,
+            f"LI(x{r}, {hex(_MSTATUS_MPRV)})",
+            f"csrc mstatus, x{r} # MPRV=0",
         ]
-        if mode == "Sm":
-            assert mprv_scratch_reg is not None
-            lines.extend(_mprv_as_umode_setup(mprv_scratch_reg))
-        lines.append(f"lw x{data_reg}, 0(x{addr_reg}) # load page fault")
-        lines.append("nop # spacer; trap handler returns here")
-        if mode == "Sm":
-            assert mprv_scratch_reg is not None
-            lines.extend(_mprv_as_umode_clear(mprv_scratch_reg))
-        return lines
-
-    if code == 15:  # store/AMO page fault
-        if addr_reg is None or data_reg is None:
-            raise ValueError("addr_reg and data_reg are required for store page fault")
-
-        lines = [
-            "#if __riscv_xlen == 64",
-            f"LI(x{addr_reg}, 0x{VA_TARGET_RV64:x})",
-            "#else",
-            f"LI(x{addr_reg}, 0x{VA_TARGET_RV32:x})",
-            "#endif",
-            f"LI(x{data_reg}, 0xDEADBEEF)",
-        ]
-        if mode == "Sm":
-            assert mprv_scratch_reg is not None
-            lines.extend(_mprv_as_umode_setup(mprv_scratch_reg))
-        lines.append(f"sw x{data_reg}, 0(x{addr_reg}) # store page fault")
-        lines.append("nop # spacer; trap handler returns here")
-        if mode == "Sm":
-            assert mprv_scratch_reg is not None
-            lines.extend(_mprv_as_umode_clear(mprv_scratch_reg))
-        return lines
 
     raise ValueError(
         f"_cause_exception: exception code {code} ({ETRIGGER_EXCODE_NAMES.get(code, '?')}) not implemented yet"
@@ -678,26 +569,6 @@ def _cause_interrupt(code: int, mode: str, r1: int) -> list[str]:
     raise ValueError(f"unsupported interrupt code {code}")
 
 
-_INT_MACRO = {
-    1: "SSW",
-    3: "MSW",
-    5: "STIME",
-    7: "MTIME",
-    9: "SEXT",
-    11: "MEXT",
-    13: "LCOFI",
-}
-_INT_TYPE = {
-    1: "SSI",
-    3: "MSI",
-    5: "STI",
-    7: "MTI",
-    9: "SEI",
-    11: "MEI",
-    13: "LCOFI",
-}
-
-
 def _clear_interrupt(code: int, mode: str) -> list[str]:
     """Clear interrupt ``code`` using the standard ACT4 interrupt macro."""
     int_type = _INT_TYPE[code]
@@ -705,11 +576,7 @@ def _clear_interrupt(code: int, mode: str) -> list[str]:
     macro = _INT_MACRO[code]
     priv = "M" if mode == "Sm" else mode
 
-    return [
-        f"#ifdef {guard}",
-        f"RVTEST_CLR_{macro}_INT_{priv} # clear interrupt {code}",
-        f"#endif // {guard}",
-    ]
+    return [f"#ifdef {guard}", f"RVTEST_CLR_{macro}_INT_{priv} # clear interrupt {code}", f"#endif // {guard}"]
 
 
 def _config_mcontrol6(
@@ -730,12 +597,7 @@ def _config_mcontrol6(
     """Emit assembly configuring trigger ``tselect`` as an mcontrol6 trigger."""
     if privbits is None:
         privbits = MODE_PRIVBIT[mode]
-
-    m = (privbits >> 4) & 1
-    s = (privbits >> 3) & 1
-    u = (privbits >> 2) & 1
-    vs = (privbits >> 1) & 1
-    vu = privbits & 1
+    m, s, u, vs, vu = _priv_fields(privbits)
     lowfields = (
         (vs << 24)
         | (vu << 23)
@@ -750,22 +612,18 @@ def _config_mcontrol6(
         | (xsl & 0b111)
     )
     mcontrol6 = 6  # tdata1.type
-    lines: list[str] = []
-    lines.extend(
-        [
-            f"# configure trigger {tselect} as mcontrol6",
-            _load_reg(reg, tselect),
-            _csr_access(f"csrw tselect, x{reg}", mode),
-            _csr_access("csrw tdata1, x0 # disable before configuring", mode),
-            *_load_value_or_lines(reg, tdata2),
-            _csr_access(f"csrw tdata2, x{reg} # match value", mode),
-            *_load_value_or_lines(reg, tdata3),
-            _csr_access(f"csrw tdata3, x{reg} # textra context matching ", mode),
-            f"# tdata1: type={mcontrol6} priv={privbits:05b} xsl={xsl:03b} select={select} size={size} match={match} chain={chain}",
-            *_load_tdata1(reg, mcontrol6, mode, lowfields),  # load data in tdata1
-        ]
-    )
-    return lines
+    return [
+        f"# configure trigger {tselect} as mcontrol6",
+        *_load_reg(reg, tselect),
+        _csr_access(f"csrw tselect, x{reg}", mode),
+        _csr_access("csrw tdata1, x0 # disable before configuring", mode),
+        *_load_reg(reg, tdata2),
+        _csr_access(f"csrw tdata2, x{reg} # match value", mode),
+        *_load_reg(reg, tdata3),
+        _csr_access(f"csrw tdata3, x{reg} # textra context matching ", mode),
+        f"# tdata1: type={mcontrol6} priv={privbits:05b} xsl={xsl:03b} select={select} size={size} match={match} chain={chain}",
+        *_load_tdata1(reg, mcontrol6, mode, lowfields),  # load data in tdata1
+    ]
 
 
 def _config_icount(
@@ -782,12 +640,7 @@ def _config_icount(
     """Emit assembly configuring trigger ``tselect`` as an icount trigger."""
     if privbits is None:
         privbits = MODE_PRIVBIT[mode]
-
-    m = (privbits >> 4) & 1
-    s = (privbits >> 3) & 1
-    u = (privbits >> 2) & 1
-    vs = (privbits >> 1) & 1
-    vu = privbits & 1
+    m, s, u, vs, vu = _priv_fields(privbits)
     lowfields = (
         (vs << 26)
         | (vu << 25)
@@ -799,20 +652,16 @@ def _config_icount(
         | (action & 0x3F)
     )
     icount = 3  # tdata1.type
-    lines: list[str] = []
-    lines.extend(
-        [
-            f"# configure trigger {tselect} as icount",
-            _load_reg(reg, tselect),
-            _csr_access(f"csrw tselect, x{reg}", mode),
-            _csr_access("csrw tdata1, x0 # disable before configuring", mode),
-            *_load_value_or_lines(reg, tdata3),
-            _csr_access(f"csrw tdata3, x{reg} # textra", mode),
-            f"# tdata1: type={icount} priv={privbits:05b} count={count} pending={pending} action={action}",
-            *_load_tdata1(reg, icount, mode, lowfields),  # load data in tdata1
-        ]
-    )
-    return lines
+    return [
+        f"# configure trigger {tselect} as icount",
+        *_load_reg(reg, tselect),
+        _csr_access(f"csrw tselect, x{reg}", mode),
+        _csr_access("csrw tdata1, x0 # disable before configuring", mode),
+        *_load_reg(reg, tdata3),
+        _csr_access(f"csrw tdata3, x{reg} # textra", mode),
+        f"# tdata1: type={icount} priv={privbits:05b} count={count} pending={pending} action={action}",
+        *_load_tdata1(reg, icount, mode, lowfields),  # load data in tdata1
+    ]
 
 
 def _config_itrigger(
@@ -829,31 +678,22 @@ def _config_itrigger(
     """Emit assembly configuring trigger ``tselect`` as an itrigger."""
     if privbits is None:
         privbits = MODE_PRIVBIT[mode]
-
-    m = (privbits >> 4) & 1
-    s = (privbits >> 3) & 1
-    u = (privbits >> 2) & 1
-    vs = (privbits >> 1) & 1
-    vu = privbits & 1
+    m, s, u, vs, vu = _priv_fields(privbits)
     lowfields = (vs << 12) | (vu << 11) | (nmi << 10) | (m << 9) | (s << 7) | (u << 6) | (action & 0x3F)
     itrigger = 4  # tdata1.type
-    lines: list[str] = []
-    lines.extend(
-        [
-            f"# configure trigger {tselect} as itrigger",
-            _load_reg(reg, tselect),
-            _csr_access(f"csrw tselect, x{reg}", mode),
-            _csr_access("csrw tdata1, x0 # disable before configuring", mode),
-            _load_reg(reg, tdata2),
-            _csr_access(f"csrw tdata2, x{reg} # interrupt-cause mask", mode),
-            _csr_access(f"csrs mie, x{reg} # enable masked interrupt(s)", mode),
-            *_load_value_or_lines(reg, tdata3),
-            _csr_access(f"csrw tdata3, x{reg} # textra context matching ", mode),
-            f"# tdata1: type={itrigger} priv={privbits:05b} nmi={nmi} action={action}",
-            *_load_tdata1(reg, itrigger, mode, lowfields),  # load data in tdata1
-        ]
-    )
-    return lines
+    return [
+        f"# configure trigger {tselect} as itrigger",
+        *_load_reg(reg, tselect),
+        _csr_access(f"csrw tselect, x{reg}", mode),
+        _csr_access("csrw tdata1, x0 # disable before configuring", mode),
+        *_load_reg(reg, tdata2),
+        _csr_access(f"csrw tdata2, x{reg} # interrupt-cause mask", mode),
+        _csr_access(f"csrs mie, x{reg} # enable masked interrupt(s)", mode),
+        *_load_reg(reg, tdata3),
+        _csr_access(f"csrw tdata3, x{reg} # textra context matching ", mode),
+        f"# tdata1: type={itrigger} priv={privbits:05b} nmi={nmi} action={action}",
+        *_load_tdata1(reg, itrigger, mode, lowfields),  # load data in tdata1
+    ]
 
 
 def _config_etrigger(
@@ -869,68 +709,21 @@ def _config_etrigger(
     """Emit assembly configuring trigger ``tselect`` as an etrigger."""
     if privbits is None:
         privbits = MODE_PRIVBIT[mode]
-
-    m = (privbits >> 4) & 1
-    s = (privbits >> 3) & 1
-    u = (privbits >> 2) & 1
-    vs = (privbits >> 1) & 1
-    vu = privbits & 1
+    m, s, u, vs, vu = _priv_fields(privbits)
     lowfields = (vs << 12) | (vu << 11) | (m << 9) | (s << 7) | (u << 6) | (action & 0x3F)
     etrigger = 5  # tdata1.type
-    lines: list[str] = []
-    lines.extend(
-        [
-            f"# configure trigger {tselect} as etrigger",
-            _load_reg(reg, tselect),
-            _csr_access(f"csrw tselect, x{reg}", mode),
-            _csr_access("csrw tdata1, x0 # disable before configuring", mode),
-            _load_reg(reg, tdata2),
-            _csr_access(f"csrw tdata2, x{reg} # exception-cause mask", mode),
-            *_load_value_or_lines(reg, tdata3),
-            _csr_access(f"csrw tdata3, x{reg} # textra context matching ", mode),
-            f"# tdata1: type={etrigger} priv={privbits:05b} action={action}",
-            *_load_tdata1(reg, etrigger, mode, lowfields),  # load data in tdata1
-        ]
-    )
-    return lines
-
-
-# Trigger types _fire_supported_trigger can fire, with the defines that enable each on trigger {trig_num}
-# armed for the running mode {mode_letter} (mcontrol6 writes that mode's m/s/u bit and a store match)
-_FIRE_TYPE_GUARDS = {
-    "mcontrol6": [
-        "#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}",
-        "#ifdef UDB_SDTRIG_{mode_letter}_AVAILABLE",
-        "#ifdef UDB_SDTRIG_MCONTROL6_STORE_AVAILABLE",
-    ],
-    "icount": ["#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE"],
-}
-
-
-def _fire_supported_trigger(
-    trig_type: str, trig_num: int, mode: str, cfg_reg: int, addr_reg: int, data_reg: int
-) -> list[str]:
-    """Arm trig_num as trig_type for ``mode``, make it fire once, and disable it.
-
-    The trailing spacers are the instructions the trap handler skips, wherever the breakpoint is taken.
-    """
-    if trig_type == "mcontrol6":  # watch &scratch, fire with a store to it
-        return [
-            *_config_mcontrol6(cfg_reg, trig_num, "scratch", mode, xsl=0b010, select=0),
-            f"LA(x{addr_reg}, scratch)",
-            f"LI(x{data_reg}, 0x{random_int(32, signed=False):x})",
-            f"sw x{data_reg}, 0(x{addr_reg}) # fire mcontrol6",
-            "nop # spacer (an address match may fire after the store)",
-            *_disable_trigger(cfg_reg, trig_num, mode),
-        ]
-    if trig_type == "icount":  # count=1: fires on the next retired instruction
-        return [
-            *_config_icount(cfg_reg, trig_num, 1, mode),
-            "nop # icount: count reaches 0 and pending is set",
-            "nop # spacer: the instruction the breakpoint is taken on",
-            *_disable_trigger(cfg_reg, trig_num, mode),
-        ]
-    raise ValueError(f"unsupported trigger type: {trig_type}")
+    return [
+        f"# configure trigger {tselect} as etrigger",
+        *_load_reg(reg, tselect),
+        _csr_access(f"csrw tselect, x{reg}", mode),
+        _csr_access("csrw tdata1, x0 # disable before configuring", mode),
+        *_load_reg(reg, tdata2),
+        _csr_access(f"csrw tdata2, x{reg} # exception-cause mask", mode),
+        *_load_reg(reg, tdata3),
+        _csr_access(f"csrw tdata3, x{reg} # textra context matching ", mode),
+        f"# tdata1: type={etrigger} priv={privbits:05b} action={action}",
+        *_load_tdata1(reg, etrigger, mode, lowfields),  # load data in tdata1
+    ]
 
 
 def _textra3(
@@ -954,11 +747,6 @@ def _textra3(
     )
 
 
-def _xlen_li(reg: int, val32: int, val64: int) -> list[str]:
-    """XLEN-guarded LI of val64 (RV64) or val32 (RV32)."""
-    return ["#if __riscv_xlen == 64", f"LI(x{reg}, 0x{val64:x})", "#else", f"LI(x{reg}, 0x{val32:x})", "#endif"]
-
-
 def _xlen_value(val32: int) -> tuple[int, int]:
     """(RV32, RV64) data values for a select = data match: val32, and on RV64 val32 with its complement above it.
 
@@ -966,33 +754,6 @@ def _xlen_value(val32: int) -> tuple[int, int]:
     so these are stored and loaded with SREG/LREG, and the upper half on RV64 makes the whole register count.
     """
     return val32, ((~val32 & 0xFFFFFFFF) << 32) | val32
-
-
-def _config_textra(reg: int, trig_num: int, trig_type: str, tdata3_lines: list[str], mode: str) -> list[str]:
-    """Configure trig_num as trig_type with the given tdata3 load, reusing each type's own configurator."""
-    if trig_type == "icount":
-        return _config_icount(reg, trig_num, 1, mode, tdata3=tdata3_lines)
-    if trig_type == "mcontrol6":
-        tdata2 = _xlen_li(reg, *_xlen_value(_TEXTRA_DATA))
-        return _config_mcontrol6(reg, trig_num, tdata2, mode, xsl=0b010, select=1, tdata3=tdata3_lines)
-    raise ValueError(f"unsupported textra trigger type: {trig_type}")
-
-
-def _fire_textra_trigger(trig_type: str, mode: str, cfg_reg: int, addr_reg: int, data_reg: int) -> list[str]:
-    """Perform trig_type's action; the trailing spacer is the instruction the trap handler skips."""
-    if trig_type == "icount":
-        return [
-            "nop # icount: decrement count and test context match",
-            "nop # spacer: the instruction the breakpoint is taken on",
-        ]
-    if trig_type == "mcontrol6":
-        return [
-            f"LA(x{addr_reg}, scratch)",
-            *_xlen_li(data_reg, *_xlen_value(_TEXTRA_DATA)),
-            f"SREG x{data_reg}, 0(x{addr_reg}) # mcontrol6 XLEN-wide data-store trigger",
-            "nop # spacer (data match fires after)",
-        ]
-    raise ValueError(f"unsupported textra trigger type: {trig_type}")
 
 
 def _sign_trap_count(temp_reg: int, test_data: TestData) -> list[str]:
@@ -1004,9 +765,126 @@ def _sign_trap_count(temp_reg: int, test_data: TestData) -> list[str]:
     ]
 
 
-def _load_value_or_lines(reg: int, val: int | str | list[str]) -> list[str]:
-    """Load val into x{reg}; a list is spliced in as-is, otherwise falls back to _load_reg."""
-    return val if isinstance(val, list) else [_load_reg(reg, val)]
+def _lrsc_pair(
+    test_data: TestData,
+    coverpoint: str,
+    covergroup: str,
+    bins: tuple[str, str],
+    regs: tuple[int, int, int, int, int],
+    width: str,
+    comments: tuple[str, str],
+    *,
+    data_match: bool = False,
+) -> list[str]:
+    """Emit one lr; nop; sc; nop sequence (an LR bin and an SC bin) after the trigger is configured.
+
+    The pair stays a constrained LR/SC sequence. The signature records LR's result (the sentinel if the trigger
+    skipped it) and whether the SC was skipped, but not the SC result, which is implementation-defined after a
+    skipped or trapped LR. Address matches fire before the access, so the skips tell an LR fire from an SC fire.
+    A data match may fire before or after (Whisper before, Sail after), so with ``data_match`` a skipped LR records
+    the value it would have loaded and the SC flag is not recorded; the trap records still count the fires.
+    """
+    lr_reg, sc_reg, addr_reg, data_reg, temp_reg = regs
+    lines = [
+        f"LI(x{lr_reg}, 0x{LRSC_SENTINEL:x}) # sentinel: still here if the trigger skips the lr",
+        f"LI(x{sc_reg}, 0x{LRSC_SENTINEL:x}) # sentinel: still here if the trigger skips the sc",
+        _add_tc(test_data, bins[0], coverpoint, covergroup),
+    ]
+    lr_label = test_data.current_testcase_label
+    lines.extend(
+        [
+            *_arch_guard(f"lr.{width} x{lr_reg}, (x{addr_reg}) # {comments[0]}", ["zalrsc"]),
+            "nop # spacer (lands here after a trigger that fires after the lr)",
+            _add_tc(test_data, bins[1], coverpoint, covergroup),
+            *_arch_guard(f"sc.{width} x{sc_reg}, x{data_reg}, (x{addr_reg}) # {comments[1]}", ["zalrsc"]),
+            "nop # spacer (lands here after a trigger that fires after the sc)",
+        ]
+    )
+    if data_match:
+        lines.extend(
+            [
+                f"LI(x{temp_reg}, 0x{LRSC_SENTINEL:x})",
+                f"bne x{lr_reg}, x{temp_reg}, 1f # lr ran",
+                f"mv x{lr_reg}, x{data_reg} # data matches use XLEN-wide lr only, so lr loads all of dataval",
+                f"1: # x{lr_reg} = what lr loaded, whether the trigger fired before or after it",
+            ]
+        )
+    lines.extend(
+        [
+            f"LI(x{temp_reg}, 0x{LRSC_SIG_KEY:x}) # key for the recorded words",
+            f"xor x{lr_reg}, x{lr_reg}, x{temp_reg} # lr result ^ key",
+            write_sigupd(lr_reg, test_data, label=lr_label),
+        ]
+    )
+    if not data_match:
+        lines.extend(
+            [
+                f"LI(x{lr_reg}, 0x{LRSC_SENTINEL:x})",
+                f"sub x{sc_reg}, x{sc_reg}, x{lr_reg}",
+                f"seqz x{sc_reg}, x{sc_reg} # 1 = trigger skipped the sc",
+                f"xor x{sc_reg}, x{sc_reg}, x{temp_reg} # sc-skipped flag ^ key",
+                write_sigupd(sc_reg, test_data),
+            ]
+        )
+    return lines
+
+
+def _select_trigger(reg: int, trig_num: int, mode: str) -> list[str]:
+    """Write tselect = trig_num."""
+    return [f"LI(x{reg}, {trig_num})", _csr_access(f"csrw tselect, x{reg} # tselect = {trig_num}", mode)]
+
+
+def _clear_tdata(mode: str) -> list[str]:
+    """Disable the selected trigger (tdata1 = 0 first, so any tdata2/3 value is then legal) and zero tdata2/3."""
+    return [
+        _csr_access("csrw tdata1, x0 # disable trigger", mode),
+        _csr_access("csrw tdata2, x0", mode),
+        _csr_access("csrw tdata3, x0", mode),
+    ]
+
+
+def _set_itrigger_delegation(code: int, delegate: int, reg: int) -> list[str]:
+    return [f"LI(x{reg}, 0x{1 << code:x})", f"{'csrs' if delegate else 'csrc'} mideleg, x{reg}"]
+
+
+def _trap_textra_blocks(reg: int, temp_reg: int) -> list[tuple[str, list[str], list[str], list[tuple[str, list[str]]]]]:
+    """(context, context-set lines, context-clear lines, [(case, tdata3 load into x{reg})]) for the itrigger/etrigger
+    textra cases: mhselect=4 with mhvalue equal to or different from mcontext, and sselect=1 with svalue equal to or
+    different from scontext. Each block runs under #ifdef UDB_<CONTEXT>_AVAILABLE."""
+    mh = {name: (v32, v64) for name, v32, v64 in _TEXTRA_MCONTEXT_CASES}
+    return [
+        (
+            "mcontext",
+            [*_xlen_li(temp_reg, _MCONTEXT_TEST_VALUE_RV32, _MCONTEXT_TEST_VALUE_RV64), f"csrw mcontext, x{temp_reg}"],
+            ["csrw mcontext, x0 # clear the test context"],
+            [
+                (
+                    f"mhvalue_{name}",
+                    _xlen_li(
+                        reg,
+                        _textra3(32, mhselect=4, mhvalue=mh[name][0]),
+                        _textra3(64, mhselect=4, mhvalue=mh[name][1]),
+                    ),
+                )
+                for name in ("match", "other")
+            ],
+        ),
+        (
+            "scontext",
+            [*_xlen_li(temp_reg, _SCONTEXT_TEST_VALUE_RV32, _SCONTEXT_TEST_VALUE_RV64), f"csrw scontext, x{temp_reg}"],
+            ["csrw scontext, x0 # clear the test context"],
+            [
+                (
+                    f"svalue_{name}",
+                    _xlen_li(reg, _textra3(32, sselect=1, svalue=sv32), _textra3(64, sselect=1, svalue=sv64)),
+                )
+                for name, sv32, sv64 in (
+                    ("match", _SCONTEXT_TEST_VALUE_RV32, _SCONTEXT_TEST_VALUE_RV64),
+                    ("zero", 0, 0),
+                )
+            ],
+        ),
+    ]
 
 
 ### COVERPOINTS
@@ -1034,9 +912,7 @@ def _generate_access_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     csrs = ("tdata1", "tdata2", "tdata3", "tinfo", "tcontrol", "scontext", "mcontext", "hcontext")
     optional_csrs = ("tcontrol", "scontext", "mcontext", "hcontext")
 
-    type_reg, save_reg, temp_reg = test_data.int_regs.get_registers(
-        3, exclude_regs=[10, 11]
-    )  # exclude a0, a1 because they are used in SBI
+    type_reg, save_reg, temp_reg = test_data.int_regs.get_registers(3)
 
     for trig_num in range(UDB_NUM_TRIGGERS):
         for trig_type in ACCESS_TYPES:
@@ -1084,16 +960,14 @@ def _generate_access_trap_tests(test_data: TestData, mode: str) -> list[TestChun
     covergroup = f"Sdtrig{mode}_cg"
     chunks: list[TestChunk] = []
 
-    ######################################
     coverpoint = f"cp_csr_access_trap_{mode.lower()}"
-    ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.append(
         comment_banner(
             coverpoint, f"Direct {mode}-mode reads and writes of the M-level trigger CSRs raise illegal instruction"
         )
     )
-    (data_reg,) = test_data.int_regs.get_registers(1, exclude_regs=[10, 11])
+    (data_reg,) = test_data.int_regs.get_registers(1)
     for csr in ("tselect", "tdata1", "tdata2", "tdata3", "tinfo", "tcontrol", "mcontext"):
         optional = csr in ("tcontrol", "mcontext")
         if optional:
@@ -1116,18 +990,15 @@ def _generate_access_trap_tests(test_data: TestData, mode: str) -> list[TestChun
 def _generate_native_triggers_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate native-trigger breakpoint-delegation tests (S and U suites).
 
-    Each supported trigger type fires once from ``mode`` with medeleg[3] clear and once with it set. The trap
-    record names the mode the breakpoint was handled in, and rvtest_trap_count is signed after each case.
-    SIE stays 1 in the S suite: with medeleg[3]=1, harts using the interrupt-enable re-entrancy option do not
-    fire S-mode triggers while SIE=0.
+    Each supported trigger type fires once from ``mode`` with medeleg[3] clear and once with it set; the trap record
+    names the handling mode. SIE stays 1 in the S suite: with medeleg[3]=1, harts using the interrupt-enable
+    reentrancy option do not fire S-mode triggers while SIE=0.
     """
     covergroup = f"Sdtrig{mode}_cg"
     seed(reproducible_hash(covergroup))
     chunks: list[TestChunk] = []
 
-    ######################################
     coverpoint = f"cp_breakpoint_delegate_{mode.lower()}"
-    ######################################
     lines = test_data.new_test_chunk(chunks, "breakpoint_delegate").code
     lines.append(
         comment_banner(
@@ -1137,7 +1008,7 @@ def _generate_native_triggers_tests(test_data: TestData, mode: str) -> list[Test
         )
     )
     cfg_reg, addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
-        4, exclude_regs=[2, 10, 11], reg_range=list(range(8, 16))
+        4, exclude_regs=[2], reg_range=list(range(8, 16))
     )
     for delegate in (0, 1):
         # T-SBI does not write medeleg, so change it in M-mode
@@ -1150,15 +1021,30 @@ def _generate_native_triggers_tests(test_data: TestData, mode: str) -> list[Test
             ]
         )
         for trig_num in range(UDB_NUM_TRIGGERS):
-            for trig_type, type_guards in _FIRE_TYPE_GUARDS.items():
-                guards = [g.format(trig_num=trig_num, mode_letter=MODE_UDB_LETTER[mode]) for g in type_guards]
+            for trig_type in ("mcontrol6", "icount"):
+                guards = _fire_guards(trig_type, trig_num, mode)
                 lines.extend(
                     [
                         *guards,
                         _add_tc(
                             test_data, f"trig_num_{trig_num}_{trig_type}_delegate_{delegate}", coverpoint, covergroup
                         ),
-                        *_fire_supported_trigger(trig_type, trig_num, mode, cfg_reg, addr_reg, data_reg),
+                        *(
+                            [  # watch &scratch, fire with a store to it
+                                *_config_mcontrol6(cfg_reg, trig_num, "scratch", mode, xsl=0b010, select=0),
+                                f"LA(x{addr_reg}, scratch)",
+                                f"LI(x{data_reg}, 0x{random_int(32, signed=False):x})",
+                                f"sw x{data_reg}, 0(x{addr_reg}) # fire mcontrol6",
+                                "nop # spacer (an address match may fire after the store)",
+                            ]
+                            if trig_type == "mcontrol6"
+                            else [  # icount count=1: fires on the next retired instruction
+                                *_config_icount(cfg_reg, trig_num, 1, mode),
+                                "nop # icount: count reaches 0 and pending is set",
+                                "nop # spacer: the instruction the breakpoint is taken on",
+                            ]
+                        ),
+                        *_disable_trigger(cfg_reg, trig_num, mode),
                         *_sign_trap_count(data_reg, test_data),
                         *(["#endif"] * len(guards)),
                     ]
@@ -1170,85 +1056,11 @@ def _generate_native_triggers_tests(test_data: TestData, mode: str) -> list[Test
     return chunks
 
 
-LRSC_SENTINEL = 0xBAD5EED  # preloaded into the lr/sc rd: no load of scratch or SC result writes it
-LRSC_SIG_KEY = 0x5A5A5A5A  # xor'd into recorded lr/sc words so none equals 0 or dataval, which a data trigger may watch
-
-
-def _lrsc_pair(
-    test_data: TestData,
-    coverpoint: str,
-    covergroup: str,
-    bins: tuple[str, str],
-    regs: tuple[int, int, int, int, int],
-    width: str,
-    comments: tuple[str, str],
-    *,
-    data_match: bool = False,
-) -> list[str]:
-    """Emit one lr; nop; sc; nop sequence (an LR bin and an SC bin) after the trigger is configured.
-
-    The LR and SC stay contiguous, so the pair is a constrained LR/SC sequence. Afterwards the signature
-    records LR's result (the sentinel if the trigger skipped the LR) and whether the trigger skipped the SC
-    (its rd still holds the sentinel). The SC result itself is not recorded: after a skipped or trapped LR
-    it is implementation-defined.
-
-    Address matches fire before the access on every hart (the suggested timing), so the skips tell an LR
-    fire from an SC fire. A data match may fire before or after the access (Whisper fires load data before,
-    Sail after), so with ``data_match`` a skipped LR records the value it would have loaded, and the SC flag
-    is not recorded; the trap records still count the fires.
-    """
-    lr_reg, sc_reg, addr_reg, data_reg, temp_reg = regs
-    lines = [
-        f"LI(x{lr_reg}, 0x{LRSC_SENTINEL:x}) # sentinel: still here if the trigger skips the lr",
-        f"LI(x{sc_reg}, 0x{LRSC_SENTINEL:x}) # sentinel: still here if the trigger skips the sc",
-        _add_tc(test_data, bins[0], coverpoint, covergroup),
-    ]
-    lr_label = test_data.current_testcase_label
-    lines.extend(
-        [
-            *_arch_guard(f"lr.{width} x{lr_reg}, (x{addr_reg}) # {comments[0]}", ["zalrsc"]),
-            "nop # spacer (lands here after a trigger that fires after the lr)",
-            _add_tc(test_data, bins[1], coverpoint, covergroup),
-            *_arch_guard(f"sc.{width} x{sc_reg}, x{data_reg}, (x{addr_reg}) # {comments[1]}", ["zalrsc"]),
-            "nop # spacer (lands here after a trigger that fires after the sc)",
-        ]
-    )
-    if data_match:
-        lines.extend(
-            [
-                f"LI(x{temp_reg}, 0x{LRSC_SENTINEL:x})",
-                f"bne x{lr_reg}, x{temp_reg}, 1f # lr ran",
-                f"mv x{lr_reg}, x{data_reg} # data matches use XLEN-wide lr only, so lr loads all of dataval",
-                f"1: # x{lr_reg} = what lr loaded, whether the trigger fired before or after it",
-            ]
-        )
-    lines.extend(
-        [
-            f"LI(x{temp_reg}, 0x{LRSC_SIG_KEY:x}) # key for the recorded words",
-            f"xor x{lr_reg}, x{lr_reg}, x{temp_reg} # lr result ^ key",
-            write_sigupd(lr_reg, test_data, label=lr_label),
-        ]
-    )
-    if not data_match:
-        lines.extend(
-            [
-                f"LI(x{lr_reg}, 0x{LRSC_SENTINEL:x})",
-                f"sub x{sc_reg}, x{sc_reg}, x{lr_reg}",
-                f"seqz x{sc_reg}, x{sc_reg} # 1 = trigger skipped the sc",
-                f"xor x{sc_reg}, x{sc_reg}, x{temp_reg} # sc-skipped flag ^ key",
-                write_sigupd(sc_reg, test_data),
-            ]
-        )
-    return lines
-
-
 def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate lr/sc matching tests."""
     covergroup = "SdtrigSm_a_cg"
     seed(reproducible_hash(f"Sdtrig{mode}_a_cg"))
     chunks: list[TestChunk] = []
-
-    # setup registers
     lr_reg, sc_reg, addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
         5, exclude_regs=[2], reg_range=list(range(8, 16))
     )
@@ -1265,16 +1077,11 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 fires when lr/sc address == tdata2 (select=address)",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 fires when lr/sc address == tdata2 (select=address)"))
     lines.extend(
         [
             f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
-            _load_reg(data_reg, dataval),
+            *_load_reg(data_reg, dataval),
             f"SREG x{data_reg}, 0(x{addr_reg}) # scratch = dataval before any trigger is armed; sc only rewrites it",
         ]
     )
@@ -1290,7 +1097,7 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         [
                             f"\n# trigger {trig_num}: tdata2={tdata2} xsl={perm:03b} on lr.{width}/sc.{width}",
                             f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
-                            _load_reg(data_reg, dataval),
+                            *_load_reg(data_reg, dataval),
                             *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=0),
                             *_lrsc_pair(
                                 test_data,
@@ -1319,16 +1126,11 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 fires when lr/sc data == tdata2 (select=data)",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 fires when lr/sc data == tdata2 (select=data)"))
     lines.extend(
         [
             f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
-            _load_reg(data_reg, dataval),
+            *_load_reg(data_reg, dataval),
             f"SREG x{data_reg}, 0(x{addr_reg}) # load scratch with XLEN-wide dataval",
         ]
     )
@@ -1347,7 +1149,7 @@ def _generate_zalrsc_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                         [
                             f"\n# trigger {trig_num}: tdata2={td2_name} xsl={perm:03b} on lr.{width}/sc.{width} data",
                             f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
-                            _load_reg(data_reg, dataval),
+                            *_load_reg(data_reg, dataval),
                             *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=1),
                             *_lrsc_pair(
                                 test_data,
@@ -1387,8 +1189,6 @@ def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     covergroup = "SdtrigSm_a_cg"
     seed(reproducible_hash(f"Sdtrig{mode}_a_cg"))
     chunks: list[TestChunk] = []
-
-    # setup registers
     dest_reg, addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
         4, exclude_regs=[2], reg_range=list(range(8, 16))
     )
@@ -1403,12 +1203,7 @@ def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     for op in ZAAMO_OPS:  # one file per op keeps the S/U files under 100k dynamic instructions
         lines = test_data.new_test_chunk(chunks, f"amo_{op}").code
         lines.extend(_global_ie(mode, True))
-        lines.append(
-            comment_banner(
-                coverpoint,
-                f"mcontrol6 fires when {op} address == tdata2 (select=address)",
-            )
-        )
+        lines.append(comment_banner(coverpoint, f"mcontrol6 fires when {op} address == tdata2 (select=address)"))
         for trig_num in range(UDB_NUM_TRIGGERS):
             gates = _mcontrol6_gates(trig_num, mode)
             lines.extend(gates)
@@ -1423,7 +1218,7 @@ def _generate_zaamo_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             [
                                 _add_tc(test_data, binname, coverpoint, covergroup),
                                 f"LA(x{addr_reg}, scratch) # x{addr_reg} = &scratch",
-                                _load_reg(data_reg, dataval),
+                                *_load_reg(data_reg, dataval),
                                 f"LI(x{dest_reg}, 0x{randval:x}) # data for sigupd",
                                 *_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=perm, select=0),
                                 *_arch_guard(
@@ -1584,23 +1379,14 @@ def _generate_zcmp_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     coverpoint = "cp_cm_pop_push"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 matches each XLEN store of cm.push / cm.pop",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 matches each XLEN store of cm.push / cm.pop"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         for addrval in ("marker", "marker8", "zero"):
             for insn in ("cm_push", "cm_pop"):
                 for size in SIZE_ALL:
                     for perm in ("store", "load"):
                         binname = f"trig_num_{trig_num}_addr_{addrval}_{insn}_size_{size}_{perm}"
-                        lines.extend(
-                            [
-                                _add_tc(test_data, binname, coverpoint, covergroup),
-                            ]
-                        )
+                        lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
 
     chunks.append(test_data.end_test_chunk())
     return chunks
@@ -1763,27 +1549,12 @@ def _generate_zicbop_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     return [test_data.end_test_chunk()]
 
 
-# cp_tdata2_translate: (name, XLEN, VA width, satp setup, superpage PTE macro, root level, alias VA, superpage shift).
-# The alias is the last root slot, so it is a negative (sign-extended) VA and never the boot identity map's slot.
-_XLATE_MODES = (
-    ("sv39", 64, 39, "SATP_SETUP_RV64(sv39)", "SUPERPAGE_PTE_SETUP_SV39", "LEVEL2", 0xFFFFFFFFC0000000, 30),
-    ("sv48", 64, 48, "SATP_SETUP_RV64(sv48)", "SUPERPAGE_PTE_SETUP_SV48", "LEVEL3", 0xFFFFFF8000000000, 39),
-    ("sv57", 64, 57, "SATP_SETUP_RV64(sv57)", "SUPERPAGE_PTE_SETUP_SV57", "LEVEL4", 0xFFFF000000000000, 48),
-    ("sv32", 32, 32, "SATP_SETUP_SV32", "SUPERPAGE_PTE_SETUP_SV32", "LEVEL1", 0xFFC00000, 22),
-)
-_PTE_SPAGE = "PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V"
-
-
-def _xlate_guard(name: str, xlen: int) -> list[str]:
-    return [f"#if __riscv_xlen == {xlen}", f"#ifdef {name.upper()}_SUPPORTED"]
-
-
 def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate tdata2 address-storage / translation tests."""
     covergroup = f"Sdtrig{mode}_address_matches_cg"
     chunks: list[TestChunk] = []
     cfg_reg, va_reg, pa_reg, temp_reg = test_data.int_regs.get_registers(
-        4, exclude_regs=[2, 10, 11], reg_range=list(range(8, 16))
+        4, exclude_regs=[2], reg_range=list(range(8, 16))
     )
 
     ######################################
@@ -1816,7 +1587,14 @@ def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[Test
             ("msb_0", [f"LI(x{temp_reg}, 0x{half - 1:x}) # largest VA with the sign bit clear"]),
             ("msb_1", [f"LI(x{temp_reg}, 0x{(1 << xlen) - half:x}) # smallest VA with the sign bit set"]),
         ]
-        blocks.append((name, _xlate_guard(name, xlen), [satp_setup, "sfence.vma"], values))
+        blocks.append(
+            (
+                name,
+                [f"#if __riscv_xlen == {xlen}", f"#ifdef {name.upper()}_SUPPORTED"],
+                [satp_setup, "sfence.vma"],
+                values,
+            )
+        )
     for satp, guards, satp_lines, values in blocks:
         lines.extend([f"\n# satp.MODE = {satp}", *guards, *satp_lines])
         for trig_num in range(UDB_NUM_TRIGGERS):
@@ -1871,7 +1649,8 @@ def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[Test
         lines.extend(
             [
                 f"\n# {name}: sdtrig_xlate_target's superpage aliased at 0x{alias:x}",
-                *_xlate_guard(name, xlen),
+                f"#if __riscv_xlen == {xlen}",
+                f"#ifdef {name.upper()}_SUPPORTED",
                 f"{pte_macro}(sdtrig_xlate_target, ({_PTE_SPAGE}), 0x{alias:x}, {level})",
                 satp_setup,
                 "sfence.vma",
@@ -1925,52 +1704,23 @@ def _generate_address_matches_tests(test_data: TestData, mode: str) -> list[Test
     return chunks
 
 
-def _li_xlen(reg: int, rv64: int, rv32: int, comment: str) -> list[str]:
-    """LI an XLEN-dependent constant."""
-    return [
-        "#if __riscv_xlen == 64",
-        f"LI(x{reg}, 0x{rv64:x}) # {comment}",
-        "#else",
-        f"LI(x{reg}, 0x{rv32:x}) # {comment}",
-        "#endif",
-    ]
-
-
-def _select_trigger(reg: int, trig_num: int, mode: str) -> list[str]:
-    """Write tselect = trig_num."""
-    return [
-        f"LI(x{reg}, {trig_num})",
-        _csr_access(f"csrw tselect, x{reg} # tselect = {trig_num}", mode),
-    ]
-
-
-def _clear_tdata(mode: str) -> list[str]:
-    """Disable the selected trigger (tdata1 = 0 first, so any tdata2/3 value is then legal) and zero tdata2/3."""
-    return [
-        _csr_access("csrw tdata1, x0 # disable trigger", mode),
-        _csr_access("csrw tdata2, x0", mode),
-        _csr_access("csrw tdata3, x0", mode),
-    ]
-
-
 def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate trigger-module register (tselect, tdata1-3, tinfo and the global trigger CSRs) tests.
 
-    The signature records only what the Debug spec pins down: an implemented tselect index reads back as
-    written, tinfo has the bits of the types this trigger is configured to support and info != 1, tinfo.version
-    is at least 1 on a trigger that supports mcontrol6 (norm:Sdtrig_mcontrol6_dependence), a write
-    to one tdata register leaves the other two and the other trigger's tdata registers unchanged and a write
-    to tinfo has no effect (before ^ after
-    = 0), a disabled trigger takes tdata2 = tdata3 = 0, an mcontrol6 tdata1 keeps type and m while the
-    mode bits of absent modes stay hard-wired to 0, and dmode reads 0 after an M-mode write of 1. Values that are WARL choices are not recorded:
-    Sail 0.16, Spike, Whisper and Imperas differ on tselect after an all-ones write, on the ignored bits
-    of an all-ones tdata1 (type 15), and on whether tinfo has type 2.
+    The signature records only what the Debug spec pins down:
+    - an implemented tselect index reads back as written
+    - tinfo has the configured types' bits, info != 1, and version >= 1 with mcontrol6
+      (norm:Sdtrig_mcontrol6_dependence)
+    - a tdata write leaves the other tdata registers of both triggers unchanged; a tinfo write has no effect
+    - a disabled trigger takes tdata2 = tdata3 = 0
+    - an mcontrol6 tdata1 keeps type and m, and absent modes' bits stay 0
+    - dmode reads 0 after an M-mode write of 1
+    WARL choices are not recorded: Sail, Spike, Whisper and Imperas differ on tselect after an all-ones write, on
+    the ignored bits of an all-ones type-15 tdata1, and on whether tinfo has type 2.
     """
     covergroup = f"Sdtrig{mode}_trig_module_reg_cg"
     chunks: list[TestChunk] = []
-    data_reg, temp_reg, ones_reg, old1_reg, old2_reg = test_data.int_regs.get_registers(
-        5, exclude_regs=[10, 11]
-    )  # exclude a0, a1 because they are used in SBI
+    data_reg, temp_reg, ones_reg, old1_reg, old2_reg = test_data.int_regs.get_registers(5)
 
     ######################################
     coverpoint = "cp_tselect_trigs"
@@ -2142,7 +1892,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 [
                     _add_tc(test_data, f"trig_num_{trig_num}_{csr}", coverpoint, covergroup),
                     *_clear_tdata(mode),
-                    *_li_xlen(temp_reg, TDATA1_TYPE_DISABLED << 60, TDATA1_TYPE_DISABLED << 28, "tdata1.type = 15"),
+                    *_xlen_li(temp_reg, TDATA1_TYPE_DISABLED << 28, TDATA1_TYPE_DISABLED << 60, "tdata1.type = 15"),
                     _csr_access(f"csrw tdata1, x{temp_reg} # disabled: tdata2/3 take any supported value", mode),
                     _csr_access(f"csrr x{old1_reg}, {others[0]} # before", mode),
                     _csr_access(f"csrr x{old2_reg}, {others[1]} # before", mode),
@@ -2160,12 +1910,12 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     # Nor does it change any trigger besides the selected one: trigger 0 is disabled with tdata2 set (to scratch,
     # an address mcontrol6 supports), then each tdata register of trigger 1 is written all 0s and all 1s
     if UDB_NUM_TRIGGERS >= 2:
-        (old3_reg,) = test_data.int_regs.get_registers(1, exclude_regs=[10, 11])
+        (old3_reg,) = test_data.int_regs.get_registers(1)
         lines.extend(
             [
                 *_select_trigger(temp_reg, 0, mode),
                 *_clear_tdata(mode),
-                *_li_xlen(temp_reg, TDATA1_TYPE_DISABLED << 60, TDATA1_TYPE_DISABLED << 28, "tdata1.type = 15"),
+                *_xlen_li(temp_reg, TDATA1_TYPE_DISABLED << 28, TDATA1_TYPE_DISABLED << 60, "tdata1.type = 15"),
                 _csr_access(f"csrw tdata1, x{temp_reg} # trigger 0 disabled", mode),
                 "#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED0",
                 f"LA(x{temp_reg}, scratch)",
@@ -2183,7 +1933,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     _csr_access(f"csrr x{old3_reg}, tdata3 # trigger 0 before", mode),
                     *_select_trigger(temp_reg, 1, mode),
                     *_clear_tdata(mode),
-                    *_li_xlen(temp_reg, TDATA1_TYPE_DISABLED << 60, TDATA1_TYPE_DISABLED << 28, "tdata1.type = 15"),
+                    *_xlen_li(temp_reg, TDATA1_TYPE_DISABLED << 28, TDATA1_TYPE_DISABLED << 60, "tdata1.type = 15"),
                     _csr_access(f"csrw tdata1, x{temp_reg} # trigger 1 disabled", mode),
                     _csr_access(f"csrw {csr}, x0 # trigger 1: write all 0s", mode),
                     _csr_access(f"csrw {csr}, x{ones_reg} # trigger 1: write all 1s", mode),
@@ -2215,12 +1965,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     )
     lines.extend(
         [
-            *_li_xlen(
-                ones_reg,
-                (0xF << 60) | MCONTROL6_M,
-                (0xF << 28) | MCONTROL6_M,
-                "type and m",
-            ),
+            *_xlen_li(ones_reg, (0xF << 28) | MCONTROL6_M, (0xF << 60) | MCONTROL6_M, "type and m"),
             "#ifndef S_SUPPORTED",
             f"ori x{ones_reg}, x{ones_reg}, 0x{MCONTROL6_S:x} # s hard-wired to 0",
             "#endif",
@@ -2240,10 +1985,10 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 _add_tc(test_data, f"trig_num_{trig_num}", coverpoint, covergroup),
                 *_select_trigger(temp_reg, trig_num, mode),
                 *_clear_tdata(mode),
-                *_li_xlen(
+                *_xlen_li(
                     data_reg,
-                    (MCONTROL6_TYPE << 60) | MCONTROL6_ALL_PRIV,
                     (MCONTROL6_TYPE << 28) | MCONTROL6_ALL_PRIV,
+                    (MCONTROL6_TYPE << 60) | MCONTROL6_ALL_PRIV,
                     "mcontrol6, m/s/u/vs/vu = 1",
                 ),
                 _csr_access(f"csrw tdata1, x{data_reg} # all mode bits set", mode),
@@ -2286,10 +2031,10 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                     _add_tc(test_data, f"trig_num_{trig_num}_{type_name}", coverpoint, covergroup),
                     *_select_trigger(temp_reg, trig_num, mode),
                     *_clear_tdata(mode),
-                    *_li_xlen(
+                    *_xlen_li(
                         data_reg,
-                        (trig_type << 60) | (1 << 59) | lowfields,
                         (trig_type << 28) | (1 << 27) | lowfields,
+                        (trig_type << 60) | (1 << 59) | lowfields,
                         f"{type_name}, dmode = 1",
                     ),
                     _csr_access(f"csrw tdata1, x{data_reg} # dmode is not writable from M-mode", mode),
@@ -2312,8 +2057,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.append(
         comment_banner(
-            coverpoint,
-            "Write all 0s and all 1s to tinfo; it is read-only, so before ^ after is recorded and must be 0",
+            coverpoint, "Write all 0s and all 1s to tinfo; it is read-only, so before ^ after is recorded and must be 0"
         )
     )
     lines.append(f"LI(x{ones_reg}, -1) # all 1s")
@@ -2341,64 +2085,38 @@ def _generate_tcontrol_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate tcontrol tests (labels only; needs UDB_TCONTROL_AVAILABLE)."""
     covergroup = f"Sdtrig{mode}_tcontrol_cg"
     chunks: list[TestChunk] = []
+
     ######################################
     coverpoint = "cp_tcontrol_enable"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "tcontrol.mte gates M-mode trigger firing",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "tcontrol.mte gates M-mode trigger firing"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         for mte in (0, 1):  # tcontrol[3]
             binname = f"trig_num_{trig_num}_mte_{mte}"
-            lines.extend(
-                [
-                    _add_tc(test_data, binname, coverpoint, covergroup),
-                ]
-            )
+            lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
 
     ######################################
     coverpoint = "cp_tcontrol_mtrap"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mte/mpte updated on trap into M-mode",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mte/mpte updated on trap into M-mode"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         for mte in (0, 1):  # tcontrol[3]
             for mpte in (0, 1):  # tcontrol[7]
                 binname = f"trig_num_{trig_num}_mte_{mte}_mpte_{mpte}"
-                lines.extend(
-                    [
-                        _add_tc(test_data, binname, coverpoint, covergroup),
-                    ]
-                )
+                lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
 
     ######################################
     coverpoint = "cp_tcontrol_mret"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mte restored from mpte on mret",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mte restored from mpte on mret"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         for mte in (0, 1):  # tcontrol[3]
             for mpte in (0, 1):  # tcontrol[7]
                 binname = f"trig_num_{trig_num}_mte_{mte}_mpte_{mpte}"
-                lines.extend(
-                    [
-                        _add_tc(test_data, binname, coverpoint, covergroup),
-                    ]
-                )
+                lines.append(_add_tc(test_data, binname, coverpoint, covergroup))
 
     chunks.append(test_data.end_test_chunk())
     return chunks
@@ -2409,8 +2127,6 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     covergroup = "SdtrigSm_mcontrol6_cg"
     seed(reproducible_hash(f"Sdtrig{mode}_mcontrol6_cg"))
     chunks: list[TestChunk] = []
-
-    # setup registers
     sp_reg, addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
         4, exclude_regs=[2], reg_range=list(range(8, 16))
     )
@@ -2474,12 +2190,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 fires when PC == tdata2",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 fires when PC == tdata2"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         gates = _mcontrol6_gates(trig_num, mode)
         lines.extend(gates)
@@ -2512,12 +2223,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 fires when access address == tdata2 (select=address)",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 fires when access address == tdata2 (select=address)"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         gates = _mcontrol6_gates(trig_num, mode)
         lines.extend(gates)
@@ -2579,12 +2285,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 fires when load/store data == tdata2 (select=data)",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 fires when load/store data == tdata2 (select=data)"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         gates = _mcontrol6_gates(trig_num, mode, select=1)
         lines.extend(gates)
@@ -2663,12 +2364,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 load/store match across access sizes",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 load/store match across access sizes"))
 
     lines.extend(
         [
@@ -2768,12 +2464,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 match types equal / ge / lt / not-equal",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 match types equal / ge / lt / not-equal"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         gates = _mcontrol6_gates(trig_num, mode, select=1)
         lines.extend(gates)
@@ -2828,12 +2519,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 NAPOT and not-NAPOT match types",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 NAPOT and not-NAPOT match types"))
 
     for trig_num in range(UDB_NUM_TRIGGERS):
         gates = _mcontrol6_gates(trig_num, mode, select=1)
@@ -2879,12 +2565,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "mcontrol6 mask-low / mask-high match types",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "mcontrol6 mask-low / mask-high match types"))
     # Mask cases for the current RV length, with the correct length store operation, and test case values.
     mask_cases = (
         (
@@ -3000,10 +2681,9 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     seed(reproducible_hash(f"Sdtrig{mode}_icount_cg"))
     chunks: list[TestChunk] = []
 
-    # setup registers
     sp_reg, addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
         4, exclude_regs=[2], reg_range=list(range(8, 16))
-    )  # exclude a0, a1 because they are used in SBI
+    )
 
     ######################################
     coverpoint = "cp_icount_hardwired"
@@ -3011,12 +2691,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     # Shares the icount_instr file: a DUT gets exactly one of hardwired and instr, so neither file is ever empty.
     lines = test_data.new_test_chunk(chunks, "icount_instr").code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "icount priv/action hard-wired field behavior",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "icount priv/action hard-wired field behavior"))
 
     lines.append("#ifdef UDB_ICOUNT_HARDWIRED_1")
     for trig_num in range(UDB_NUM_TRIGGERS):
@@ -3043,12 +2718,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     lines = test_data.new_test_chunk(chunks, "icount_instr").code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "icount fires after count instructions",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "icount fires after count instructions"))
     lines.append("#ifndef UDB_ICOUNT_HARDWIRED_1")
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
@@ -3078,12 +2748,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "icount count decrement across a trap",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "icount count decrement across a trap"))
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
         for priv_en in (0, 1):  # trigger disabled/enabled in the current mode
@@ -3110,12 +2775,7 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.extend(_global_ie(mode, True))
-    lines.append(
-        comment_banner(
-            coverpoint,
-            "icount pending bit when count reaches 0",
-        )
-    )
+    lines.append(comment_banner(coverpoint, "icount pending bit when count reaches 0"))
     lines.append("#ifndef UDB_ICOUNT_HARDWIRED_1")
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
@@ -3145,71 +2805,11 @@ def _generate_icount_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     return chunks
 
 
-INTERRUPT_CODES = (1, 3, 5, 7, 9, 11, 13)  # SSI, MSI, STI, MTI, SEI, MEI, LCOFI
-LOWER_MODE_INTERRUPT_CODES = (1, 5, 9, 13)
-TIMER_INTERRUPT_CODE = 7
-
-
-def _set_itrigger_delegation(code: int, delegate: int, reg: int) -> list[str]:
-    return [
-        f"LI(x{reg}, 0x{1 << code:x})",
-        f"{'csrs' if delegate else 'csrc'} mideleg, x{reg}",
-    ]
-
-
-def _goto_itrigger_origin(origin: str) -> list[str]:
-    if origin == "Sm":
-        return []
-    return [f"RVTEST_TSBI_GOTO_{origin}MODE"]
-
-
-def _trap_textra_blocks(reg: int, temp_reg: int) -> list[tuple[str, list[str], list[str], list[tuple[str, list[str]]]]]:
-    """(context, context-set lines, context-clear lines, [(case, tdata3 load into x{reg})]) for the itrigger/etrigger
-    textra cases: mhselect=4 with mhvalue equal to or different from mcontext, and sselect=1 with svalue equal to or
-    different from scontext. Each block runs under #ifdef UDB_<CONTEXT>_AVAILABLE."""
-    mh = {name: (v32, v64) for name, v32, v64 in _TEXTRA_MCONTEXT_CASES}
-    return [
-        (
-            "mcontext",
-            [*_xlen_li(temp_reg, _MCONTEXT_TEST_VALUE_RV32, _MCONTEXT_TEST_VALUE_RV64), f"csrw mcontext, x{temp_reg}"],
-            ["csrw mcontext, x0 # clear the test context"],
-            [
-                (
-                    f"mhvalue_{name}",
-                    _xlen_li(
-                        reg,
-                        _textra3(32, mhselect=4, mhvalue=mh[name][0]),
-                        _textra3(64, mhselect=4, mhvalue=mh[name][1]),
-                    ),
-                )
-                for name in ("match", "other")
-            ],
-        ),
-        (
-            "scontext",
-            [*_xlen_li(temp_reg, _SCONTEXT_TEST_VALUE_RV32, _SCONTEXT_TEST_VALUE_RV64), f"csrw scontext, x{temp_reg}"],
-            ["csrw scontext, x0 # clear the test context"],
-            [
-                (
-                    f"svalue_{name}",
-                    _xlen_li(reg, _textra3(32, sselect=1, svalue=sv32), _textra3(64, sselect=1, svalue=sv64)),
-                )
-                for name, sv32, sv64 in (
-                    ("match", _SCONTEXT_TEST_VALUE_RV32, _SCONTEXT_TEST_VALUE_RV64),
-                    ("zero", 0, 0),
-                )
-            ],
-        ),
-    ]
-
-
 def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate itrigger interrupt trigger tests."""
 
     covergroup = "SdtrigSm_itrigger_cg"
     chunks: list[TestChunk] = []
-
-    # setup registers
     t1, t2 = test_data.int_regs.get_registers(2, exclude_regs=[2], reg_range=list(range(8, 16)))
 
     ######################################
@@ -3262,16 +2862,10 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                                     lines.extend(_set_itrigger_delegation(cause, delegate, t1))
                             lines.extend(
                                 [
-                                    *_config_itrigger(
-                                        t1,
-                                        trig_num,
-                                        1 << code,
-                                        mode,
-                                        privbits=priv,
-                                    ),
+                                    *_config_itrigger(t1, trig_num, 1 << code, mode, privbits=priv),
                                     *(
                                         [
-                                            _load_reg(t1, 1 << cause),
+                                            *_load_reg(t1, 1 << cause),
                                             _csr_access(f"csrs mie, x{t1} # enable the non-matching interrupt", mode),
                                         ]
                                         if cause != code
@@ -3279,7 +2873,7 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                                     ),
                                     *_cause_interrupt(cause, mode, t1),
                                     *wait,
-                                    *_goto_itrigger_origin(origin),
+                                    *([] if origin == "Sm" else [f"RVTEST_TSBI_GOTO_{origin}MODE"]),
                                     *_global_ie(origin, enable=True),
                                     "nop # allow the pending interrupt to be taken",
                                     *_global_ie(origin, enable=False),
@@ -3365,13 +2959,9 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     covergroup = "SdtrigSm_etrigger_cg"
     chunks: list[TestChunk] = []
 
-    cfg_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
-        3, exclude_regs=[2, 10, 11], reg_range=list(range(8, 16))
-    )
+    cfg_reg, data_reg, temp_reg = test_data.int_regs.get_registers(3, exclude_regs=[2], reg_range=list(range(8, 16)))
 
-    ######################################
     coverpoint = f"cp_etrigger_{ {'Sm': 'm', 'S': 's', 'U': 'u'}[mode] }"
-    ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
     lines.append(
         comment_banner(
@@ -3387,7 +2977,7 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     codes_to_test = _etrigger_codes_to_test(mode)
 
     if any(code in _PAGE_FAULT_CODES for code in codes_to_test):
-        lines.extend(pf_data_section())
+        lines.extend(_PF_DATA_SECTION)
 
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
@@ -3422,7 +3012,7 @@ def _generate_etrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                                 data_reg,
                                 temp_reg,
                                 mprv_scratch_reg=cfg_reg if (is_pf and mode == "Sm") else None,
-                            ),
+                            )
                         ]
                     )
                     if is_pf:
@@ -3449,13 +3039,9 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
     lines = test_data.new_test_chunk(chunks, f"etrigger_cross_priv_{target_mode.lower()}").code
     lines.append("#ifdef S_SUPPORTED")
 
-    cfg_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
-        3, exclude_regs=[2, 10, 11], reg_range=list(range(8, 16))
-    )
+    cfg_reg, data_reg, temp_reg = test_data.int_regs.get_registers(3, exclude_regs=[2], reg_range=list(range(8, 16)))
 
-    ######################################
     coverpoint = f"cp_etrigger_{target_mode.lower()}"
-    ######################################
     lines.append(
         comment_banner(
             coverpoint,
@@ -3470,7 +3056,7 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
     goto_target = "RVTEST_TSBI_GOTO_SMODE" if target_mode == "S" else "RVTEST_TSBI_GOTO_UMODE"
 
     if any(code in _PAGE_FAULT_CODES for code in codes_to_test):
-        lines.extend(pf_data_section())
+        lines.extend(_PF_DATA_SECTION)
 
     for trig_num in range(UDB_NUM_TRIGGERS):
         lines.append(f"\n#ifdef UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
@@ -3525,12 +3111,7 @@ def etrigger_cross_priv_delegate_test(test_data: TestData, target_mode: str) -> 
                         lines.extend(_cause_exception(raised_code, target_mode, data_reg, temp_reg))
                         if is_pf:
                             lines.extend(pf_mode_disarm(target_mode))
-                        lines.extend(
-                            [
-                                "RVTEST_TSBI_GOTO_MMODE",
-                                *_set_medeleg(temp_reg, code, False),
-                            ]
-                        )
+                        lines.extend(["RVTEST_TSBI_GOTO_MMODE", *_set_medeleg(temp_reg, code, False)])
                         lines.extend(_sign_trap_count(data_reg, test_data))
                         if is_pf:
                             lines.append("#endif // paging")
@@ -3593,33 +3174,43 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     """Generate textra32/64 (tdata3) context-matching tests, one test chunk per coverpoint.
 
     Each case arms an icount (count=1) or mcontrol6 (store-data) trigger whose tdata3 selects a context match,
-    performs the triggering action, disarms it, and signs rvtest_trap_count, so a case that fires when it
-    should not (or the reverse) is reported at that case. tdata3 is accessed unconditionally (as in the
-    Access tests); a hart without textra reads it as 0 and the reference model is configured to match.
-    itrigger/etrigger are omitted here: with action=0 they cannot fire in these cases, because every interrupt and
-    exception is taken with xIE=0 (into M, or into S with medeleg[3]=1). cp_textra_itrigger and cp_textra_etrigger
-    test them on S-handled traps instead.
+    fires it, disarms it, and signs rvtest_trap_count, so a wrong fire or miss is reported at that case. tdata3
+    is accessed unconditionally; a hart without textra reads it as 0. itrigger/etrigger cannot fire here (every
+    trap is taken with xIE=0), so cp_textra_itrigger and cp_textra_etrigger test them on S-handled traps.
     """
     covergroup = "SdtrigSm_textra_cg"
     chunks: list[TestChunk] = []
     trig_types = ("icount", "mcontrol6")
     cfg_reg, addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(
-        4, exclude_regs=[2, 10, 11], reg_range=list(range(8, 16))
+        4, exclude_regs=[2], reg_range=list(range(8, 16))
     )
 
     def case(binname: str, cp: str, trig_num: int, trig_type: str, tdata3_lines: list[str]) -> list[str]:
+        """Arm trig_num as trig_type with tdata3_lines and fire it; the trap handler skips the trailing spacer."""
+        if trig_type == "icount":
+            fire = [
+                *_config_icount(cfg_reg, trig_num, 1, mode, tdata3=tdata3_lines),
+                "nop # icount: decrement count and test context match",
+                "nop # spacer: the instruction the breakpoint is taken on",
+            ]
+        else:  # mcontrol6: XLEN-wide data-store match
+            tdata2 = _xlen_li(cfg_reg, *_xlen_value(_TEXTRA_DATA))
+            fire = [
+                *_config_mcontrol6(cfg_reg, trig_num, tdata2, mode, xsl=0b010, select=1, tdata3=tdata3_lines),
+                f"LA(x{addr_reg}, scratch)",
+                *_xlen_li(data_reg, *_xlen_value(_TEXTRA_DATA)),
+                f"SREG x{data_reg}, 0(x{addr_reg}) # mcontrol6 XLEN-wide data-store trigger",
+                "nop # spacer (data match fires after)",
+            ]
         return [
             _add_tc(test_data, binname, cp, covergroup),
-            *_config_textra(cfg_reg, trig_num, trig_type, tdata3_lines, mode),
-            *_fire_textra_trigger(trig_type, mode, cfg_reg, addr_reg, data_reg),
+            *fire,
             *_disable_trigger(cfg_reg, trig_num, mode),
             *_sign_trap_count(temp_reg, test_data),
         ]
 
     def per_type(trig_num: int, trig_type: str, body: list[str]) -> list[str]:
-        guards = [
-            g.format(trig_num=trig_num, mode_letter=MODE_UDB_LETTER[mode]) for g in _TEXTRA_TYPE_GUARDS[trig_type]
-        ]
+        guards = _fire_guards(trig_type, trig_num, mode, select=1)
         return [f"\n# trig_num {trig_num}, {trig_type}", *guards, *body, *(["#endif"] * len(guards))]
 
     def set_context(csr: str, val32: int, val64: int) -> list[str]:
@@ -3835,17 +3426,6 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     return chunks
 
 
-def register_sdtrig_textra(mode: str, required_extensions: list[str | list[str]], extra_defines: list[str]) -> None:
-    """Register the textra (tdata3 context-match) section for ``mode`` as its own generator of suite ``Sdtrig{mode}``."""
-
-    @add_priv_test_generator(
-        f"Sdtrig{mode}", required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
-    )
-    def make_sdtrig_textra(test_data: TestData) -> list[TestChunk]:
-        """textra context-match tests."""
-        return _generate_textra_tests(test_data, mode)
-
-
 # ── Suite registration ─────────────────────────────────────────────────────
 
 
@@ -3976,7 +3556,12 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
             """Breakpoint delegation tests."""
             return _generate_native_triggers_tests(test_data, mode)
 
-    register_sdtrig_textra(mode, required_extensions, extra_defines)
+    @add_priv_test_generator(
+        suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_textra(test_data: TestData) -> list[TestChunk]:
+        """textra context-match tests."""
+        return _generate_textra_tests(test_data, mode)
 
     # Disabled sections and their extra required extension:
     #   _generate_tcontrol_tests: body not implemented yet; needs UDB_TCONTROL_AVAILABLE
