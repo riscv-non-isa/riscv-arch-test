@@ -1587,7 +1587,7 @@ def _generate_zcmp_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     chunks: list[TestChunk] = []
 
     # s0 (x8) is an operand of cm.push/cm.pop, so keep it out of the pool
-    temp_reg, sp_save = test_data.int_regs.get_registers(2, reg_range=list(range(9, 16)))
+    temp_reg, sp_save, ra_save, s0_save = test_data.int_regs.get_registers(4, reg_range=list(range(9, 16)))
     sp = 2
     # With sp = scratch+16, cm.push stores ra and s0 into the 16-byte frame at scratch and leaves sp = scratch;
     # cm.pop then loads them back from the same frame. ra and s0 are at scratch+12 and scratch+8 (RV32) or
@@ -1613,7 +1613,14 @@ def _generate_zcmp_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             "Breakpoint iff tdata2 is a transferred address, store/load matches the op, and size is 0 or XLEN",
         )
     )
-    lines.append(f"mv x{sp_save}, sp # save sp; the trap handler swaps sp with xscratch")
+    lines.extend(
+        [
+            f"mv x{sp_save}, sp # save sp; the trap handler swaps sp with xscratch",
+            # cm.pop loads ra and s0 from the frame, which holds stale values when a breakpoint skipped cm.push
+            f"mv x{ra_save}, ra # save ra",
+            f"mv x{s0_save}, s0 # save s0",
+        ]
+    )
     for trig_num in range(UDB_NUM_TRIGGERS):
         gates = _mcontrol6_gates(trig_num, mode)
         lines.extend(gates)
@@ -1653,10 +1660,16 @@ def _generate_zcmp_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
         lines.extend(_disable_trigger(temp_reg, trig_num, mode))
         lines.extend(_close_gates(gates))
-    lines.append(f"mv sp, x{sp_save} # restore sp")
+    lines.extend(
+        [
+            f"mv sp, x{sp_save} # restore sp",
+            f"mv ra, x{ra_save} # restore ra",
+            f"mv s0, x{s0_save} # restore s0",
+        ]
+    )
 
     lines.extend(_global_ie(mode, False))
-    test_data.int_regs.return_registers([temp_reg, sp_save])
+    test_data.int_regs.return_registers([temp_reg, sp_save, ra_save, s0_save])
     chunks.append(test_data.end_test_chunk())
     return chunks
 

@@ -199,6 +199,8 @@ normative_rule_definitions:
         "SdtrigSm_combined_accesses_cg/cp_vector_accesses",
         "SdtrigSm_combined_accesses_cg/cp_vector_mask",
         "SdtrigSm_combined_accesses_cg/cp_cm_pop_push",
+        "SdtrigS_combined_accesses_cg/cp_cm_pop_push",
+        "SdtrigU_combined_accesses_cg/cp_cm_pop_push",
       ]
 
   # For the purposes of debug triggers, two classes of cache operations must match as

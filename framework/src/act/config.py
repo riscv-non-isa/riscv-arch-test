@@ -69,19 +69,9 @@ _SPIKE_ISA: dict[int, str] = {
 }
 
 
-def spike_isa_string(xlen: int, implemented_extensions: frozenset[str] = frozenset()) -> str:
-    """Return spike's ``--isa=`` string for the given XLEN.
-
-    Zcmp is incompatible with Zcd, so a DUT with Zcmp gets a string without D, Zcd, and V (which requires D).
-    """
-    isa = _SPIKE_ISA[xlen]
-    if "Zcmp" not in implemented_extensions:
-        return isa
-    base, *multi = isa.split("_")
-    prefix, letters = base[:4], base[4:]
-    letters = letters.replace("d", "").replace("v", "")
-    multi = [ext for ext in multi if ext != "zcd" and not ext.startswith("zv")]
-    return "_".join([prefix + letters, *multi, "zcmp"])
+def spike_isa_string(xlen: int) -> str:
+    """Return spike's ``--isa=`` string for the given XLEN."""
+    return _SPIKE_ISA[xlen]
 
 
 class CoverageSimulator(str, Enum):
@@ -103,6 +93,7 @@ class Config(BaseModel):
     compiler_type: CompilerType  # Inferred from compiler_exe by model validator
     ref_model_exe: Path
     ref_model_type: RefModelType  # Inferred from ref_model_exe by model validator
+    ref_model_isa: str | None = None  # Spike --isa= value; defaults to spike_isa_string(xlen)
     include_priv_tests: bool = True
     harts: int = Field(default=1, ge=1)
 
@@ -154,6 +145,13 @@ class Config(BaseModel):
             else:
                 raise ValueError(f"Unable to infer reference model type from ref_model_exe: {ref_model_exe}")
         return data
+
+    @model_validator(mode="after")
+    def check_ref_model_isa(self) -> "Config":
+        """ref_model_isa sets Spike's --isa; Sail takes its ISA from sail.json instead."""
+        if self.ref_model_isa is not None and self.ref_model_type != RefModelType.SPIKE:
+            raise ValueError("ref_model_isa is only supported when the reference model is Spike")
+        return self
 
     @field_validator("udb_config", "linker_script", "dut_include_dir", mode="before")
     @classmethod
