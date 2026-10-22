@@ -2517,14 +2517,14 @@ skp_\__MODE__\()tval:
       .else
         sv_\__MODE__\()Htval2:
         csrr    T3, CSR_HTVAL
-      #ifdef SHTVALA_SUPPORTED
+        #ifdef SHTVALA_SUPPORTED
         LI(     T2, 0xB00000)                        // Shtvala: a guest-page fault (20, 21, 23)
         srl     T2, T2, T5                           // must write the guest physical address
         andi    T2, T2, 1
         xori    T2, T2, 1
-      #else
+        #else
         LI(     T2, 1)                               // zero is always legal in htval
-      #endif
+        #endif
       .endif
       .ifc \__MODE__ , M
         TRAP_SIGUPD_ZERO(T4, T3, 4, T2, sv_\__MODE__\()Mtval2, sv_Mtval2_str) // write word 4: mtval2
