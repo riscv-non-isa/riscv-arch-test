@@ -72,9 +72,9 @@ The first merge, Sscofpmf, is the worked example; diff it against its base when 
    directory, or test files starting with `<entry>_` or `<entry>-` (`parse_test_constraints._is_excluded`).
 8. `make tests`, then check `git status` shows only the intended generated diff.
 9. Run the checker (below) until it passes, then the verification.
-10. `git commit -s` (never `--no-gpg-sign`), `mise run prek && git push` (gate the push on prek), and open the
-    PR with `gh pr create --draft --base act4`. PR body: what moved and why, `seed_name`, the cross-group
-    sampling note, follow-up plan gaps, and the checker command.
+10. `git cm` (never `--no-gpg-sign`), `mise run prek && git push` (gate the push on prek), and open the
+    PR with `gh pr create --draft --base act4`. PR body: what moved and why, the cross-group
+    sampling note, follow-up plan gaps.
 
 ## Checker
 
@@ -125,7 +125,6 @@ Use `--configs '<glob>'` to narrow it.
 - Suites with several covergroups per old suite (Sm, Exceptions*, Interrupts*, PMP*, Sv*) map each
   `<Old><rest>_cg` to `<Suite>_<G><rest>_cg`; the checker derives label renames from the aligned `cg:` strings
   in each test, so labels need not follow that rule.
-- Handwritten suites (PMP*, Sv*) are checked in under `tests/priv/`; rename their files and labels by hand, then
-  the checker compares the checked-in files.
+
 - When the merged suite keeps an old suite's name (e.g. `Sv` absorbing `SvSm`), pass that suite as `--group =Sv`
   (empty group); its files and covergroups keep their names.
