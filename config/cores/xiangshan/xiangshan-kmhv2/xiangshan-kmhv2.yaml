@@ -573,13 +573,14 @@ params:
   DCSR_STOPCOUNT_TYPE: rw
   DCSR_STOPTIME_TYPE: rw
   # Sdtrig parameters added for riscv-unified-db#2069 (values from sail.json and NewCSR/DebugLevel.scala @ e7bab53:
-  # no tdata3 (L26-98); mcontrol6 SELECT and SIZE are read-only 0 (L168-170); MATCH is legalized to EQ, GE or LT
-  # (L257-278))
+  # mcontrol6 SELECT and SIZE are read-only 0 (L168-170); MATCH is legalized to EQ, GE or LT (L257-278)).
+  # XiangShan implements no tdata3 (L26-98), but its mcontrol6 triggers use it (textra), so the spec and UDB
+  # require it ("optional if no implemented triggers use it"); see the Sdtrig exclusion in ../ci.yaml.
   SDTRIG_NUM_TRIGGERS: 4
   SDTRIG_BREAKPOINT_REENTRANCY: Use_interrupt_enables
   TCONTROL_IMPLEMENTED: false
   TDATA2_IMPLEMENTED: true
-  TDATA3_IMPLEMENTED: false
+  TDATA3_IMPLEMENTED: true
   SDTRIG_M_WRITABLE: true
   SDTRIG_S_WRITABLE: true
   SDTRIG_U_WRITABLE: true
