@@ -184,6 +184,9 @@ coverpoints:
     rules:
       - Sdtrig_mult_mem_access
   - name: cp_cm_pop_push
+    status: >-
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     goal: Accesses match as if happened individually
     description: |-
       if ZCMP_SUPPORTED

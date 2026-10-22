@@ -93,7 +93,7 @@ class Config(BaseModel):
     compiler_type: CompilerType  # Inferred from compiler_exe by model validator
     ref_model_exe: Path
     ref_model_type: RefModelType  # Inferred from ref_model_exe by model validator
-    ref_model_isa: str | None = None  # Spike --isa= value; defaults to spike_isa_string(xlen)
+    ref_model_isa: str | None = Field(default=None, min_length=1)  # Spike --isa=; default spike_isa_string(xlen)
     include_priv_tests: bool = True
     harts: int = Field(default=1, ge=1)
 
