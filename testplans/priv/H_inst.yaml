@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: H_inst
+source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=262865576#gid=262865576
+coverpoints:
+  - heading: Instructions (H_inst_cg)
+  - name: cp_hlv
+    goal: Basic load
+    description: "Set up non-identity G and VS-stage page tables. In {M, HS, U (with hstatus.HU = 1)}: Write a random value to scratch. hlv.b, hlv.bu, hlv.h,  hlv.hu, hlv.w from scratch.  For rv64, also test hlv.wu, hlv.d.  Random source and destination registers."
+    expectation: Read and sign/zero extend
+    bins: 3 modes * 7 instr
+  - name: cp_hlvx
+    goal: Basic load
+    description: "Set up non-identity G and VS-stage page tables. In {M, HS, U (with hstatus.HU = 1): Write a random value to scratch. hlvx.hu, hlvx.wu from scratch.  Random source and destination registers."
+    expectation: Read and sign/zero extend
+    bins: 3 modes * 2 instr
+  - name: cp_hsv
+    goal: Basic store
+    description: "Set up non-identity G and VS-stage page tables. In {M, HS, U (with hstatus.HU = 1): Write a random value to scratch. hsv.b, hsv.h, hsv.w to scratch.  For rv64, also test hsv.d.  Random source and destination registers and values."
+    expectation: Read and sign/zero extend
+    bins: 3 modes * 4 instr
+  - name: cp_mret_illegal
+    goal: mret unavailable below M mode
+    description: Execute mret in {HS, VS, VU} modes.
+    expectation: Illegal instruction
+    bins: 3 modes
+  - name: cp_sret_illegal
+    goal: sret unavailable in VU mode
+    description: Execute sret in VU mode.
+    expectation: Virtual instruction
+    bins: 1 mode
+  - name: cp_sret_hs
+    goal: sret from HS mode
+    description: Execute sret in HS-mode with cross-product of sstatus.SPP / SPIE  / hstatus.SPV.  After the sret, a read of mscratch traps to M-mode, and the trap record shows the mode reached; medeleg sends illegal instructions and U/VU and VS ecalls to M-mode during the test, so that no trap into HS-mode rewrites SPP, SPIE or SPV before they are checked.  Then check sstatus.SPP, SIE, SPIE, hstatus.SPV in HS-mode.
+    expectation: Goes to appropriate mode
+    bins: 2 SPP * 2 SPIE * 2 SPV
+  - name: cp_sret_vs
+    goal: sret from VS mode
+    description: Execute sret in VS-mod ewith cross-product of sstatus.SPP / SPIE  / hstatus.VTSR. Check sstatus.SPP, SIE, SPIE.
+    expectation: Goes to appropriate mode, or virtual-instruction exception if VTSR=1.
+    bins: 2 SPP * 2 SPIE * 2 VTSR

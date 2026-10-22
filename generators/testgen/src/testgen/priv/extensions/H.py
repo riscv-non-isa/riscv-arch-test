@@ -1,15 +1,18 @@
 ##################################
 # H.py
 #
-# H hypervisor extension tests that run in HS, VS, U and VU modes.
+# H hypervisor extension tests.  Group Sm runs in M-mode, or needs M-mode to take its traps.
 # David_Harris@hmc.edu 24 September 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
 """H hypervisor extension test generator.
 
-The suite boots to HS-mode.  The HS-mode handler takes traps from U, VS and VU (hedeleg = 0).
-Tests that need mstatus.TVM = 1 are in HSm.
+The H group boots to HS-mode, and the HS-mode handler takes traps from U, VS and VU (hedeleg = 0).
+
+The Sm group boots to M-mode and delegates nothing, so the M-mode handler takes every trap.  The
+mstatus.TVM tests run in lower modes but are in the Sm group because the HS-mode trap handler accesses
+satp and hgatp, which trap in HS-mode when TVM = 1.
 """
 
 from testgen.asm.csr import csr_access_test, gen_csr_read_sigupd
@@ -39,6 +42,9 @@ HS_CG = "H_hscsr_cg"
 VS_CG = "H_vscsr_cg"
 U_CG = "H_ucsr_cg"
 INST_CG = "H_inst_cg"
+SM_CSR_CG = "H_Sm_mcsr_cg"
+SM_TVM_CG = "H_Sm_tvm_cg"
+SM_INST_CG = "H_Sm_inst_cg"
 
 # The accesses of csraccesses: csrrw all 1s, csrrw 0s, csrrs all 1s, csrrc all 1s, csrr
 CSR_OPS = [
@@ -328,6 +334,203 @@ def _xret_tests(test_data: TestData) -> list[str]:
     return lines
 
 
+def _sm_replica_tests(test_data: TestData) -> list[str]:
+    """Write different values to each S CSR and its VS replica, then read both back."""
+    save_s, save_vs, mask_reg, val_reg = test_data.int_regs.get_registers(4)
+    lines = [
+        comment_banner("cp_replica", "Write different values to each S CSR and its VS replica, then read both"),
+        f"LI(x{val_reg}, MIP_S_MASK)",
+        f"csrw mideleg, x{val_reg}    # sie and sip show only delegated interrupts",
+        f"LI(x{val_reg}, MIP_VS_MASK)",
+        f"csrw hideleg, x{val_reg}    # vsie and vsip show only delegated interrupts",
+    ]
+    for rep in REPLICAS:
+        body = [
+            f"csrr x{save_s}, {rep.s}",
+            f"csrr x{save_vs}, {rep.vs}",
+            *([f"LI(x{mask_reg}, {rep.mask:#x})"] if rep.mask else []),
+            *replica_write(test_data, rep, rep.s, rep.values[0], val_reg),
+            *replica_write(test_data, rep, rep.vs, rep.values[1], val_reg),
+            *replica_read(test_data, rep, rep.s, mask_reg, rep.s, SM_CSR_CG),
+            *replica_read(test_data, rep, rep.vs, mask_reg, rep.vs, SM_CSR_CG),
+            f"csrw {rep.s}, x{save_s}",
+            f"csrw {rep.vs}, x{save_vs}",
+        ]
+        lines.extend(gated(body, REPLICA_ATP_GATE if rep.s == "satp" else None))
+    # Boot delegates nothing
+    lines.extend(["csrw mideleg, zero", "csrw hideleg, zero"])
+    test_data.int_regs.return_registers([save_s, save_vs, mask_reg, val_reg])
+    return lines
+
+
+def _mtvala_tests(test_data: TestData) -> list[str]:
+    """With H, mtval is not read-only zero."""
+    save_reg, check_reg = test_data.int_regs.get_registers(2)
+    lines = [
+        comment_banner("cp_mtvala", "Write all 1s to mtval; it must not read back as zero"),
+        f"csrr x{save_reg}, mtval",
+        f"LI(x{check_reg}, -1)",
+        test_data.add_testcase("ones", "cp_mtvala", SM_CSR_CG),
+        f"csrw mtval, x{check_reg}",
+        f"csrr x{check_reg}, mtval",
+        f"snez x{check_reg}, x{check_reg}",
+        write_sigupd(check_reg, test_data),
+        f"csrw mtval, x{save_reg}",
+    ]
+    test_data.int_regs.return_registers([save_reg, check_reg])
+    return lines
+
+
+def _tvm_tests(test_data: TestData) -> list[str]:
+    """satp, hgatp and vsatp accesses and fences in each mode with mstatus.TVM and hstatus.VTVM."""
+    temp_reg, rd = test_data.int_regs.get_registers(2)
+
+    def tvm_bits(tvm: int, vtvm: int | None = None) -> list[str]:
+        """Write mstatus.TVM and, unless vtvm is None, hstatus.VTVM from M-mode."""
+        lines = [f"LI(x{temp_reg}, MSTATUS_TVM)", f"{'csrs' if tvm else 'csrc'} mstatus, x{temp_reg}"]
+        if vtvm is not None:
+            lines.extend([f"LI(x{temp_reg}, HSTATUS_VTVM)", f"{'csrs' if vtvm else 'csrc'} hstatus, x{temp_reg}"])
+        return lines
+
+    lines = [
+        comment_banner(
+            "cp_tvm_hs",
+            "Read and write satp, hgatp and vsatp in HS-mode with mstatus.TVM = 0, 1.  TVM = 1 traps satp and\n"
+            "hgatp accesses but not vsatp accesses",
+        )
+    ]
+    for tvm in (0, 1):
+        lines.extend([*tvm_bits(tvm), "RVTEST_TSBI_GOTO_SMODE"])
+        for csr in ("satp", "hgatp", "vsatp"):
+            lines.extend(
+                [
+                    f"LI(x{rd}, 42)",
+                    test_data.add_testcase(f"{csr}_read_tvm{tvm}", "cp_tvm_hs", SM_TVM_CG),
+                    f"csrr x{rd}, {csr}",
+                    write_sigupd(rd, test_data),
+                    test_data.add_testcase(f"{csr}_write_tvm{tvm}", "cp_tvm_hs", SM_TVM_CG),
+                    f"csrw {csr}, zero",
+                ]
+            )
+        lines.append("RVTEST_TSBI_GOTO_MMODE")
+
+    lines.append(
+        comment_banner(
+            "cp_tvm_vs",
+            "Read and write satp in VS-mode with mstatus.TVM = 0, 1 and hstatus.VTVM = 0, 1.\n"
+            "VTVM = 1 raises virtual instruction; TVM does not affect VS-mode",
+        )
+    )
+    for tvm in (0, 1):
+        for vtvm in (0, 1):
+            lines.extend(
+                [
+                    *tvm_bits(tvm, vtvm),
+                    "RVTEST_TSBI_GOTO_VSMODE",
+                    f"LI(x{rd}, 42)",
+                    test_data.add_testcase(f"satp_read_tvm{tvm}_vtvm{vtvm}", "cp_tvm_vs", SM_TVM_CG),
+                    f"csrr x{rd}, satp",
+                    write_sigupd(rd, test_data),
+                    test_data.add_testcase(f"satp_write_tvm{tvm}_vtvm{vtvm}", "cp_tvm_vs", SM_TVM_CG),
+                    "csrw satp, zero",
+                    "RVTEST_TSBI_GOTO_MMODE",
+                ]
+            )
+
+    lines.append(
+        comment_banner(
+            "cp_hfence, cp_sfence",
+            "Execute hfence.vvma, hfence.gvma and sfence.vma in M, HS, VS, U and VU modes with\n"
+            "mstatus.TVM = 0, 1 and hstatus.VTVM = 0, 1",
+        )
+    )
+    for tvm in (0, 1):
+        for vtvm in (0, 1):
+            lines.extend(tvm_bits(tvm, vtvm))
+            for mode in ("m", "s", "vs", "u", "vu"):
+                suffix = f"{mode}_tvm{tvm}_vtvm{vtvm}"
+                lines.extend(
+                    [
+                        *([] if mode == "m" else [f"RVTEST_TSBI_GOTO_{mode.upper()}MODE"]),
+                        test_data.add_testcase(f"hfence_vvma_{suffix}", "cp_hfence", SM_TVM_CG),
+                        "hfence.vvma",
+                        test_data.add_testcase(f"hfence_gvma_{suffix}", "cp_hfence", SM_TVM_CG),
+                        "hfence.gvma",
+                        test_data.add_testcase(f"sfence_vma_{suffix}", "cp_sfence", SM_TVM_CG),
+                        "sfence.vma",
+                        *([] if mode == "m" else ["RVTEST_TSBI_GOTO_MMODE"]),
+                    ]
+                )
+    lines.extend(tvm_bits(0, 0))
+    test_data.int_regs.return_registers([temp_reg, rd])
+    return lines
+
+
+def _mret_tests(test_data: TestData) -> list[str]:
+    """mret from M-mode.  In a lower mode, a read of mscratch traps and the trap record shows the mode."""
+    save_reg, save_h_reg, mpv_reg, temp_reg, rd = test_data.int_regs.get_registers(5)
+    lines = [
+        comment_banner(
+            "cp_mret_m",
+            "Execute mret with mstatus.MPP = {M, S, U}, MPV = {0, 1} and MPIE = {0, 1}.  With MPP = M, V stays 0",
+        ),
+        f"csrr x{save_reg}, mstatus",
+        "#if __riscv_xlen == 64",
+        f"LI(x{mpv_reg}, MSTATUS_MPV)",
+        "#else",
+        f"csrr x{save_h_reg}, mstatush",
+        f"LI(x{mpv_reg}, MSTATUSH_MPV)",
+        "#endif",
+    ]
+    for mpp, mpp_bits in ((3, "MPP_MMODE"), (1, "MPP_SMODE"), (0, None)):
+        for mpv in (0, 1):
+            for mpie in (0, 1):
+                name = f"mpp{mpp}_mpv{mpv}_mpie{mpie}"
+                bits = " | ".join(bit for bit in (mpp_bits, "MSTATUS_MPIE" if mpie else None) if bit) or "0"
+                mpv_op = "csrs" if mpv else "csrc"
+                lines.extend(
+                    [
+                        f"LI(x{temp_reg}, MSTATUS_MPP | MSTATUS_MPIE)",
+                        f"csrc mstatus, x{temp_reg}",
+                        f"LI(x{temp_reg}, {bits})",
+                        f"csrs mstatus, x{temp_reg}",
+                        "#if __riscv_xlen == 64",
+                        f"{mpv_op} mstatus, x{mpv_reg}",
+                        "#else",
+                        f"{mpv_op} mstatush, x{mpv_reg}",
+                        "#endif",
+                        f"LA(x{temp_reg}, 1f)",
+                        f"csrw mepc, x{temp_reg}",
+                        test_data.add_testcase(name, "cp_mret_m", SM_INST_CG),
+                        "mret",
+                        "1:",
+                    ]
+                )
+                if mpp != 3:
+                    lines.extend(
+                        [
+                            f"LI(x{rd}, 42)",
+                            test_data.add_testcase(f"{name}_mode", "cp_mret_m", SM_INST_CG),
+                            f"csrr x{rd}, mscratch",
+                            write_sigupd(rd, test_data),
+                            "RVTEST_TSBI_GOTO_MMODE",
+                        ]
+                    )
+                lines.extend(
+                    [
+                        test_data.add_testcase(f"{name}_mstatus", "cp_mret_m", SM_INST_CG),
+                        gen_csr_read_sigupd(rd, ("mstatus", None), test_data),
+                        "#if __riscv_xlen == 32",
+                        test_data.add_testcase(f"{name}_mstatush", "cp_mret_m", SM_INST_CG),
+                        gen_csr_read_sigupd(rd, ("mstatush", None), test_data),
+                        "#endif",
+                    ]
+                )
+    lines.extend([f"csrw mstatus, x{save_reg}", "#if __riscv_xlen == 32", f"csrw mstatush, x{save_h_reg}", "#endif"])
+    test_data.int_regs.return_registers([save_reg, save_h_reg, mpv_reg, temp_reg, rd])
+    return lines
+
+
 @add_priv_test_generator(
     "H",
     required_extensions=["H"],
@@ -367,6 +570,48 @@ def make_h(test_data: TestData) -> list[TestChunk]:
                 "implicit VS-stage access; the trap records hold htval and htinst",
             ),
             *guest_page_fault_tests(test_data, INST_CG),
+        ]
+    )
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "H",
+    required_extensions=["Sm", "H"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    seed_name="HSm",
+)
+def make_hsm(test_data: TestData) -> list[TestChunk]:
+    """Generate the Sm group of the H hypervisor testsuite."""
+    test_chunks: list[TestChunk] = []
+    hcsr_tests(test_data, test_chunks, [*H_M_CSRS, *H_HS_CSRS, *H_VS_CSRS], SM_CSR_CG, group="Sm_")
+
+    tc = test_data.new_test_chunk(test_chunks, "Sm_replica")
+    tc.code.extend([*_sm_replica_tests(test_data), *_mtvala_tests(test_data)])
+
+    tc = test_data.new_test_chunk(test_chunks, "Sm_tvm")
+    tc.code.extend(_tvm_tests(test_data))
+
+    tc = test_data.new_test_chunk(test_chunks, "Sm_inst")
+    tc.code.extend(
+        [
+            *hlv_tests(test_data, tc, SM_INST_CG, ("m",)),
+            *_mret_tests(test_data),
+            *sret_tests(test_data, SM_INST_CG, "cp_sret_m", "m"),
+        ]
+    )
+
+    tc = test_data.new_test_chunk(test_chunks, "Sm_trap")
+    tc.code.extend(
+        [
+            comment_banner(
+                "cp_guest_page_fault",
+                "In M-mode, hlv.w and hsv.w raise guest-page faults on the final translation and on an\n"
+                "implicit VS-stage access; the trap records hold mtval2 and mtinst",
+            ),
+            *guest_page_fault_tests(test_data, SM_INST_CG),
         ]
     )
 

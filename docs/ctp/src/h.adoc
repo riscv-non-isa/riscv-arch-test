@@ -3,16 +3,46 @@
 
 The Hypervisor Extension adds an H coverage file containing new Hypervisor instructions, and additional coverage files related to exceptions, interrupts, endian, and virtual memory.
 
-==== HSm and H Hypervisor CSRs and Instructions
+==== H Hypervisor CSRs and Instructions
 
-HSm boots to M-mode and tests the hypervisor CSRs and instructions from M-mode.  It also holds the
-mstatus.TVM tests of HS-mode and VS-mode, whose traps must be taken in M-mode because the HS-mode trap
-handler accesses satp and hgatp.  H boots to HS-mode and tests hypervisor CSRs and instructions in
-HS, VS, U and VU modes.
+The H suite has two groups of tests.  The H group boots to HS-mode and tests hypervisor CSRs and instructions in
+HS, VS, U and VU modes; its covergroups are H_hscsr_cg, H_vscsr_cg, H_ucsr_cg and H_inst_cg.  The Sm group boots
+to M-mode and tests the hypervisor CSRs and instructions from M-mode.  It also holds the mstatus.TVM tests of
+HS-mode and VS-mode, whose traps must be taken in M-mode because the HS-mode trap handler accesses satp and hgatp;
+its covergroups are H_Sm_mcsr_cg, H_Sm_tvm_cg and H_Sm_inst_cg.  The Sm group requires Sm, so it is not part of a
+certificate without Sm, such as RVA23.
 
-include::{testplansdir}/priv/H.adoc[]
+include::{testplansdir}/priv/H_common.adoc[]
 
-include::norm/HSm_norm_rules.adoc[]
+===== H_hscsr
+
+include::{testplansdir}/priv/H_hscsr.adoc[]
+
+===== H_vscsr
+
+include::{testplansdir}/priv/H_vscsr.adoc[]
+
+===== H_ucsr
+
+include::{testplansdir}/priv/H_ucsr.adoc[]
+
+===== H_inst
+
+include::{testplansdir}/priv/H_inst.adoc[]
+
+===== H_Sm_mcsr
+
+include::{testplansdir}/priv/H_Sm_mcsr.adoc[]
+
+===== H_Sm_tvm
+
+include::{testplansdir}/priv/H_Sm_tvm.adoc[]
+
+===== H_Sm_inst
+
+include::{testplansdir}/priv/H_Sm_inst.adoc[]
+
+===== H Normative Rules
 
 include::norm/H_norm_rules.adoc[]
 

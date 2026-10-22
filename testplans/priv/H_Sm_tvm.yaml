@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: H_Sm_tvm
+source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=262865576#gid=262865576
+coverpoints:
+  - name: cp_tvm_hs
+    goal: TVM traps access to satp and hgatp, but not vsatp
+    description: "HSm_tvm_cg (boots to M-mode, so the traps are taken in M-mode): with mstatus.TVM = {0/1}, in HS-mode read and write satp, hgatp and vsatp"
+    expectation: Illegal instruction fault for satp and hgatp if TVM = 1.  vsatp accesses never trap.
+    bins: 3 regs * 2 accesses * 2 TVM
+  - name: cp_tvm_vs
+    goal: VTVM traps access to satp
+    description: "HSm_tvm_cg (boots to M-mode, so the traps are taken in M-mode): with mstatus.TVM = {0/1} cross hstatus.VTVM = {0/1}, in VS-mode read and write satp"
+    expectation: Virtual instruction fault if VTVM = 1. TVM does not affect VS-mode.
+    bins: 2 TVM * 2 VTVM * 2 accesses
+  - name: cp_hfence
+    goal: Basic fence
+    description: Execute hfence.vvma, hfence.gvma in {M, HS mode} cross with mstatus.TVM = {0,1} and with hstatus.VTVM = {0,1}
+    expectation: Only exception for HFENCE.GVMA in HS-mode with mstatus.TVM=1
+    bins: 2 modes * 2 instr * 2 TVM * 2 VTVM
+  - name: cp_sfence
+    goal: Basic fence
+    description: Execute sfence.vma in {M, HS, VS mode} cross with mstatus.TVM = {0,1} and with hstatus.VTVM = {0,1}
+    expectation: Only exception in HS mode when TVM = 1 or in VS-mode when VTMV = 1
+    bins: 3 modes * 2 TVM * 2 VTVM

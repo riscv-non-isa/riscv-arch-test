@@ -165,12 +165,15 @@ def gated(lines: list[str], gate: str | None) -> list[str]:
     return [f"#if {gate}", *lines, f"#endif // {gate}"]
 
 
-def hcsr_tests(test_data: TestData, test_chunks: list[TestChunk], csrs: list[HCsr], covergroup: str) -> None:
+def hcsr_tests(
+    test_data: TestData, test_chunks: list[TestChunk], csrs: list[HCsr], covergroup: str, group: str = ""
+) -> None:
     """Access and walk each H CSR in csrs, access the read-only hgeip, and walk hgatp and vsatp with a paged MODE.
 
     The walk writes each bit alone, so CSRs that hold virtual addresses are walked with valid addresses instead.
+    group prefixes the split names (e.g. "Sm_").
     """
-    tc = test_data.new_test_chunk(test_chunks, "hcsr_access")
+    tc = test_data.new_test_chunk(test_chunks, f"{group}hcsr_access")
     tc.section_header = comment_banner(
         "cp_hcsr_access",
         "Read, write all 1s, write all 0s, set all 1s, clear all 1s and restore each H CSR.  hgeip is read-only,\n"
@@ -218,7 +221,7 @@ def hcsr_tests(test_data: TestData, test_chunks: list[TestChunk], csrs: list[HCs
         test_data.int_regs.return_registers([save_reg, ones_reg, check_reg, mask_reg])
         tc.code.extend(gated(lines, P113_GATE))
 
-    tc = test_data.new_test_chunk(test_chunks, "hcsr_walk")
+    tc = test_data.new_test_chunk(test_chunks, f"{group}hcsr_walk")
     tc.section_header = comment_banner(
         "cp_hcsrwalk", "Set and clear each bit of each H CSR that holds more than zero and is not an address"
     )
@@ -235,7 +238,9 @@ def hcsr_tests(test_data: TestData, test_chunks: list[TestChunk], csrs: list[HCs
                 maskedwrites=csr.masked,
             )
             tc.code.extend(gated([*csr.setup, *lines, *csr.restore], csr.gate))
-    addr_csr_tests(test_data, test_chunks, {csr.name: (0, {}) for csr in csrs if csr.vaddr}, covergroup, "hcsr_addr")
+    addr_csr_tests(
+        test_data, test_chunks, {csr.name: (0, {}) for csr in csrs if csr.vaddr}, covergroup, f"{group}hcsr_addr"
+    )
 
     tc = test_data.new_test_chunk(test_chunks)
     tc.section_header = comment_banner(

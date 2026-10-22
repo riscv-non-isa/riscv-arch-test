@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: H_ucsr
+source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=262865576#gid=262865576
+coverpoints:
+  - heading: Tests executed in U-mode (H_ucsr_cg)
+  - name: cp_hcsr_inaccessible
+    goal: All H-extenion CSRs are inaccessible from U-mode
+    description: csrrw, csrrc, csrrs, csrr each {Machine/HS/VS} H-Extension CSR
+    expectation: Illegal instruction fault
+    bins: 5 * (2 + 14-17 + 9-11)
+    rules:
+      - Zicsr_illegal_mode
+  - name: cp_illegalupper
+    goal: In RV64, h half of CSRs are illegal.
+    description: "RV64 ONLY: csrrw, csrrs, csrrc, csrr  each h H-extension CSR"
+    expectation: Illegal instruction fault
+    bins: 5 * 4
+    rules:
+      - Zicsr_illegal_mode
+    notes: |-
+      ***
+  - name: cp_scsr
+    goal: Illegal instruction fault on U access to supervisor CSRs
+    description: csrrw, csrrc, csrrs, csrr each S CSRs {with/without VS replicas}*** this should get tested in ZicsrS, along with other illegal instruction faults for CSRs of too much priv
+    expectation: Illegal instruction fault
+    bins: 5 * (9 + 3)
+    rules:
+      - Zicsr_illegal_mode
+  - heading: Tests executed in VU-mode (H_vucsr_cg)
+  - name: cp_hcsr_inaccessible
+    goal: M-mode H-extension registers are inaccessible from VS-mode
+    description: csrrw, csrrs, csrrc, csrr each {Machine/HS/VS} H-Extension and {Machine/Supervisor} CSR
+    expectation: Illegal instruction fault
+    bins: 5 * (2 + 14-17 + 9-11)
+    rules:
+      - Zicsr_illegal_mode
+  - name: cp_illegalupper
+    goal: In RV64, h half of CSRs are illegal.
+    description: "RV64 ONLY: csrrw, csrrs, csrrc, csrr  each h H-extension CSR"
+    expectation: Illegal instruction fault
+    bins: 5 * 4
+    rules:
+      - Zicsr_illegal_mode
+  - name: cp_scsr
+    goal: Virtual instruction fault on VU access to hypervisor CSRs
+    description: csrrw, csrrc, csrrs, csrr each {HS/VS/S} CSRs {with/without VS replicas}
+    expectation: Virtual instruction fault or illegal instruction
+    bins: 5 * (9 + 3)
+    rules:
+      - H_vscsrs_acc_vs
+      - Zicsr_illegal_mode

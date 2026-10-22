@@ -180,7 +180,7 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |MisalignV|Vector Misalignment|<<t-MisalignV-coverpoints>>|||o|o|o
 |SsstrictV|Vector Strict|<<t-SsstrictV-coverpoints>>|||o|o|o
 8+^|Hypervisor
-|H|Hypervisor Instructions|<<t-H-coverpoints>>|||o|o|x
+|H|Hypervisor Instructions|<<t-H_common-coverpoints>>|||o|o|x
 |ExceptionsH|Hypervisor Exceptions|<<t-ExceptionsH-coverpoints>>|||o|o|x
 |ExceptionsHV|Hypervisor Vector Exceptions|<<t-ExceptionsHV-coverpoints>>|||o|o|x
 |InterruptsH|Hypervisor Interrupts|<<t-InterruptsH-coverpoints>>|||o|o|x

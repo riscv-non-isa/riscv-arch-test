@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: H_common
+title: H Setup
+source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=262865576#gid=262865576
+notes: |
+  Definitions:
+  Machine H-Extension CSRs: mtval2, mtinst
+  HS H-Extension CSRs: hstatus, hedeleg, hideleg, hie, hcounteren, hgeie, henvcfg, htval, hip, hvip, htinst, hgatp, hgeip (+ htimedelta for Zicntr) (+ hedelegh, htimedeltah, henvcfgh for RV32)
+  VS H-Extension CSRs: vsstatus, vsie, vstval,  vsip, vstvec, vsscratch, vsepc, vscause, vsatp (+ vstimecmp for SSTC, vstimecmph with RV32)
+  h H-extension CSRS (RV64 only): hedelegh, htimedeltah, henvcfgh, vstimecmph
+  S CSRs with VS replicas: sstatus, sie, stvec, sscratch, sepc, scause, stval, sip, satp
+  S CSRs without VS replicas: scounteren, senvcfg, scountinhibit
+  Note: *** trap handler should also record hstatus, m/s status in signature
+coverpoints:
+  - heading: Seems Zicsr* should write all 0s and all 1s to each standard CSR and read the CSR.  Applies to all Zicsr* tabs. *** maybe already done?

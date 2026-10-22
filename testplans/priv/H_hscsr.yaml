@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: H_hscsr
+source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=262865576#gid=262865576
+coverpoints:
+  - heading: Tests executed in HS-mode (H_hscsr_cg)
+  - name: cp_hcsr_access
+    goal: All H-extension CSRs are able to read, write, set, and clear
+    description: Write all 1s and all 0s, then set all bits, then clear all bits, then read each {HS/VS} H-Extension CSR.
+    expectation: All registers are accessible. hgeip is read-only.
+    bins: 5 * (14-17 + 9-11)
+    rules:
+      - hstatus_sz_acc_op
+      - hedeleg_sz_acc
+      - hideleg_sz_acc
+      - hip_hie_sz_acc
+      - htimedelta_sz_acc_op
+      - hcounteren_sz
+      - hgeie_sz_acc_op
+      - henvcfg_sz_acc_op
+      - htval_sz_acc_op
+      - hvip_sz_op
+      - htinst_sz_acc_op
+      - hgatp_sz_acc_op
+      - hgeip_sz_acc_op
+      - hedelegh_sz_acc_op
+      - htimedeltah_sz_acc_op
+      - henvcfgh_sz_acc_op
+      - vsstatus_sz_acc_op
+      - vsip_vsie_sz_acc_op
+      - vstval_sz_acc_op
+      - vstvec_sz_acc_op
+      - vsscratch_sz_acc_op
+      - vsepc_sz_acc_op
+      - vscause_sz_acc_op
+      - vsatp_sz_acc_op
+  - name: cp_hcsrwalk
+    goal: Exercise each bit of H-extension CSRs
+    description: Set and clear each bit of each {HS/VS} H-Extension CSR. Exclude hstatus, vsstatus because of WPRI bits. vsepc and vstval are not walked, because an invalid address may legally be converted; cp_vsepc_vaddr_* and cp_vstval_vaddr_* write them with valid addresses.
+    expectation: All registers are accessible.  Some fields are WARL and will not change.
+    bins: 64 * 2 * (13-16 + 8-10)
+    rules:
+      - hedeleg_sz_acc
+      - hideleg_sz_acc
+      - hip_hie_sz_acc
+      - htimedelta_sz_acc_op
+      - hcounteren_sz
+      - hgeie_sz_acc_op
+      - henvcfg_sz_acc_op
+      - htval_sz_acc_op
+      - hvip_sz_op
+      - htinst_sz_acc_op
+      - hgatp_sz_acc_op
+      - hgeip_sz_acc_op
+      - hedelegh_sz_acc_op
+      - htimedeltah_sz_acc_op
+      - henvcfgh_sz_acc_op
+      - vsip_vsie_sz_acc_op
+      - vstval_sz_acc_op
+      - vstvec_sz_acc_op
+      - vsscratch_sz_acc_op
+      - vsepc_sz_acc_op
+      - vscause_sz_acc_op
+      - vsatp_sz_acc_op
+    notes: |-
+      The ...X bits, when set, indicate that the PMP entry permits ... instruction execution
+  - name: |-
+      cp_vsepc_vaddr_walk1
+      cp_vsepc_vaddr_walk0
+      cp_vsepc_vaddr_pc
+      cp_vsepc_vaddr_scratch
+      cp_vstval_vaddr_walk1
+      cp_vstval_vaddr_walk0
+      cp_vstval_vaddr_pc
+      cp_vstval_vaddr_scratch
+    goal: vsepc and vstval hold every valid address
+    description: In HS-mode, csrrw vsepc and vstval with each canonical virtual address with a walking 1 (0s in the msbs) and a walking 0 (1s in the msbs) through bits 0 to VALEN-2 of the largest supported Sv mode, and with two physical addresses, the current pc and the scratch area. Only valid addresses are written, because an invalid address may legally be converted.
+    expectation: Each value reads back as written (vsepc bit 0 reads 0, and bit 1 reads 0 unless 2-byte instruction alignment is allowed).
+    bins: |-
+      walk1, walk0: 2 CSRs * (32 (Sv32), 38 (Sv39), 47 (Sv48) or 56 (Sv57)) each
+      pc, scratch: 2 CSRs * 1 each
+  - name: cp_hcsr_inaccessible
+    goal: M-mode H-extension registers are inaccessible from HS-mode
+    description: csrrw, csrrs, csrrc, csrr each Machine H-Extension CSR
+    expectation: Illegal instruction fault
+    bins: 5 * 2
+    rules:
+      - Zicsr_illegal_mode
+  - name: cp_replica
+    goal: In HS, writing to S/VS-mode CSRs doesn't affect replica
+    description: In M-mode, write different random values into S-mode CSRs and their VS-mode replicas.  Switch to HS-mode and read, write random, and readback S and VS CSRs. Switch back to M-mode and read back both the S-mode CSRs and VS replicas.
+    expectation: Each CSR should have value written.
+    bins: "9"
+    rules:
+      - H_vscsrs_v0
+  - name: cp_hstatus_vgein
+    goal: VGEIN can hold values between 0 and GEILEN
+    description: Write {0, 1, GEILEN-1, GEILEN, GEILEN+1, 63} to hstatus.VGEIN
+    expectation: Only write legal values
+    bins: "6"
+    rules:
+      - hstatus_vgein_wlrl
+  - name: cp_vscause_write
+    goal: vscause WLRL fields writable
+    description: |-
+      Write values
+      (WLRL)
+    expectation: |-
+      with interrupt = 1: 0-15
+      with interrupt = 0: 0-64
+    bins: "81"
+  - heading: "*** check if any other bitfields need special cases, including hstatus, vsstatus"

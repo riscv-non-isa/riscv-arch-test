@@ -194,12 +194,17 @@ normative_rule_definitions:
 
   # The VS CSRs can be accessed as themselves only from M-mode or HS-mode.
   - name: H_vscsrs_acc_m_hs
+    # Representative coverpoints; also H_Sm_mcsr_cg/cp_atpwalk0/vsatp
     coverpoint:
       [
         "H_hscsr_cg/cp_hcsr_access",
         "H_hscsr_cg/cp_hcsr_access_zero/vsatp",
         "H_vscsr_cg/cp_hcsr_virtualinstructionfault",
         "H_ucsr_cg/cp_hcsr_inaccessible_u",
+        "H_Sm_mcsr_cg/cp_hcsr_access",
+        "H_Sm_mcsr_cg/cp_hcsrwalk",
+        "H_Sm_mcsr_cg/cp_hcsr_access_zero/vsatp",
+        "H_Sm_mcsr_cg/cp_atpwalk1/vsatp",
       ]
   # The vsstatus register is a VSXLEN-bit read/write register that is VS-mode’s version of
   # supervisor register sstatus, formatted as shown in when VSXLEN=32 and when VSXLEN=64.
@@ -293,7 +298,7 @@ normative_rule_definitions:
   # translation, the first stage of two-stage translation for guest virtual addresses (see
   # ).
   - name: vsatp_sz_acc_op
-    # Representative coverpoints; also HSm_mcsr_cg/{cp_atpwalk1, cp_atpwalk0}/vsatp
+    # Representative coverpoints; also H_Sm_mcsr_cg/{cp_atpwalk1, cp_atpwalk0}/vsatp
     coverpoint:
       [
         "H_hscsr_cg/cp_hcsr_access_zero/vsatp",
@@ -319,15 +324,6 @@ normative_rule_definitions:
       [
         "H_hscsr_cg/{cp_hcsr_access, cp_hcsrwalk}/vstimecmp",
         "H_hscsr_cg/{cp_hcsr_access, cp_hcsrwalk}/vstimecmph",
-      ]
-
-  # Machine-level H CSRs are inaccessible below M-mode
-  - names: [mtval2_sz_acc_op, mtinst_sz_acc_op]
-    coverpoint:
-      [
-        "H_hscsr_cg/cp_hcsr_inaccessible",
-        "H_vscsr_cg/cp_hcsr_inaccessible",
-        "H_ucsr_cg/cp_hcsr_inaccessible",
       ]
 
   # hstatus.VGEIN holds 0 through GEILEN
@@ -356,8 +352,15 @@ normative_rule_definitions:
       ]
 
   # With V=0, S CSRs and their VS replicas are separate registers, but vsstatus applies to HLV, HLVX and HSV
-  - names: [H_vscsrs_v0, vsstatus_v0]
+  - names: [vsstatus_v0]
     coverpoint: ["H_hscsr_cg/cp_replica", "SvH_hlv_cg/cp_hlv_priv"]
+  - names: [H_vscsrs_v0]
+    coverpoint:
+      [
+        "H_hscsr_cg/cp_replica",
+        "SvH_hlv_cg/cp_hlv_priv",
+        "H_Sm_mcsr_cg/cp_replica",
+      ]
 
   # When V=1, the VS CSRs substitute for the corresponding supervisor CSRs, taking over
   # all functions of the usual supervisor CSRs except as specified otherwise. Instructions
@@ -405,14 +408,25 @@ normative_rule_definitions:
   - names: [vsstatus_sd_xs_op]
     coverpoint: ["H_vscsr_cg/cp_vsstatus_sd_write"]
 
-  # Hypervisor virtual-machine loads and stores from HS-mode and from U-mode with hstatus.HU = 1
-  - names: [hlsv_mode, hlsv_op, hstatus_hu_op, hlvx-wu_valid32]
+  # Hypervisor virtual-machine loads and stores from HS-mode and from U-mode with hstatus.HU = 1, and from M-mode
+  - names: [hstatus_hu_op]
     coverpoint:
       [
         "H_inst_cg/cp_hlv",
         "H_inst_cg/cp_hlvx",
         "H_inst_cg/cp_hsv",
         "ExceptionsH_cg/cp_loadstore_priv",
+      ]
+  - names: [hlsv_mode, hlsv_op, hlvx-wu_valid32]
+    coverpoint:
+      [
+        "H_inst_cg/cp_hlv",
+        "H_inst_cg/cp_hlvx",
+        "H_inst_cg/cp_hsv",
+        "ExceptionsH_cg/cp_loadstore_priv",
+        "H_Sm_inst_cg/cp_hlv",
+        "H_Sm_inst_cg/cp_hlvx",
+        "H_Sm_inst_cg/cp_hsv",
       ]
 
   # Attempting to execute an xRET instruction in a mode less privileged than x will raise
@@ -428,9 +442,9 @@ normative_rule_definitions:
         "ExceptionsH_cg/cp_virtual_instr_vu_sfence_vma",
       ]
 
-  # sret from HS-mode uses SPV
+  # sret from HS-mode and M-mode uses SPV
   - names: [sret_v0, hstatus_spv_sret]
-    coverpoint: ["H_inst_cg/cp_sret_hs"]
+    coverpoint: ["H_inst_cg/cp_sret_hs", "H_Sm_inst_cg/cp_sret_m"]
 
   # sret from VS-mode; hstatus.VTSR traps it
   - names: [sret_v1, hstatus_vtsr_op, H_virtinst_vs_sret_vtsr1]
@@ -444,15 +458,15 @@ normative_rule_definitions:
   # csr:htinst[] may also be written with information about the faulting instruction or
   # other reason for the access, as explained in .
   - name: H_guest_page_fault
-    coverpoint: ["H_inst_cg/cp_guest_page_fault"]
+    coverpoint: ["{H_inst_cg, H_Sm_inst_cg}/cp_guest_page_fault"]
   # On any trap into M-mode or HS-mode, one of these values is written automatically into
   # the appropriate trap instruction CSR, mtinst or htinst:
   - name: H_trap_xtinst
-    coverpoint: ["H_inst_cg/cp_guest_page_fault"]
+    coverpoint: ["{H_inst_cg, H_Sm_inst_cg}/cp_guest_page_fault"]
   # On a synchronous exception, if a nonzero value is written, one of the following shall
   # be true about the value:
   - name: H_trap_xtinst_exception_lead_in
-    coverpoint: ["H_inst_cg/cp_guest_page_fault"]
+    coverpoint: ["{H_inst_cg, H_Sm_inst_cg}/cp_guest_page_fault"]
   # Bit 0 is 1, and replacing bit 1 with 1 makes the value into a valid encoding of a
   # standard instruction. In this case, the instruction that trapped is the same kind as
   # indicated by the register value, and the register value is the transformation of the
@@ -466,7 +480,7 @@ normative_rule_definitions:
   # specified by this standard. The value is one of the special pseudoinstructions defined
   # later, all of which have bits 1:0 equal to 00.
   - name: H_trap_xtinst_exception_list
-    coverpoint: ["H_inst_cg/cp_guest_page_fault"]
+    coverpoint: ["{H_inst_cg, H_Sm_inst_cg}/cp_guest_page_fault"]
   # shows the values that may be automatically written to the trap instruction register
   # for each standard exception cause. For exceptions that prevent the fetching of an
   # instruction, only zero or a pseudoinstruction value may be written. A custom value may
@@ -474,14 +488,14 @@ normative_rule_definitions:
   # standard or extension may permit other values to be written, chosen from the set of
   # allowed values established earlier.
   - name: H_trap_xtinst_val
-    coverpoint: ["H_inst_cg/cp_guest_page_fault"]
+    coverpoint: ["{H_inst_cg, H_Sm_inst_cg}/cp_guest_page_fault"]
   # For guest-page faults, the trap instruction register is written with a special
   # pseudoinstruction value if: (a) the fault is caused by an implicit memory access for
   # VS-stage address translation, and (b) a nonzero value (the faulting guest physical
   # address) is written to mtval2 or htval. If both conditions are met, the value written
   # to mtinst or htinst must be taken from ; zero is not allowed.
   - name: H_trap_xtinst_guestpage
-    coverpoint: ["H_inst_cg/cp_guest_page_fault"]
+    coverpoint: ["{H_inst_cg, H_Sm_inst_cg}/cp_guest_page_fault"]
 
   # When V=1 and XLEN=32, an invalid access to a high-half CSR raises virtual instruction if the same access to its
   # low-half partner is HS-qualified (RV32 high-half bins)
@@ -500,8 +514,8 @@ normative_rule_definitions:
       [
         "H_hscsr_cg/cp_atpwalk1/hgatp",
         "H_hscsr_cg/cp_atpwalk0/hgatp",
-        "HSm_mcsr_cg/cp_atpwalk1/hgatp",
-        "HSm_mcsr_cg/cp_atpwalk0/hgatp",
+        "H_Sm_mcsr_cg/cp_atpwalk1/hgatp",
+        "H_Sm_mcsr_cg/cp_atpwalk0/hgatp",
       ]
 
   # An implementation that supports only the defined paged schemes and Bare may make hgatp.PPN[1:0] read-only zero
@@ -660,3 +674,130 @@ normative_rule_definitions:
       [
         "TODO: check vsstatus.SDT after sret from HS-mode into VU-mode and after sret in VS-mode",
       ]
+
+  # Sm group (formerly HSm): tests executed in M-mode, or that need M-mode to take their traps
+  # The mtval2 register is an MXLEN-bit read/write register formatted as shown in . When a
+  # trap is taken into M-mode, mtval2 is written with additional exception-specific
+  # information, alongside mtval, to assist software in handling the trap.
+  - name: mtval2_sz_acc_op
+    # Accessible in M-mode, and inaccessible below M-mode
+    coverpoint:
+      [
+        "H_Sm_mcsr_cg/cp_hcsr_access_zero/mtval2",
+        "H_Sm_inst_cg/cp_guest_page_fault",
+        "H_hscsr_cg/cp_hcsr_inaccessible",
+        "H_vscsr_cg/cp_hcsr_inaccessible",
+        "H_ucsr_cg/cp_hcsr_inaccessible",
+      ]
+  # mtval2 is a WARL register that must be able to hold zero and may be capable of holding
+  # only an arbitrary subset of other 2-bit-shifted guest physical addresses, if any.
+  - name: mtval2_val
+    coverpoint: ["H_Sm_mcsr_cg/cp_hcsr_access_zero/mtval2"]
+  # The mtinst register is an MXLEN-bit read/write register formatted as shown in . When a
+  # trap is taken into M-mode, mtinst is written with a value that, if nonzero, provides
+  # information about the instruction that trapped, to assist software in handling the
+  # trap. The values that may be written to mtinst on a trap are documented in .
+  - name: mtinst_sz_acc_op
+    # Accessible in M-mode, and inaccessible below M-mode
+    coverpoint:
+      [
+        "H_Sm_mcsr_cg/cp_hcsr_access_zero/mtinst",
+        "H_Sm_inst_cg/cp_guest_page_fault",
+        "H_hscsr_cg/cp_hcsr_inaccessible",
+        "H_vscsr_cg/cp_hcsr_inaccessible",
+        "H_ucsr_cg/cp_hcsr_inaccessible",
+      ]
+  # mtinst is a WARL register that need only be able to hold the values that the
+  # implementation may automatically write to it on a trap.
+  - name: mtinst_val
+    coverpoint: ["H_Sm_mcsr_cg/cp_hcsr_access_zero/mtinst"]
+
+  # mtval is not read-only zero with H
+  - names: [H_mtval_nrz]
+    coverpoint: ["H_Sm_mcsr_cg/cp_mtvala"]
+
+  # Setting TVM=1 prevents HS-mode from accessing hgatp or executing HFENCE.GVMA or
+  # HINVAL.GVMA, but has no effect on accesses to vsatp or instructions HFENCE.VVMA or
+  # HINVAL.VVMA.
+  - name: mstatus_tvm_hs
+    coverpoint:
+      [
+        "H_Sm_tvm_cg/cp_tvm_hs",
+        "H_Sm_tvm_cg/cp_hfence",
+        "SvinvalHSm_cg/cp_svinval_tvm",
+      ]
+  # When mstatus.TVM=1, attempts to read or write hgatp while executing in HS-mode will
+  # raise an illegal-instruction exception.
+  - name: hgatp_tvm_illegal
+    coverpoint: ["H_Sm_tvm_cg/cp_tvm_hs/hgatp"]
+
+  # mstatus.TVM and TSR do not affect VS-mode; TW affects every mode except M-mode
+  - names: [mstatus_modes]
+    coverpoint:
+      [
+        "H_Sm_tvm_cg/cp_tvm_vs",
+        "ExceptionsHSm_cg/cp_tsr_vs_sret",
+        "ExceptionsH_cg/cp_virtual_instr_{vs_tvm, vu_tvm}",
+        "InterruptsH_hs_cg/cp_wfi_{vs, vu}",
+      ]
+
+  # hstatus.VTVM traps satp accesses and sfence.vma in VS-mode
+  - names: [hstatus_vtvm_op, H_virtinst_vs_sfence_sinval_satp_vtvm1]
+    coverpoint: ["H_Sm_tvm_cg/cp_tvm_vs", "H_Sm_tvm_cg/cp_sfence"]
+
+  # hfence.vvma and hfence.gvma are valid in M-mode and HS-mode, and order VS-stage and G-stage translation
+  - names: [hfence-vvma_hfence-gvma_op, hfence-vvma_mode]
+    coverpoint:
+      [
+        "H_Sm_tvm_cg/cp_hfence",
+        "SvH_fence_cg/cp_hfence_vvma",
+        "SvH_fence_cg/cp_hfence_gvma",
+      ]
+
+  # hfence.vvma and hfence.gvma in M-mode and HS-mode, and TVM
+  - names:
+      [hfence-gvma_mode, hfence-vvma_tvm, hfence-vvma_hfence-gvma_exceptions]
+    coverpoint: ["H_Sm_tvm_cg/cp_hfence"]
+
+  # mret uses MPV to enter a virtual mode
+  - names: [mstatus_mpv_op, mret_H]
+    coverpoint: ["H_Sm_inst_cg/cp_mret_m"]
+
+  # sret from M-mode uses SPV
+  - names: [sret_H]
+    coverpoint: ["H_Sm_inst_cg/cp_sret_m"]
+
+  # The Ssdbltrp extension requires mtval2
+  - names: [mtval2_Ssdbltrp]
+    coverpoint: ["TODO: an Ssdbltrp double trap into M-mode that reads mtval2"]
+
+  # The hypervisor extension is enabled by setting misa bit 7
+  - name: misa_H_op
+    coverpoint:
+      [
+        "TODO: read misa.H, and with MUTABLE_MISA_H clear it and check that hypervisor CSRs and instructions raise illegal instruction",
+      ]
+
+  # hfence.gvma is valid in HS-mode with mstatus.TVM=0 and in M-mode, and orders prior stores before G-stage
+  # implicit reads; a nonzero rs1 selects one guest physical address and a nonzero rs2 one VMID
+  - names: [hfence-gvma_op]
+    coverpoint: ["H_Sm_tvm_cg/cp_hfence", "SvH_fence_cg/cp_hfence_gvma"]
+
+  # hfence.gvma ignores rs2 bits above VMIDMAX and unimplemented VMID bits
+  - names: [hfence-gvma_vmid]
+    coverpoint:
+      [
+        "SvH_fence_cg/cp_hfence_gvma (rs2 with every VMIDMAX bit set; ignoring bits above VMIDMAX is only a should)",
+      ]
+
+  # hfence.vvma ignores rs2 bits above ASIDMAX and unimplemented ASID bits
+  - names: [hfence-vvma_asid]
+    coverpoint:
+      [
+        "SvH_fence_cg/cp_hfence_vvma (rs2 with every ASIDMAX bit set; ignoring bits above ASIDMAX is only a should)",
+      ]
+
+  # hfence.vvma need not order implicit reads under a different hgatp.VMID; a nonzero rs1 selects one guest
+  # virtual address and a nonzero rs2 one ASID
+  - names: [hfence-vvma_limits]
+    coverpoint: ["SvH_fence_cg/cp_hfence_vvma"]

@@ -1,0 +1,81 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: H_Sm_mcsr
+source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=262865576#gid=262865576
+coverpoints:
+  - heading: Tests executed in M-mode (H_mcsr_cg)
+  - name: cp_hcsr_access
+    goal: All H-extension CSRs are able to read, write, set, and clear
+    description: Write all 1s and all 0s, then set all bits, then clear all bits, then read each {Machine/HS/VS} H-Extension CSR.
+    expectation: All registers are accessible. hgeip is read-only.
+    bins: 5 * (2 + 14-17 + 9-11)
+    rules:
+      - mtval2_sz_acc_op
+      - mtinst_sz_acc_op
+      - hstatus_sz_acc_op
+      - hedeleg_sz_acc
+      - hideleg_sz_acc
+      - hip_hie_sz_acc
+      - htimedelta_sz_acc_op
+      - hcounteren_sz
+      - hgeie_sz_acc_op
+      - henvcfg_sz_acc_op
+      - htval_sz_acc_op
+      - hvip_sz_op
+      - htinst_sz_acc_op
+      - hgatp_sz_acc_op
+      - hgeip_sz_acc_op
+      - hedelegh_sz_acc_op
+      - htimedeltah_sz_acc_op
+      - henvcfgh_sz_acc_op
+      - vsstatus_sz_acc_op
+      - vsip_vsie_sz_acc_op
+      - vstval_sz_acc_op
+      - vstvec_sz_acc_op
+      - vsscratch_sz_acc_op
+      - vsepc_sz_acc_op
+      - vscause_sz_acc_op
+      - vsatp_sz_acc_op
+      - H_vscsrs_acc_m_hs
+      - Zicsr_higher_priv
+      - Zicsr_rw
+    notes: |-
+      *** also capture 2.7 >xlen,2 "accessible at higher priv levels"
+  - name: cp_hcsrwalk
+    goal: Exercise each bit of H-extension CSRs
+    description: Set and clear each bit of each Machine H-Extension CSR. vsepc and vstval are not walked, because an invalid address may legally be converted; cp_vsepc_vaddr_* and cp_vstval_vaddr_* write them with valid addresses.
+    expectation: All registers are accessible.  Some fields are WARL and will not change.
+    bins: 64*2*(2 + 13-16 + 8-10)
+    rules:
+      - mtval2_sz_acc_op
+      - mtinst_sz_acc_op
+    notes: |-
+      *** make sure each bit of hstatus, vsstatus are tested elsewhere
+  - name: |-
+      cp_vsepc_vaddr_walk1
+      cp_vsepc_vaddr_walk0
+      cp_vsepc_vaddr_pc
+      cp_vsepc_vaddr_scratch
+      cp_vstval_vaddr_walk1
+      cp_vstval_vaddr_walk0
+      cp_vstval_vaddr_pc
+      cp_vstval_vaddr_scratch
+    goal: vsepc and vstval hold every valid address
+    description: csrrw vsepc and vstval with each canonical virtual address with a walking 1 (0s in the msbs) and a walking 0 (1s in the msbs) through bits 0 to VALEN-2 of the largest supported Sv mode, and with two physical addresses, the current pc and the scratch area. Only valid addresses are written, because an invalid address may legally be converted.
+    expectation: Each value reads back as written (vsepc bit 0 reads 0, and bit 1 reads 0 unless 2-byte instruction alignment is allowed).
+    bins: |-
+      walk1, walk0: 2 CSRs * (32 (Sv32), 38 (Sv39), 47 (Sv48) or 56 (Sv57)) each
+      pc, scratch: 2 CSRs * 1 each
+  - name: cp_replica
+    goal: Writing to S/VS-mode CSRs doesn't affect replica
+    description: Write different random values into S-mode CSRs and their VS-mode replicas.  Read back
+    expectation: Each CSR should have value written.
+    bins: "9"
+    rules:
+      - H_vscsrs_v0
+  - name: cp_mtvala
+    goal: mtval must not be read-only zero
+    description: Write 1s to mtval
+    expectation: nonzero
+    bins: "1"
+    rules:
+      - H_mtval_nrz
