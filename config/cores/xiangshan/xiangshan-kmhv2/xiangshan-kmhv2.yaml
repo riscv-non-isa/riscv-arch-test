@@ -193,9 +193,6 @@ params:
   SEI_INTR_IMPL: true
   SSI_INTR_IMPL: true
   STI_INTR_IMPL: true
-  VSEI_INTR_IMPL: true
-  VSSI_INTR_IMPL: true
-  VSTI_INTR_IMPL: true
   TIME_CSR_IMPLEMENTED: true
   HPM_COUNTER_EN:
     [

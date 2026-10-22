@@ -597,7 +597,6 @@ params:
   VFREDUSUM_FINAL_NODE_ELEMENT_BEHAVIOR: "additive_identity"
   IMPRECISE_VECTOR_TRAP_SETTABLE: false
   # H params
-  VSTI_INTR_IMPL: true
   MUTABLE_MISA_H: false
   VSXLEN: [32]
   VUXLEN: [32]
