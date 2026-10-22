@@ -9,5 +9,8 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
-    ZkrS_cg = new();         ZkrS_cg.set_inst_name("obj_ZkrS");
+`ifndef EXCLUDE_SM
+    Zkr_Sm_cg = new();      Zkr_Sm_cg.set_inst_name("obj_Zkr_Sm");
+`endif
+    Zkr_S_cg = new();       Zkr_S_cg.set_inst_name("obj_Zkr_S");
+    Zkr_U_cg = new();       Zkr_U_cg.set_inst_name("obj_Zkr_U");

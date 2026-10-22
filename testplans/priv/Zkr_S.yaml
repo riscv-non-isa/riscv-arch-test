@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: Zkr
+suite: Zkr_S
 source: https://docs.google.com/spreadsheets/d/10NX0T4MgueqA4p7JNg4whCq2k3YZ9R73UCV88MtcIUA/edit?gid=231840071#gid=231840071
 coverpoints:
   - name: cp_zkr_seed_csrrw

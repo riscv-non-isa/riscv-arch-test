@@ -84,7 +84,7 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Sm|Machine CSRs|<<t-Sm-coverpoints>>||x|x|x|x
 |S|Supervisor CSRs|<<t-S-coverpoints>>|||x|x|x
 |U|User CSRs|<<t-U-coverpoints>>|||x|x|x
-|Zkr|Entropy CSR|<<t-Zkr-coverpoints>>|||o|o|o
+|Zkr|Entropy CSR|<<t-Zkr_S-coverpoints>>|||o|o|o
 |ExceptionsSm|Machine Exceptions|<<t-ExceptionsSm-coverpoints>>||x|x|x|x
 |ExceptionsS|Supervisor Exceptions|<<t-ExceptionsS-coverpoints>>|||x|x|x
 |ExceptionsU|User Exceptions|<<t-ExceptionsU-coverpoints>>|||x|x|x

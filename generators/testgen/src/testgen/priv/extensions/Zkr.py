@@ -1,15 +1,16 @@
 ##################################
-# priv/extensions/ZkrCommon.py
-#
-# Shared generators for the ZkrSm / ZkrS / ZkrU seed CSR test suites.
+# priv/extensions/Zkr.py
+# Zkr privileged test generators: seed CSR tests for the Sm, S and U groups.
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""Shared Zkr seed-CSR test generators, parameterized by the privilege mode the suite runs in."""
+"""Zkr test generators. Shared test-case generators are called with mode in {"M", "S", "U"}."""
 
 from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
+from testgen.data.test_chunk import TestChunk
+from testgen.priv.registry import add_priv_test_generator
 
 
 def _record_seed_reserved(dest_reg: int, test_data: TestData) -> list[str]:
@@ -190,3 +191,59 @@ def gen_seed_entropy_zero_non_es16_tests(test_data: TestData, covergroup: str, m
 
     test_data.int_regs.return_registers([read_reg, opst_reg, entropy_reg, cmp_reg, save_reg, loop_reg])
     return lines
+
+
+@add_priv_test_generator(
+    "Zkr",
+    required_extensions=["Zkr", "Sm"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    seed_name="ZkrSm",
+)
+def make_zkrsm(test_data: TestData) -> list[TestChunk]:
+    """Generate the Zkr seed tests in M-mode."""
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("Sm")
+
+    tc.code.extend(gen_seed_csrrw_tests(test_data, "Zkr_Sm_cg", "M"))
+    tc.code.extend(gen_seed_illegal_csr_op_tests(test_data, "Zkr_Sm_cg", "M"))
+    tc.code.extend(gen_seed_entropy_zero_non_es16_tests(test_data, "Zkr_Sm_cg", "M"))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "Zkr",
+    required_extensions=["Zkr", "S"],
+    extra_defines=["#define BOOT_TO_SMODE"],
+    seed_name="ZkrS",
+)
+def make_zkrs(test_data: TestData) -> list[TestChunk]:
+    """Generate the Zkr seed tests in S-mode."""
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("S")
+
+    tc.code.extend(gen_seed_csrrw_tests(test_data, "Zkr_S_cg", "S"))
+    tc.code.extend(gen_seed_illegal_csr_op_tests(test_data, "Zkr_S_cg", "S"))
+    tc.code.extend(gen_seed_entropy_zero_non_es16_tests(test_data, "Zkr_S_cg", "S"))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "Zkr",
+    required_extensions=["Zkr", "U"],
+    seed_name="ZkrU",
+)
+def make_zkru(test_data: TestData) -> list[TestChunk]:
+    """Generate the Zkr seed tests in U-mode."""
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("U")
+
+    tc.code.extend(gen_seed_csrrw_tests(test_data, "Zkr_U_cg", "U"))
+    tc.code.extend(gen_seed_illegal_csr_op_tests(test_data, "Zkr_U_cg", "U"))
+    tc.code.extend(gen_seed_entropy_zero_non_es16_tests(test_data, "Zkr_U_cg", "U"))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
