@@ -1,5 +1,5 @@
 # rvmodel_macros.h
-# RVMODEL macro definitions for OpenHW CVA6 (cv32a65x) core
+# RVMODEL macro definitions for OpenHW CVA6 (cv32a60x) core
 # SPDX-License-Identifier: Apache-2.0
 
 #ifndef _RVMODEL_MACROS_H
@@ -10,6 +10,8 @@
         .balign 8; .global tohost; tohost: .dword 0;         \
         .balign 8; .global fromhost; fromhost: .dword 0;     \
         .popsection;
+
+#define STANDARD_SM_SUPPORTED
 
 ##### STARTUP #####
 
@@ -87,7 +89,14 @@
 
 ##### Machine Timer #####
 
-##### Machine Interrupts #####
+#define RVMODEL_MTIME_ADDRESS     0x0200BFF8
+#define RVMODEL_MTIMECMP_ADDRESS  0x02004000
+
+##### Machine External Interrupts #####
+
+#define CLINT_BASE_ADDRESS 0x02000000
+#define RVMODEL_MSIP_ADDRESS (CLINT_BASE_ADDRESS + 0x0)
+
 
 #define RVMODEL_SET_MEXT_INT(_R1, _R2)
 
