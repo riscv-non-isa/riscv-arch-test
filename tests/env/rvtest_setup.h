@@ -1024,7 +1024,9 @@
       .p2align 12
       rvtest_Vroot_pg_tbl:
         .zero(4096)              // 4KB page table
-      // Lower-level G-stage and VS-stage tables, enough for a kilopage under Sv32x4/Sv32 or Sv39x4/Sv39
+      // Lower-level G-stage and VS-stage tables for a kilopage under the smallest modes H requires at
+      // this XLEN: Sv32x4/Sv32 on RV32 walk one level below the root (8KB in all), and Sv39x4/Sv39 on
+      // RV64 walk two (16KB). Sv48x4/Sv48 and Sv57x4/Sv57 tests define rvtest_[hv]lvl2/3_pg_tbl.
       rvtest_hlvl0_pg_tbl:
         .zero(4096)
       rvtest_vlvl0_pg_tbl:
