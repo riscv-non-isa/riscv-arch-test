@@ -2183,17 +2183,16 @@ tsbi_instr_table:
 \__MODE__\()tsee_ecall_record:
         addi    T3, T2, TSEE_SIG                    // word 0: entry size in bits 5:2, mode TSEE_SIG
         TRAP_SIGUPD(T4, T3, 0, sv_\__MODE__\()vect, sv_\__MODE__\()vect_str)
-        li      T3, 0                               // word 1: cause not recorded
-        TRAP_SIGUPD(T4, T3, 1, sv_\__MODE__\()cause, sv_\__MODE__\()cause_str)
+        // word 1: cause not recorded
+        TRAP_SIGUPD(T4, x0, 1, sv_\__MODE__\()cause, sv_\__MODE__\()cause_str)
         csrr    T3, CSR_XEPC                        // word 2: mepc
         TRAP_SIGUPD(T4, T3, 2, sv_\__MODE__\()epc, sv_\__MODE__\()epc_str)
-        li      T3, 0                               // word 3: mtval not recorded
-        TRAP_SIGUPD(T4, T3, 3, sv_\__MODE__\()tval, sv_\__MODE__\()tval_str)
+        // word 3: mtval not recorded
+        TRAP_SIGUPD(T4, x0, 3, sv_\__MODE__\()tval, sv_\__MODE__\()tval_str)
   #ifdef H_SUPPORTED
-        li      T3, 0                               // words 4 and 5: mtval2 and mtinst not recorded
-        TRAP_SIGUPD(T4, T3, 4, sv_\__MODE__\()Mtval2, sv_Mtval2_str)
-        li      T3, 0
-        TRAP_SIGUPD(T4, T3, 5, sv_\__MODE__\()Mtinst, sv_Mtinst_str)
+        // words 4 and 5: mtval2 and mtinst not recorded
+        TRAP_SIGUPD(T4, x0, 4, sv_\__MODE__\()Mtval2, sv_Mtval2_str)
+        TRAP_SIGUPD(T4, x0, 5, sv_\__MODE__\()Mtinst, sv_Mtinst_str)
   #endif
         csrr    a0, CSR_XEPC                        // a0 = mepc = address of the ecall
         addi    T3, a0, 4                           // skip the ecall
