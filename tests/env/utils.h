@@ -706,7 +706,7 @@
   RVTEST_TSBI_CSR_CLEAR(CSR_SIP, MIP_LCOFIP)
 
 // VS-level interrupts, raised through hvip. M-mode and HS-mode write hvip directly with the _M
-// flavor; U-mode, VS-mode and VU-mode use the _U flavor, which goes through T-SBI.
+// and _S flavors; U-mode, VS-mode and VU-mode use the _U flavor, which goes through T-SBI.
 
 #define RVTEST_SET_VSSW_INT_M   li a1, MIP_VSSIP; csrs CSR_HVIP, a1  /* Trigger VS-level software interrupt */
 #define RVTEST_CLR_VSSW_INT_M   li a1, MIP_VSSIP; csrc CSR_HVIP, a1  /* Clear VS-level software interrupt */
@@ -714,6 +714,13 @@
 #define RVTEST_CLR_VSTIME_INT_M li a1, MIP_VSTIP; csrc CSR_HVIP, a1  /* Clear VS-level timer interrupt */
 #define RVTEST_SET_VSEXT_INT_M  li a1, MIP_VSEIP; csrs CSR_HVIP, a1  /* Trigger VS-level external interrupt */
 #define RVTEST_CLR_VSEXT_INT_M  li a1, MIP_VSEIP; csrc CSR_HVIP, a1  /* Clear VS-level external interrupt */
+
+#define RVTEST_SET_VSSW_INT_S   RVTEST_SET_VSSW_INT_M
+#define RVTEST_CLR_VSSW_INT_S   RVTEST_CLR_VSSW_INT_M
+#define RVTEST_SET_VSTIME_INT_S RVTEST_SET_VSTIME_INT_M
+#define RVTEST_CLR_VSTIME_INT_S RVTEST_CLR_VSTIME_INT_M
+#define RVTEST_SET_VSEXT_INT_S  RVTEST_SET_VSEXT_INT_M
+#define RVTEST_CLR_VSEXT_INT_S  RVTEST_CLR_VSEXT_INT_M
 
 #define RVTEST_SET_VSSW_INT_U   RVTEST_TSBI_CSR_SET(CSR_HVIP, MIP_VSSIP)
 #define RVTEST_CLR_VSSW_INT_U   RVTEST_TSBI_CSR_CLEAR(CSR_HVIP, MIP_VSSIP)
