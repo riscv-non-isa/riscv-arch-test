@@ -26,7 +26,7 @@ coverpoints:
     bins: 5 * (9 + 3)
     rules:
       - Zicsr_illegal_mode
-  - heading: Tests executed in VU-mode (H_vucsr_cg)
+  - heading: Tests executed in VU-mode (also H_ucsr_cg)
   - name: cp_hcsr_inaccessible
     goal: M-mode H-extension registers are inaccessible from VS-mode
     description: csrrw, csrrs, csrrc, csrr each {Machine/HS/VS} H-Extension and {Machine/Supervisor} CSR

@@ -2,22 +2,22 @@
 suite: H_Sm_inst
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=262865576#gid=262865576
 coverpoints:
-  - heading: Instructions (H_inst_cg)
+  - heading: Instructions executed in M-mode (H_Sm_inst_cg)
   - name: cp_hlv
     goal: Basic load
-    description: "Set up non-identity G and VS-stage page tables. In {M, HS, U (with hstatus.HU = 1)}: Write a random value to scratch. hlv.b, hlv.bu, hlv.h,  hlv.hu, hlv.w from scratch.  For rv64, also test hlv.wu, hlv.d.  Random source and destination registers."
+    description: "Set up non-identity G and VS-stage page tables. In M-mode: Write a random value to scratch. hlv.b, hlv.bu, hlv.h,  hlv.hu, hlv.w from scratch.  For rv64, also test hlv.wu, hlv.d.  Random source and destination registers."
     expectation: Read and sign/zero extend
-    bins: 3 modes * 7 instr
+    bins: 7 instr
   - name: cp_hlvx
     goal: Basic load
-    description: "Set up non-identity G and VS-stage page tables. In {M, HS, U (with hstatus.HU = 1): Write a random value to scratch. hlvx.hu, hlvx.wu from scratch.  Random source and destination registers."
+    description: "Set up non-identity G and VS-stage page tables. In M-mode: Write a random value to scratch. hlvx.hu, hlvx.wu from scratch.  Random source and destination registers."
     expectation: Read and sign/zero extend
-    bins: 3 modes * 2 instr
+    bins: 2 instr
   - name: cp_hsv
     goal: Basic store
-    description: "Set up non-identity G and VS-stage page tables. In {M, HS, U (with hstatus.HU = 1): Write a random value to scratch. hsv.b, hsv.h, hsv.w to scratch.  For rv64, also test hsv.d.  Random source and destination registers and values."
+    description: "Set up non-identity G and VS-stage page tables. In M-mode: Write a random value to scratch. hsv.b, hsv.h, hsv.w to scratch.  For rv64, also test hsv.d.  Random source and destination registers and values."
     expectation: Read and sign/zero extend
-    bins: 3 modes * 4 instr
+    bins: 4 instr
   - name: cp_mret_m
     goal: mret uses MPV
     description: Execute mret in machine mode with cross-product of mstatus.MPP / MPV / MPIE.

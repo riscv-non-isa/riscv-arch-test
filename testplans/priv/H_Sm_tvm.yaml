@@ -2,14 +2,15 @@
 suite: H_Sm_tvm
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=262865576#gid=262865576
 coverpoints:
+  - heading: Tests of mstatus.TVM and hstatus.VTVM, whose traps are taken in M-mode (H_Sm_tvm_cg)
   - name: cp_tvm_hs
     goal: TVM traps access to satp and hgatp, but not vsatp
-    description: "HSm_tvm_cg (boots to M-mode, so the traps are taken in M-mode): with mstatus.TVM = {0/1}, in HS-mode read and write satp, hgatp and vsatp"
+    description: "Boots to M-mode, so the traps are taken in M-mode: with mstatus.TVM = {0/1}, in HS-mode read and write satp, hgatp and vsatp"
     expectation: Illegal instruction fault for satp and hgatp if TVM = 1.  vsatp accesses never trap.
     bins: 3 regs * 2 accesses * 2 TVM
   - name: cp_tvm_vs
     goal: VTVM traps access to satp
-    description: "HSm_tvm_cg (boots to M-mode, so the traps are taken in M-mode): with mstatus.TVM = {0/1} cross hstatus.VTVM = {0/1}, in VS-mode read and write satp"
+    description: "Boots to M-mode, so the traps are taken in M-mode: with mstatus.TVM = {0/1} cross hstatus.VTVM = {0/1}, in VS-mode read and write satp"
     expectation: Virtual instruction fault if VTVM = 1. TVM does not affect VS-mode.
     bins: 2 TVM * 2 VTVM * 2 accesses
   - name: cp_hfence
