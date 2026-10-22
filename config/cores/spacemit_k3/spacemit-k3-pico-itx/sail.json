@@ -56,10 +56,12 @@
         "base_alignment": 2
       }
     },
+    // csr_probe: 0xb3ff with misa.H as found (0); 0xf0b7ff with misa.H set (adds the H causes
+    // 10 and 20-23; runner single-ELF #28). Tests set misa.H in RVMODEL_BOOT.
     "medeleg": {
       "delegatable_bits": {
         "len": 64,
-        "value": "0x0000_0000_0000_b3FF"
+        "value": "0x0000_0000_00F0_B7FF"
       }
     },
     "mideleg": {
