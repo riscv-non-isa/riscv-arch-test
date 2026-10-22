@@ -2300,13 +2300,13 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             "#endif",
         ]
     )
-    befores = tuple(zip(TDATA_CSRS, (old1_reg, old2_reg, old3_reg), strict=True))
+    before_regs = tuple(zip(TDATA_CSRS, (old1_reg, old2_reg, old3_reg), strict=True))
     for csr in TDATA_CSRS:
         body = [
             _add_tc(test_data, f"trig_num_1_{csr}_trig_num_0", coverpoint, covergroup),
             *_select_trigger(temp_reg, 0, mode),
         ]
-        for other, before_reg in befores:
+        for other, before_reg in before_regs:
             body.extend(_if_implemented(other, _csr_access(f"csrr x{before_reg}, {other} # trigger 0 before", mode)))
         body.extend(
             [
@@ -2319,7 +2319,7 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 *_select_trigger(temp_reg, 0, mode),
             ]
         )
-        for other, before_reg in befores:
+        for other, before_reg in before_regs:
             check = [
                 _csr_access(f"csrr x{data_reg}, {other} # trigger 0 after", mode),
                 f"xor x{data_reg}, x{data_reg}, x{before_reg} # 0 if trigger 0's {other} unchanged",
@@ -2328,7 +2328,12 @@ def _generate_csr_tests(test_data: TestData, mode: str) -> list[TestChunk]:
             body.extend([f"#ifdef UDB_{other.upper()}_IMPLEMENTED", *check, "#endif"] if other != "tdata1" else check)
         lines.extend(body if csr == "tdata1" else [f"#ifdef UDB_{csr.upper()}_IMPLEMENTED", *body, "#endif"])
     lines.extend(
-        [*_clear_tdata(mode), *_select_trigger(temp_reg, 1, mode), *_clear_tdata(mode), "#endif // UDB_SDTRIG_NUM_TRIGGERS"]
+        [
+            *_clear_tdata(mode),
+            *_select_trigger(temp_reg, 1, mode),
+            *_clear_tdata(mode),
+            "#endif // UDB_SDTRIG_NUM_TRIGGERS",
+        ]
     )
     test_data.int_regs.return_registers([old3_reg])
 
