@@ -173,12 +173,14 @@ include::{testplansdir}/priv/SdtrigSm.adoc[]
 
 include::norm/SdtrigSm_norm_rules.adoc[]
 
-As of 7/24/26, Sdtrig is partially implemented.  Only the mcontrol6 covergroup is fully developed. Coverpoints are incomplete and are in a draft PR.
-Sail models Sdtrig, including mcontrol6, and is the reference for the Sdtrig tests; Whisper can also be run against Spike.  QEMU does not yet match and some issues
-have been filed and are tracked https://docs.google.com/spreadsheets/d/1EuG4LV1TQDx4wTzYDWEAvq0fwaWjNuxenwDARZmrN-E/edit?gid=0#gid=0[here].
-Run with `make whisper-rv64-max-spike-ref EXTENSIONS=SdtrigSm`.
+As of 10/22/26, the SdtrigSm, SdtrigS and SdtrigU tests and coverpoints exercise the mcontrol6, icount, itrigger and etrigger trigger types, `textra`,
+access to the trigger registers, and address matching on scalar, compressed, atomic, vector, cache-block and translated accesses.
+Sail models Sdtrig and is the reference for the Sdtrig tests. Spike and Whisper pass; Whisper can also be run against Spike with `make whisper-rv64-max-spike-ref EXTENSIONS=SdtrigSm`.
+Imperas passes with HMC's engineering build of the model. Stock Imperas, QEMU and XiangShan are excluded because of filed bugs,
+listed in their `ci.yaml` files; the QEMU issues are also tracked
+https://docs.google.com/spreadsheets/d/1EuG4LV1TQDx4wTzYDWEAvq0fwaWjNuxenwDARZmrN-E/edit?gid=0#gid=0[here].
 
-An initial set of parameters for Sdtrig is proposed for https://github.com/riscv/riscv-unified-db/pull/2069[UDB].
+The Sdtrig parameters are defined in https://github.com/riscv/riscv-unified-db/pull/2069[UDB].
 
 Most Sdtrig features are optional, so defining what to test requires many parameters.  UDB_SDTRIG_NUM_TRIGGERS define how many triggers exist.
 For each trigger, each type (mcontrol6, icount, itrigger, etrigger) is optionally supported. Many of the fields in `tdata1` for each type are optional.
@@ -189,7 +191,7 @@ implementation-specific external triggers.
 `dmode` is not tested in Sdtrig because it depends on Sdext. `hcontext` depends on the Hypervisor extension, so the Access tests touch it only on configurations that implement it.  Non-maskable interrupts
 are not tested because they are not part of RVA23.
 
-`mcontrol` has been replaced by `mcontrol6`.  It is deprecated and not tested.  `mscontext` is only for backward compatibility with Sdtrig 0.13 and is not tested.
+`mcontrol` has been replaced by `mcontrol6`, so it is deprecated and not tested.  `mscontext` is only for backward compatibility with Sdtrig 0.13 and is not tested.
 
 ===== Trigger Re-entrancy and What Can Be Tested
 
