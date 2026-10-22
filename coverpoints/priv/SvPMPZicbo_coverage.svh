@@ -42,6 +42,23 @@ covergroup SvPMPZicbo_cg with function sample(ins_t ins);
         }
     `endif
 
+    // Page level (0 = 4 KiB leaf) for a PMP fault on a page table. The test skips the top-level leaf when
+    // PMP_GRANULARITY >= 12, where the PMP region covers the whole root table and so blocks every translation.
+    `ifdef UDB_MXLEN_64
+        PageType_pte_d: coverpoint ins.current.page_type_d {
+            `ifdef SV48_SUPPORTED
+                bins sv48[] = {[0:3]} with (item < 3 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+            `endif
+            `ifdef SV39_SUPPORTED
+                bins sv39[] = {[0:2]} with (item < 2 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
+            `endif
+        }
+    `else
+        PageType_pte_d: coverpoint ins.current.page_type_d {
+            bins sv32[] = {[0:1]} with (item < 1 || `UDB_PMP_GRANULARITY < 12) iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[0] == 1'b1);
+        }
+    `endif
+
     store_acc_fault: coverpoint  get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mcause", "mcause") {
         bins store_acc_fault = {STORE_AMO_ACCESS_FAULT};
     }
@@ -62,8 +79,8 @@ covergroup SvPMPZicbo_cg with function sample(ins_t ins);
 
     cp_PA_PMP_rw_unset_cbo_s:  cross PTE_s, PageType_d, PMP_perm, cbo_ins, store_acc_fault, priv_mode_s;
     cp_PA_PMP_rw_unset_cbo_u:  cross PTE_u, PageType_d, PMP_perm, cbo_ins, store_acc_fault, priv_mode_u;
-    cp_PTE_PMP_rw_unset_cbo_s: cross PTE_s, PageType_d, PMP_perm, cbo_ins, store_acc_fault, priv_mode_s;
-    cp_PTE_PMP_rw_unset_cbo_u: cross PTE_u, PageType_d, PMP_perm, cbo_ins, store_acc_fault, priv_mode_u;
+    cp_PTE_PMP_rw_unset_cbo_s: cross PTE_s, PageType_pte_d, PMP_perm, cbo_ins, store_acc_fault, priv_mode_s;
+    cp_PTE_PMP_rw_unset_cbo_u: cross PTE_u, PageType_pte_d, PMP_perm, cbo_ins, store_acc_fault, priv_mode_u;
 
 endgroup
 
