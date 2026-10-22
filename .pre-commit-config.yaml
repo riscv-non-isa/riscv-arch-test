@@ -64,7 +64,7 @@ repos:
 
   # Ensure uv lock file is up to date
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 2e145a365871c9fef3715d38b9b7393ce4174c85 # frozen: 0.13.0
+    rev: d4acaec07ac3bc6017fba3c3b8e9810af1b615db # frozen: 0.13.1
     hooks:
       - id: uv-lock
 
@@ -112,6 +112,11 @@ repos:
     hooks:
       - id: markdown-link-check
         args: [-q, -c .markdown-link-check.config]
+      # docs.openhwfoundation.org rate-limits CI, so check its links separately and accept HTTP 429 only there
+      - id: markdown-link-check
+        name: Markdown Link Check (docs.openhwfoundation.org)
+        alias: markdown-link-check-openhw
+        args: [-q, -c .markdown-link-check-openhw.config]
 
   # Validate Renovate configuration
   - repo: https://github.com/renovatebot/pre-commit-hooks

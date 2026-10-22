@@ -1,9 +1,6 @@
 [[abstraction-layer]]
 == Abstraction Layer
 
-*** separate this into parts required for all test suites including TT vs. parts required only for ACT4
-*** key for TT is to invoke RVMODEL_BOOT and RVMODEL_BOOT_TO_MMODE if they exist, and to implement SBI, also use other RVMODEL macros and link.ld
-
 The abstraction layer provides a set of macros that allow test programs and coverpoints to interact with the DUT in a platform-specific way.  This allows the same test program and coverpoint source code to be used across different DUTs, with only the abstraction layer macros needing to be modified for each DUT.  In particular, the abstraction layer includes
 
 * Boot macros to initialize state.
@@ -51,7 +48,7 @@ CSR initialization includes
 * mstatus (SXLEN/UXLEN = MXLEN, SBE/UBE = MBE, other features off)
 * menvcfg (enable unpriv features if U supported)
 * mstateen0 (enable unpriv features if SMSTATEN_SUPPORTED)
-* mcountinhibit = 0 *** if exists
+* mcountinhibit = 0 (if implemented)
 * mhpmenvent3...31/h = 0
 * mseccfg (disable features if supported)
 * mnstatus (disable resumable NMI fields if SMRNMI_SUPPORTED)
@@ -76,7 +73,7 @@ The boot process ends in S-mode if the BOOT_TO_SMODE symbol is defined in the te
 
 If the test is not intended to run in S-mode, and U-mode is supported, `rvmodel_boot` calls `RVTEST_BOOT_TO_UMODE`, which switches to U-mode through T-SBI.
 
-Finally, `rvmodel_boot` jumps to `rvtest_init`, which calls `RVTEST_INIT_REGS` to initialize GPRs, then sets up the signature pointer and checks a canary if applicable.***
+Finally, `rvmodel_boot` clears the trap counter and runs `RVTEST_INIT_REGS`, which initializes the integer, floating-point and vector registers, then sets up the signature pointer and checks a canary if applicable. It then jumps to `rvtest_code_begin` to start the test.
 
 [[rvmodel-macros]]
 === RVMODEL DUT-Specific Macros
