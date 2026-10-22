@@ -1903,7 +1903,7 @@ normative_rule_definitions:
   # Byte-granular comparison of scontext to svalue allows scontext to be defined to
   # include more than one element of comparison.
   - name: Sdtrig_textra32_byte_granular
-    coverpoint: ["Descriptive spec text with no separately testable behavior"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
 
   # Byte masking only applies to scontext comparison; i.e when sselect is 1.
   - name: Sdtrig_textra32_byte_mask_applies

@@ -276,9 +276,15 @@ coverpoints:
       Read all registers
       Write reg_x  all 1's
       Read other 2 registers
+      Then, with trigger 0 disabled (tdata1.type = 15, tdata2 = scratch if it supports mcontrol6):
+      For reg_x in {tdata1, tdata2, tdata3} of trigger 1:
+      Read tdata1/2/3 of trigger 0
+      Select trigger 1, tdata1.type = 15, write reg_x all 0s, then all 1's
+      Select trigger 0, read tdata1/2/3 again (each before ^ after is recorded)
     expectation: |-
       No exceptions
       Writing one tdata register does not change another
+      Writing the tdata registers of trigger 1 does not change those of trigger 0
     bins: "3"
     rules:
       - Sdtrig_tdata_write
@@ -1208,6 +1214,8 @@ coverpoints:
       - Sdtrig_textra32_sselect_scontext
       - Sdtrig_textra32_sbytemask
       - Sdtrig_textra64_sbytemask
+      - Sdtrig_textra32_byte_granular
+      - Sdtrig_textra64_byte_granular
   - name: cp_textra_scontext_all
     goal: With every scontext byte masked, the scontext compare always matches
     description: |-
