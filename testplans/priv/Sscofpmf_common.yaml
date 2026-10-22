@@ -3,16 +3,14 @@ suite: Sscofpmf_common
 title: Sscofpmf Setup
 source: https://docs.google.com/spreadsheets/d/13ibIsAhJpQBXcL1Y5F7sddysLPFpaCr8_oDyQV_Boqw/edit?gid=0#gid=0
 coverpoints:
-  - heading: To test Sscofpf, the user must give values to the following RVMODEL macros.  If any are undefined and SSCOFPMF_SUPPORTED, error.
-  - name: RVMODEL_MHPMCOUNTER
-    goal: Name of a hpmcounter CSR to test (e.g. mhpmcounter3)
-  - name: RVMODEL_MHPMEVENT
-    goal: Name of a event CSR to test (e.g. mhpmevent3)
+  - heading: To test Sscofpmf, define the following RVMODEL macros in rvmodel_macros.h. check_defines.h reports an error if Sscofpmf is supported and any of them is undefined.
+  - name: RVMODEL_HPM_COUNTER
+    goal: Index, 3 to 31, of the HPM counter to test. The tests derive mhpmevent<n> and mhpmcounter<n>, and on RV32 their high halves, from it; the tables below call them mhpmevent and mhpmcounter.
   - name: RVMODEL_MHPMEVENT_VAL
-    goal: Value to put in the event CSR to make it count.
+    goal: Event selector written to mhpmevent[55:0] so that RVMODEL_MHPMEVENT_CODE increments mhpmcounter. 0 if the DUT cannot count any event, in which case the overflow checks are vacuous.
   - name: RVMODEL_MHPMEVENT_CODE
-    goal: Code that increments the event counter (shouldn't trash certain registers), should be able to run in all privilege modes
-  - heading: These values need to be different in sail_macros.h to support how Sail will do this (https://github.com/riscv/sail-riscv/issues/1733)
+    goal: Code that increments mhpmcounter at least once in the current privilege mode, whatever that mode is. It must not trap.
+  - heading: The Sail reference model runs a fence in place of RVMODEL_MHPMEVENT_CODE, so map EV_FENCE to RVMODEL_MHPMEVENT_VAL in event_selectors of the DUT's sail.json. The tests check only whether mhpmcounter moved and whether it overflowed, never by how much, so the DUT and Sail may count different events.
   - heading: Only one of the HPM counters is tested because the spec does not require multiple counters supported even when Zihpm is active.
-  - heading: Tests are performed in Sm/S/U for SscofpmfSm/S/U suites
-  - heading: Use T-SBI calls where necessary to access machine mode CSRs from lower privilege modes.
+  - heading: The tests run in M-mode (Sscofpmf_Sm), S-mode (Sscofpmf_S) and U-mode (Sscofpmf_U). Each group has its own covergroup and table below.
+  - heading: Below M-mode, T-SBI calls access the machine-mode CSRs, and counting is inhibited in the modes above the one under test so that the T-SBI trap handler is not counted.

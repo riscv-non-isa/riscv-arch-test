@@ -1119,7 +1119,6 @@ def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
     required_extensions=["Sm", "Sscofpmf"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="SscofpmfSm",
 )
 def make_sscofpmfsm(test_data: TestData) -> list[TestChunk]:
     """Generate the Sscofpmf_Sm performance-counter-overflow tests, run in M-mode."""
@@ -1137,7 +1136,6 @@ def make_sscofpmfsm(test_data: TestData) -> list[TestChunk]:
     required_extensions=["Sscofpmf"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_SMODE"],
-    seed_name="SscofpmfS",
 )
 def make_sscofpmfs(test_data: TestData) -> list[TestChunk]:
     """Generate the Sscofpmf_S performance-counter-overflow tests, run in S-mode."""
@@ -1153,7 +1151,6 @@ def make_sscofpmfs(test_data: TestData) -> list[TestChunk]:
 @add_priv_test_generator(
     "Sscofpmf",
     required_extensions=["Sscofpmf", "U"],
-    seed_name="SscofpmfU",
 )
 def make_sscofpmfu(test_data: TestData) -> list[TestChunk]:
     """Generate the Sscofpmf_U performance-counter-overflow tests, run in U-mode."""

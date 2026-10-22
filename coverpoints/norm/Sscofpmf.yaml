@@ -29,10 +29,9 @@ normative_rule_definitions:
       ]
 
   - name: count_overflow_trigger
-    # Representative coverpoints; also Sscofpmf_U_cg/{cp_overflow_hw_only, cp_lcofip_hw_only}
     coverpoint:
       [
-        "{Sscofpmf_Sm_cg,Sscofpmf_S_cg}/{cp_overflow_hw_only, cp_lcofip_hw_only}",
+        "{Sscofpmf_Sm_cg,Sscofpmf_S_cg,Sscofpmf_U_cg}/{cp_overflow_hw_only, cp_lcofip_hw_only}",
       ]
 
   - name: scountovf_op
@@ -66,11 +65,12 @@ normative_rule_definitions:
   # reflects the occurrence of a local counter-overflow overflow interrupt request
   # resulting from any of the mhpmeventn.OF bits being set.
   - name: mip_lcofip_reflects_overflow
-    coverpoint: ["Sscofpmf_Sm_cg/cp_lcofi_m"]
+    coverpoint: ["Sscofpmf_Sm_cg/cp_of_set_on_overflow"]
   # When an OF bit is set, it eventually, but not necessarily immediately, sets the LCOFIP
   # bit in the mip/sip registers.
   - name: lcofip_op
-    coverpoint: ["Sscofpmf_Sm_cg/cp_lcofi_m", "Sscofpmf_S_cg/cp_lcofi_sip_s"]
+    coverpoint:
+      ["{Sscofpmf_Sm_cg,Sscofpmf_S_cg,Sscofpmf_U_cg}/{cp_of_set_on_overflow}"]
   # csr::[lcofip] is read-write in csr:mip[]
   - name: mip_lcofip_acc
     coverpoint: ["Sscofpmf_Sm_cg/cp_lcofi_m"]
@@ -82,7 +82,12 @@ normative_rule_definitions:
   # the Sscofpmf extension is not implemented, sip.LCOFIP and sie.LCOFIE are read-only
   # zeros.
   - name: sip_sie_Sscofpmf
-    coverpoint: ["Sscofpmf_S_cg/cp_lcofi_sip_s", "Sscofpmf_U_cg/cp_lcofi_sip_u"]
+    coverpoint:
+      [
+        "Sscofpmf_S_cg/cp_lcofi_sip_s",
+        "Sscofpmf_S_cg/cp_of_set_on_overflow",
+        "Sscofpmf_U_cg/cp_lcofi_sip_u",
+      ]
 
   - name: intr_m_mode_pri
     coverpoint: ["Sscofpmf_Sm_cg/cp_lcofip_priority_m"]
