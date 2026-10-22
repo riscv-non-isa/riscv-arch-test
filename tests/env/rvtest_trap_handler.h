@@ -106,8 +106,6 @@
 //      translation on and has registered a code alias for its code region
 //      (see TSBI_RELOCATE_EPC).
 //    TSBI_ECALL_TEST  (a0=0x73)       — Test ecall path; returns xEPC in a0
-//    TSBI_ECALL_RECORD (a0=6)         — Record the ecall in the trap signature like any
-//                                       other exception and return past it
 //    CSR_ACCESS       (a0=CSR opcode) — Execute CSR instruction; rd must be a0
 //    TSBI_LW/LWP4/LD  (a0=load opcode) — Load from physical address a1 into a0
 //    TSBI_SW/SWP4/SD  (a0=store opcode)— Store a2 to physical address a1
@@ -115,10 +113,10 @@
 //
 //  Dispatch hierarchy:
 //    M-mode handler:  handles all operations directly
-//    S-mode handler:  handles ECALL_TEST, ECALL_RECORD, GOTO_S/U/VS/VU, S-mode CSR_ACCESS locally;
+//    S-mode handler:  handles ECALL_TEST, GOTO_S/U/VS/VU, S-mode CSR_ACCESS locally;
 //                     forwards GOTO_M, M-mode CSR_ACCESS, and loads/stores to M-mode via ecall
 //    VS-mode handler: receives calls from VU-mode when hedeleg[8]=1. It handles
-//                     ECALL_TEST, ECALL_RECORD and GOTO_VS/VU locally and forwards everything
+//                     ECALL_TEST and GOTO_VS/VU locally and forwards everything
 //                     else to HS-mode via ecall. A forwarded GOTO_M/S/U leaves the
 //                     guest: the HS handler recognizes the ecall at
 //                     tsbi_Vforward_goto_ecall and resumes the VU caller
@@ -196,9 +194,8 @@
 // Dispatch order in the handler:
 //   1. If (a0-1) < 5  -> GOTO_xMODE      (a0 in range [1..5])
 //   2. If a0 == 0x73  -> ECALL_TEST      (exact match on ecall encoding)
-//   3. If a0 == 6     -> ECALL_RECORD    (recorded like any other exception)
-//   4. If a0[6:0]==0x73 && a0[14:12]!=0 -> CSR_ACCESS (SYSTEM opcode with funct3)
-//   5. Otherwise       -> RESERVED        (return -1)
+//   3. If a0[6:0]==0x73 && a0[14:12]!=0 -> CSR_ACCESS (SYSTEM opcode with funct3)
+//   4. Otherwise       -> RESERVED        (return -1)
 //==============================================================================
 
 // a0 values for TSBI_GOTO_xMODE.
@@ -208,7 +205,6 @@
 #define TSBI_GOTO_VSMODE    0x00000004
 #define TSBI_GOTO_VUMODE    0x00000005
 #define TSBI_ECALL_TEST     0x00000073
-#define TSBI_ECALL_RECORD   0x00000006
 #define TSBI_SFENCE_VMA     0x12000073           // sfence.vma x0, x0: flush address-translation caches
 #define TSBI_LW             0x0005a503
 #define TSBI_LWP4           0x0045a503
@@ -705,7 +701,6 @@
 //   RVTEST_TSBI_GOTO_MMODE              // switch to M-mode, clobbers a0
 //   RVTEST_TSBI_GOTO_UMODE              // switch to U-mode, clobbers a0
 //   RVTEST_TSBI_ECALL_TEST              // test ecall path, result in a0
-//   RVTEST_TSBI_ECALL_RECORD            // ecall recorded in the trap signature
 //   RVTEST_TSBI_CSR_ACCESS 0x30002573   // read mstatus into a0
 //
 // CLOBBERS: a0 (operation code / return value), a1 (CSR_ACCESS argument only)
@@ -758,14 +753,6 @@
   li   a0, TSBI_ECALL_TEST                      // a0 = 0x73 (ECALL_TEST operation code)
   ecall                                          // trap to handler; handler reads xEPC into a0
   // a0 now contains the address of the ecall instruction above
-  .option pop
-.endm
-
-.macro RVTEST_TSBI_ECALL_RECORD
-  .option push
-  .option norvc                                  // ensure consistent code size
-  li   a0, TSBI_ECALL_RECORD                    // a0 = 6 (ECALL_RECORD operation code)
-  ecall                                          // handler records the trap and returns past the ecall
   .option pop
 .endm
 
@@ -1363,7 +1350,6 @@ common_\__MODE__\()entry:                       // common entry for all traps in
 //   2. Dispatch on the caller's a0 (still live — the handler never touches a0/a1):
 //      a. a0 in [1..5] -> GOTO_xMODE (set MPP/MPV, bump mepc, mret)
 //      b. a0 == 0x73   -> ECALL_TEST (return xEPC in a0, bump mepc)
-//         a0 == 6      -> ECALL_RECORD (record the trap signature, bump mepc)
 //      c. a0[6:0]==0x73 && a0[14:12]!=0 -> CSR_ACCESS (execute dynamic CSR instr)
 //      d. Otherwise    -> RESERVED (return -1 in a0)
 //   3. If not an SBI call: fall through to normal trap signature recording
@@ -1396,8 +1382,6 @@ tsbi_\__MODE__\()dispatch:
         // --- Check for ECALL_TEST (a0 == 0x00000073) ---
         LI(     T2, TSBI_ECALL_TEST)              // T2 = 0x73 (ECALL_TEST operation code)
         beq     a0, T2, tsbi_\__MODE__\()ecall_test // if caller_a0 == 0x73 -> ECALL_TEST handler
-        LI(     T2, TSBI_ECALL_RECORD)
-        beq     a0, T2, \__MODE__\()trapsig_ptr_upd // ECALL_RECORD -> record it like any other exception
 
         // Otherwise consult dispatch table
         j tsbi_\__MODE__\()instr_dispatch
@@ -1558,7 +1542,6 @@ tsbi_\__MODE__\()goto_vu:
 //
 // LOCAL HANDLING (S-mode can service these directly):
 //   - ECALL_TEST:  return sepc in a0 (sepc = U-mode ecall address)
-//   - ECALL_RECORD: record the trap signature and return past the ecall
 //   - GOTO_SMODE:  set sstatus.SPP=1 (return to S-mode via sret)
 //   - GOTO_UMODE:  set sstatus.SPP=0 (return to U-mode via sret)
 //   - CSR_ACCESS for S/U-mode CSRs: execute locally (CSR addr[9:8] != 11)
@@ -1571,7 +1554,7 @@ tsbi_\__MODE__\()goto_vu:
 //   - LW/LWP4/LD/SW/SWP4/SD: physical memory-mapped I/O access needs M-mode
 //
 // VS-MODE HANDLER:
-//   - ECALL_TEST, ECALL_RECORD, GOTO_VSMODE (vsstatus.SPP=1) and GOTO_VUMODE
+//   - ECALL_TEST, GOTO_VSMODE (vsstatus.SPP=1) and GOTO_VUMODE
 //     (vsstatus.SPP=0) are handled locally.
 //   - GOTO_MMODE/SMODE/UMODE leave the guest, which only HS-mode can do:
 //     tsbi_Vforward_goto makes the call from tsbi_Vforward_goto_ecall, where
@@ -1651,8 +1634,6 @@ tsbi_\__MODE__\()dispatch:
         // Check for ECALL_TEST (a0 == 0x73)
         LI(     T2, TSBI_ECALL_TEST)              // T2 = 0x73
         beq     a0, T2, tsbi_\__MODE__\()ecall_test // match -> ECALL_TEST handler
-        LI(     T2, TSBI_ECALL_RECORD)
-        beq     a0, T2, \__MODE__\()trapsig_ptr_upd // ECALL_RECORD -> record it like any other exception
 
   .ifc \__MODE__ , V
         j       tsbi_\__MODE__\()forward           // everything else is serviced by HS-mode
