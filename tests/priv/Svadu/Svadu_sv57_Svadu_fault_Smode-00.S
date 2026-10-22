@@ -65,13 +65,16 @@ RVTEST_BEGIN
 
   LI(x9, 0x800) // Test signature initialization
 
-// Test case 1: Misaligned superpage at level 4 | A=0 D=0 | expected = RWX page fault, D unchanged
-  PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL4)
+// Test case 1: Misaligned superpage at level 1 | A=0 D=0 | expected = RWX page fault, D unchanged
+  PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_misaligned, LEVEL4)
+  PTE_SETUP_SV57(rvtest_slvl2_pg_tbl, (PTE_V), va_misaligned, LEVEL3)
+  PTE_SETUP_SV57(rvtest_slvl1_pg_tbl, (PTE_V), va_misaligned, LEVEL2)
+  PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL1)
 
-  LI(x15, (va_misaligned >> 48) << 48)
+  LI(x15, (va_misaligned >> 21) << 21)
   LA(x14, rvtest_data_1)
-  slli x14, x14, 16
-  srli x14, x14, 16
+  slli x14, x14, 43
+  srli x14, x14, 43
   add x15, x15, x14
   sfence.vma
   addi x9, x9, 16
@@ -101,8 +104,8 @@ Svadu_cg_cp_ad_fault_no_update_test1_exec:
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test1_exec, Svadu_cg_cp_ad_fault_no_update_test1_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(x14, rvtest_Sroot_pg_tbl)
-  LI(x8, 56)
+  LA(x14, rvtest_slvl1_pg_tbl)
+  LI(x8, 0)
   add x14, x14, x8
 Svadu_cg_cp_ad_fault_no_update_test1_read_pte:
   LREG x8, 0(x14)
@@ -110,14 +113,15 @@ Svadu_cg_cp_ad_fault_no_update_test1_read_pte:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test1_read_pte, Svadu_cg_cp_ad_fault_no_update_test1_read_pte_str)
 
-// Test case 2: Misaligned superpage at level 3 | A=0 D=0 | expected = RWX page fault, D unchanged
+// Test case 2: Misaligned superpage at level 2 | A=0 D=0 | expected = RWX page fault, D unchanged
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_misaligned, LEVEL4)
-  PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL3)
+  PTE_SETUP_SV57(rvtest_slvl2_pg_tbl, (PTE_V), va_misaligned, LEVEL3)
+  PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL2)
 
-  LI(x15, (va_misaligned >> 39) << 39)
+  LI(x15, (va_misaligned >> 30) << 30)
   LA(x14, rvtest_data_1)
-  slli x14, x14, 25
-  srli x14, x14, 25
+  slli x14, x14, 34
+  srli x14, x14, 34
   add x15, x15, x14
   sfence.vma
   addi x9, x9, 16
@@ -147,7 +151,7 @@ Svadu_cg_cp_ad_fault_no_update_test2_exec:
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test2_exec, Svadu_cg_cp_ad_fault_no_update_test2_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(x14, rvtest_slvl3_pg_tbl)
+  LA(x14, rvtest_slvl2_pg_tbl)
   LI(x8, 0)
   add x14, x14, x8
 Svadu_cg_cp_ad_fault_no_update_test2_read_pte:
@@ -156,15 +160,14 @@ Svadu_cg_cp_ad_fault_no_update_test2_read_pte:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test2_read_pte, Svadu_cg_cp_ad_fault_no_update_test2_read_pte_str)
 
-// Test case 3: Misaligned superpage at level 2 | A=0 D=0 | expected = RWX page fault, D unchanged
+// Test case 3: Misaligned superpage at level 3 | A=0 D=0 | expected = RWX page fault, D unchanged
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_misaligned, LEVEL4)
-  PTE_SETUP_SV57(rvtest_slvl2_pg_tbl, (PTE_V), va_misaligned, LEVEL3)
-  PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL2)
+  PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL3)
 
-  LI(x15, (va_misaligned >> 30) << 30)
+  LI(x15, (va_misaligned >> 39) << 39)
   LA(x14, rvtest_data_1)
-  slli x14, x14, 34
-  srli x14, x14, 34
+  slli x14, x14, 25
+  srli x14, x14, 25
   add x15, x15, x14
   sfence.vma
   addi x9, x9, 16
@@ -194,7 +197,7 @@ Svadu_cg_cp_ad_fault_no_update_test3_exec:
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test3_exec, Svadu_cg_cp_ad_fault_no_update_test3_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(x14, rvtest_slvl2_pg_tbl)
+  LA(x14, rvtest_slvl3_pg_tbl)
   LI(x8, 0)
   add x14, x14, x8
 Svadu_cg_cp_ad_fault_no_update_test3_read_pte:
@@ -203,16 +206,13 @@ Svadu_cg_cp_ad_fault_no_update_test3_read_pte:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test3_read_pte, Svadu_cg_cp_ad_fault_no_update_test3_read_pte_str)
 
-// Test case 4: Misaligned superpage at level 1 | A=0 D=0 | expected = RWX page fault, D unchanged
-  PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_misaligned, LEVEL4)
-  PTE_SETUP_SV57(rvtest_slvl2_pg_tbl, (PTE_V), va_misaligned, LEVEL3)
-  PTE_SETUP_SV57(rvtest_slvl1_pg_tbl, (PTE_V), va_misaligned, LEVEL2)
-  PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL1)
+// Test case 4: Misaligned superpage at level 4 | A=0 D=0 | expected = RWX page fault, D unchanged
+  PTE_SETUP_SV57(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_misaligned, LEVEL4)
 
-  LI(x15, (va_misaligned >> 21) << 21)
+  LI(x15, (va_misaligned >> 48) << 48)
   LA(x14, rvtest_data_1)
-  slli x14, x14, 43
-  srli x14, x14, 43
+  slli x14, x14, 16
+  srli x14, x14, 16
   add x15, x15, x14
   sfence.vma
   addi x9, x9, 16
@@ -242,8 +242,8 @@ Svadu_cg_cp_ad_fault_no_update_test4_exec:
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test4_exec, Svadu_cg_cp_ad_fault_no_update_test4_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(x14, rvtest_slvl1_pg_tbl)
-  LI(x8, 0)
+  LA(x14, rvtest_Sroot_pg_tbl)
+  LI(x8, 56)
   add x14, x14, x8
 Svadu_cg_cp_ad_fault_no_update_test4_read_pte:
   LREG x8, 0(x14)
@@ -496,13 +496,16 @@ Svadu_cg_cp_ad_fault_no_update_test9_read_pte:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test9_read_pte, Svadu_cg_cp_ad_fault_no_update_test9_read_pte_str)
 
-// Test case 10: N=1 with ppn[3:0]=1000 on a level 4 superpage | A=0 D=0 | expected = RWX page fault, D unchanged
-  SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 63) | (1 << 13) | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL4)
+// Test case 10: N=1 with ppn[3:0]=1000 on a level 1 superpage | A=0 D=0 | expected = RWX page fault, D unchanged
+  PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
+  PTE_SETUP_SV57(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
+  PTE_SETUP_SV57(rvtest_slvl1_pg_tbl, (PTE_V), va_data, LEVEL2)
+  SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 63) | (1 << 13) | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
 
-  LI(x15, (va_data >> 48) << 48)
+  LI(x15, (va_data >> 21) << 21)
   LA(x14, rvtest_data_1)
-  slli x14, x14, 16
-  srli x14, x14, 16
+  slli x14, x14, 43
+  srli x14, x14, 43
   add x15, x15, x14
   sfence.vma
   addi x9, x9, 16
@@ -532,8 +535,8 @@ Svadu_cg_cp_ad_fault_no_update_test10_exec:
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test10_exec, Svadu_cg_cp_ad_fault_no_update_test10_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(x14, rvtest_Sroot_pg_tbl)
-  LI(x8, 56)
+  LA(x14, rvtest_slvl1_pg_tbl)
+  LI(x8, 16)
   add x14, x14, x8
 Svadu_cg_cp_ad_fault_no_update_test10_read_pte:
   LREG x8, 0(x14)
@@ -541,14 +544,15 @@ Svadu_cg_cp_ad_fault_no_update_test10_read_pte:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test10_read_pte, Svadu_cg_cp_ad_fault_no_update_test10_read_pte_str)
 
-// Test case 11: N=1 with ppn[3:0]=1000 on a level 3 superpage | A=0 D=0 | expected = RWX page fault, D unchanged
+// Test case 11: N=1 with ppn[3:0]=1000 on a level 2 superpage | A=0 D=0 | expected = RWX page fault, D unchanged
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
-  SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 63) | (1 << 13) | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL3)
+  PTE_SETUP_SV57(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
+  SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 63) | (1 << 13) | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL2)
 
-  LI(x15, (va_data >> 39) << 39)
+  LI(x15, (va_data >> 30) << 30)
   LA(x14, rvtest_data_1)
-  slli x14, x14, 25
-  srli x14, x14, 25
+  slli x14, x14, 34
+  srli x14, x14, 34
   add x15, x15, x14
   sfence.vma
   addi x9, x9, 16
@@ -578,8 +582,8 @@ Svadu_cg_cp_ad_fault_no_update_test11_exec:
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test11_exec, Svadu_cg_cp_ad_fault_no_update_test11_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(x14, rvtest_slvl3_pg_tbl)
-  LI(x8, 40)
+  LA(x14, rvtest_slvl2_pg_tbl)
+  LI(x8, 160)
   add x14, x14, x8
 Svadu_cg_cp_ad_fault_no_update_test11_read_pte:
   LREG x8, 0(x14)
@@ -587,15 +591,14 @@ Svadu_cg_cp_ad_fault_no_update_test11_read_pte:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test11_read_pte, Svadu_cg_cp_ad_fault_no_update_test11_read_pte_str)
 
-// Test case 12: N=1 with ppn[3:0]=1000 on a level 2 superpage | A=0 D=0 | expected = RWX page fault, D unchanged
+// Test case 12: N=1 with ppn[3:0]=1000 on a level 3 superpage | A=0 D=0 | expected = RWX page fault, D unchanged
   PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
-  PTE_SETUP_SV57(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
-  SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 63) | (1 << 13) | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL2)
+  SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 63) | (1 << 13) | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL3)
 
-  LI(x15, (va_data >> 30) << 30)
+  LI(x15, (va_data >> 39) << 39)
   LA(x14, rvtest_data_1)
-  slli x14, x14, 34
-  srli x14, x14, 34
+  slli x14, x14, 25
+  srli x14, x14, 25
   add x15, x15, x14
   sfence.vma
   addi x9, x9, 16
@@ -625,8 +628,8 @@ Svadu_cg_cp_ad_fault_no_update_test12_exec:
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test12_exec, Svadu_cg_cp_ad_fault_no_update_test12_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(x14, rvtest_slvl2_pg_tbl)
-  LI(x8, 160)
+  LA(x14, rvtest_slvl3_pg_tbl)
+  LI(x8, 40)
   add x14, x14, x8
 Svadu_cg_cp_ad_fault_no_update_test12_read_pte:
   LREG x8, 0(x14)
@@ -634,16 +637,13 @@ Svadu_cg_cp_ad_fault_no_update_test12_read_pte:
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test12_read_pte, Svadu_cg_cp_ad_fault_no_update_test12_read_pte_str)
 
-// Test case 13: N=1 with ppn[3:0]=1000 on a level 1 superpage | A=0 D=0 | expected = RWX page fault, D unchanged
-  PTE_SETUP_SV57(rvtest_slvl3_pg_tbl, (PTE_V), va_data, LEVEL4)
-  PTE_SETUP_SV57(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
-  PTE_SETUP_SV57(rvtest_slvl1_pg_tbl, (PTE_V), va_data, LEVEL2)
-  SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 63) | (1 << 13) | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
+// Test case 13: N=1 with ppn[3:0]=1000 on a level 4 superpage | A=0 D=0 | expected = RWX page fault, D unchanged
+  SUPERPAGE_PTE_SETUP_SV57(rvtest_data_1, ((1 << 63) | (1 << 13) | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL4)
 
-  LI(x15, (va_data >> 21) << 21)
+  LI(x15, (va_data >> 48) << 48)
   LA(x14, rvtest_data_1)
-  slli x14, x14, 43
-  srli x14, x14, 43
+  slli x14, x14, 16
+  srli x14, x14, 16
   add x15, x15, x14
   sfence.vma
   addi x9, x9, 16
@@ -673,8 +673,8 @@ Svadu_cg_cp_ad_fault_no_update_test13_exec:
   RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_cg_cp_ad_fault_no_update_test13_exec, Svadu_cg_cp_ad_fault_no_update_test13_exec_str)
 
 // The PTE must still have D=0. A may have been set speculatively, so clear it before the check.
-  LA(x14, rvtest_slvl1_pg_tbl)
-  LI(x8, 16)
+  LA(x14, rvtest_Sroot_pg_tbl)
+  LI(x8, 56)
   add x14, x14, x8
 Svadu_cg_cp_ad_fault_no_update_test13_read_pte:
   LREG x8, 0(x14)

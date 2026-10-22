@@ -8,6 +8,8 @@
 
 """Generate hardware A/D-bit update tests."""
 
+from typing import NamedTuple
+
 from testgen.asm.helpers import write_sigupd
 from testgen.asm.tsbi import tsbi_call
 from testgen.data.state import TestData
@@ -175,53 +177,47 @@ def _make_svadu_mode(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
     return end_sv_test(test_data, regs)
 
 
-# Leaf VAs for the fault tests: va_data for 4 KiB pages, and a VA whose superpage leaf maps the 4 KiB-aligned
+# Fault-test VAs. va_data maps a 4 KiB page. va_misaligned has a superpage leaf that maps the 4 KiB-aligned
 # rvtest_data_1, so its PPN is misaligned for every superpage size.
-_FAULT_VA = {"sv32": "0x90407000", "sv39": "0x140802000", "sv48": "0x028500403000", "sv57": "0x07028500403000"}
-_MISALIGNED_VA = {"sv32": "0x90400000", "sv39": "0x140000000", "sv48": "0x028000000000", "sv57": "0x07000000000000"}
+_FAULT_VAS = {
+    "sv32": {"va_data": "0x90407000", "va_misaligned": "0x90400000"},
+    "sv39": {"va_data": "0x140802000", "va_misaligned": "0x140000000"},
+    "sv48": {"va_data": "0x028500403000", "va_misaligned": "0x028000000000"},
+    "sv57": {"va_data": "0x07028500403000", "va_misaligned": "0x07000000000000"},
+}
+
+
+class _FaultCase(NamedTuple):
+    description: str
+    level: int
+    flags: PteFlags
+    va: str = "va_data"
 
 
 def _ad_clear(*, user: bool = False, read: bool = True, extra: tuple[str, ...] = ()) -> PteFlags:
     return PteFlags(user=user, read=read, accessed=False, dirty=False, extra=extra)
 
 
-def _fault_cases(sv: SvMode) -> list[tuple[str, int, PteFlags, bool, str]]:
-    """Return (description, level, flags, superpage, va) for leaf PTEs that must page fault before an A/D update."""
-    cases = [
-        (f"Misaligned superpage at level {level}", level, _ad_clear(), False, "va_misaligned")
-        for level in range(sv.levels - 1, 0, -1)
-    ]
-    cases.extend(
-        [
-            ("U page accessed from S-mode with SUM=0", 0, _ad_clear(user=True), True, "va_data"),
-            ("Reserved encoding W=1 R=0", 0, _ad_clear(read=False), True, "va_data"),
-        ]
-    )
-    if sv.xlen == 64:
-        cases.extend(
-            [
-                ("Reserved bit 54 set", 0, _ad_clear(extra=("(1 << 54)",)), True, "va_data"),
-                ("Reserved PBMT=3", 0, _ad_clear(extra=("(3 << 61)",)), True, "va_data"),
-                (
-                    "N=1 with reserved encoding ppn[3:0]=0000",
-                    0,
-                    _ad_clear(extra=("(1 << 63)",)),
-                    True,
-                    "va_data",
-                ),
-            ]
-        )
-        cases.extend(
-            (
-                f"N=1 with ppn[3:0]=1000 on a level {level} superpage",
-                level,
-                _ad_clear(extra=("(1 << 63)", "(1 << 13)")),
-                True,
-                "va_data",
+def _fault_cases(sv: SvMode) -> list[_FaultCase]:
+    """Return leaf PTEs that must page fault before any A/D update."""
+    superpage_levels = range(1, sv.levels)
+    rv64_cases = [
+        _FaultCase("Reserved bit 54 set", 0, _ad_clear(extra=("(1 << 54)",))),
+        _FaultCase("Reserved PBMT=3", 0, _ad_clear(extra=("(3 << 61)",))),
+        _FaultCase("N=1 with reserved encoding ppn[3:0]=0000", 0, _ad_clear(extra=("(1 << 63)",))),
+        *(
+            _FaultCase(
+                f"N=1 with ppn[3:0]=1000 on a level {l} superpage", l, _ad_clear(extra=("(1 << 63)", "(1 << 13)"))
             )
-            for level in range(sv.levels - 1, 0, -1)
-        )
-    return cases
+            for l in superpage_levels
+        ),
+    ]
+    return [
+        *(_FaultCase(f"Misaligned superpage at level {l}", l, _ad_clear(), "va_misaligned") for l in superpage_levels),
+        _FaultCase("U page accessed from S-mode with SUM=0", 0, _ad_clear(user=True)),
+        _FaultCase("Reserved encoding W=1 R=0", 0, _ad_clear(read=False)),
+        *(rv64_cases if sv.xlen == 64 else []),
+    ]
 
 
 def _pte_address(sv: SvMode, regs: SvRegs, va: str, level: int) -> list[str]:
@@ -239,10 +235,10 @@ def _pte_address(sv: SvMode, regs: SvRegs, va: str, level: int) -> list[str]:
 def _make_svadu_fault(test_data: TestData, sv: SvMode) -> TestChunk:
     """Access leaf PTEs with A=D=0 that must page fault, then check that D is still clear.
 
-    The walk checks for a leaf PTE must all pass before the hardware A/D update, so a faulting store leaves D clear.
-    A may be set speculatively, so it is not checked.
+    A faulting access must not update D. A may be set speculatively, so it is not checked.
     """
     csr, mask = ("menvcfg", "MENVCFG_ADUE") if sv.xlen == 64 else ("menvcfgh", "MENVCFGH_ADUE")
+    fault_vas = _FAULT_VAS[sv.name]
     regs = SvRegs.allocate(test_data)
     chunk = begin_sv_test(
         test_data,
@@ -251,24 +247,29 @@ def _make_svadu_fault(test_data: TestData, sv: SvMode) -> TestChunk:
         "Smode",
         f"{sv.name}_Svadu_fault_Smode",
         coverpoint="cp_ad_fault_no_update",
-        va_defs=(("va_data", _FAULT_VA[sv.name]), ("va_misaligned", _MISALIGNED_VA[sv.name])),
+        va_defs=tuple(fault_vas.items()),
         setup_asm=(f"LI(x{regs.scratch}, {mask})", tsbi_call(f"csrs {csr}, x{regs.scratch}")),
     )
-    fault_vas = {"va_data": _FAULT_VA[sv.name], "va_misaligned": _MISALIGNED_VA[sv.name]}
     cases = _fault_cases(sv)
-    for number, (description, level, flags, superpage, va) in enumerate(cases, start=1):
+    for number, case in enumerate(cases, start=1):
         chunk.code.extend(
             [
-                f"// Test case {number}: {description} | A=0 D=0 | expected = RWX page fault, D unchanged",
-                *create_page_mapping(sv, virtual_address=va, leaf_level=level, leaf_flags=flags, superpage=superpage),
+                f"// Test case {number}: {case.description} | A=0 D=0 | expected = RWX page fault, D unchanged",
+                *create_page_mapping(
+                    sv,
+                    virtual_address=case.va,
+                    leaf_level=case.level,
+                    leaf_flags=case.flags,
+                    superpage=case.va != "va_misaligned",
+                ),
                 "",
                 *add_rwx_test(
                     test_data,
                     sv,
                     regs,
                     "Smode",
-                    va,
-                    level,
+                    case.va,
+                    case.level,
                     f"test{number}",
                     setup=("sfence.vma",),
                     repeat_setup=True,
@@ -277,7 +278,7 @@ def _make_svadu_fault(test_data: TestData, sv: SvMode) -> TestChunk:
                 ),
                 "",
                 "// The PTE must still have D=0. A may have been set speculatively, so clear it before the check.",
-                *_pte_address(sv, regs, fault_vas[va], level),
+                *_pte_address(sv, regs, fault_vas[case.va], case.level),
                 test_data.add_testcase(f"test{number}_read_pte", "cp_ad_fault_no_update", "Svadu_cg"),
                 f"LREG x{regs.result}, 0(x{regs.scratch})",
                 f"andi x{regs.result}, x{regs.result}, ~PTE_A",
