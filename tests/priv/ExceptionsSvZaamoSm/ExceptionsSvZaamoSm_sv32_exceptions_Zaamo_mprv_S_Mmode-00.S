@@ -1036,7 +1036,7 @@ RVTEST_DATA_BEGIN
 // Physical address region for levels 0 and 1
   .p2align 12
 rvtest_data_1:
-  nop
+  .insn i 0x13, 0, x15, x2, 0 # mv x15, sp
   addi x15, x14, 4
   jr ra
   nop
