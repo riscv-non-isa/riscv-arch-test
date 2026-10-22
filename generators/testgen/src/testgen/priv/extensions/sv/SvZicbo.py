@@ -308,7 +308,7 @@ def _begin_test(test_data: TestData, regs: SvRegs, sv: SvMode, mode: str, family
         sv,
         mode,
         f"{sv.name}_{family}{qualifier}_{mode}",
-        coverpoint=f"cp_PTE_rwx_zicbop_{mode[0].lower()}"
+        coverpoint=f"cp_zicbop_no_fault_{mode[0].lower()}"
         if family == "zicbop"
         else f"SvZicbo {family} exception crosses",
         sig_init=None if family == "zicbop" else "0x800",
@@ -345,7 +345,7 @@ def _make_prefetch(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
                     mode,
                     virtual_address(sv, "va_data", level, destination=regs.addr, scratch=regs.scratch),
                     number,
-                    f"cp_PTE_rwx_zicbop_{mode[0].lower()}",
+                    f"cp_zicbop_no_fault_{mode[0].lower()}",
                 ),
                 "",
             ]
