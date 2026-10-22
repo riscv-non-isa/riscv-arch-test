@@ -60,6 +60,7 @@ covergroup Zkr_Sm_cg with function sample(ins_t ins);
 endgroup
 `endif
 
+`ifdef S_SUPPORTED
 covergroup Zkr_S_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -104,7 +105,9 @@ covergroup Zkr_S_cg with function sample(ins_t ins);
     cp_zkr_seed_entropy_zero_non_es16: cross seed_csr, csrrw, prev_csrrw, priv_mode_s;
 
 endgroup
+`endif
 
+`ifdef U_SUPPORTED
 covergroup Zkr_U_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -149,11 +152,16 @@ covergroup Zkr_U_cg with function sample(ins_t ins);
     cp_zkr_seed_entropy_zero_non_es16: cross seed_csr, csrrw, prev_csrrw, priv_mode_u;
 
 endgroup
+`endif
 
 function void zkr_sample(int hart, int issue, ins_t ins);
     `ifndef EXCLUDE_SM
         Zkr_Sm_cg.sample(ins);
     `endif
-    Zkr_S_cg.sample(ins);
-    Zkr_U_cg.sample(ins);
+    `ifdef S_SUPPORTED
+        Zkr_S_cg.sample(ins);
+    `endif
+    `ifdef U_SUPPORTED
+        Zkr_U_cg.sample(ins);
+    `endif
 endfunction
