@@ -2899,6 +2899,10 @@ excpt_\__MODE__\()hndlr_tbl:
 // other value is returned unchanged and mismatches. The caller's TRAP_SIGUPD_ZERO then
 // accepts zero for the pseudoinstruction only when mtval2/htval is zero.
 //
+// If Sail gains configuration options to write the transformation when the DUT does (the
+// UDB TINST_VALUE_ON_* parameters already describe the choice per cause), the reference
+// will match the DUT and this checking can be reduced to an exact compare.
+//
 // The path depends only on the trapping instruction and the cause, never on the value the
 // hart wrote, so every hart retires the same number of handler instructions (the Zicntr
 // instret tests count them).
