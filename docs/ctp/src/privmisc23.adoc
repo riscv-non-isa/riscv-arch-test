@@ -155,10 +155,12 @@ include::{testplansdir}/priv/SdtrigSm.adoc[]
 
 include::norm/SdtrigSm_norm_rules.adoc[]
 
-As of 7/24/26, Sdtrig is partially implemented.  Only the mcontrol6 covergroup is fully developed. Coverpoints are incomplete and are in a draft PR.
-Sail models Sdtrig, including mcontrol6, and is the reference for the Sdtrig tests; Whisper can also be run against Spike.  QEMU does not yet match and some issues
-have been filed and are tracked https://docs.google.com/spreadsheets/d/1EuG4LV1TQDx4wTzYDWEAvq0fwaWjNuxenwDARZmrN-E/edit?gid=0#gid=0[here].
-Run with `make whisper-rv64-max-spike-ref EXTENSIONS=SdtrigSm`.
+As of 10/22/26, the SdtrigSm, SdtrigS and SdtrigU tests and coverpoints exercise the mcontrol6, icount, itrigger and etrigger trigger types, `textra`,
+access to the trigger registers, and address matching on scalar, compressed, atomic, vector, cache-block and translated accesses.
+Sail models Sdtrig and is the reference for the Sdtrig tests. Spike and Whisper pass; Whisper can also be run against Spike with `make whisper-rv64-max-spike-ref EXTENSIONS=SdtrigSm`.
+Imperas passes with HMC's engineering build of the model. Stock Imperas, QEMU and XiangShan are excluded because of filed bugs,
+listed in their `ci.yaml` files; the QEMU issues are also tracked
+https://docs.google.com/spreadsheets/d/1EuG4LV1TQDx4wTzYDWEAvq0fwaWjNuxenwDARZmrN-E/edit?gid=0#gid=0[here].
 
 Most Sdtrig features are optional, so the tests take every DUT-specific fact from the Sdtrig parameters of the DUT's https://github.com/riscv/riscv-unified-db[UDB] configuration (added in https://github.com/riscv/riscv-unified-db/pull/2069[riscv-unified-db#2069]).
 `SDTRIG_NUM_TRIGGERS` gives the number of triggers; the tests exercise up to 16 of them.
@@ -173,7 +175,7 @@ implementation-specific external triggers.
 `dmode` is not tested in Sdtrig because it depends on Sdext. `hcontext` depends on the Hypervisor extension, so the Access tests touch it only on configurations that implement it.  Non-maskable interrupts
 are not tested because they are not part of RVA23.
 
-`mcontrol` has been replaced by `mcontrol6`.  It is deprecated and not tested.  `mscontext` is only for backward compatibility with Sdtrig 0.13 and is not tested.
+`mcontrol` has been replaced by `mcontrol6`, so it is deprecated and not tested.  `mscontext` is only for backward compatibility with Sdtrig 0.13 and is not tested.
 
 ===== Trigger Re-entrancy and What Can Be Tested
 
@@ -248,6 +250,7 @@ The tests assume one of the two methods.
 The three suites start in different modes.
 SdtrigSm boots to M-mode and can change `medeleg`.
 SdtrigS and SdtrigU boot to S-mode and U-mode, and keep the boot value of `medeleg`[3]: 1 on a hart that uses interrupt enables, and read-only 0 on a hart that uses tcontrol.
+The exception is their breakpoint-delegation test, which switches to M-mode to clear and then set `medeleg`[3] and fires mcontrol6 and icount triggers each way.
 SdtrigSm arms its M-mode triggers with MIE=1, and with MTE=1 when `SDTRIG_BREAKPOINT_REENTRANCY` is `Use_tcontrol`.
 SdtrigS arms its triggers with SIE=1.
 SdtrigSm reaches S-mode and U-mode only in the etrigger and itrigger tests, which clear `medeleg`[3] first.
@@ -260,8 +263,8 @@ The tables below show what each suite then exercises.
 
 |mcontrol6, icount
 |Fires in M-mode; breakpoint taken from M to M
-|Fires in S-mode; breakpoint taken from S to S (`medeleg`[3]=1)
-|Fires in U-mode; breakpoint taken to S (to M if there is no S-mode)
+|Fires in S-mode; breakpoint taken from S to M (`medeleg`[3]=0) and from S to S (`medeleg`[3]=1)
+|Fires in U-mode; breakpoint taken to M (`medeleg`[3]=0) and to S (`medeleg`[3]=1); to M if there is no S-mode
 
 |etrigger, itrigger
 |Raised in M-mode: suppressed.
@@ -292,6 +295,9 @@ Each kind of hart leaves some cases unexercised, but none of these gaps comes fr
 * SdtrigS and SdtrigU (`cp_breakpoint_delegate_s/u`) fire mcontrol6 and icount triggers in S-mode and U-mode with `medeleg`[3]=0 and with `medeleg`[3]=1, so on a hart that uses interrupt enables a breakpoint is also taken from S or U to M.
 * The tests read the reentrancy method from `SDTRIG_BREAKPOINT_REENTRANCY` and whether `tcontrol` exists from `TCONTROL_IMPLEMENTED`.
 The `tcontrol` tests check that a trap into M-mode copies MTE to MPTE and clears MTE and that `mret` copies MPTE to MTE on every hart with `tcontrol`, and that MTE gates M-mode triggers on a hart that uses `tcontrol` for reentrancy.
+* On a hart that uses interrupt enables, etrigger and itrigger never fire in SdtrigS or SdtrigU, because those suites keep `medeleg`[3]=1 for these tests.
+They fire only in SdtrigSm, which clears `medeleg`[3] first.
+SdtrigS and SdtrigU could clear `medeleg`[3] from M-mode, as their breakpoint-delegation test does.
 
 ===== SdtrigS
 
