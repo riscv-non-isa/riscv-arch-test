@@ -249,7 +249,6 @@ The ACT Framework uses a selection of assembly macros to run DUT-specific code t
 - `RVMODEL_INVISIBLE_TRAP_HANDLER(_PC_REG, _INSTRUCTION_REG, _ACTION_REG, _DEST_REG, _VALUE_REG)` (can be omitted if the DUT does not trap and emulate instructions)
 - `RVMODEL_FENCEI` (can be omitted to use `fence.i`, or `nop` without Zifencei)
 - `RVMODEL_BOOT_TO_MMODE` (omit unless the DUT has a custom M-mode that cannot run the default M-mode boot)
-- `RVMODEL_SDTRIG_USE_TCONTROL` (temporary; define if M-mode Sdtrig triggers fire only while `tcontrol.mte` is 1)
 
 **Timer Macros**: Can be left blank if machine mode is not supported.
 
