@@ -514,7 +514,10 @@ normative_rule_definitions:
 
   # If the currently selected trigger doesn't exist, this field contains 1.
   - name: Sdtrig_tinfo_no_trigger
-    coverpoint: ["WARL tselect; nonexistent-trigger reporting not tested"]
+    coverpoint:
+      [
+        "Not tested: info = 1 can be read only after selecting a nonexistent trigger, whose tselect legalization is implementation-specific; needs SDTRIG_NUM_TRIGGERS (riscv-unified-db#2069)",
+      ]
 
   # This optional register is only accessible in M-mode and Debug Mode and provides
   # various control bits related to triggers.
@@ -911,7 +914,11 @@ normative_rule_definitions:
   # All NAPOT ranges between stem:[2^1] and stem:[2^maskmax6] are supported where
   # stem:[maskmax6 >= 1].
   - name: Sdtrig_mcontrol6_napot_range
-    coverpoint: ["NAPOT range support is optional; not required here"]
+    coverpoint:
+      [
+        "SdtrigSm_mcontrol6_cg/cp_mcontrol6_match_napot",
+        "Once maskmax6 >= 1, every NAPOT range from 2^1 to 2^maskmax6 must be supported; cp_mcontrol6_match_napot is gated until MASKMAX6 and the supported MATCH values are UDB parameters (riscv-unified-db#2069)",
+      ]
 
   # If textra32 or textra64 are implemented for this trigger, it only matches when
   # the conditions set there are satisfied.
@@ -1764,7 +1771,7 @@ normative_rule_definitions:
   # Byte-granular comparison of scontext to svalue allows scontext to be defined to
   # include more than one element of comparison.
   - name: Sdtrig_textra32_byte_granular
-    coverpoint: ["Descriptive spec text with no separately testable behavior"]
+    coverpoint: ["SdtrigSm_textra_cg/cp_textra_scontext"]
 
   # Byte masking only applies to scontext comparison; i.e when sselect is 1.
   - name: Sdtrig_textra32_byte_mask_applies
