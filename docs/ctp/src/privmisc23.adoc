@@ -74,8 +74,13 @@ include::norm/Ss1p13_norm_rules.adoc[]
 
 ==== Ssnpm Pointer Masking
 
+===== Ssnpm
+
 include::{testplansdir}/priv/Ssnpm.adoc[]
-include::{testplansdir}/priv/SsnpmSm.adoc[]
+
+===== Ssnpm_Sm
+
+include::{testplansdir}/priv/Ssnpm_Sm.adoc[]
 
 include::norm/Ssnpm_norm_rules.adoc[]
 
