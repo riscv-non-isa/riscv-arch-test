@@ -132,7 +132,7 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Svpbmt|Page-based Memory Types|<<t-Svpbmt-coverpoints>>|||x|x|x
 |Svnapot|Naturally Aligned Pages|<<t-Svnapot-coverpoints>>|||o|x|x
 |Svukte|User Kernel Translation Enable|<<t-Svukte-coverpoints>>|||o|o|o
-|Sscofpmf|Counter Filtering|<<t-Sscofpmf-coverpoints>>|||o|x|x
+|Sscofpmf|Counter Filtering|<<t-Sscofpmf_common-coverpoints>>|||o|x|x
 |Ssstateen|Supervisor State Enable|<<t-Ssstateen-coverpoints>>|||o||x
 |Ssu64xl|64-bit UXL|<<t-Ssu64xl-coverpoints>>|||o|x|x
 |Sscounterenw|Counter Enables Writable|<<t-Sscounterenw-coverpoints>>|||x|x|x
