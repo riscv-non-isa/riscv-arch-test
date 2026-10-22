@@ -415,6 +415,18 @@
     `ifdef COVER_ZICBOZ
         zicboz_sample(hart, issue, ins);
     `endif
+    `ifdef COVER_ZICCAMOA
+        ziccamoa_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_ZICCAMOC
+        ziccamoc_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_ZICCIF
+        ziccif_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_ZICCRSE
+        ziccrse_sample(hart, issue, ins);
+    `endif
     `ifdef COVER_ZICFILPS
         zicfilps_sample(hart, issue, ins);
     `endif

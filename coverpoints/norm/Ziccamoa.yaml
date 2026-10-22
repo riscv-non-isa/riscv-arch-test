@@ -1,0 +1,14 @@
+# Normative rule to coverpoint mappings
+# Generated from riscv-isa-manual normative rule definitions
+
+normative_rule_definitions:
+  # If the Ziccamoa extension is implemented, then main memory regions with both the
+  # coherence and cacheability PMAs must provide AMOArithmetic-level PMA support.
+  - name: Ziccamoa_amo_pma
+    # Atomicity is not observable with a single hart
+    coverpoint: ["Ziccamoa_cg/cp_ziccamoa"]
+
+  # The Ziccamoa extension requires AMOArithmetic-level support to main memory regions with
+  # both the coherence and cacheability PMAs.
+  - name: Ziccamoa_pma_amo_req
+    coverpoint: ["Ziccamoa_cg/cp_ziccamoa"]

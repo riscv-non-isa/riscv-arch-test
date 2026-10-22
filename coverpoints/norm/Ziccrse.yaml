@@ -1,0 +1,14 @@
+# Normative rule to coverpoint mappings
+# Generated from riscv-isa-manual normative rule definitions
+
+normative_rule_definitions:
+  # If the Ziccrse extension is implemented, then main memory regions with both the
+  # coherence and cacheability PMAs must support the RsrvEventual PMA.
+  - name: Ziccrse_rsrv_eventual
+    # Eventual success in the presence of other harts is not observable with a single hart
+    coverpoint: ["Ziccrse_cg/cp_ziccrse"]
+
+  # The Ziccrse extension requires RsrvEventual support to main memory regions with both the
+  # coherence and cacheability PMAs.
+  - name: Ziccrse_pma_rsrv_req
+    coverpoint: ["Ziccrse_cg/cp_ziccrse"]

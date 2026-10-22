@@ -1,0 +1,22 @@
+# Normative rule to coverpoint mappings
+# Generated from riscv-isa-manual normative rule definitions
+
+normative_rule_definitions:
+  # If the Ziccif extension is implemented, main memory regions with both the coherence
+  # and cacheability PMAs must support instruction fetch, and any instruction fetches of
+  # naturally aligned power-of-2 sizes of at most min(ILEN,XLEN) bits are atomic.
+  - name: Ziccif_if_atomicity
+    # Fetch atomicity is only observable when another hart modifies the code being fetched
+    coverpoint: ["Ziccif_cg/cp_ziccif_fetch"]
+
+  # An implementation with the Ziccif extension fetches instructions in a manner
+  # equivalent to the following state machine.
+  - name: Ziccif_fetch_mechanism
+    coverpoint: ["OUT-OF-SCOPE for single hart"]
+
+  # Memory protection and executability PMAs are applied only to bytes that are not discarded
+  # by this algorithm.
+  - name: Ziccif_pma_application
+    # TODO: execute an instruction that ends at the top of an executable PMP or PMA region,
+    # below a non-executable region, and check that it does not fault
+    coverpoint: [""]
