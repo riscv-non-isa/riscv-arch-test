@@ -342,10 +342,6 @@
         `cover_info("//      Svbare - Enabled");
         `include "Svbare_coverage_init.svh"
     `endif
-    `ifdef COVER_SVBARESM
-        `cover_info("//      SvbareSm - Enabled");
-        `include "SvbareSm_coverage_init.svh"
-    `endif
     `ifdef COVER_SVINVAL
         `cover_info("//      Svinval - Enabled");
         `include "Svinval_coverage_init.svh"
