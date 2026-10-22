@@ -5,10 +5,12 @@ normative_rule_definitions:
   # The Sm menvcfg walk writes ADUE (bit 61, menvcfgh bit 29 on RV32); Svadu runs with ADUE=1.
   - name: Svadu_hw_update_a_d_bits
     # Representative coverpoints; also the other Svadu_cg/{Abit,Dbit}_unset crosses
+    # and the other Svadu_PMP_cg/{Abit,Dbit}_unset_pmpW_unset crosses
     coverpoint:
       [
         "Sm_mcsr_cg/cp_mcsrwalk_masked/menvcfg",
         "Svadu_cg/{Abit_unset_read_s, Dbit_unset_write_s}",
+        "Svadu_PMP_cg/{Abit_unset_pmpW_unset_exec_s, Abit_unset_pmpW_unset_read_s, Abit_unset_pmpW_unset_write_u, Dbit_unset_pmpW_unset_write_s}",
       ]
 
   # If the hypervisor extension is additionally implemented, the henvcfg.ADUE field is
@@ -58,3 +60,14 @@ normative_rule_definitions:
   # menvcfg.ADUE is zero.
   - name: menvcfg_adue_henvcfg_adue_rdonly0
     coverpoint: ["TODO: test in hypervisor tests"]
+
+  # PMP checks are also applied to page-table accesses for virtual-address translation,
+  # for which the effective privilege mode is S.
+  # Svadu_PMP sets ADUE=1 and removes PMP write permission from the page table, so the
+  # hardware A/D update raises an access fault.
+  - name: pmp_check_pagetable_access
+    # Representative coverpoints; also the other Svadu_PMP_cg/{Abit,Dbit}_unset_pmpW_unset crosses
+    coverpoint:
+      [
+        "Svadu_PMP_cg/{Abit_unset_pmpW_unset_exec_s, Abit_unset_pmpW_unset_read_s, Abit_unset_pmpW_unset_write_u, Dbit_unset_pmpW_unset_write_s}",
+      ]

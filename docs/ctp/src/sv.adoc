@@ -7,7 +7,7 @@ The UDB configuration file determines whether to run tests for Sv32, or for Sv39
 
 Coverpoints that need M-mode state (`mstatus.MPRV`, `mstatus.TVM`, `mstatus.SBE`, or an M-mode CSR access)
 are in the `Sm` suites: SvSm, SvbareSm and SvinvalSm.
-The PMP suites (SvPMP, SvPMPZicbo, SvaduPMP) boot to M-mode because they program PMP entries.
+The PMP suites (SvPMP, SvPMPZicbo, Svadu_PMP) boot to M-mode because they program PMP entries.
 
 include::{testplansdir}/priv/Sv.adoc[]
 
@@ -87,13 +87,13 @@ include::norm/Svade_norm_rules.adoc[]
 
 include::{testplansdir}/priv/Svadu.adoc[]
 
+===== Svadu_PMP
+
+include::{testplansdir}/priv/Svadu_PMP.adoc[]
+
+===== Svadu Normative Rules
+
 include::norm/Svadu_norm_rules.adoc[]
-
-==== Svadu A/D Bit Hardware Update + PMP
-
-include::{testplansdir}/priv/SvaduPMP.adoc[]
-
-include::norm/SvaduPMP_norm_rules.adoc[]
 
 ==== Svpbmt Page-Based Memory Types
 

@@ -9,3 +9,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     Svadu_cg = new(); Svadu_cg.set_inst_name("obj_Svadu");
+`ifndef EXCLUDE_SM
+    Svadu_PMP_cg = new(); Svadu_PMP_cg.set_inst_name("obj_Svadu_PMP");
+`endif

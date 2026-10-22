@@ -334,10 +334,6 @@
         `cover_info("//      Svadu - Enabled");
         `include "Svadu_coverage_init.svh"
     `endif
-    `ifdef COVER_SVADUPMP
-        `cover_info("//      SvaduPMP - Enabled");
-        `include "SvaduPMP_coverage_init.svh"
-    `endif
     `ifdef COVER_SVBARE
         `cover_info("//      Svbare - Enabled");
         `include "Svbare_coverage_init.svh"

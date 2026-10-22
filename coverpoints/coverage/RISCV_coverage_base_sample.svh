@@ -253,9 +253,6 @@
     `ifdef COVER_SVADU
         svadu_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_SVADUPMP
-        svadupmp_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_SVBARE
         svbare_sample(hart, issue, ins);
     `endif

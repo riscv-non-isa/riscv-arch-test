@@ -254,9 +254,6 @@
 `ifdef SVADU_COVERAGE
   `include "Svadu_coverage.svh"
 `endif
-`ifdef SVADUPMP_COVERAGE
-  `include "SvaduPMP_coverage.svh"
-`endif
 `ifdef SVBARE_COVERAGE
   `include "Svbare_coverage.svh"
 `endif

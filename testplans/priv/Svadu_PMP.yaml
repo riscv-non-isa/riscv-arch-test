@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: SvaduPMP
+suite: Svadu_PMP
 source: https://docs.google.com/spreadsheets/d/1LGwD2e01j4SN9tg85nt6gPwpp7nXyXMF7hqbw3jvXko/edit?gid=1645706147#gid=1645706147
 coverpoints:
   - heading: "General Test Environment (SvaduPMP):\n- Boots to M-mode (PMP programming). Unchanged by the T-SBI conversion. Run for every supported translation mode: Sv32 on RV32; Sv39, Sv48 and Sv57 on RV64, as selected by the UDB configuration."
