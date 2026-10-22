@@ -93,6 +93,7 @@ class Config(BaseModel):
     compiler_type: CompilerType  # Inferred from compiler_exe by model validator
     ref_model_exe: Path
     ref_model_type: RefModelType  # Inferred from ref_model_exe by model validator
+    ref_model_isa: str | None = Field(default=None, min_length=1)  # Spike --isa=; default spike_isa_string(xlen)
     include_priv_tests: bool = True
     harts: int = Field(default=1, ge=1)
 
@@ -144,6 +145,13 @@ class Config(BaseModel):
             else:
                 raise ValueError(f"Unable to infer reference model type from ref_model_exe: {ref_model_exe}")
         return data
+
+    @model_validator(mode="after")
+    def check_ref_model_isa(self) -> "Config":
+        """ref_model_isa sets Spike's --isa; Sail takes its ISA from sail.json instead."""
+        if self.ref_model_isa is not None and self.ref_model_type != RefModelType.SPIKE:
+            raise ValueError("ref_model_isa is only supported when the reference model is Spike")
+        return self
 
     @field_validator("udb_config", "linker_script", "dut_include_dir", mode="before")
     @classmethod

@@ -1586,28 +1586,90 @@ def _generate_zcmp_tests(test_data: TestData, mode: str) -> list[TestChunk]:
     covergroup = f"Sdtrig{mode}_combined_accesses_cg"
     chunks: list[TestChunk] = []
 
+    # s0 (x8) is an operand of cm.push/cm.pop, so keep it out of the pool
+    temp_reg, sp_save, ra_save, s0_save = test_data.int_regs.get_registers(4, reg_range=list(range(9, 16)))
+    sp = 2
+    # With sp = scratch+16, cm.push stores ra and s0 into the 16-byte frame at scratch and leaves sp = scratch;
+    # cm.pop then loads them back from the same frame. ra and s0 are at scratch+12 and scratch+8 (RV32) or
+    # scratch+8 and scratch (RV64). scratch+16 is outside the frame and is never accessed.
+    # (bin name, tdata2, RV32 only)
+    addresses = (
+        ("scratch", "scratch", False),
+        ("scratch8", "scratch+8", False),
+        ("scratch12", "scratch+12", True),
+        ("scratch16", "scratch+16", False),
+    )
+
     ######################################
     coverpoint = "cp_cm_pop_push"
     ######################################
     lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+    lines.extend(_global_ie(mode, True))
     lines.append(
         comment_banner(
             coverpoint,
-            "mcontrol6 matches each XLEN store of cm.push / cm.pop",
+            "mcontrol6 matches each XLEN transfer of cm.push / cm.pop as an individual access\n"
+            "(sp = scratch+16; cm.push {ra, s0}, -16; cm.pop {ra, s0}, 16)\n"
+            "Breakpoint iff tdata2 is a transferred address, store/load matches the op, and size is 0 or XLEN",
         )
     )
+    lines.extend(
+        [
+            f"mv x{sp_save}, sp # save sp; the trap handler swaps sp with xscratch",
+            # cm.pop loads ra and s0 from the frame, which holds stale values when a breakpoint skipped cm.push
+            f"mv x{ra_save}, ra # save ra",
+            f"mv x{s0_save}, s0 # save s0",
+        ]
+    )
     for trig_num in range(UDB_NUM_TRIGGERS):
-        for addrval in ("marker", "marker8", "zero"):
-            for insn in ("cm_push", "cm_pop"):
-                for size in SIZE_ALL:
-                    for perm in ("store", "load"):
-                        binname = f"trig_num_{trig_num}_addr_{addrval}_{insn}_size_{size}_{perm}"
-                        lines.extend(
-                            [
-                                _add_tc(test_data, binname, coverpoint, covergroup),
-                            ]
-                        )
+        gates = _mcontrol6_gates(trig_num, mode)
+        lines.extend(gates)
+        for xsl in (0b100, 0b010, 0b001):
+            lines.extend(_xsl_ifdefs(xsl))
+            for addr_name, tdata2, rv32_only in addresses:
+                if rv32_only:
+                    lines.append("#if __riscv_xlen == 32")
+                for size in range(7):
+                    if size > 0:
+                        lines.append("#ifdef UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+                    lines.extend(_config_mcontrol6(temp_reg, trig_num, tdata2, mode, xsl=xsl, select=0, size=size))
+                    binname = f"trig_num_{trig_num}_td2_{addr_name}_xsl_{xsl:03b}_size_{size}"
+                    lines.extend(
+                        [
+                            _add_tc(test_data, f"{binname}_push", coverpoint, covergroup),
+                            f"LA(x{sp}, scratch)",
+                            f"addi x{sp}, x{sp}, 16 # sp = scratch+16",
+                            *_arch_guard(
+                                "cm.push {ra, s0}, -16 # fire iff a stored address == tdata2 and size in (0, XLEN)",
+                                ["zcmp"],
+                            ),
+                            "nop # spacer",
+                            _add_tc(test_data, f"{binname}_pop", coverpoint, covergroup),
+                            f"LA(x{sp}, scratch) # sp as cm.push leaves it; a breakpoint skips cm.push",
+                            *_arch_guard(
+                                "cm.pop {ra, s0}, 16 # fire iff a loaded address == tdata2 and size in (0, XLEN)",
+                                ["zcmp"],
+                            ),
+                            "nop # spacer",
+                        ]
+                    )
+                    if size > 0:
+                        lines.append("#endif // UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE")
+                if rv32_only:
+                    lines.append("#endif")
+            lines.extend(["#endif // UDB_SDTRIG_MCONTROL6_XSL_AVAILABLE"] * len(_xsl_ifdefs(xsl)))
+        lines.extend(_disable_trigger(temp_reg, trig_num, mode))
+        lines.extend(_close_gates(gates))
+    lines.extend(
+        [
+            f"mv sp, x{sp_save} # restore sp",
+            f"mv ra, x{ra_save} # restore ra",
+            f"mv s0, x{s0_save} # restore s0",
+        ]
+    )
 
+    lines.extend(_global_ie(mode, False))
+    test_data.int_regs.return_registers([temp_reg, sp_save, ra_save, s0_save])
     chunks.append(test_data.end_test_chunk())
     return chunks
 
@@ -3905,6 +3967,13 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
         return _generate_vector_tests(test_data, mode)
 
     @add_priv_test_generator(
+        suite, required_extensions=[*required_extensions, "Zcmp"], march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_zcmp(test_data: TestData) -> list[TestChunk]:
+        """cm.push/cm.pop tests."""
+        return _generate_zcmp_tests(test_data, mode)
+
+    @add_priv_test_generator(
         suite, required_extensions=[*required_extensions, "Zicbom"], march_extensions=[], extra_defines=extra_defines
     )
     def make_sdtrig_zicbom(test_data: TestData) -> list[TestChunk]:
@@ -3993,4 +4062,3 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
 
     # Disabled sections and their extra required extension:
     #   _generate_tcontrol_tests: body not implemented yet; needs UDB_TCONTROL_AVAILABLE
-    #   _generate_zcmp_tests: Zcmp; waits for Zcmp in the Sail reference model (riscv/sail-riscv#730)

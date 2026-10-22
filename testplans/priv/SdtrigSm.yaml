@@ -166,12 +166,10 @@ coverpoints:
     bins: 2 mask states * 4 SEW * 2 ops
     rules:
       - Sdtrig_mult_mem_access
-  - name: cp_cm_pop_push (not generated)
+  - name: cp_cm_pop_push
     status: >-
-      Not generated until the Sail reference model supports Zcmp: Sail 0.16 has no Zcmp extension
-      (model/core/extensions.sail has no Ext_Zcmp; riscv/sail-riscv#730 adds it and is open), and no CI
-      configuration claims both Zcmp and Sdtrig. With #730, cm.push and cm.pop make one vmem_write or vmem_read
-      per register, which Sail's per-access trigger matching (model/sys/vmem_utils.sail) checks individually
+      Partly gated: the size 1-6 cases and bins are compiled only with UDB_SDTRIG_MCONTROL6_SIZE_AVAILABLE
+      (pending riscv-unified-db#2069); only size = 0 (any) runs today
     goal: Accesses match as if happened individually
     description: |-
       if ZCMP_SUPPORTED
@@ -182,11 +180,14 @@ coverpoints:
       tdata1.select = 0 (adr)
       tdata1.XSL = {100/010/001}
       tdata1.size = {0,1,2,3,4,5,6}
-      sp = scratch+16
+      sp = scratch+16 for cm.push and scratch for cm.pop (both access the 16-byte frame at scratch)
       cm.push {ra, s0}, -16
       cm.pop{ra, s0}, 16
-    expectation: Breakpoint exception if the tdata2 matches mem address, store/load = 1, tdata1.size = XLEN or 0
-    bins: 3 address * 3 XSL * 7 sizes * 2 ops
+    expectation: |-
+      Breakpoint exception if the tdata2 matches a transferred address (ra and s0 at scratch+12 and scratch+8 on
+      RV32, scratch+8 and scratch on RV64), store/load = 1 for cm.push/cm.pop, tdata1.size = XLEN or 0
+      No breakpoint exception at scratch+16, which is outside the frame
+    bins: 4 address (RV32) or 3 address (RV64) * 3 XSL * 7 sizes * 2 ops
     rules:
       - Sdtrig_mult_mem_access
   - name: Cache Operations

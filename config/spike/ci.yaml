@@ -7,6 +7,9 @@ ci_enabled: true
 # Run experimental extensions in their dedicated workflow job.
 exclude_configs:
   - spike-rv64-experimental
+  # Spike is also the reference model; these configs exist to run the Zcmp-dependent Sdtrig tests locally
+  - spike-rv32-zcmp-spike-ref
+  - spike-rv64-zcmp-spike-ref
 # Sscofpmf_Sm_access (rv32-max), Sscofpmf_{Sm,S,U}_inhibit, Sscofpmf_{Sm,S}_mcounteren, Sscofpmf_{Sm,S,U}_overflow,
 #   Sscofpmf_{Sm,S}_shadow (the other groups pass): spike hardwires mhpmcounter3..31 to 0 but keeps mhpmevent3..31 writable
 #   (https://github.com/riscv-software-src/riscv-isa-sim/issues/2370). Sail's
