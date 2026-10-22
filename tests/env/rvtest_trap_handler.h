@@ -900,14 +900,11 @@
         #define  RVMODEL_CLR_MEXT_INT(_R1, _R2) RVTEST_DFLT_INT_HNDLR  // M-mode ext interrupt clear: abort
 #endif
 
-// The S-mode timer interrupt has no RVMODEL macro: mip.STIP comes from stimecmp (Sstc) or an
-// M-mode write, never from a platform controller, and clr_Stmr_int leaves clearing it to the test.
+// The S-mode timer interrupt has no RVMODEL macro: STIP comes from stimecmp or an M-mode write.
 // RVMODEL_CLR_SEXT_INT has no default: when undefined, rvtest_clr_sext_int_* clear mip.SEIP instead
 
-// VS-level interrupts need no RVMODEL macros: they are raised and cleared through
-// hvip (RVTEST_SET/CLR_VS*_INT_* in utils.h). A guest external interrupt (hgeip bit
-// _GEI) can only be raised by the platform, through RVMODEL_SET_GUEST_EXT_INT(_GEI, _R1, _R2)
-// and RVMODEL_CLR_GUEST_EXT_INT(_GEI, _R1, _R2), which check_defines.h requires when GEILEN > 0.
+// VS-level interrupts have no RVMODEL macros (utils.h raises them through hvip). Guest external
+// interrupts use RVMODEL_SET/CLR_GUEST_EXT_INT, which check_defines.h requires when GEILEN > 0.
 
 
 //==============================================================================
