@@ -18,10 +18,6 @@ covergroup PMPZicbo_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
 
-    cfg_for_menvcfg: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "menvcfg", "menvcfg")[7:4] {
-        bins configuration = {4'b1111}; //menvcfg.CBIE, CBCFE, CBZE = 1
-    }
-
     // Compare above the grain: the test writes pmpaddr0 while the entry is OFF, so the trace
     // records it with bits G-1:0 read as zero, and does not record it again once the entry is NAPOT.
     pmpaddr_region: coverpoint ((pmpaddr[0] & `PMP_PMPADDR_LOWMASK & `READ_ZERO_MASK) ==
@@ -33,6 +29,10 @@ covergroup PMPZicbo_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
         bins address = {`PMP_SPECIAL_REGION_START & `PMP_ADDR_LOWMASK};
     }
 
+    // cbo.clean/flush/inval need Zicbom and cbo.zero needs Zicboz. prefetch.i/r/w are HINTs
+    // (ORI with rd = x0), so they run on every hart.
+
+  `ifdef ZICBOM_SUPPORTED
     cbo_clean_instr: coverpoint ins.current.insn {
         wildcard bins cbo_clean = {CBO_CLEAN};
     }
@@ -44,10 +44,13 @@ covergroup PMPZicbo_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
     cbo_inval_instr: coverpoint ins.current.insn {
         wildcard bins cbo_inval = {CBO_INVAL};
     }
+  `endif
 
+  `ifdef ZICBOZ_SUPPORTED
     cbo_zero_instr: coverpoint ins.current.insn {
         wildcard bins cbo_zero = {CBO_ZERO};
     }
+  `endif
 
     prefetch_i_instr: coverpoint ins.current.insn {
         wildcard bins prefetch_i_instr = {PREFETCH_I};
@@ -71,20 +74,26 @@ covergroup PMPZicbo_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
         wildcard bins cfg_l111 = {54'b10011111????????????????????????????????????????_?????1};
     }
 
+    cp_prefetch_w: cross priv_mode_m, legal_lxwr, prefetch_w_instr, addr_in_region;
+    cp_prefetch_r: cross priv_mode_m, legal_lxwr, prefetch_r_instr, addr_in_region;
+    cp_prefetch_i: cross priv_mode_m, legal_lxwr, prefetch_i_instr, addr_in_region;
+
+    // Weight 0: used only by the cp_cbo_* crosses, which a hart without Zicbom or Zicboz does not have
     wr_combinations: coverpoint pmpcfg[0] {
+        type_option.weight = 0;
         bins cfg_l000 = {8'b10011000};
         bins cfg_l001 = {8'b10011001};
         bins cfg_l011 = {8'b10011011};
     }
 
-    cp_prefetch_w: cross priv_mode_m, legal_lxwr, cfg_for_menvcfg, prefetch_w_instr, addr_in_region;
-    cp_prefetch_r: cross priv_mode_m, legal_lxwr, cfg_for_menvcfg, prefetch_r_instr, addr_in_region;
-    cp_prefetch_i: cross priv_mode_m, legal_lxwr, cfg_for_menvcfg, prefetch_i_instr, addr_in_region;
-
-    cp_cbo_zero:  cross priv_mode_m, wr_combinations, pmpaddr_region, cfg_for_menvcfg, cbo_zero_instr;
-    cp_cbo_inval: cross priv_mode_m, wr_combinations, pmpaddr_region, cfg_for_menvcfg, cbo_inval_instr;
-    cp_cbo_flush: cross priv_mode_m, wr_combinations, pmpaddr_region, cfg_for_menvcfg, cbo_flush_instr;
-    cp_cbo_clean: cross priv_mode_m, wr_combinations, pmpaddr_region, cfg_for_menvcfg, cbo_clean_instr;
+  `ifdef ZICBOZ_SUPPORTED
+    cp_cbo_zero:  cross priv_mode_m, wr_combinations, pmpaddr_region, cbo_zero_instr;
+  `endif
+  `ifdef ZICBOM_SUPPORTED
+    cp_cbo_inval: cross priv_mode_m, wr_combinations, pmpaddr_region, cbo_inval_instr;
+    cp_cbo_flush: cross priv_mode_m, wr_combinations, pmpaddr_region, cbo_flush_instr;
+    cp_cbo_clean: cross priv_mode_m, wr_combinations, pmpaddr_region, cbo_clean_instr;
+  `endif
 
 endgroup
 
