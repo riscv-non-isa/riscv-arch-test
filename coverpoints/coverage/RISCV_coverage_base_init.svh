@@ -550,6 +550,22 @@
         `cover_info("//      Zicboz - Enabled");
         `include "Zicboz_coverage_init.svh"
     `endif
+    `ifdef COVER_ZICCAMOA
+        `cover_info("//      Ziccamoa - Enabled");
+        `include "Ziccamoa_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZICCAMOC
+        `cover_info("//      Ziccamoc - Enabled");
+        `include "Ziccamoc_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZICCIF
+        `cover_info("//      Ziccif - Enabled");
+        `include "Ziccif_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZICCRSE
+        `cover_info("//      Ziccrse - Enabled");
+        `include "Ziccrse_coverage_init.svh"
+    `endif
     `ifdef COVER_ZICFILPS
         `cover_info("//      ZicfilpS - Enabled");
         `include "ZicfilpS_coverage_init.svh"
