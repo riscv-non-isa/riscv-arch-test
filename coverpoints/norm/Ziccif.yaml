@@ -17,6 +17,7 @@ normative_rule_definitions:
   # Memory protection and executability PMAs are applied only to bytes that are not discarded
   # by this algorithm.
   - name: Ziccif_pma_application
-    # TODO: execute an instruction that ends at the top of an executable PMP or PMA region,
-    # below a non-executable region, and check that it does not fault
-    coverpoint: [""]
+    # Discarded bytes lie in the same M-byte aligned block as the instruction. With ILEN=32, M=4,
+    # the minimum PMP granule, so no protection boundary can separate them from the instruction.
+    # Only a hart with ILEN>32 on RV64 (M=8) and a 4-byte PMP grain could observe this rule.
+    coverpoint: ["OUT-OF-SCOPE: not observable with ILEN=32"]
