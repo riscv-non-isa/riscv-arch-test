@@ -260,9 +260,6 @@
 `ifdef SVINVALH_COVERAGE
   `include "SvinvalH_coverage.svh"
 `endif
-`ifdef SVINVALSM_COVERAGE
-  `include "SvinvalSm_coverage.svh"
-`endif
 `ifdef SVNAPOT_COVERAGE
   `include "Svnapot_coverage.svh"
 `endif

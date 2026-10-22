@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: SvinvalSm
+suite: Svinval_Sm
 source: https://docs.google.com/spreadsheets/d/1LGwD2e01j4SN9tg85nt6gPwpp7nXyXMF7hqbw3jvXko/edit?gid=1611339746#gid=1611339746
 coverpoints:
   - heading: "General Test Environment (SvinvalSm):\n- Sm suite: boots to M-mode (BOOT_TO_MMODE) because each coverpoint needs M-mode state (mstatus.MPRV/MPP, mstatus.TVM, mstatus.SBE or an M-mode CSR access). Mode changes use RVTEST_TSBI_GOTO_*. Runs the Svinval instructions in M, S and U mode, first with mstatus.TVM=0 and then with mstatus.TVM=1.\n- Split from Svinval: the M-mode and mstatus.TVM=1 bins of cr_svinival. The suite also repeats the S-mode and U-mode cases with TVM=0 so the cross closes without ignore_bins."

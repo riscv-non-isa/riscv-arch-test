@@ -1,8 +1,9 @@
 ##################################
 # priv/extensions/sv/Svinval.py
 #
-# Svinval instruction tests.
+# Svinval instruction tests. Groups: Svinval (S and U, mstatus.TVM=0) and Sm (M, S and U, mstatus.TVM=0 and 1).
 # Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# umer@riscv.org September 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
@@ -19,13 +20,16 @@ _OPERATIONS = (
     ("sfence_vma", "sfence.vma x0, x0"),
 )
 
+_SVINVAL_CG = "Svinval_cg"
+_SM_CG = "Svinval_Sm_cg"
 
-def add_operations(test_data: TestData, number: int) -> list[str]:
+
+def add_operations(test_data: TestData, number: int, covergroup: str) -> list[str]:
     lines = []
     for name, instruction in _OPERATIONS:
         lines.extend(
             [
-                test_data.add_testcase(f"test{number}_{name}", "cp_svinval", f"{test_data.testsuite}_cg"),
+                test_data.add_testcase(f"test{number}_{name}", "cp_svinval", covergroup),
                 instruction,
                 "",
             ]
@@ -42,11 +46,49 @@ def make_svinval(test_data: TestData) -> list[TestChunk]:
     chunk = test_data.begin_test_chunk("Svinval")
     chunk.code.extend(
         [
-            *add_operations(test_data, 1),
+            *add_operations(test_data, 1, _SVINVAL_CG),
             "RVTEST_TSBI_GOTO_UMODE",
-            *add_operations(test_data, 2),
+            *add_operations(test_data, 2, _SVINVAL_CG),
             "RVTEST_TSBI_GOTO_SMODE",
         ]
     )
     chunk.trap_sigupd_count = 8
+    return [test_data.end_test_chunk()]
+
+
+@add_priv_test_generator(
+    "Svinval",
+    required_extensions=["Sm", "S", "Svinval"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    seed_name="SvinvalSm",
+)
+def make_svinvalsm_tvm(test_data: TestData) -> list[TestChunk]:
+    tvm_reg = test_data.int_regs.get_register(exclude_regs=[0])
+    chunk = test_data.begin_test_chunk("Sm_Svinval_mstatus_tvm")
+    # The mstatus readback checks the setup that the cp_tvm coverpoint samples.
+    tvm_label = test_data.add_testcase("tvm", "cp_tvm", _SM_CG).removesuffix(":")
+    number = 0
+    code: list[str] = []
+    for tvm in (0, 1):
+        if tvm:
+            code.extend(
+                [
+                    f"LI(x{tvm_reg}, MSTATUS_TVM)",
+                    f"csrs mstatus, x{tvm_reg}",
+                    f"{tvm_label}:",
+                    f"RVTEST_SIGUPD_CSR_READ(mstatus, x{tvm_reg}, {tvm_label}, {tvm_label}_str)",
+                ]
+            )
+        previous = "Mmode"
+        for mode in ("Mmode", "Smode", "Umode"):
+            number += 1
+            switch = [] if mode == previous else [f"RVTEST_TSBI_GOTO_{mode.upper()}"]
+            code.extend([*switch, *add_operations(test_data, number, _SM_CG)])
+            previous = mode
+        if previous != "Mmode":
+            code.append("RVTEST_TSBI_GOTO_MMODE")
+    chunk.code.extend(code)
+    chunk.sigupd_count = 1
+    chunk.trap_sigupd_count = 20
+    test_data.int_regs.return_register(tvm_reg)
     return [test_data.end_test_chunk()]
