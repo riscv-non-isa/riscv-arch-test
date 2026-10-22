@@ -70,11 +70,9 @@ covergroup ExceptionsSvZalrscSm_cg with function sample(ins_t ins);
         `endif
         cp_misaligned_priority_m: cross priv_mode_m, lrscops, d_virt_adr_misaligned, d_page_table_entry_invalid, d_phys_address_nonexistent {
             `ifdef UDB_MISALIGNED_LDST_EXCEPTION_PRIORITY_HIGH
-                `ifndef UDB_MISALIGNED_AMO
-                    `ifdef UDB_LRSC_MISALIGNED_BEHAVIOR_ALWAYS_RAISE_MISALIGNED_EXCEPTION
-                        // The misaligned exception is raised before translation, so there is no PTE or physical address
-                        ignore_bins misaligned_before_translation = binsof(d_virt_adr_misaligned.misaligned);
-                    `endif
+                `ifdef UDB_LRSC_MISALIGNED_BEHAVIOR_ALWAYS_RAISE_MISALIGNED_EXCEPTION
+                    // The misaligned exception is raised before translation, so there is no PTE or physical address
+                    ignore_bins misaligned_before_translation = binsof(d_virt_adr_misaligned.misaligned);
                 `endif
             `endif
         }
