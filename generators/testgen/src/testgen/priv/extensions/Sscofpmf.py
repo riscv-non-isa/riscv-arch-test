@@ -1,11 +1,11 @@
 ##################################
-# priv/extensions/SscofpmfCommon.py
+# priv/extensions/Sscofpmf.py
 # Written by: Ayesha Anwar, ayesha.anwaar2005@gmail.com
-# Sscofpmf (HPM counter overflow/interrupt) shared test-case generators.
+# Sscofpmf (HPM counter overflow/interrupt) test generators for the Sm, S and U groups.
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""Shared Sscofpmf test-case generators, called with priv_mode in {"M", "S", "U"}."""
+"""Sscofpmf test generators. Shared test-case generators are called with priv_mode in {"M", "S", "U"}."""
 
 from collections.abc import Callable
 
@@ -14,6 +14,14 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
+from testgen.priv.registry import add_priv_test_generator
+
+# Covergroup group (and test file name prefix) for each privilege mode
+_GROUP = {"M": "Sm", "S": "S", "U": "U"}
+
+
+def _cg(priv_mode: str) -> str:
+    return f"Sscofpmf_{_GROUP[priv_mode]}_cg"
 
 
 def lcofip_access(priv_mode: str, instr: Callable[[str], str]) -> list[str]:
@@ -41,7 +49,7 @@ def clear_lcofip(r_tmp: int, priv_mode: str) -> list[str]:
 def generate_lcofi_sip_tests(test_data: TestData, priv_mode: str) -> list[str]:
     """Sweep sip.LCOFIP x sie.LCOFIE with sstatus.SIE fixed (1 in S, 0 in U)."""
     ######################################
-    covergroup = "Sscofpmf_cg"
+    covergroup = _cg(priv_mode)
     coverpoint = f"cp_lcofi_sip_{priv_mode.lower()}"
     ######################################
 
@@ -191,7 +199,7 @@ def _generate_xinh_inhibits_tests(
 ) -> list[str]:
     """xINH toggles (when ``toggles``) and the MINH/SINH/UINH/VSINH/VUINH combinations in ``combos``."""
 
-    covergroup = "Sscofpmf_cg"
+    covergroup = _cg(priv_mode)
     inh_prefix = priv_mode.lower()
     coverpoint = f"cp_{inh_prefix}inh_inhibits_{inh_prefix}mode"
     inh_bit_pos = {"M": 62, "S": 61, "U": 60}[priv_mode]
@@ -322,7 +330,7 @@ def read_event_config_bits(r_temp: int, priv_mode: str) -> list[str]:
 
 def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> list[str]:
     ######################################
-    covergroup = "Sscofpmf_cg"
+    covergroup = _cg(priv_mode)
     coverpoint = "cp_of_set_on_overflow"
     ######################################
 
@@ -445,7 +453,7 @@ def _generate_of_set_on_overflow_tests(test_data: TestData, priv_mode: str) -> l
 
 def _generate_overflow_hw_only_tests(test_data: TestData, priv_mode: str) -> list[str]:
     ######################################
-    covergroup = "Sscofpmf_cg"
+    covergroup = _cg(priv_mode)
     coverpoint = "cp_overflow_hw_only"
     ######################################
 
@@ -520,7 +528,7 @@ def check_lcofip(r_temp: int, priv_mode: str, test_data: TestData, expect_desc: 
 
 def _generate_lcofip_hw_only_tests(test_data: TestData, priv_mode: str) -> list[str]:
     ######################################
-    covergroup = "Sscofpmf_cg"
+    covergroup = _cg(priv_mode)
     coverpoint = "cp_lcofip_hw_only"
     ######################################
 
@@ -605,7 +613,7 @@ MCOUNTEREN_OF_PATTERNS: dict[str, Callable[[int], int]] = {
 
 def _generate_scountovf_mcounteren_tests(test_data: TestData, mode: str, of_names: list[str]) -> list[str]:
     ######################################
-    covergroup = "Sscofpmf_cg"
+    covergroup = _cg(mode)
     coverpoint = "cp_scountovf_mcounteren"
     ######################################
 
@@ -666,7 +674,7 @@ def _generate_scountovf_mcounteren_tests(test_data: TestData, mode: str, of_name
 
 def _generate_sscofpmf_access_tests(test_data: TestData, mode: str) -> list[str]:
     ######################################
-    covergroup = "Sscofpmf_cg"
+    covergroup = _cg(mode)
     coverpoint = "cp_sscofpmf_access"
     ######################################
 
@@ -709,7 +717,7 @@ def _generate_scountovf_shadow_tests(
         return []
 
     ######################################
-    covergroup = "Sscofpmf_cg"
+    covergroup = _cg(priv_mode)
     coverpoint = "cp_scountovf_shadow"
     ######################################
 
@@ -754,15 +762,15 @@ def generate_sscofpmf_suite(test_data: TestData, mode: str) -> list[TestChunk]:
     """Assemble the shared Sscofpmf tests for ``mode`` ("M"/"S"/"U")."""
     test_chunks: list[TestChunk] = []
 
-    tc = test_data.begin_test_chunk("inhibit_lo")
+    tc = test_data.begin_test_chunk(f"{_GROUP[mode]}_inhibit_lo")
     tc.code.extend(_generate_xinh_inhibits_tests(test_data, mode, combos=range(16)))
     test_chunks.append(test_data.end_test_chunk())
 
-    tc = test_data.begin_test_chunk("inhibit_hi")
+    tc = test_data.begin_test_chunk(f"{_GROUP[mode]}_inhibit_hi")
     tc.code.extend(_generate_xinh_inhibits_tests(test_data, mode, combos=range(16, 32), toggles=False))
     test_chunks.append(test_data.end_test_chunk())
 
-    tc = test_data.begin_test_chunk("overflow")
+    tc = test_data.begin_test_chunk(f"{_GROUP[mode]}_overflow")
     tc.code.extend(_generate_of_set_on_overflow_tests(test_data, mode))
     tc.code.extend(_generate_overflow_hw_only_tests(test_data, mode))
     tc.code.extend(_generate_lcofip_hw_only_tests(test_data, mode))
@@ -772,16 +780,386 @@ def generate_sscofpmf_suite(test_data: TestData, mode: str) -> list[TestChunk]:
         return test_chunks
 
     for of_name in MCOUNTEREN_OF_PATTERNS:
-        tc = test_data.begin_test_chunk(f"mcounteren_{of_name}")
+        tc = test_data.begin_test_chunk(f"{_GROUP[mode]}_mcounteren_{of_name}")
         tc.code.extend(_generate_scountovf_mcounteren_tests(test_data, mode, [of_name]))
         test_chunks.append(test_data.end_test_chunk())
 
-    tc = test_data.begin_test_chunk("access")
+    tc = test_data.begin_test_chunk(f"{_GROUP[mode]}_access")
     tc.code.extend(_generate_sscofpmf_access_tests(test_data, mode))
     test_chunks.append(test_data.end_test_chunk())
 
     for split_name, patterns in SHADOW_PATTERNS.items():
-        tc = test_data.begin_test_chunk(split_name)
+        tc = test_data.begin_test_chunk(f"{_GROUP[mode]}_{split_name}")
         tc.code.extend(_generate_scountovf_shadow_tests(test_data, mode, patterns))
         test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+def _generate_lcofi_m_tests(test_data: TestData) -> list[str]:
+    ######################################
+    covergroup = _cg("M")
+    coverpoint = "cp_lcofi_m"
+    ######################################
+
+    r_val, r_temp, r_idle = test_data.int_regs.get_registers(3)
+
+    lines = [
+        comment_banner(
+            coverpoint,
+            "Interrupt pending and enable, mode = M.\n"
+            "mstatus.MIE=1, mstatus.SIE=1 held fixed per testplan; sweep is\n"
+            "mip.LCOFIP x mie.LCOFIE x mideleg.LCOFI.\n",
+        ),
+        "",
+        "# === M-MODE SETUP ===",
+        "csrw mip, zero      # clear all pending (sip may not exist in this suite)",
+        "csrw mie, zero      # disable all interrupts",
+        "csrw RVTEST_CSR_MHPMEVENT, zero",
+        f"LI(x{r_val}, MSTATUS_MIE)",
+        f"csrs mstatus, x{r_val}   # mstatus.MIE = 1 (fixed)",
+        f"LI(x{r_val}, SSTATUS_SIE)",
+        f"csrs mstatus, x{r_val}   # mstatus.SIE = 1 (fixed)",
+    ]
+
+    for lcofip in [0, 1]:
+        for lcofie in [0, 1]:
+            for mideleg_bit in [0, 1]:
+                binname = f"lcofi_m_lcofip_{lcofip}_lcofie_{lcofie}_mideleg_{mideleg_bit}"
+                lines.extend(
+                    [
+                        "",
+                        (f"# Testcase: mip.LCOFIP={lcofip}, mie.LCOFIE={lcofie}, mideleg.LCOFI={mideleg_bit}, mode=M"),
+                    ]
+                )
+
+                if lcofip:
+                    lines.extend(
+                        [
+                            f"LI(x{r_val}, MIP_LCOFIP)",
+                            f"csrs mip, x{r_val}   # set mip.LCOFIP directly",
+                        ]
+                    )
+                else:
+                    lines.append("csrw RVTEST_CSR_MHPMCOUNTER, zero   # keep counter clear -- no overflow")
+
+                lines.extend(
+                    [
+                        f"LI(x{r_temp}, MIP_LCOFIP)",
+                        f"{'csrs' if mideleg_bit else 'csrc'} mideleg, x{r_temp}   # mideleg.LCOFI = {mideleg_bit}",
+                        f"{'csrs' if lcofie else 'csrc'} mie, x{r_temp}   # mie.LCOFIE = {lcofie}",
+                        "",
+                        test_data.add_testcase(binname, coverpoint, covergroup),
+                        "    # Stays in M-mode throughout. With mideleg.LCOFI=1, LCOFI is an",
+                        "    # S-level interrupt and is never taken in M-mode, whatever mstatus.MIE",
+                        "    # is. So the trap fires during the idle window below only if",
+                        "    # LCOFIP=1, LCOFIE=1 and mideleg.LCOFI=0; else it falls through once",
+                        "    # the countdown expires.",
+                        f"RVTEST_IDLE_FOR_INTERRUPT(x{r_idle})",
+                        "",
+                        f"csrc mip, x{r_temp}   # clear LCOFIP for next iteration (if it latched)" if lcofip else "",
+                        "csrw mie, zero        # disable LCOFIE before next iteration",
+                    ]
+                )
+
+    lines.extend(
+        [
+            "",
+            "# === M-MODE CLEANUP ===",
+            f"LI(x{r_temp}, MIP_LCOFIP)",
+            f"csrc mip, x{r_temp}      # clear LCOFIP",
+            f"csrc mie, x{r_temp}      # clear LCOFIE",
+            f"csrc mideleg, x{r_temp}  # clear mideleg.LCOFI",
+            f"LI(x{r_val}, MSTATUS_MIE | MSTATUS_SIE)",
+            f"csrc mstatus, x{r_val}   # clear mstatus.MIE and mstatus.SIE",
+            "csrw RVTEST_CSR_MHPMCOUNTER, zero",
+            "csrw RVTEST_CSR_MHPMEVENT, zero",
+        ]
+    )
+
+    test_data.int_regs.return_registers([r_val, r_temp, r_idle])
+    return lines
+
+
+def _generate_lcofip_priority_sm_tests(test_data: TestData) -> list[str]:
+    ######################################
+    covergroup = _cg("M")
+    coverpoint = "cp_lcofip_priority_m"
+    ######################################
+
+    r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(4)
+
+    lines = [
+        comment_banner(
+            coverpoint,
+            "LCOFI priority with MEIP, MTIP, MSIP, or no other pending interrupt.\n"
+            "LCOFIP is raised by a real hpmcounter overflow through RVMODEL_MHPMEVENT_CODE.\n"
+            "Each case holds with mie = all 0s (nothing fires), then with mie = all 1s:\n"
+            "the competing interrupt fires first and LCOFI only after it.",
+        ),
+        "",
+        "# Setup: mstatus.MIE=1, mstatus.SIE=1",
+        "csrsi mstatus, MSTATUS_MIE   # MIE",
+        "csrsi mstatus, MSTATUS_SIE   # SIE",
+        "csrw mie, zero      # mie = all 0s initially",
+        "",
+    ]
+
+    # Each competing interrupt is raised only where the platform implements it
+    other_interrupts = {
+        "meip": "UDB_MEI_INTR_IMPL",
+        "mtip": "UDB_MTI_INTR_IMPL",
+        "msip": "UDB_MSI_INTR_IMPL",
+        "none": None,
+    }
+
+    for other_int, guard in other_interrupts.items():
+        binname = f"lcofip_priority_{other_int}"
+
+        if guard:
+            lines.append(f"#ifdef {guard}")
+        lines.extend(
+            [
+                f"# Testcase: competing interrupt = {other_int}",
+                "csrw mip, zero   # clear LCOFIP and other pending bits",
+                "csrw mie, zero   # disable interrupts (clear LCOFIE)",
+                *prime_counter_overflow(r_val, r_temp2, r_temp, r_addr, "M"),
+                "# the overflow sets OF and raises LCOFIP; mie = 0, so nothing fires yet",
+                "",
+            ]
+        )
+
+        if other_int == "meip":
+            lines.append("RVTEST_SET_MEXT_INT_M")
+
+        elif other_int == "mtip":
+            lines.append("RVTEST_SET_MTIME_INT_M")
+
+        elif other_int == "msip":
+            lines.append("RVTEST_SET_MSW_INT_M")
+
+        lines.extend(
+            [
+                "",
+                test_data.add_testcase(
+                    f"{binname}_mie_off",
+                    coverpoint,
+                    covergroup,
+                ),
+                "# mie = all 0s: LCOFIP and the competing interrupt stay pending, nothing fires",
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
+                "",
+                f"LI(x{r_temp}, -1)",
+                test_data.add_testcase(
+                    binname,
+                    coverpoint,
+                    covergroup,
+                ),
+                f"csrw mie, x{r_temp}   # mie = all 1s: competing interrupt fires first, then LCOFI",
+                "",
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
+                "",
+                f"csrr x{r_temp2}, mip   # sample point for lcofip priority outcome",
+                write_sigupd(r_temp2, test_data),
+                "",
+            ]
+        )
+
+        if other_int == "meip":
+            lines.append("RVTEST_CLR_MEXT_INT_M")
+
+        elif other_int == "mtip":
+            lines.append("RVTEST_CLR_MTIME_INT_M")
+
+        elif other_int == "msip":
+            lines.append("RVTEST_CLR_MSW_INT_M")
+
+        lines.extend(
+            [
+                "csrw mip, zero   # clear LCOFIP for next iteration",
+                "csrw mie, zero",
+            ]
+        )
+        if guard:
+            lines.append("#endif")
+        lines.append("")
+
+    lines.extend(
+        [
+            "csrw RVTEST_CSR_MHPMEVENT, zero   # stop counting, clear OF",
+            "#if __riscv_xlen == 32",
+            "csrw RVTEST_CSR_MHPMEVENTH, zero",
+            "#endif",
+            "csrw RVTEST_CSR_MHPMCOUNTER, zero",
+        ]
+    )
+
+    test_data.int_regs.return_registers([r_val, r_temp, r_temp2, r_addr])
+
+    return lines
+
+
+def _generate_lcofip_priority_s_tests(test_data: TestData) -> list[str]:
+
+    ######################################
+    covergroup = _cg("S")
+    coverpoint = "cp_lcofip_priority_s"
+    ######################################
+
+    r_val, r_temp, r_temp2, r_addr = test_data.int_regs.get_registers(4)
+
+    lines = [
+        comment_banner(
+            coverpoint,
+            (
+                "Priority of LCOFI interrupt in S-mode (4 cases).\n"
+                "sstatus.SIE=1; LCOFIP is raised by a real hpmcounter overflow through\n"
+                "RVMODEL_MHPMEVENT_CODE, together with one of {SEIP,STIP,SSIP,none}.\n"
+                "Each case holds with sie = all 0s (nothing fires), then with sie = all 1s:\n"
+                "the competing interrupt fires first and LCOFI only after it (lowest priority).\n"
+                "The competing interrupts are raised through the RVTEST_SET_*_INT_S macros;\n"
+                "enables stay in sie, written only here."
+            ),
+        ),
+        "",
+        "csrw sie, zero      # disable all S-mode interrupts",
+        tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero", "S"),
+        "csrsi sstatus, SSTATUS_SIE   # sstatus.SIE = 1",
+    ]
+
+    # Each competing interrupt is raised only where the platform implements it
+    other_interrupts = {
+        "seip": "UDB_SEI_INTR_IMPL",
+        "stip": "UDB_STI_INTR_IMPL",
+        "ssip": "UDB_SSI_INTR_IMPL",
+        "none": None,
+    }
+
+    for other_int, guard in other_interrupts.items():
+        binname = f"lcofip_priority_s_{other_int}"
+
+        lines.append("")
+        if guard:
+            lines.append(f"#ifdef {guard}")
+        lines.extend(
+            [
+                f"# Testcase: competing interrupt = {other_int}",
+                "# RVTEST_CSR_MHPMEVENT/RVTEST_CSR_MHPMCOUNTER writes go via T-SBI from S-mode, per spec",
+                *prime_counter_overflow(r_val, r_temp2, r_temp, r_addr, "S"),
+                "# the overflow sets OF and raises LCOFIP; sie = 0, so nothing fires yet",
+            ]
+        )
+
+        if other_int == "seip":
+            lines.append("RVTEST_SET_SEXT_INT_S")
+
+        elif other_int == "stip":
+            lines.append("RVTEST_SET_STIME_INT_S")
+
+        elif other_int == "ssip":
+            lines.append("RVTEST_SET_SSW_INT_S")
+
+        lines.extend(
+            [
+                "",
+                test_data.add_testcase(f"{binname}_sie_off", coverpoint, covergroup),
+                "# sie = all 0s: LCOFIP and the competing interrupt stay pending, nothing fires",
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
+                "",
+                f"LI(x{r_temp}, -1)",
+                test_data.add_testcase(binname, coverpoint, covergroup),
+                tsbi_call_or_direct(
+                    f"csrs sie, x{r_temp}   # sie = all 1s: competing interrupt fires first, then LCOFI", "S"
+                ),
+                "",
+                f"RVTEST_IDLE_FOR_INTERRUPT(x{r_temp})",
+                f"csrr x{r_temp2}, sip   # sample point for lcofip priority outcome",
+                write_sigupd(r_temp2, test_data),
+                "",
+            ]
+        )
+
+        if other_int == "seip":
+            lines.append("RVTEST_CLR_SEXT_INT_S")
+
+        elif other_int == "stip":
+            lines.append("RVTEST_CLR_STIME_INT_S")
+
+        elif other_int == "ssip":
+            lines.append("RVTEST_CLR_SSW_INT_S")
+
+        lines.extend(
+            [
+                f"LI(x{r_val}, MIP_LCOFIP)",
+                f"csrc sip, x{r_val}   # clear LCOFIP for next iteration",
+                "csrw sie, zero   # disable all before next iteration",
+            ]
+        )
+        if guard:
+            lines.append("#endif")
+
+    lines.extend(
+        [
+            "",
+            "csrci sstatus, SSTATUS_SIE   # sstatus.SIE = 0",
+            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENT, zero   # stop counting, clear OF", "S"),
+            "#if __riscv_xlen == 32",
+            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMEVENTH, zero", "S"),
+            "#endif",
+            tsbi_call_or_direct("csrw RVTEST_CSR_MHPMCOUNTER, zero", "S"),
+        ]
+    )
+
+    test_data.int_regs.return_registers([r_val, r_temp, r_temp2, r_addr])
+
+    return lines
+
+
+@add_priv_test_generator(
+    "Sscofpmf",
+    required_extensions=["Sm", "Sscofpmf"],
+    march_extensions=[],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    seed_name="SscofpmfSm",
+)
+def make_sscofpmfsm(test_data: TestData) -> list[TestChunk]:
+    """Generate the Sscofpmf_Sm performance-counter-overflow tests, run in M-mode."""
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("Sm_interrupt")
+    tc.code.extend(_generate_lcofi_m_tests(test_data))
+    tc.code.extend(_generate_lcofip_priority_sm_tests(test_data))
+    test_chunks.append(test_data.end_test_chunk())
+    test_chunks.extend(generate_sscofpmf_suite(test_data, "M"))
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "Sscofpmf",
+    required_extensions=["Sscofpmf"],
+    march_extensions=[],
+    extra_defines=["#define BOOT_TO_SMODE"],
+    seed_name="SscofpmfS",
+)
+def make_sscofpmfs(test_data: TestData) -> list[TestChunk]:
+    """Generate the Sscofpmf_S performance-counter-overflow tests, run in S-mode."""
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("S_interrupt")
+    tc.code.extend(generate_lcofi_sip_tests(test_data, "S"))
+    tc.code.extend(_generate_lcofip_priority_s_tests(test_data))
+    test_chunks.append(test_data.end_test_chunk())
+    test_chunks.extend(generate_sscofpmf_suite(test_data, "S"))
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "Sscofpmf",
+    required_extensions=["Sscofpmf", "U"],
+    seed_name="SscofpmfU",
+)
+def make_sscofpmfu(test_data: TestData) -> list[TestChunk]:
+    """Generate the Sscofpmf_U performance-counter-overflow tests, run in U-mode."""
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("U_interrupt")
+    tc.code.extend(generate_lcofi_sip_tests(test_data, "U"))
+    test_chunks.append(test_data.end_test_chunk())
+    test_chunks.extend(generate_sscofpmf_suite(test_data, "U"))
     return test_chunks

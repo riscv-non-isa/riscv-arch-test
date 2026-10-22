@@ -3,7 +3,25 @@
 
 ==== Sscofpmf Counter filtering
 
-include::{testplansdir}/priv/Sscofpmf.adoc[]
+The Sscofpmf suite has one covergroup per privilege mode the tests run in: Sscofpmf_Sm_cg (M-mode), Sscofpmf_S_cg (S-mode) and Sscofpmf_U_cg (U-mode).
+The setup table applies to all three.
+The Sscofpmf_Sm tests require Sm, so they are not part of a certificate without Sm, such as RVA23.
+
+include::{testplansdir}/priv/Sscofpmf_common.adoc[]
+
+===== Sscofpmf_Sm
+
+include::{testplansdir}/priv/Sscofpmf_Sm.adoc[]
+
+===== Sscofpmf_S
+
+include::{testplansdir}/priv/Sscofpmf_S.adoc[]
+
+===== Sscofpmf_U
+
+include::{testplansdir}/priv/Sscofpmf_U.adoc[]
+
+===== Sscofpmf Normative Rules
 
 include::norm/Sscofpmf_norm_rules.adoc[]
 

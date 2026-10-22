@@ -1,21 +1,8 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: Sscofpmf
+suite: Sscofpmf_S
 source: https://docs.google.com/spreadsheets/d/13ibIsAhJpQBXcL1Y5F7sddysLPFpaCr8_oDyQV_Boqw/edit?gid=0#gid=0
 coverpoints:
-  - heading: To test Sscofpf, the user must give values to the following RVMODEL macros.  If any are undefined and SSCOFPMF_SUPPORTED, error.
-  - name: RVMODEL_MHPMCOUNTER
-    goal: Name of a hpmcounter CSR to test (e.g. mhpmcounter3)
-  - name: RVMODEL_MHPMEVENT
-    goal: Name of a event CSR to test (e.g. mhpmevent3)
-  - name: RVMODEL_MHPMEVENT_VAL
-    goal: Value to put in the event CSR to make it count.
-  - name: RVMODEL_MHPMEVENT_CODE
-    goal: Code that increments the event counter (shouldn't trash certain registers), should be able to run in all privilege modes
-  - heading: These values need to be different in sail_macros.h to support how Sail will do this (https://github.com/riscv/sail-riscv/issues/1733)
-  - heading: Only one of the HPM counters is tested because the spec does not require multiple counters supported even when Zihpm is active.
-  - heading: Tests are performed in Sm/S/U for SscofpmfSm/S/U suites
-  - heading: Use T-SBI calls where necessary to access machine mode CSRs from lower privilege modes.
-  - name: cp_xinh_inhibits_xmode
+  - name: cp_sinh_inhibits_smode
     goal: xINH bit inhibits counting in {M/S/U}-mode
     description: |-
       For SscofpmfSm/S/U:
@@ -137,17 +124,6 @@ coverpoints:
       - scountovf_mmode_read_access
       - scountovf_smode_read_access
       - mhpmeventh_presence
-  - name: cp_lcofi_m
-    goal: Interrupt pending and enable
-    description: |-
-      For SscofpmfSm:
-      mstatus.MIE = 1, mstatus.SIE = 1, mip.LCOFIP = {0/1} x mie.LCOFIE = {0/1}, mideleg.LCOFI = {0/1} from each of Sm mode
-    expectation: Trap to M mode if enabled and pending
-    bins: 2 pending * 2 enabled * 2 deleg
-    rules:
-      - mip_lcofip_mie_lcofie_op
-      - mip_lcofip_acc
-      - sip_sie_Sscofpmf
   - name: cp_lcofi_sip_s
     goal: Interrupt from sip.LCOFIP
     description: |-
@@ -157,21 +133,7 @@ coverpoints:
     bins: 2 pending * 2 enabled
     rules:
       - sip_sie_Sscofpmf
-  - name: cp_lcofi_sip_u
-    goal: Interrupt from sip.LCOFIP
-    description: |-
-      For SscofpmfU:
-      If S_SUPPORTED, sip.LCOFIP = {0/1} x sie.LCOFIE = {0/1}
-      else mip.LCOFIP = {0/1} x mip.LCOFIP = {0/1}
-    expectation: |-
-      Trap to S if S_SUPPORTED if enabled and pending
-      else trap to M if enabled and pending
-    bins: 2 pending * 2 enabled
-    rules:
-      - sip_sie_Sscofpmf
-  - name: |-
-      cp_lcofip_priority_m
-      cp_lcofip_priority_s
+  - name: cp_lcofip_priority_s
     goal: Priority of LCOFI interrupt
     description: |-
       xinh = 00000
