@@ -47,9 +47,6 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     dmode_after: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "dmode")[0] {
         bins clear = {1'b0};
     }
-    csr_tselect:  coverpoint ins.current.insn[31:20] {
-        bins tselect = {CSR_TSELECT};
-    }
     csr_tdata: coverpoint ins.current.insn[31:20] {
         bins tdata1 = {CSR_TDATA1};
         bins tdata2 = {CSR_TDATA2};
@@ -57,6 +54,16 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     }
     csr_tinfo: coverpoint ins.current.insn[31:20] {
         bins tinfo = {CSR_TINFO};
+    }
+    // cp_tselect_trigs: a csrr of tinfo reports that the selected trigger exists (info != 1) and, when it
+    // supports mcontrol6 (info bit 6), version >= 1 (Sdtrig_mcontrol6_dependence)
+    tinfo_exists: coverpoint (ins.current.rd_val[15:0] != 16'h1) {
+        type_option.weight = 0;
+        bins exists = {1'b1};
+    }
+    tinfo_version: coverpoint (!ins.current.rd_val[6] || ins.current.rd_val[31:24] != 8'h0) {
+        type_option.weight = 0;
+        bins version_ge1 = {1'b1};
     }
     csr_global_reg: coverpoint ins.current.insn[31:20] {
         bins tselect  = {CSR_TSELECT};
@@ -110,7 +117,7 @@ covergroup SdtrigSm_trig_module_reg_cg with function sample(ins_t ins);
     cp_tdata_write:           cross priv_mode_m, triggernum, type_disabled, csr_tdata, csr_access;          // NTRIG * 3 CSRs * 2 values
     cp_csr_access_global:     cross priv_mode_m, csr_global_reg, csr_access;                                // implemented global CSRs * 2 values
     cp_csr_access_local:      cross priv_mode_m, triggernum, csr_local_reg, csr_access;                     // NTRIG * 4 CSRs * 2 values
-    cp_tselect_trigs:         cross priv_mode_m, triggernum, csrr, csr_tselect;                             // NTRIG
+    cp_tselect_trigs:         cross priv_mode_m, triggernum, csrr, csr_tinfo, tinfo_exists, tinfo_version;  // NTRIG
     cp_tdata1_mode_hardwired: cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_six, priv_bits;  // NTRIG
     cp_tinfo_read_only:       cross priv_mode_m, triggernum, csr_tinfo, csr_access;                         // NTRIG
     cp_tdata1_dmode:          cross priv_mode_m, triggernum, csrw, csr_tdata1, tdata1_type_dmode, dmode_written, dmode_after;  // NTRIG * 2 types
