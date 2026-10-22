@@ -91,7 +91,7 @@ covergroup ExceptionsZalrsc_cg with function sample(ins_t ins);
         illegal_address_misaligned: coverpoint ins.current.rs1_val {
             bins illegal = {`RVMODEL_ACCESS_FAULT_ADDRESS + 1};
         }
-        non_illegal_address: coverpoint ({{ins.current.imm + ins.current.rs1_val}[`UDB_MXLEN-1:3], 3'b000} != `RVMODEL_ACCESS_FAULT_ADDRESS) {
+        non_illegal_address: coverpoint (64'({{ins.current.imm + ins.current.rs1_val}[`UDB_MXLEN-1:3], 3'b000}) != `RVMODEL_ACCESS_FAULT_ADDRESS) {
             bins non_illegal = {1};
         }
         cp_load_address_misaligned:                cross lr, adr_LSBs, non_illegal_address;
@@ -99,8 +99,6 @@ covergroup ExceptionsZalrsc_cg with function sample(ins_t ins);
         cp_load_access_misaligned_priority:        cross lr, illegal_address_misaligned;
         cp_store_address_misaligned_legal_w:       cross sc_w, adr_LSBs_legal_w,rd_gt_one_prev, rd_zero_cur, non_illegal_address;
         cp_store_address_misaligned_illegal_w:     cross sc_w, adr_LSBs_illegal_w, rd_gt_one_prev, rd_gt_one_cur, non_illegal_address;
-        // illegal sc.w and sc.d does not get coverage as SAIL stores content in by bytes instead of giving exceptions
-        // Sail issue: https://github.com/riscv/sail-riscv/issues/1574
         `ifdef UDB_MXLEN_64
             cp_store_address_misaligned_legal_d:     cross sc_d, adr_LSBs_legal_d,rd_gt_one_prev, rd_zero_cur, non_illegal_address;
             cp_store_address_misaligned_illegal_d:   cross sc_d, adr_LSBs_illegal_d, rd_gt_one_prev, rd_gt_one_cur, non_illegal_address;

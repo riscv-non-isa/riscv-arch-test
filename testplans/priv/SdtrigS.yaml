@@ -1,0 +1,58 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: SdtrigS
+source: https://docs.google.com/spreadsheets/d/1jvJCSf9vdZ23PEaaYETLxfwZoyq_PzpyJzIB1OhdhcQ/edit?gid=498263567#gid=498263567
+description: |
+  Unless otherwise specified, run tests in S-Mode, with tdata1.s = 1
+  medeleg[3] = 1 (breakpoints from triggers are taken in S-mode) unless the hart has no S-mode or uses tcontrol (medeleg[3] hard-wired to 0); then they are taken in M-mode
+  Unless otherwise specified, use T-SBI calls to access trigger CSRs: the access runs in M-mode, so it does not trap.
+  cp_csr_access_trap_s is the exception: it reads and writes the trigger CSRs directly from S-mode, which traps
+  All other assumptions are inherited from SdtrigSm
+  Perform all tests defined in SdtrigSm except these, which run only in SdtrigSm: the trigger module register tests
+  (cp_tdata_write, cp_csr_access_global/local, cp_tselect_trigs, cp_tdata1_mode_hardwired, cp_tdata1_dmode,
+  cp_tinfo_read_only, cp_csr_unimplemented), cp_tdata2_translate/_exec, cp_textra_asid/_asid_sbytemask,
+  cp_textra_mhselect_no_h, cp_textra_itrigger_mcontext/_scontext, cp_textra_etrigger_mcontext/_scontext and the
+  cross-privilege itrigger/etrigger cases (interrupts and exceptions taken from S and U in cp_itrigger_s/u and
+  cp_etrigger_s/u); and cp_csr_access_common, which cp_csr_access_trap_s replaces (in M it would only repeat the
+  SdtrigSm accesses). The rows that SdtrigSm marks "not generated" (cp_cm_pop_push, cp_tcontrol_*,
+  cp_smode_fields_hardwired) run in no suite
+  The rows below are the S-mode coverpoints; the other tests are checked by their signatures
+  Note: cp_csr_access_trap_s reads and writes the M-level trigger CSRs from S-mode; cp_csr_insufficient_priv in the
+  S suite also reads every M-mode CSR, the trigger CSRs included, from S-mode
+coverpoints:
+  - name: cp_csr_access_trap_s
+    goal: The M-level trigger CSRs are not accessible from S-mode
+    description: |-
+      For x in {tselect, tdata1, tdata2, tdata3, tinfo}, and tcontrol if UDB_TCONTROL_AVAILABLE and mcontext if UDB_MCONTEXT_AVAILABLE:
+      csrr x, then csrw x, directly from S-mode (not through T-SBI)
+    expectation: Illegal instruction exception on every access (into S-mode when medeleg[2] = 1, else into M-mode)
+    bins: 2 accesses * implemented M-level trigger CSRs (5-7)
+  - name: cp_breakpoint_s
+    goal: Triggers enabled for S-mode fire in S-mode
+    description: |-
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect, for each supported trigger type in {icount, mcontrol6}:
+      arm the trigger with tdata1.s = 1 (T-SBI)
+      run the S-mode instruction that matches it
+    expectation: Breakpoint exception taken from S-mode (into S-mode when medeleg[3] = 1, else into M-mode)
+    bins: NUM_TRIGGERS * 2 types
+  - name: cp_mcontrol6_priv_bits_s
+    goal: An mcontrol6 trigger fires in S-mode only when its s bit is set
+    description: |-
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect:
+      mcontrol6 store address trigger on scratch (select = 0, XSL = 010)
+      tdata1.m/s/u = {s only, m and u only}
+      sw to scratch in S-mode
+    expectation: |-
+      Breakpoint exception when tdata1.s = 1
+      No breakpoint when only the other modes' bits are set
+    bins: NUM_TRIGGERS * 2 (own bit and fired, other bits only and not fired)
+  - name: cp_breakpoint_delegate_s
+    goal: Breakpoints caused by triggers can be delegated
+    description: |-
+      if S_SUPPORTED
+      medeleg[3] = {0/1} (written in M-mode: T-SBI does not write medeleg)
+      For each of UDB_SDTRIG_NUM_TRIGGERS in tselect, for each supported trigger type in {icount, mcontrol6}:
+      arm the trigger with tdata1.s = 1 (T-SBI)
+      run the S-mode instruction that fires it; sstatus.SIE = 1
+      After each case, rvtest_trap_count is written to the signature
+    expectation: Breakpoint exception taken into M when medeleg[3] = 0 and into S when medeleg[3] = 1
+    bins: NUM_TRIGGERS * 2 types * 2 medeleg

@@ -43,6 +43,18 @@ covergroup ExceptionsSm_cg with function sample(ins_t ins);
         wildcard bins bltu_nottaken = {6'b110_?_?_0};
         wildcard bins bgeu_nottaken = {6'b111_?_?_1};
     }
+    `ifdef ZIBI_SUPPORTED
+        zibi_branches_taken: coverpoint {ins.current.insn[6:0], ins.current.insn[14:12],
+                                         ins.current.rs1_val == ins.current.imm2} {
+            bins beqi_taken = {11'b1100011_010_1};
+            bins bnei_taken = {11'b1100011_011_0};
+        }
+        zibi_branches_nottaken: coverpoint {ins.current.insn[6:0], ins.current.insn[14:12],
+                                            ins.current.rs1_val == ins.current.imm2} {
+            bins beqi_nottaken = {11'b1100011_010_0};
+            bins bnei_nottaken = {11'b1100011_011_1};
+        }
+    `endif
     jal: coverpoint ins.current.insn {
         wildcard bins jal = {JAL};
     }
@@ -149,6 +161,10 @@ covergroup ExceptionsSm_cg with function sample(ins_t ins);
     // main coverpoints
     cp_instr_adr_misaligned_branch:          cross priv_mode_m, branch, branches_taken, pc_bit_1, imm_bit_1;
     cp_instr_adr_misaligned_branch_nottaken: cross priv_mode_m, branch, branches_nottaken, pc_bit_1, imm_bit_1;
+    `ifdef ZIBI_SUPPORTED
+        cp_instr_adr_misaligned_zibi_branch:          cross priv_mode_m, zibi_branches_taken, pc_bit_1, imm_bit_1;
+        cp_instr_adr_misaligned_zibi_branch_nottaken: cross priv_mode_m, zibi_branches_nottaken, pc_bit_1, imm_bit_1;
+    `endif
     cp_instr_adr_misaligned_jal:             cross priv_mode_m, jal, pc_bit_1, imm_bit_1;
     cp_instr_adr_misaligned_jalr:            cross priv_mode_m, jalr, rs1_1_0, offset;
     cp_illegal_instruction:                  cross priv_mode_m, illegalops;
@@ -184,11 +200,11 @@ covergroup ExceptionsSm_cg with function sample(ins_t ins);
             bins misaligned = {2'b10};
         }
         `ifdef UDB_MXLEN_64 // RV64 physical addresses have 56 bits; an RV32 address zero-extends into 34
-            i_phys_address_nonexistent: coverpoint ({{ins.current.imm + ins.current.rs1_val}[55:2], 2'b00} == `RVMODEL_ACCESS_FAULT_ADDRESS) {
+            i_phys_address_nonexistent: coverpoint ({8'b0, {ins.current.imm + ins.current.rs1_val}[55:2], 2'b00} == `RVMODEL_ACCESS_FAULT_ADDRESS) {
                 // auto fill 1/0 for the physical address being valid
             }
         `else
-            i_phys_address_nonexistent: coverpoint ({{ins.current.imm + ins.current.rs1_val}[31:2], 2'b00} == `RVMODEL_ACCESS_FAULT_ADDRESS) {
+            i_phys_address_nonexistent: coverpoint ({32'b0, {ins.current.imm + ins.current.rs1_val}[31:2], 2'b00} == `RVMODEL_ACCESS_FAULT_ADDRESS) {
                 // auto fill 1/0 for the physical address being valid
             }
         `endif

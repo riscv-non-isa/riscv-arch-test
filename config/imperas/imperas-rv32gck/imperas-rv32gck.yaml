@@ -29,7 +29,7 @@ implemented_extensions:
   - { name: Ssaia, version: "= 1.0.0" }
   - { name: Ssccfg, version: "= 1.0.0" }
   - { name: Ssccptr, version: "= 1.0.0" }
-  - { name: Sscofpmf, version: "= 1.0.0" }
+  # - { name: Sscofpmf, version: "= 1.0.0" } # Imperas implements no HPM counters, which Sscofpmf requires
   - { name: Sscounterenw, version: "= 1.0.0" }
   - { name: Sscsrind, version: "= 1.0.0" }
   - { name: Ssctr, version: "= 1.0.0" }
@@ -56,7 +56,6 @@ implemented_extensions:
   - { name: Zacas, version: "= 1.0.0" }
   - { name: Zalasr, version: "= 1.0.0" }
   - { name: Zalrsc, version: "= 1.0.0" }
-  - { name: Zama16b, version: "= 1.0.0" }
   - { name: Zba, version: "= 1.0.0" }
   - { name: Zbb, version: "= 1.0.0" }
   - { name: Zbc, version: "= 1.0.0" }
@@ -404,7 +403,7 @@ params:
   DCSR_STEPIE_TYPE: rw
   DCSR_STOPCOUNT_TYPE: rw
   DCSR_STOPTIME_TYPE: rw
-  HCONTEXT_AVAILABLE: true
+  HCONTEXT_AVAILABLE: false
   MCONTEXT_AVAILABLE: true
   # Smstateen params
   MSTATEEN_ENVCFG_TYPE: rw

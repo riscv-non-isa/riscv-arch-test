@@ -30,7 +30,6 @@ covergroup SsstrictSm_mcsr_cg with function sample(ins_t ins);
     csr: coverpoint ins.current.insn[31:20]  {
         ignore_bins mscratch = {CSR_MSCRATCH}; // mscratch accesses may corrupt the trap stack and cause unpredictable side effects
         ignore_bins mtvec = {CSR_MTVEC}; // mtvec accesses breaks the trap handler
-        ignore_bins scontext = {CSR_SCONTEXT}; // scontext not yet supported in Sail 5/31/26 dh; restore when Sail has support
         ignore_bins mseccfg = {CSR_MSECCFG}; // enables features that hang spike if not configured properly
         bins user_std0[] = {[12'h000:12'h0FF]};
         bins super_std0[] = {[12'h100:12'h1FF]};
@@ -85,8 +84,8 @@ endgroup
 covergroup SsstrictSm_instr_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
-    `include "priv/RISCV_coverage_instr.svh"
-    `include "priv/RISCV_coverage_vect_instr.svh"
+    `include "general/RISCV_coverage_instr.svh"
+    `include "general/RISCV_coverage_vect_instr.svh"
 
     // ── Scalar illegal instruction coverpoints ───────────────────────
 
@@ -192,7 +191,7 @@ endgroup
 covergroup SsstrictSm_comp_instr_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
-    `include "priv/RISCV_coverage_comp_instr.svh"
+    `include "general/RISCV_coverage_comp_instr.svh"
 
     cp_compressed00: cross priv_mode_m, compressed00;
     cp_compressed01: cross priv_mode_m, compressed01;

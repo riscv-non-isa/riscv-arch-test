@@ -221,6 +221,70 @@ covergroup Sv_vm_permissions_cg with function sample(ins_t ins);
     }
 
     `ifdef UDB_MXLEN_64
+        // Non-leaf PTEs with one of the reserved bits 63:54 set
+        PTE_nonleaf_i: coverpoint ins.current.pte_i[7:0] {
+            wildcard bins nonleaf = {8'b00?00001};
+        }
+        PTE_nonleaf_rsv_i: coverpoint ins.current.pte_i[63:54] {
+            bins bit_54 = {10'h001};
+            bins bit_55 = {10'h002};
+            bins bit_56 = {10'h004};
+            bins bit_57 = {10'h008};
+            bins bit_58 = {10'h010};
+            // With Svrsw60t59b, bits 60:59 are ignored and the access does not fault
+            `ifndef SVRSW60T59B_SUPPORTED
+                bins bit_59 = {10'h020};
+                bins bit_60 = {10'h040};
+            `endif
+            bins bit_61 = {10'h080};
+            bins bit_62 = {10'h100};
+            bins bit_63 = {10'h200};
+        }
+        // A non-leaf PTE is never at level 0
+        PTE_nonleaf_level_i: coverpoint ins.current.page_type_i {
+            `ifdef SV48_SUPPORTED
+                bins sv48_tera = {2'b11} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+                bins sv48_giga = {2'b10} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+                bins sv48_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+            `endif
+            `ifdef SV39_SUPPORTED
+                bins sv39_giga = {2'b10} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
+                bins sv39_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
+            `endif
+        }
+        PTE_nonleaf_d: coverpoint ins.current.pte_d[7:0] {
+            wildcard bins nonleaf = {8'b00?00001};
+        }
+        PTE_nonleaf_rsv_d: coverpoint ins.current.pte_d[63:54] {
+            bins bit_54 = {10'h001};
+            bins bit_55 = {10'h002};
+            bins bit_56 = {10'h004};
+            bins bit_57 = {10'h008};
+            bins bit_58 = {10'h010};
+            // With Svrsw60t59b, bits 60:59 are ignored and the access does not fault
+            `ifndef SVRSW60T59B_SUPPORTED
+                bins bit_59 = {10'h020};
+                bins bit_60 = {10'h040};
+            `endif
+            bins bit_61 = {10'h080};
+            bins bit_62 = {10'h100};
+            bins bit_63 = {10'h200};
+        }
+        // A non-leaf PTE is never at level 0
+        PTE_nonleaf_level_d: coverpoint ins.current.page_type_d {
+            `ifdef SV48_SUPPORTED
+                bins sv48_tera = {2'b11} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+                bins sv48_giga = {2'b10} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+                bins sv48_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
+            `endif
+            `ifdef SV39_SUPPORTED
+                bins sv39_giga = {2'b10} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
+                bins sv39_mega = {2'b01} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1000);
+            `endif
+        }
+    `endif
+
+    `ifdef UDB_MXLEN_64
         PageType_i: coverpoint ins.current.page_type_i {
             `ifdef SV48_SUPPORTED
                 bins sv48_tera = {2'b11} iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "satp", "mode")[3:0] == 4'b1001);
@@ -554,6 +618,12 @@ covergroup Sv_vm_permissions_cg with function sample(ins_t ins);
         `ifdef UDB_MXLEN_32   ignore_bins ig3 = binsof(PageType_i.sv32_kilo); `endif
     }
 
+    `ifdef UDB_MXLEN_64
+        cp_PTE_rsv_nleaf_read_s: cross PTE_nonleaf_d, PTE_nonleaf_rsv_d, PTE_nonleaf_level_d, load_page_fault, priv_mode_s;
+        cp_PTE_rsv_nleaf_write_s: cross PTE_nonleaf_d, PTE_nonleaf_rsv_d, PTE_nonleaf_level_d, store_page_fault, priv_mode_s;
+        cp_PTE_rsv_nleaf_exec_s: cross PTE_nonleaf_i, PTE_nonleaf_rsv_i, PTE_nonleaf_level_i, ins_page_fault, priv_mode_s;
+    `endif
+
     cp_misaligned_exec_s: cross PTE_RWX_i, misaligned_PPN_i, ins_page_fault, exec_acc  { //pte.16
         ignore_bins ig1 = binsof(PTE_RWX_i.leaflvl_u);
     }
@@ -830,8 +900,8 @@ covergroup Sv_add_feature_cg with function sample(ins_t ins);
 
         //pte.20
         cp_reserved_read_fault:  cross reserved_PTE_d, load_page_fault, read_acc, mode;
-        cp_reserved_write_fault: cross reserved_PTE_d, store_page_fault, read_acc, mode;
-        cp_reserved_exec_fault:  cross reserved_PTE_i, ins_page_fault, read_acc, mode;
+        cp_reserved_write_fault: cross reserved_PTE_d, store_page_fault, write_acc, mode;
+        cp_reserved_exec_fault:  cross reserved_PTE_i, ins_page_fault, exec_acc, mode;
 
         //pte.17&19&20
         cp_read_nofault:  cross zeros_PTE_d, read_acc, mode;
