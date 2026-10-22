@@ -584,7 +584,9 @@ def check_norm(report: Report, gpt: ModuleType, old: Tree, new: Tree, renames: d
     stale = sorted(
         {
             o
-            for o in renames
+            for o, n in renames.items()
+            # A group whose suite keeps its name (--group =Sv) keeps its covergroup names too
+            if o != n
             for f in (new.root / "coverpoints/norm").glob("*.yaml")
             if re.search(rf"\b{o}\b", f.read_text())
         }
