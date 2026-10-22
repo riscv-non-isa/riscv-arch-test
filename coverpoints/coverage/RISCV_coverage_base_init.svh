@@ -162,10 +162,6 @@
         `cover_info("//      M - Enabled");
         `include "M_coverage_init.svh"
     `endif
-    `ifdef COVER_MISALIGN
-        `cover_info("//      Misalign - Enabled");
-        `include "Misalign_coverage_init.svh"
-    `endif
     `ifdef COVER_MISALIGNV
         `cover_info("//      MisalignV - Enabled");
         `include "MisalignV_coverage_init.svh"
@@ -541,6 +537,10 @@
     `ifdef COVER_ZICBOZ
         `cover_info("//      Zicboz - Enabled");
         `include "Zicboz_coverage_init.svh"
+    `endif
+    `ifdef COVER_ZICCLSM
+        `cover_info("//      Zicclsm - Enabled");
+        `include "Zicclsm_coverage_init.svh"
     `endif
     `ifdef COVER_ZICFILPS
         `cover_info("//      ZicfilpS - Enabled");

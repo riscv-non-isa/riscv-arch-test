@@ -125,9 +125,6 @@
 `ifdef M_COVERAGE
   `include "M_coverage.svh"
 `endif
-`ifdef MISALIGN_COVERAGE
-  `include "Misalign_coverage.svh"
-`endif
 `ifdef MISALIGNV_COVERAGE
   `include "MisalignV_coverage.svh"
 `endif
@@ -409,6 +406,9 @@
 `endif
 `ifdef ZICBOZ_COVERAGE
   `include "Zicboz_coverage.svh"
+`endif
+`ifdef ZICCLSM_COVERAGE
+  `include "Zicclsm_coverage.svh"
 `endif
 `ifdef ZICFILPS_COVERAGE
   `include "ZicfilpS_coverage.svh"

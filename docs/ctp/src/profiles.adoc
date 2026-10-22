@@ -53,7 +53,6 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |F|Float|<<t-F-coverpoints>>|o||x|x|x
 |D|Double|<<t-D-coverpoints>>|o||x|x|x
 |ZicsrF|Float CSRs|<<t-ZicsrF-coverpoints>>|o||x|x|x
-|Misalign|Misaligned Load/Store|<<t-Misalign-coverpoints>>|o|o|o|o|o
 |Zfh|Half|<<t-Zfh-coverpoints>>|||o|o|o
 |Zfhmin|Half Converts|<<t-Zfhmin-coverpoints>>|||x|o|x
 |Zfa|Additional Float|<<t-Zfa-coverpoints>>||||x|x
@@ -236,7 +235,6 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |ZfhminQ|Half-Quad Converts|<<t-ZfhQ-coverpoints>>|||||
 |ZfaQ|Additional Quad|<<t-ZfaQ-coverpoints>>|||||
 |ZfaZfhQ|Additional Half-Quad Converts|<<t-ZfaZfhQ-coverpoints>>|||||
-|MisalignQ|Misaligned Quad|none yet|||||
 |Zcmp|Compressed Push/Pop|none yet|||||
 |Zcmt|Compressed Table Jumps|none yet|||||
 |Zilsd|Load/Store Double|<<t-Zilsd-coverpoints>>|||||
