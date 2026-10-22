@@ -389,6 +389,22 @@
 1:
 .endm
 
+// Clear mstatus.MDT on an M-mode trap handler failure exit, which does not use mret. The
+// failure code and cleanup_epilogs make T-SBI ecalls, which are double traps while MDT is
+// still 1 from trap entry. Failure exits clear it only after the trap state has been
+// captured, so a passing trap never sees MDT changed.
+.macro RVTEST_CLEAR_MDT TMP_REG
+#ifdef SMDBLTRP_SUPPORTED
+  #if (UDB_MXLEN==64)
+        LI(\TMP_REG, MSTATUS_MDT)
+        csrc    CSR_MSTATUS, \TMP_REG
+  #else // RV32
+        LI(\TMP_REG, MSTATUSH_MDT)
+        csrc    CSR_MSTATUSH, \TMP_REG
+  #endif // MXLEN
+#endif // SMDBLTRP_SUPPORTED
+.endm
+
 // Relocate the resume address (xEPC, already past the ecall) of
 // RVTEST_TSBI_GOTO_MMODE, RVTEST_TSBI_GOTO_SMODE and RVTEST_TSBI_GOTO_UMODE
 // between the two mappings of the code region.
@@ -2168,7 +2184,7 @@ tsbi_instr_table:
         // sig_end_canary but must never pass it.
         LA(     T3, sig_end_canary)
         add     T4, T1, T2                          // T4 = this mode's updated trap sig write pointer
-        bgtu    T4, T3, trap_sig_overflow           // overrun -> fail before corrupting the signature/tohost
+        bgtu    T4, T3, \__MODE__\()trap_overflow  // overrun -> fail before corrupting the signature/tohost
 
 //---------- Trap Signature Word 0: vect+mode+status ----------
 // Packed format:
@@ -2243,12 +2259,12 @@ sv_\__MODE__\()vect:
         andi    T4, T4, 0x1C0                        // extract bits 8:6 (SPVP, MPV, GVA)
         slli    T4, T4, 13+14-6                      // position at word 0 bits 29:27 (xstatus 16:14)
         or      T3, T3, T4                           // merge into word 0
-        TRAP_SIGUPD(T4, T3, 0, sv_\__MODE__\()vect, sv_\__MODE__\()vect_str) // write word 0 to trap sig
+        TRAP_SIGUPD(T4, T3, 0, sv_\__MODE__\()vect, sv_\__MODE__\()vect_str, \__MODE__\()trap_mismatch) // write word 0 to trap sig
 
 //---------- Trap Signature Word 1: xcause ----------
 sv_\__MODE__\()cause:
         mv      T3, T5                               // T3 = xcause (for TRAP_SIGUPD)
-        TRAP_SIGUPD(T4, T3, 1, sv_\__MODE__\()cause, sv_\__MODE__\()cause_str) // write word 1
+        TRAP_SIGUPD(T4, T3, 1, sv_\__MODE__\()cause, sv_\__MODE__\()cause_str, \__MODE__\()trap_mismatch) // write word 1
 
         bltz    T5, common_\__MODE__\()int_handler   // if MSB=1 -> interrupt -> branch to int handler
 
@@ -2266,7 +2282,7 @@ sv_\__MODE__\()epc:
         LI(     T6, CAUSE_BREAKPOINT)                 //   at a slightly different instr) -> don't record xEPC for
         beq     T2, T6, skpsv_\__MODE__\()epc         //   mcause==3, else self-check mismatches on word 2
 #endif
-        TRAP_SIGUPD_ADDR(T4, T3, 2, sv_\__MODE__\()epc, sv_\__MODE__\()epc_str) // write word 2: xEPC
+        TRAP_SIGUPD_ADDR(T4, T3, 2, sv_\__MODE__\()epc, sv_\__MODE__\()epc_str, \__MODE__\()trap_mismatch) // write word 2: xEPC
 skpsv_\__MODE__\()epc:
         csrr    T3, CSR_XEPC                          // reload xEPC (TRAP_SIGUPD may clobber T3 on its failure path)
 
@@ -2361,7 +2377,7 @@ sv_\__MODE__\()tval_words:
         csrr    T3, CSR_XTVAL                         // T3 = xtval (trap value: faulting addr or instruction)
 
 sv_\__MODE__\()tval:
-        TRAP_SIGUPD_ADDR(T4, T3, 3, sv_\__MODE__\()tval, sv_\__MODE__\()tval_str) // write word 3: xtval
+        TRAP_SIGUPD_ADDR(T4, T3, 3, sv_\__MODE__\()tval, sv_\__MODE__\()tval_str, \__MODE__\()trap_mismatch) // write word 3: xtval
 
 skp_\__MODE__\()tval:
 
@@ -2372,20 +2388,20 @@ skp_\__MODE__\()tval:
         #ifdef H_SUPPORTED
         sv_\__MODE__\()Mtval2:
         csrr    T3, CSR_MTVAL2
-        TRAP_SIGUPD(T4, T3, 4, sv_\__MODE__\()Mtval2, sv_Mtval2_str) // write word 4: mtval2
+        TRAP_SIGUPD(T4, T3, 4, sv_\__MODE__\()Mtval2, sv_Mtval2_str, \__MODE__\()trap_mismatch) // write word 4: mtval2
         sv_\__MODE__\()Mtinst:
         csrr    T3, CSR_MTINST
-        TRAP_SIGUPD_ZERO_OK(T4, T3, 5, sv_\__MODE__\()Mtinst, sv_Mtinst_str) // write word 5: mtinst
+        TRAP_SIGUPD_ZERO_OK(T4, T3, 5, sv_\__MODE__\()Mtinst, sv_Mtinst_str, \__MODE__\()trap_mismatch) // write word 5: mtinst
       #endif
   .else
     .ifnc \__MODE__ , V
       #ifdef H_SUPPORTED
         sv_\__MODE__\()Htval2:
         csrr    T3, CSR_HTVAL
-        TRAP_SIGUPD(T4, T3, 4, sv_\__MODE__\()Htval2, sv_Htval2_str) // write word 4: htval
+        TRAP_SIGUPD(T4, T3, 4, sv_\__MODE__\()Htval2, sv_Htval2_str, \__MODE__\()trap_mismatch) // write word 4: htval
         sv_\__MODE__\()Htinst:
         csrr    T3, CSR_HTINST
-        TRAP_SIGUPD_ZERO_OK(T4, T3, 5, sv_\__MODE__\()Htinst, sv_Htinst_str) // write word 5: htinst
+        TRAP_SIGUPD_ZERO_OK(T4, T3, 5, sv_\__MODE__\()Htinst, sv_Htinst_str, \__MODE__\()trap_mismatch) // write word 5: htinst
       #endif
     .endif
   .endif
@@ -2433,7 +2449,7 @@ common_\__MODE__\()int_handler:
         csrrc   T3, CSR_XIP, T3                      // read xIP, then attempt to clear pending bit
 
 sv_\__MODE__\()ip:
-        TRAP_SIGUPD(T4, T3, 2, sv_\__MODE__\()ip, sv_\__MODE__\()ip_str) // write word 2: xIP
+        TRAP_SIGUPD(T4, T3, 2, sv_\__MODE__\()ip, sv_\__MODE__\()ip_str, \__MODE__\()trap_mismatch) // write word 2: xIP
 
         j       sv_\__MODE__\()tval_words           // words 3-5: xtval and, with H, second trap value and xtinst
 
@@ -2462,7 +2478,7 @@ spcl_\__MODE__\()dispatch_handling:
         srli    T2, T2,1                //odd entry>0, remove LSB, normalizing to cause range
         beq     T5, T2, resto_\__MODE__\()rtn // case range matches, not an error, just noop
 1:
-        j       abort_test
+        j       \__MODE__\()trap_abort
 
 // The entry is in T2 (x7) because a jump through x7 does not set ELP (Zicfilp), so the
 // handler routines need no landing pad. The 15*4 offset above counts the instructions
@@ -2682,6 +2698,24 @@ excpt_\__MODE__\()hndlr_tbl:
 
 .popsection                                          // end of .text.rvmodel section
 
+// Failure exits. They leave the handler without an xRET, so an M-mode handler clears MDT
+// first. T4 is free on all three paths.
+\__MODE__\()trap_mismatch:                         // from TRAP_SIGUPD: x7 = return address
+  .ifc \__MODE__ , M
+        RVTEST_CLEAR_MDT T4
+  .endif
+        j       failedtest_trap_x7_x9
+\__MODE__\()trap_overflow:
+  .ifc \__MODE__ , M
+        RVTEST_CLEAR_MDT T4
+  .endif
+        j       trap_sig_overflow
+\__MODE__\()trap_abort:
+  .ifc \__MODE__ , M
+        RVTEST_CLEAR_MDT T4
+  .endif
+        j       abort_test
+
 .option pop
 .endm                                                 // end of RVTEST_TRAP_HANDLER
 
@@ -2747,10 +2781,10 @@ excpt_\__MODE__\()hndlr_tbl:
 //==============================================================================
 //==============================================================================
 
-// RVTEST_FAST_TRAP_FAILURE(epc, cause, tval, status, check, description)
+// RVTEST_FAST_TRAP_FAILURE(epc, cause, tval, status, check, description, failure)
 // Reports a fast-trap field mismatch. This path is cold, so it can use extra
 // registers to snapshot the trapping CSRs for the normal trap diagnostics.
-#define RVTEST_FAST_TRAP_FAILURE(_EPC, _CAUSE, _TVAL, _STATUS, _CHECK, _DESCRIPTION) \
+#define RVTEST_FAST_TRAP_FAILURE(_EPC, _CAUSE, _TVAL, _STATUS, _CHECK, _DESCRIPTION, _FAIL) \
         csrr x9, _EPC                                      ;\
         LA(x7, saved_xepc)                                 ;\
         SREG x9, 0(x7)                                     ;\
@@ -2762,7 +2796,7 @@ excpt_\__MODE__\()hndlr_tbl:
         SREG x9, 24(x7)                                    ;\
         mv x6, a0                                          ;\
         mv x4, a1                                          ;\
-        jal x7, failedtest_trap_x7_x9                      ;\
+        jal x7, _FAIL                                      ;\
         RVTEST_WORD_PTR _CHECK                             ;\
         RVTEST_WORD_PTR _DESCRIPTION                       ;\
         .word _EPC
@@ -2854,11 +2888,14 @@ fast_Mothertrap:
         j    Mtrampoline                // hand off all non-illegal-instruction traps
 
 fast_Mcause_mismatch:
-        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mcause_mismatch, sv_Mcause_str)
+        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mcause_mismatch, sv_Mcause_str, fast_Mtrap_mismatch)
 fast_Mepc_mismatch:
-        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mepc_mismatch, sv_Mepc_str)
+        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mepc_mismatch, sv_Mepc_str, fast_Mtrap_mismatch)
 fast_Mtval_mismatch:
-        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mtval_mismatch, sv_Mtval_str)
+        RVTEST_FAST_TRAP_FAILURE(CSR_MEPC, CSR_MCAUSE, CSR_MTVAL, CSR_MSTATUS, fast_Mtval_mismatch, sv_Mtval_str, fast_Mtrap_mismatch)
+fast_Mtrap_mismatch:                    // mstatus is already captured; x7 = return address, x9 free
+        RVTEST_CLEAR_MDT x9
+        j    failedtest_trap_x7_x9
 
 #ifdef S_SUPPORTED
 // ── Fast S-mode handler (stvec) ─────────────────────────────────────────────
@@ -2926,11 +2963,11 @@ fast_Sothertrap:
         j    Strampoline                // hand off all non-illegal-instruction traps
 
 fast_Scause_mismatch:
-        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Scause_mismatch, sv_Scause_str)
+        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Scause_mismatch, sv_Scause_str, failedtest_trap_x7_x9)
 fast_Sepc_mismatch:
-        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Sepc_mismatch, sv_Sepc_str)
+        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Sepc_mismatch, sv_Sepc_str, failedtest_trap_x7_x9)
 fast_Stval_mismatch:
-        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Stval_mismatch, sv_Stval_str)
+        RVTEST_FAST_TRAP_FAILURE(CSR_SEPC, CSR_SCAUSE, CSR_STVAL, CSR_SSTATUS, fast_Stval_mismatch, sv_Stval_str, failedtest_trap_x7_x9)
 #endif // S_SUPPORTED
 
 .option pop
