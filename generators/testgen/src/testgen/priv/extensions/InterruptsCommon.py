@@ -90,8 +90,6 @@ def guard_symbol(int_type: str) -> str:
 int_macro = {"MEI": "MEXT", "MTI": "MTIME", "MSI": "MSW", "SEI": "SEXT", "STI": "STIME", "SSI": "SSW"}
 int_macro |= {name: name for name in ["LCOFI", *reg_ints, *sstc_ints]}
 int_macro |= {"VSEI": "VSEXT", "VSTI": "VSTIME", "VSSI": "VSSW"}
-# The VS-level interrupts' macro names alone. HS-mode writes hvip directly, as M-mode does.
-vs_int_macro = {name: int_macro[name] for name in vs_ints}
 
 
 def flavor(priv: str) -> str:
@@ -556,7 +554,7 @@ def interrupt_xtinst_tests(test_data: TestData, covergroup: str, priv: str) -> l
     machine = priv == "M"
     xtinst, status, enable = ("mtinst", "mstatus", "MSTATUS_MIE") if machine else ("htinst", "sstatus", "SSTATUS_SIE")
     ie_csrs = ["mie"] if machine else ["sie", "hie"]
-    types = [*machine_ints, "SEI", "STI", "SSI", "LCOFI"] if machine else ["SEI", "STI", "SSI", *vs_int_macro, "LCOFI"]
+    types = [*machine_ints, "SEI", "STI", "SSI", "LCOFI"] if machine else ["SEI", "STI", "SSI", *vs_ints, "LCOFI"]
     coverpoint = f"cp_{xtinst}"
     tmp_reg = test_data.int_regs.get_register()
     lines = [
@@ -565,9 +563,8 @@ def interrupt_xtinst_tests(test_data: TestData, covergroup: str, priv: str) -> l
         ),
         f"csrw {'mideleg' if machine else 'hideleg'}, zero",
     ]
-    macros = int_macro | vs_int_macro
     for int_type in types:
-        macro = f"{macros[int_type]}_INT_{'M' if int_type in vs_int_macro else priv}"
+        macro = f"{int_macro[int_type]}_INT_{priv}"
         guard = guard_symbol(int_type)
         lines.extend(
             [

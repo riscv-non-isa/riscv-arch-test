@@ -22,7 +22,6 @@ from testgen.priv.extensions.InterruptsCommon import (
     int_bit,
     int_macro,
     interrupt_xtinst_tests,
-    vs_int_macro,
 )
 from testgen.priv.registry import add_priv_test_generator
 
@@ -40,8 +39,7 @@ def _vs(combo: int) -> int:
 
 
 def _trigger_tests(test_data: TestData) -> list[str]:
-    """Raise each VS-level interrupt through hvip across sstatus.SIE, hideleg and hie.  HS-mode writes hvip with the
-    M-mode macros."""
+    """Raise each VS-level interrupt through hvip across sstatus.SIE, hideleg and hie."""
     tmp_reg = test_data.int_regs.get_register()
     lines = []
     for name, bit in VS_INTS.items():
@@ -64,12 +62,12 @@ def _trigger_tests(test_data: TestData) -> list[str]:
                             f"csrw hie, x{tmp_reg}",
                             f"csr{'s' if sie else 'c'}i sstatus, SSTATUS_SIE",
                             test_data.add_testcase(f"sie{sie}_hideleg{deleg}_hie{ie}", coverpoint, _CG),
-                            f"RVTEST_SET_{vs_int_macro[name]}_INT_M",
+                            f"RVTEST_SET_{int_macro[name]}_INT_S",
                             f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg})",
                             "csrci sstatus, SSTATUS_SIE",
                             f"csrr x{tmp_reg}, hip    # still pending unless HS-mode took it",
                             write_sigupd(tmp_reg, test_data),
-                            f"RVTEST_CLR_{vs_int_macro[name]}_INT_M",
+                            f"RVTEST_CLR_{int_macro[name]}_INT_S",
                         ]
                     )
     lines.extend(["csrw hideleg, zero", "csrw hie, zero"])
