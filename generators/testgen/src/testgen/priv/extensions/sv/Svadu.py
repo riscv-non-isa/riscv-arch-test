@@ -52,6 +52,20 @@ _VAS = {
     },
 }
 _CODE_VA = {"sv32": "0x90000000", "sv39": "0x180000000", "sv48": "0x030080000000", "sv57": "0x05000080000000"}
+# Fault tests: a superpage leaf here maps the 4 KiB-aligned rvtest_data_1, so its PPN is misaligned at every level.
+_MISALIGNED_VA = {"sv32": "0x90400000", "sv39": "0x140000000", "sv48": "0x028000000000", "sv57": "0x07000000000000"}
+
+
+def _pte_offset(sv: SvMode, va: str, level: int) -> int:
+    """Return the byte offset of the level ``level`` PTE for ``va`` within its page table."""
+    index_bits = 10 if sv.xlen == 32 else 9
+    return ((int(va, 16) >> sv.page_offset_bits(level)) & ((1 << index_bits) - 1)) * (sv.xlen // 8)
+
+
+def _enable_adue(sv: SvMode, regs: SvRegs) -> tuple[str, ...]:
+    """Return setup assembly that sets ADUE in menvcfg (menvcfgh on RV32)."""
+    csr, mask = ("menvcfg", "MENVCFG_ADUE") if sv.xlen == 64 else ("menvcfgh", "MENVCFGH_ADUE")
+    return (f"LI(x{regs.scratch}, {mask})", tsbi_call(f"csrs {csr}, x{regs.scratch}"))
 
 
 def _add_adu_access(
@@ -66,13 +80,8 @@ def _add_adu_access(
         ).removesuffix(":")
         for name in ("store", "load", "exec", "read_store_pte", "read_load_pte", "read_exec_pte")
     }
-    table = "rvtest_Sroot_pg_tbl" if level == sv.levels - 1 else f"rvtest_slvl{level}_pg_tbl"
     load = "lw" if sv.xlen == 32 else "ld"
-    index_bits = 10 if sv.xlen == 32 else 9
-    offsets = [
-        ((int(va, 16) >> sv.page_offset_bits(level)) & ((1 << index_bits) - 1)) * (sv.xlen // 8)
-        for va in _VAS[sv.name][level]
-    ]
+    offsets = [_pte_offset(sv, va, level) for va in _VAS[sv.name][level]]
     # The store, load, and fetch VAs are all built before the mode switch. The load register is free until
     # the load, so it is the scratch register for building them.
     store_addr = test_data.int_regs.get_register(exclude_regs=[0])
@@ -106,7 +115,7 @@ def _add_adu_access(
         write_sigupd(regs.value, test_data, label=labels["store"]),
         write_sigupd(regs.load, test_data, label=labels["load"]),
         write_sigupd(regs.result, test_data, label=labels["exec"]),
-        f"LA(x{regs.scratch}, {table})",
+        f"LA(x{regs.scratch}, {sv.page_table_label(level)})",
     ]
     for name, offset in zip(("read_store_pte", "read_load_pte", "read_exec_pte"), offsets, strict=True):
         lines.extend(
@@ -127,7 +136,6 @@ def _make_svadu_mode(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
         for level in sorted(va_table, reverse=True)
         for suffix, va in zip(("w", "r", "x"), va_table[level], strict=True)
     )
-    csr, mask = ("menvcfg", "MENVCFG_ADUE") if sv.xlen == 64 else ("menvcfgh", "MENVCFGH_ADUE")
     regs = SvRegs.allocate(test_data)
     chunk = begin_sv_test(
         test_data,
@@ -140,7 +148,7 @@ def _make_svadu_mode(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
         ),
         va_defs=va_defs,
         va_code_override=_CODE_VA[sv.name],
-        setup_asm=(f"LI(x{regs.scratch}, {mask})", tsbi_call(f"csrs {csr}, x{regs.scratch}")),
+        setup_asm=_enable_adue(sv, regs),
     )
     number = 0
     for level in sorted(va_table, reverse=True):
@@ -151,20 +159,11 @@ def _make_svadu_mode(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
             (False, False, "PTE.A and PTE.D unset"),
         ):
             number += 1
-            permissions = PteFlags(
-                user=mode == "Umode",
-                accessed=accessed,
-                dirty=dirty,
-            )
+            permissions = PteFlags(user=mode == "Umode", accessed=accessed, dirty=dirty)
             chunk.code.extend(
                 [
                     f"// Test case {number}: {description} at level {level}",
-                    *create_page_mapping(
-                        sv,
-                        virtual_address=va_w,
-                        leaf_level=level,
-                        leaf_flags=permissions,
-                    ),
+                    *create_page_mapping(sv, virtual_address=va_w, leaf_level=level, leaf_flags=permissions),
                     create_leaf_pte(sv, virtual_address=va_r, level=level, flags=permissions),
                     create_leaf_pte(sv, virtual_address=va_x, level=level, flags=permissions),
                     "sfence.vma",
@@ -175,16 +174,6 @@ def _make_svadu_mode(test_data: TestData, sv: SvMode, mode: str) -> TestChunk:
             )
     chunk.raw_data.extend(sv_data(sv, regs))
     return end_sv_test(test_data, regs)
-
-
-# Fault-test VAs. va_data maps a 4 KiB page. va_misaligned has a superpage leaf that maps the 4 KiB-aligned
-# rvtest_data_1, so its PPN is misaligned for every superpage size.
-_FAULT_VAS = {
-    "sv32": {"va_data": "0x90407000", "va_misaligned": "0x90400000"},
-    "sv39": {"va_data": "0x140802000", "va_misaligned": "0x140000000"},
-    "sv48": {"va_data": "0x028500403000", "va_misaligned": "0x028000000000"},
-    "sv57": {"va_data": "0x07028500403000", "va_misaligned": "0x07000000000000"},
-}
 
 
 class _FaultCase(NamedTuple):
@@ -222,12 +211,10 @@ def _fault_cases(sv: SvMode) -> list[_FaultCase]:
 
 def _pte_address(sv: SvMode, regs: SvRegs, va: str, level: int) -> list[str]:
     """Load regs.scratch with the address of the leaf PTE that maps ``va`` at ``level``, using regs.result."""
-    index_bits = 10 if sv.xlen == 32 else 9
-    offset = ((int(va, 16) >> sv.page_offset_bits(level)) & ((1 << index_bits) - 1)) * (sv.xlen // 8)
     scratch, temp = f"x{regs.scratch}", f"x{regs.result}"
     return [
         f"LA({scratch}, {sv.page_table_label(level)})",
-        f"LI({temp}, {offset})",
+        f"LI({temp}, {_pte_offset(sv, va, level)})",
         f"add {scratch}, {scratch}, {temp}",
     ]
 
@@ -237,8 +224,7 @@ def _make_svadu_fault(test_data: TestData, sv: SvMode) -> TestChunk:
 
     A faulting access must not update D. A may be set speculatively, so it is not checked.
     """
-    csr, mask = ("menvcfg", "MENVCFG_ADUE") if sv.xlen == 64 else ("menvcfgh", "MENVCFGH_ADUE")
-    fault_vas = _FAULT_VAS[sv.name]
+    fault_vas = {"va_data": sv.data_va, "va_misaligned": _MISALIGNED_VA[sv.name]}
     regs = SvRegs.allocate(test_data)
     chunk = begin_sv_test(
         test_data,
@@ -248,7 +234,7 @@ def _make_svadu_fault(test_data: TestData, sv: SvMode) -> TestChunk:
         f"{sv.name}_Svadu_fault_Smode",
         coverpoint="cp_ad_fault_no_update",
         va_defs=tuple(fault_vas.items()),
-        setup_asm=(f"LI(x{regs.scratch}, {mask})", tsbi_call(f"csrs {csr}, x{regs.scratch}")),
+        setup_asm=_enable_adue(sv, regs),
     )
     cases = _fault_cases(sv)
     for number, case in enumerate(cases, start=1):
