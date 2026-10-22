@@ -866,7 +866,7 @@
 // SECTION 11: DEFAULT INTERRUPT MACROS
 //
 // If the DUT does not define RVMODEL_SET/CLR_xxx_INT macros, these defaults
-// are used. The default action is to jump to cleanup_epilogs, which terminates
+// are used. The default action is to jump to rvtest_code_end, which terminates
 // the test. This ensures that if an unexpected interrupt fires for an
 // undefined interrupt type, the test fails cleanly rather than hanging.
 //
@@ -874,7 +874,7 @@
 // RVMODEL macros in their rvmodel_macros.h to actually set/clear the interrupt.
 //==============================================================================
 
-#define RVTEST_DFLT_INT_HNDLR      la T1, cleanup_epilogs; jr T1  // default: abort test on unexpected interrupt
+#define RVTEST_DFLT_INT_HNDLR      la T1, rvtest_code_end; jr T1  // default: abort test on unexpected interrupt
 
 // M-mode interrupt defaults
 #ifndef RVMODEL_SET_MSW_INT
@@ -1281,8 +1281,12 @@ rvtest_\__MODE__\()prolog_done:
 // Long-jumps to rvtest_Xend which is the epilog cleanup entry.
 
 rvtest_\__MODE__\()endtest:                      // impossible cause landed here
-        LA(     T2, rvtest_\__MODE__\()end)      // load epilog cleanup address (may be far away)
-        jr      T2                                // long jump to epilog cleanup; x7 does not set ELP (Zicfilp)
+.ifc \__MODE__ , M
+        LA(     T2, rvtest_fail_epilogs_mmode)    // M-mode is already in trap context
+.else
+        LA(     T2, rvtest_fail_epilogs)          // switch to M-mode before cleanup
+.endif
+        jr      T2                                // long jump to failure cleanup; x7 does not set ELP (Zicfilp)
 
 //---------- Common Handler ----------
 // Entered via jal from per-cause stub. T6 has the stub's return address
@@ -1817,7 +1821,8 @@ tsbi_instr_not_found:
         call    rvmodel_io_write_str
         LA(a0, failstr)                         // RVCP-SUMMARY: TEST FAILED line so the harness classifies this run
         call    rvmodel_io_write_str
-        call    rvmodel_halt_fail
+        LA(     T2, rvtest_fail_epilogs_mmode)
+        jr      T2                                 // x7 does not set ELP (Zicfilp)
 
 .macro TSBI_CSR_INSTR_TABLE csr_addr
         .word (\csr_addr << 20) | (0x02573) // csrr a0, csr_addr
@@ -2098,6 +2103,17 @@ tsbi_instr_table:
 //==============================================================================
 
 \__MODE__\()trapsig_ptr_upd:                      // pre-update trap signature pointer
+        // A trap taken while a failure is being reported, e.g. a console store that faults, would
+        // be unexpected, so recording it would start another report. Halt before this trap
+        // changes the trap signature or the saved_x* CSRs that the report prints.
+        LA(     T1, failure_in_progress)
+        lw      T1, 0(T1)
+        beqz    T1, 1f                            // no failure report in progress
+  .ifnc \__MODE__ , M
+        RVTEST_TSBI_GOTO_MMODE                    // halt from M-mode
+  .endif
+        j       failedtest_reentered
+1:
         LA(     T1, rvtest_trap_count)            // T1 = address of trap_count
         LREG    T2, 0(T1)                         // T2 = current count
         addi    T2, T2, 1                         // count++
