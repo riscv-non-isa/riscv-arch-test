@@ -45,7 +45,7 @@ _SPIKE_ISA: dict[int, str] = {
         "_zabha_zacas_zaamo_zalrsc_zawrs"
         "_zfa_zfbfmin_zfh"
         "_zca_zcb_zcd_zcf_zcmop"
-        "_zbc_zkn_zkr_zks"
+        "_zbc_zkn_zkr_zks_zkt"
         "_zvfbfmin_zvfbfwma_zvfh"
         "_zvbb_zvbc_zvkg_zvkned_zvknha_zvknhb_zvksed_zvksh_zvkt"
         "_sscofpmf_smcntrpmf_sstc"
@@ -59,7 +59,7 @@ _SPIKE_ISA: dict[int, str] = {
         "_zabha_zacas_zaamo_zalrsc_zawrs"
         "_zfa_zfbfmin_zfh"
         "_zca_zcb_zcd_zcmop"
-        "_zbc_zkn_zkr_zks"
+        "_zbc_zkn_zkr_zks_zkt"
         "_zvfbfmin_zvfbfwma_zvfh"
         "_zvbb_zvbc_zvkg_zvkned_zvknha_zvknhb_zvksed_zvksh_zvkt"
         "_sscofpmf_smcntrpmf_sstc"
@@ -169,7 +169,7 @@ class Config(BaseModel):
 
 
 # Minimum required tool versions
-REQUIRED_SAIL_VERSION = "0.15"
+REQUIRED_SAIL_VERSION = "0.16"
 REQUIRED_GCC_MAJOR_VERSION = 15
 REQUIRED_CLANG_MAJOR_VERSION = 20
 

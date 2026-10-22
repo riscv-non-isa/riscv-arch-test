@@ -59,6 +59,12 @@ When you run `make` in the `ctp` directory, the YAML file is parsed to build an
 ASCIIDoc file (in `ctp/norm`) with a table of normative rule names, definitions, and associated coverpoints. Include this file in the CTP with
 `include::norm/Sm_norm_rules.adoc[]`
 
+Every rule name must be a tag in the ISA manual snapshot's `norm-rules.json`, or
+the CTP build fails. A suite whose rules are not yet tagged in the ISA manual
+says where the tags are pending with a top-level key, such as
+`untagged_upstream: riscv/riscv-isa-manual#3416`. Its unknown names are then
+warnings instead of errors. Remove the key once the tags reach the snapshot.
+
 ### Parameter Lists
 
 Similar YAML files in coverpoints/param are used to make a list of the UDB parameters that apply to a test suite. Each parameter has a name (corresponding to the UDB), coverpoint (one or more coverpoints that it affects), and effect (string summarizing what it does, such as coverpoint only applying to certain parameter values, or result depending on the parameter value).
@@ -754,6 +760,8 @@ To opt in to named splits, pass a name to `test_data.begin_test_chunk(split_name
 
 Length-based splitting still applies _within_ each named group, so a large named scope can still become `<testsuite>_<split_name>-00.S`, `<testsuite>_<split_name>-01.S`, etc.
 
+A suite can also hold tests that need an extension beyond the suite's own, such as the floating-point tests of Sm. Register their generator under the base suite with its own `required_extensions`, e.g. `add_priv_test_generator("Sm", required_extensions=["Sm", "F"])`, and start its split names with the group, so its tests are `tests/priv/Sm/Sm_F-00.S` or `Sm_V_vcsr-00.S` and run only where the extra extension is supported. Name its covergroup `<suite>_<group>_cg` (`Sm_F_cg`) in the base suite's coverage file under `` `ifdef F_SUPPORTED ``, and put its test plan rows under a heading in the base suite's test plan, `testplans/priv/Sm.yaml`.
+
 ## Debugging Coverage
 
 After writing initial drafts of coverpoints and tests, run them with `make coverage EXTENSIONS=ExceptionsZc`. Omit the `--jobs` flag so they run in order and it is easier to localize which one failed. By giving the name of the test suite (e.g. ExceptionsZc), you only run the new suite of interest, saving runtime.
@@ -838,7 +846,7 @@ setup_script: ".github/scripts/setup-<sim>.sh" # Setup script, always run before
 Field details:
 
 - **`ci_enabled`**: Controls whether configs under this group appear in the CI matrix. Defaults to `true` if omitted.
-- **`exclude_extensions`**: Comma-separated list of extensions to exclude when running this simulator's tests in CI. Use for known failures with the simulator so CI passes until bugs are resolved upstream.
+- **`exclude_extensions`**: Comma-separated list of extensions to exclude when running this simulator's tests in CI. Use for known failures with the simulator so CI passes until bugs are resolved upstream. An entry can also name a group of tests within a suite: it excludes every test whose file name starts with the entry followed by `_` or `-`, so `Sm_mcsr_walk` excludes `Sm_mcsr_walk-00.S` through `Sm_mcsr_walk-11.S` and `I-add` excludes `I-add-00.S`. An entry ending in `-` matches only that group, not longer groups that extend its name: `S_scsr-` excludes `S_scsr-00.S` but not `S_scsr_addr-00.S`, and `S-` excludes the unnamed group `S-00.S` but not `S_F-00.S`. Exclude only the groups that fail, so the rest of the suite still runs.
 - **`apt_packages`**: Space-separated list of apt packages required to run the simulator. These are installed unconditionally (even on cache hit).
 - **`install_script`**: Path to a shell script that builds and installs the simulator. Receives the install directory as its first argument. The built simulator is cached — the script only runs on cache miss. The cache key is derived from the script's content hash, so updating the script (e.g., bumping a version) automatically invalidates the cache.
 - **`setup_script`**: Path to a shell script that sets up the simulator environment. This script is always run before running tests.

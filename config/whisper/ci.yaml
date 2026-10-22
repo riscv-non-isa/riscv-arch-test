@@ -2,15 +2,21 @@
 # Jordan Carlin jcarlin@hmc.edu April 2026
 # CI configuration for Whisper simulator
 
-# SsstrictSm: Sail 0.15 lacks Smaia and Smrnmi, whose CSRs Whisper implements
+# SsstrictSm_CSR: Sail 0.16 lacks Smaia and Smrnmi, whose CSRs Whisper implements
 # Smstateen: the -mu configs pass. On the max configs Whisper implements Sscsrind and Ssaia, so
 #   mstateen0.CSRIND, AIA and IMSIC are writable, but Sail does not model those extensions
 #   (https://github.com/riscv/sail-riscv/issues/1134, https://github.com/riscv/sail-riscv/pull/1874).
-# SsstrictS: Sail traps on siselect/stopi accesses that Whisper permits with mstateen0 enabled.
-# Sdtrig* not yet implemented in Sail (https://github.com/riscv/sail-riscv/issues/222)
-# Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm : Failing due to mismatch in stval/mtval ,Issue Link (https://github.com/riscv/sail-riscv/issues/1962)
+# SsstrictS_CSR: Sail traps on siselect/stopi accesses that Whisper permits with mstateen0 enabled.
+# Ssnpm_sv*_pmm00_sweep, Ssnpm_sv*_pmm10_sweep, SmnpmS_sv*_pmm00_sweep, SmnpmS_sv*_pmm10_sweep (rv64-max; the other
+#   pointer-masking groups and suites pass): ssamoswap.w to a non-canonical masked address gets a store/AMO access
+#   fault on Whisper where Sail reports a store/AMO page fault (https://github.com/tenstorrent/whisper/issues/200).
+#   On sv48 and sv57 the S-mode failure report then page-faults on the console, which the test's image map leaves
+#   unmapped, and recurses until the trap signature overflows, so those sweeps report a signature offset mismatch.
+# SdtrigSm_tdata2_translate: on RV32, Whisper replaces tdata2 = 0xFFFFFFFF with the NAPOT mask on an
+#   mcontrol6 trigger that does not use NAPOT (https://github.com/tenstorrent/whisper/issues/218, fix
+#   https://github.com/tenstorrent/whisper/pull/219). Drop it when the Whisper pin includes the fix.
 ci_enabled: true
-exclude_extensions: "SsstrictSm,SsstrictS,Smstateen,SdtrigSm,SdtrigS,SdtrigU,Ssnpm,SsnpmSm,Smmpm,SmnpmS,SmnpmSSm,SmnpmU,SmnpmUSm"
+exclude_extensions: "SdtrigSm_tdata2_translate,SsstrictSm_CSR,SsstrictS_CSR,Smstateen,Ssnpm_sv39_pmm00_sweep,Ssnpm_sv39_pmm10_sweep,Ssnpm_sv48_pmm00_sweep,Ssnpm_sv48_pmm10_sweep,Ssnpm_sv57_pmm00_sweep,Ssnpm_sv57_pmm10_sweep,SmnpmS_sv39_pmm00_sweep,SmnpmS_sv39_pmm10_sweep,SmnpmS_sv48_pmm00_sweep,SmnpmS_sv48_pmm10_sweep,SmnpmS_sv57_pmm00_sweep,SmnpmS_sv57_pmm10_sweep"
 exclude_configs:
   - whisper-rv32-max-spike-ref
   - whisper-rv64-max-spike-ref

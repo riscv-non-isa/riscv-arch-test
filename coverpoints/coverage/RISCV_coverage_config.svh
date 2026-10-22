@@ -158,20 +158,17 @@
 `ifdef S_COVERAGE
   `include "S_coverage.svh"
 `endif
+`ifdef SDTRIGS_COVERAGE
+  `include "SdtrigS_coverage.svh"
+`endif
 `ifdef SDTRIGSM_COVERAGE
   `include "SdtrigSm_coverage.svh"
 `endif
+`ifdef SDTRIGU_COVERAGE
+  `include "SdtrigU_coverage.svh"
+`endif
 `ifdef SM_COVERAGE
   `include "Sm_coverage.svh"
-`endif
-`ifdef SMF_COVERAGE
-  `include "SmF_coverage.svh"
-`endif
-`ifdef SMV_COVERAGE
-  `include "SmV_coverage.svh"
-`endif
-`ifdef SMVF_COVERAGE
-  `include "SmVF_coverage.svh"
 `endif
 `ifdef SMMPM_COVERAGE
   `include "Smmpm_coverage.svh"
@@ -293,12 +290,6 @@
 `ifdef U_COVERAGE
   `include "U_coverage.svh"
 `endif
-`ifdef UF_COVERAGE
-  `include "UF_coverage.svh"
-`endif
-`ifdef UV_COVERAGE
-  `include "UV_coverage.svh"
-`endif
 `ifdef VF16_COVERAGE
   `include "Vf16_coverage.svh"
 `endif
@@ -307,6 +298,9 @@
 `endif
 `ifdef VF64_COVERAGE
   `include "Vf64_coverage.svh"
+`endif
+`ifdef VF8_COVERAGE
+  `include "Vf8_coverage.svh"
 `endif
 `ifdef VLS16_COVERAGE
   `include "Vls16_coverage.svh"
@@ -425,9 +419,6 @@
 `ifdef ZICFILPS_COVERAGE
   `include "ZicfilpS_coverage.svh"
 `endif
-`ifdef ZICFILPSU_COVERAGE
-  `include "ZicfilpSU_coverage.svh"
-`endif
 `ifdef ZICFILPSM_COVERAGE
   `include "ZicfilpSm_coverage.svh"
 `endif
@@ -496,6 +487,9 @@
 `endif
 `ifdef ZKSH_COVERAGE
   `include "Zksh_coverage.svh"
+`endif
+`ifdef ZKT_COVERAGE
+  `include "Zkt_coverage.svh"
 `endif
 `ifdef ZMMUL_COVERAGE
   `include "Zmmul_coverage.svh"
