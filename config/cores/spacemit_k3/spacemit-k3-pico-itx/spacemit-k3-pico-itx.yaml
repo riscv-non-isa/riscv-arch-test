@@ -11,7 +11,7 @@ description: >
   medeleg/mideleg masks, VLEN 256, Sv39 only, ASID 16, PMP granularity 4 KiB, PA 40 bits,
   misaligned scalar loads in hardware. The extension list is still the K1's RVA22S64 subset:
   the K3 implements the RVA23 set (device tree riscv,isa-extensions), and H is present but
-  misa.H = 0 at reset (writable); H and the RVA23 additions are left for a later revision.
+  misa.H = 0 at reset (writable). Hypervisor branch: H 1.0 enabled with csr_probe values; the RVA23 additions are left for a later revision.
   Parameters not listed above are the K1's values and UNVERIFIED on the K3.
 
 implemented_extensions:
@@ -31,6 +31,9 @@ implemented_extensions:
   - { name: U,  version: "= 1.0.0" }
   - { name: S,  version: "= 1.13.0" }
   - { name: Sm, version: "= 1.13.0" }
+  # H: device tree riscv,isa-extensions and RVA23; misa.H = 0 at runner entry but writable
+  # (csr_probe), so RVMODEL_BOOT sets it. H CSR values: csr_probe 2026-10-22.
+  - { name: H,  version: "= 1.0.0" }
 
   # --- Atomics (spec-implied from A) ---
   - { name: Zaamo,  version: "= 1.0.0" }
@@ -363,3 +366,99 @@ params:
   VFREDUSUM_FINAL_NODE_ELEMENT_BEHAVIOR: "additive_identity"
   IMPRECISE_VECTOR_TRAP_SETTABLE: false
   RVV_VL_WHEN_AVL_LT_DOUBLE_VLMAX: VLMAX
+
+  # --- H params (hypervisor branch). Measured with csr_probe on the board, 2026-10-22
+  # (runner single-ELF #23, slots 66-79, misa.H set): hgatp keeps MODE Sv39x4 only and 14 VMID
+  # bits; hgeie writable 0xfe; hideleg/hvip writable 0x444; hedeleg writable 0xb1fe;
+  # hcounteren writable 0x7ffff; hstatus.VSXL reads 64 and VSBE is 0; mtval2, mtinst and htinst
+  # hold 64 bits. What the hardware writes to htval/tinst on each trap is not measured: the
+  # REPORT_GPA / TINST values below are UNVERIFIED (zero tinst is always legal).
+  MUTABLE_MISA_H: true                  # csr_probe: misa.H writable
+  VSXLEN: [64]                          # hstatus.VSXL reads 2 (64-bit)
+  VUXLEN: [64]
+  VS_MODE_ENDIANNESS: little            # hstatus.VSBE not writable
+  VU_MODE_ENDIANNESS: little
+  GSTAGE_MODE_BARE: true
+  VSSTAGE_MODE_BARE: true
+  SV39X4_TRANSLATION: true              # hgatp MODE 8 reads back
+  SV48X4_TRANSLATION: false             # MODE 9 legalizes to Bare
+  SV57X4_TRANSLATION: false             # MODE 10 legalizes to Bare
+  SV39_VSMODE_TRANSLATION: true         # vsatp follows satp: Sv39 only
+  SV48_VSMODE_TRANSLATION: false
+  SV57_VSMODE_TRANSLATION: false
+  VMID_WIDTH: 14                        # hgatp.VMID: 14 writable bits
+  NUM_EXTERNAL_GUEST_INTERRUPTS: 7      # hgeie writable 0xfe (GEILEN 7)
+  HCOUNTENABLE_EN: [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ]                                   # hcounteren writable 0x7ffff (CY, TM, IR, HPM3-18)
+  VSSI_INTR_IMPL: true                  # hideleg/hvip writable 0x444
+  VSTI_INTR_IMPL: true
+  VSEI_INTR_IMPL: true
+  VSTVEC_MODES: [0, 1]
+  TRAP_ON_ECALL_FROM_VS: true
+  IGNORE_INVALID_VSATP_MODE_WRITES_WHEN_V_EQ_ZERO: false   # UNVERIFIED
+  # VS tval reporting mirrors the S-mode values above (UNVERIFIED for VS).
+  REPORT_VA_IN_VSTVAL_ON_BREAKPOINT: true
+  REPORT_VA_IN_VSTVAL_ON_LOAD_MISALIGNED: true
+  REPORT_VA_IN_VSTVAL_ON_STORE_AMO_MISALIGNED: true
+  REPORT_VA_IN_VSTVAL_ON_INSTRUCTION_MISALIGNED: true
+  REPORT_VA_IN_VSTVAL_ON_LOAD_ACCESS_FAULT: true
+  REPORT_VA_IN_VSTVAL_ON_STORE_AMO_ACCESS_FAULT: true
+  REPORT_VA_IN_VSTVAL_ON_INSTRUCTION_ACCESS_FAULT: true
+  REPORT_VA_IN_VSTVAL_ON_LOAD_PAGE_FAULT: true
+  REPORT_VA_IN_VSTVAL_ON_STORE_AMO_PAGE_FAULT: true
+  REPORT_VA_IN_VSTVAL_ON_INSTRUCTION_PAGE_FAULT: true
+  REPORT_ENCODING_IN_VSTVAL_ON_ILLEGAL_INSTRUCTION: true
+  REPORT_ENCODING_IN_VSTVAL_ON_VIRTUAL_INSTRUCTION: true   # UNVERIFIED
+  REPORT_GPA_IN_HTVAL_ON_GUEST_PAGE_FAULT: true
+  REPORT_GPA_IN_TVAL_ON_INSTRUCTION_GUEST_PAGE_FAULT: true
+  REPORT_GPA_IN_TVAL_ON_LOAD_GUEST_PAGE_FAULT: true
+  REPORT_GPA_IN_TVAL_ON_STORE_AMO_GUEST_PAGE_FAULT: true
+  REPORT_GPA_IN_TVAL_ON_INTERMEDIATE_GUEST_PAGE_FAULT: true
+  TINST_VALUE_ON_BREAKPOINT: "always zero"
+  TINST_VALUE_ON_FINAL_INSTRUCTION_GUEST_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_FINAL_LOAD_GUEST_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_FINAL_STORE_AMO_GUEST_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_INSTRUCTION_ADDRESS_MISALIGNED: "always zero"
+  TINST_VALUE_ON_LOAD_ACCESS_FAULT: "always zero"
+  TINST_VALUE_ON_LOAD_ADDRESS_MISALIGNED: "always zero"
+  TINST_VALUE_ON_LOAD_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_MCALL: "always zero"
+  TINST_VALUE_ON_SCALL: "always zero"
+  TINST_VALUE_ON_STORE_AMO_ACCESS_FAULT: "always zero"
+  TINST_VALUE_ON_STORE_AMO_ADDRESS_MISALIGNED: "always zero"
+  TINST_VALUE_ON_STORE_AMO_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_UCALL: "always zero"
+  TINST_VALUE_ON_VIRTUAL_INSTRUCTION: "always zero"
+  TINST_VALUE_ON_VSCALL: "always zero"

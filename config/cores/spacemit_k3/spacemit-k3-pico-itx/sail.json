@@ -372,21 +372,24 @@
         "samo_page_fault": false,
         "samo_guest_page_fault": false
       },
-      "mutable_misa": false,
+      // csr_probe 2026-10-22 (runner single-ELF #23): misa.H writable, hgeie writable 0xfe
+      // (GEILEN 7), hgatp keeps MODE Sv39x4 only (Sv48x4/Sv57x4 legalize to Bare), VMID 14 bits
+      // (base.vmidlen). vsatp modes follow satp (Sv39 only, measured).
+      "mutable_misa": true,
       "supported": true,
-      "geilen": 63,
+      "geilen": 7,
       "guest_page_fault_writes_htval": true,
       "hgatp_modes": {
         "Sv32x4": false,
         "Sv39x4": true,
-        "Sv48x4": true,
-        "Sv57x4": true
+        "Sv48x4": false,
+        "Sv57x4": false
       },
       "vsatp_modes": {
         "Sv32": false,
         "Sv39": true,
-        "Sv48": true,
-        "Sv57": true
+        "Sv48": false,
+        "Sv57": false
       }
     },
     "Zibi": {
