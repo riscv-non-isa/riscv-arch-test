@@ -1,6 +1,8 @@
 # yaml-language-server: $schema=testplan.schema.json
 suite: Shlcofideleg
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=820648507#gid=820648507
-notes: |
-  Develop this after baseline overflow delegation tests
+notes: |-
+  Shlcofideleg makes hideleg bit 13 writable, so that LCOFIs can be delegated to VS-mode.
+  Its tests belong in InterruptsH, gated on SHLCOFIDELEG_SUPPORTED: cp_hideleg checks that bit 13 is read-only zero without Shlcofideleg, and cp_vsip_vsie_lcofi checks that vsip.LCOFIP and vsie.LCOFIE read zero while hideleg bit 13 is zero.
+  The delegated case (hideleg bit 13 = 1) is a Not tested row in InterruptsH and the mideleg bit 13 = 0 case one in InterruptsHSm: Sail 0.16 keeps hideleg bit 13 read-only zero, and no configuration declares Shlcofideleg.
 coverpoints: []

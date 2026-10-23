@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: InterruptsHGei
+notes: |-
+  hgeip is read-only, so only the platform can raise a guest external interrupt, through the RVMODEL_SET_GUEST_EXT_INT and RVMODEL_CLR_GUEST_EXT_INT hooks.
+  A DUT with GEILEN > 0 defines them, which defines UDB_SGEI_INTR_IMPL; without them the suite has no testcases.
+  The suite boots to HS-mode, and first sets mstateen0.IMSIC, AIA and CSRIND so that hooks using the IMSIC guest files can reach vstopei from HS-mode.
+coverpoints:
+  - heading: Following tests are done in M-mode
+  - name: cp_mip_gilen
+    goal: mip.SGEIP is alias of hip
+    description: Raise guest external interrupt 1 through the platform hook with hgeie = bit 1, and read mip
+    expectation: mip.SGEIP = 1 (mip bits 12, 10, 6 and 2 = 0x1000)
+    bins: "1"
+  - heading: Following tests are done in HS-mode
+  - name: cp_trigger_sgei
+    goal: trigger HS-mode SGEI
+    description: With guest external interrupt 1 pending and hgeie = bit 1, write hie.SGEIE = {0/1} with sstatus.SIE = {0/1}
+    expectation: hip.SGEIP = 1.  If SIE = 1 and SGEIE = 1, interrupt to HS-mode with cause 12
+    bins: 2 * 2
+  - name: cp_priority_sgei
+    goal: SGEI has higher priority than VS*I
+    description: With guest external interrupt 1 pending and enabled in hgeie, hvip = 0x444, hideleg = 0, hie = 0x1444 and sie = 1s, read sip, then set sstatus.SIE
+    expectation: HS-mode takes SGEI (cause 12), then VSEI, VSSI and VSTI
+    bins: "1"
+  - name: cp_priority_sgei_s
+    goal: SGEI has lower priority than any S*I
+    description: With guest external interrupt 1 pending and enabled in hgeie, hvip = 0x444, hideleg = 0, hie = 0x1444, sie = 1s and one of SEI, STI and SSI raised through the platform macros, read sip, then set sstatus.SIE
+    expectation: HS-mode takes the S-level interrupt, then SGEI, VSEI, VSSI and VSTI
+    bins: "3"
+  - name: cp_hgeie
+    goal: hgeie enables SGEI
+    description: With sstatus.SIE = 0, for i in 1...GEILEN, with hgeip = {0, 1 in i, 1s in all implemented bits}, write hgeie = 1 in bit i, and read hgeip and hip
+    expectation: hip.SGEIP = 1 if hgeip & hgeie != 0
+    bins: GEILEN * 3 (GEILEN * 2 when GEILEN = 1, where all implemented bits are bit i)
+  - name: cp_trigger_vsei_hgeip
+    goal: trigger HS-mode VSEI with hgeip
+    description: "With sstatus.SIE = 0, hvip = 0, hideleg = 0, hie = 0, for i in 1...GEILEN: hstatus.VGEIN = i, hgeip = {0, 1 in i, 1 in all implemented bits except i}, hgeie[i] = {0/1}; read hgeip and hip"
+    expectation: hip.VSEIP = hgeip[i] independent of hgeie
+    bins: GEILEN * 3 * 2 (GEILEN * 2 * 2 when GEILEN = 1)
+  - name: cp_hgeip0
+    goal: no VSEI selected when VGEIN=0
+    description: With sstatus.SIE=0, hvip = 0, hideleg=0, hie = 0, hgeip = hgeie = 1s in all implemented bits, hstatus.VGEIN = 0; read hgeip and hip
+    expectation: hip.SGEIP = 1, hip.VSEIP = 0
+    bins: "1"

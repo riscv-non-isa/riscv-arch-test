@@ -1,0 +1,67 @@
+# yaml-language-server: $schema=testplan.schema.json
+suite: InterruptsHSm
+notes: |-
+  The suite boots to M-mode.
+  mideleg is zero except for the VS-level interrupts (and SGEI when GEILEN > 0), which are always delegated to HS-mode.
+  M-level and S-level interrupts are raised through the platform macros and gated on UDB_*_INTR_IMPL; VS-level interrupts are raised through hvip.
+coverpoints:
+  - heading: Following tests are done in M-mode
+  - name: cp_mideleg
+    goal: hypervisor bits of mideleg are read-only 1
+    description: Write 0 to mideleg and read it back.
+    expectation: Bits 10, 6, 2 are 1s.  If GEILEN > 0, bit 12 is also 1; GEILEN > 0 exactly when some hgeie bit is writable, and bit 12 is not checked otherwise.
+    bins: "1"
+  - name: cp_mie
+    goal: mie.VS*IE bits are alias of hie
+    description: With hie = 0x444, read mie.
+    expectation: "0x444"
+    bins: "1"
+  - name: cp_mip
+    goal: mip.VS*IP bits are alias of hip
+    description: With hvip = 0x444, read mip and hip. Note that hip depends on hvip.
+    expectation: "0x444 in both (mip bits 12, 10, 6 and 2)"
+    bins: "1"
+  - name: cp_nohint_m
+    goal: VS*I never causes machine-mode interrupt
+    description: mstatus.MIE=1, hideleg = 0, mie = 0x444, hvip = 0x444
+    expectation: No interrupt occurs because these are always delegated to HS or VS
+    bins: "1"
+  - name: cp_mtinst
+    goal: mtinst = 0 on interrupt
+    description: With mideleg = 0 and mtinst holding a nonzero value (the pseudoinstruction for an implicit VS-stage access), take each implemented M-level and S-level interrupt and, with Sscofpmf, LCOFI into M-mode
+    expectation: mtinst = 0
+    bins: up to 7 interrupts
+  - goal: hideleg, hip and hie bits are read-only zero where mideleg is zero
+    description: With Shlcofideleg, write mideleg bit 13 = 0, then write hideleg bit 13 = 1 and read it
+    expectation: hideleg bit 13 reads 0
+    rules:
+      - mideleg_hroz
+    status: Not tested
+    notes: |-
+      mideleg bits 10, 6 and 2 are read-only one, so the rule is observable only for hideleg bit 13 with Shlcofideleg.
+      Sail 0.16 keeps hideleg bit 13 read-only zero and no configuration declares Shlcofideleg.
+  - heading: Following tests are done in M-mode if GEILEN > 0
+  - name: cp_mie_gilen
+    goal: mie.SGEIE is alias of hie
+    description: With hie = 0x1444, read mie.
+    expectation: "0x1444"
+    bins: "1"
+  - heading: Following tests enter VS-mode and VU-mode from M-mode, sampled at the T-SBI call
+  - name: cp_mideleg_mip_vs
+    description: With mstatus.MIE=0, mideleg = {0 / S-level bits SEI, STI, SSI}, mie = 1s, raise one of MEI, MTI, MSI, SEI, STI and SSI through the platform macros, change to VS-mode with vsstatus.SIE=1.  Only the S-level bits of mideleg are written, not -1, because an implementation may make the M-level bits writable.
+    expectation: Take interrupt to M, or to HS when mideleg delegates it
+    bins: 2 * 6 (interrupts gated on UDB_*_INTR_IMPL)
+  - name: cp_mideleg_mip_vu
+    description: With mstatus.MIE=0, mideleg = {0 / S-level bits SEI, STI, SSI}, mie = 1s, raise one of MEI, MTI, MSI, SEI, STI and SSI through the platform macros, change to VU-mode.  Only the S-level bits of mideleg are written, not -1, because an implementation may make the M-level bits writable.
+    expectation: Take interrupt to M, or to HS when mideleg delegates it
+    bins: 2 * 6 (interrupts gated on UDB_*_INTR_IMPL)
+  - name: cp_priority_levels_vs
+    goal: M-level, then HS-level, then VS-level interrupts are taken from VS-mode
+    description: With mstatus.MIE = 0, mideleg.SSI = 1, hideleg.VSSI = 1, mie.MSIE = mie.SSIE = mie.VSSIE = 1 and vsstatus.SIE = 1, raise {MSI+SSI, MSI+VSSI, SSI+VSSI, MSI+SSI+VSSI} and change to VS-mode
+    expectation: M-mode takes MSI, then HS-mode takes SSI, then VS-mode takes VSSI
+    bins: 4 (combinations with MSI or SSI only where that interrupt is implemented)
+  - name: cp_priority_levels_vu
+    goal: M-level, then HS-level, then VS-level interrupts are taken from VU-mode
+    description: With mstatus.MIE = 0, mideleg.SSI = 1, hideleg.VSSI = 1, mie.MSIE = mie.SSIE = mie.VSSIE = 1 and vsstatus.SIE = 1, raise {MSI+SSI, MSI+VSSI, SSI+VSSI, MSI+SSI+VSSI} and change to VU-mode
+    expectation: M-mode takes MSI, then HS-mode takes SSI, then VS-mode takes VSSI
+    bins: 4 (combinations with MSI or SSI only where that interrupt is implemented)
