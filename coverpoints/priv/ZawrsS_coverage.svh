@@ -100,16 +100,6 @@ covergroup ZawrsS_cg with function sample(ins_t ins);
         }
     `endif
 
-    `ifdef H_SUPPORTED
-        hstatus_vtw_enabled: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hstatus", "vtw")) {
-            bins one = {1};
-        }
-        hedeleg_zeros: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "hedeleg", "hedeleg")) {
-            bins zeros = {0}; // zero in all 6 interrupt enable bits
-        }
-    `endif
-
-
     `ifdef SSTC_SUPPORTED
         `ifdef UDB_MXLEN_64
             menvcfg_STCE_one: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "stce")) {
@@ -140,12 +130,6 @@ covergroup ZawrsS_cg with function sample(ins_t ins);
     cp_wrs_nto_timeout:     cross mstatus_tw_one, mstatus_mie_zero, mstatus_sie_zero, priv_mode_s, mie_zeros, wrs_nto, lr_w;
 
     cp_wrs_no_mie:     cross mstatus_tw_one, mstatus_mie_one, mip_any_ones, mstatus_sie_one, priv_mode_s, mie_zeros, wrs_ops, lr_w;
-
-    // if Hypervisor supported
-    `ifdef H_SUPPORTED
-        cp_wrs_nto_timeout_h:   cross priv_mode_vs_vu, mstatus_tw, mstatus_mie_zero, mstatus_sie_zero, mie_zeros, hstatus_vtw_enabled, wrs_nto, lr_w, hedeleg_zeros;
-    `endif
-
 
 endgroup
 
