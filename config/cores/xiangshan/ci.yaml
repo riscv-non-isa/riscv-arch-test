@@ -17,7 +17,7 @@ ci_enabled: false
 #                     stays writable, and writing 1 clears SIE, while menvcfg.DTE = 0, when the hart must
 #                     behave as though Ssdbltrp is not implemented (norm:menvcfg_dte_op); NewCSR/MachineLevel.scala
 #                     L584 gates only the sstatus view on DTE.
-#   Zicntr, SscofpmfSm
+#   Zicntr, Sscofpmf_Sm
 #                     Counter reads are not ordered after older instructions (norm:csr_access_order):
 #                     two instret reads 8 instructions apart differ by 0-21, and mhpmcounter11 read right
 #                     after the counted load is still 0 (and its overflow bit still clear). Counters are
@@ -44,7 +44,7 @@ ci_enabled: false
 #                     tdata3 for types 2-6), so riscv-unified-db requires TDATA3_IMPLEMENTED with mcontrol6
 #                     and the config claims it. In SdtrigS and SdtrigU the trapping T-SBI access never
 #                     returns, so those tests time out.
-exclude_extensions: "S,Sm,Zicntr,SscofpmfSm,SsstrictV,SsstrictS,SsstrictSm,SsstrictU,Smstateen,PMPSm,SdtrigSm,SdtrigS,SdtrigU"
+exclude_extensions: "S,Sm,Zicntr,Sscofpmf_Sm,SsstrictV,SsstrictS,SsstrictSm,SsstrictU,Smstateen,PMPSm,SdtrigSm,SdtrigS,SdtrigU"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache clang"
 install_script: ".github/scripts/install-xiangshan.sh"

@@ -164,7 +164,11 @@ coverpoints:
     rules:
       - Sdtrig_mult_mem_access
   - name: cp_cm_pop_push (not generated)
-    status: "Not generated: _generate_zcmp_tests is a stub and is not registered"
+    status: >-
+      Not generated until the Sail reference model supports Zcmp: Sail 0.16 has no Zcmp extension
+      (model/core/extensions.sail has no Ext_Zcmp; riscv/sail-riscv#730 adds it and is open), and no CI
+      configuration claims both Zcmp and Sdtrig. With #730, cm.push and cm.pop make one vmem_write or vmem_read
+      per register, which Sail's per-access trigger matching (model/sys/vmem_utils.sail) checks individually
     goal: Accesses match as if happened individually
     description: |-
       if ZCMP_SUPPORTED
@@ -1154,8 +1158,8 @@ coverpoints:
     description: |-
       only run tests if S is supported, SDTRIG_TEXTRA_SSELECT_ASID_MATCH, ASID_WIDTH >= 2,
       SDTRIG_TEXTRA_SVALUE_LEN >= ASID_WIDTH, and Sv39 (RV64) or Sv32 (RV32) is supported.
-      Runs in M-mode only: M-mode is not translated, so satp can select Sv39/Sv32 with ASID X and the zeroed
-      root page table (satp.MODE=Bare with a nonzero ASID is UNSPECIFIED).
+      M-mode is not translated, so satp can select Sv39/Sv32 with ASID X and the root page table without a
+      mapping (satp.MODE=Bare with a nonzero ASID is UNSPECIFIED). SdtrigS repeats it in S-mode.
       X = 2^UDB_ASID_WIDTH-2; ASIDMAX = 9 (RV32) or 16 (RV64)
       CSRW satp = {MODE=Sv39/Sv32, ASID=X, PPN=root page table}
       repeat for each trigger type supported:
@@ -1192,7 +1196,7 @@ coverpoints:
   - name: cp_textra_mhselect_no_h
     goal: Without H, mhselect holds only 0 or 4
     description: |-
-      only run tests if H is not supported and TDATA3_IMPLEMENTED; runs in M-mode only.
+      only run tests if H is not supported and TDATA3_IMPLEMENTED; the tdata3 accesses run in M-mode (through T-SBI in SdtrigS).
       repeat for each trigger type supported:
       arm the trigger so it never fires (icount: count = 1, m = 0; mcontrol6: select = 1, XSL = 000)
       CSRW tdata3.mhselect = {1/2/3/5/6/7}

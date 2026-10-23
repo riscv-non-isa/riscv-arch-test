@@ -416,4 +416,70 @@
   `endif
 `endif
 
+// mcontrol6 match and size values that select a group of cases
+`ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_1
+    `define SDTRIG_MATCH_NAPOT
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_9
+    `define SDTRIG_MATCH_NAPOT
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_4
+    `define SDTRIG_MATCH_MASK
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_5
+    `define SDTRIG_MATCH_MASK
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_12
+    `define SDTRIG_MATCH_MASK
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_13
+    `define SDTRIG_MATCH_MASK
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_1
+    `define SDTRIG_SIZE_DATA
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_2
+    `define SDTRIG_SIZE_DATA
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3
+    `define SDTRIG_SIZE_DATA
+`endif
+`ifdef UDB_MXLEN_64
+    `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_5
+        `define SDTRIG_SIZE_DATA
+    `endif
+`endif
+// cp_mcontrol6_execute_adr_size: a legal size the generator writes on an execute address trigger (sizes above XLEN
+// are never written; size 2 has only a c.nop case)
+`ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_1
+    `define SDTRIG_EXEC_ADR_SIZE
+`endif
+`ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3
+    `define SDTRIG_EXEC_ADR_SIZE
+`endif
+`ifdef ZCA_SUPPORTED
+    `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_2
+        `define SDTRIG_EXEC_ADR_SIZE
+    `endif
+`endif
+`ifdef UDB_MXLEN_64
+    `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_4
+        `define SDTRIG_EXEC_ADR_SIZE
+    `endif
+    `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_5
+        `define SDTRIG_EXEC_ADR_SIZE
+    `endif
+`endif
+// textra context matches with value bits to compare (the generator's _MCONTEXT_MATCH_GATE, _SCONTEXT_MATCH_GATE)
+`ifdef UDB_SDTRIG_TEXTRA_MHSELECT_MCONTEXT_MATCH
+    `ifndef UDB_SDTRIG_TEXTRA_MHVALUE_LEN_0
+        `define SDTRIG_TEXTRA_MCONTEXT
+    `endif
+`endif
+`ifdef UDB_SDTRIG_TEXTRA_SSELECT_SCONTEXT_MATCH
+    `ifndef UDB_SDTRIG_TEXTRA_SVALUE_LEN_0
+        `define SDTRIG_TEXTRA_SCONTEXT
+    `endif
+`endif
+
 `endif // RISCV_COVERAGE_SDTRIG_DERIVED_SVH

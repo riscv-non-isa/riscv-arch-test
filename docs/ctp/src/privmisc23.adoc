@@ -3,7 +3,25 @@
 
 ==== Sscofpmf Counter filtering
 
-include::{testplansdir}/priv/Sscofpmf.adoc[]
+The Sscofpmf suite has one covergroup per privilege mode the tests run in: Sscofpmf_Sm_cg (M-mode), Sscofpmf_S_cg (S-mode) and Sscofpmf_U_cg (U-mode).
+The setup table applies to all three.
+The Sscofpmf_Sm tests require Sm, so they are not part of a certificate without Sm, such as RVA23.
+
+include::{testplansdir}/priv/Sscofpmf_common.adoc[]
+
+===== Sscofpmf_Sm
+
+include::{testplansdir}/priv/Sscofpmf_Sm.adoc[]
+
+===== Sscofpmf_S
+
+include::{testplansdir}/priv/Sscofpmf_S.adoc[]
+
+===== Sscofpmf_U
+
+include::{testplansdir}/priv/Sscofpmf_U.adoc[]
+
+===== Sscofpmf Normative Rules
 
 include::norm/Sscofpmf_norm_rules.adoc[]
 
@@ -56,8 +74,13 @@ include::norm/Ss1p13_norm_rules.adoc[]
 
 ==== Ssnpm Pointer Masking
 
+===== Ssnpm
+
 include::{testplansdir}/priv/Ssnpm.adoc[]
-include::{testplansdir}/priv/SsnpmSm.adoc[]
+
+===== Ssnpm_Sm
+
+include::{testplansdir}/priv/Ssnpm_Sm.adoc[]
 
 include::norm/Ssnpm_norm_rules.adoc[]
 
@@ -80,21 +103,21 @@ See <<t-Ssnpm-normative-rules>> for normative rules.
 
 ==== Zicfilp Landing Pads
 
-In Privileged section because it has both unpriv and privileged behaviors.  The common coverpoints are defined once and re-executed by the ZicfilpU, ZicfilpSm and ZicfilpS suites in their privilege mode; each of those suites adds the coverpoints for its mode's `xPELP` handling.  ZicfilpH covers VS/VU-mode (see <<t-ZicfilpH-coverpoints>>).
+In Privileged section because it has both unpriv and privileged behaviors.  The common coverpoints are defined once and re-executed by the Zicfilp_U, Zicfilp_Sm and Zicfilp_S groups in their privilege mode; each of those groups adds the coverpoints for its mode's `xPELP` handling.  ZicfilpH covers VS/VU-mode (see <<t-ZicfilpH-coverpoints>>).
 
-include::{testplansdir}/priv/Zicfilp_common_reference.adoc[]
+include::{testplansdir}/priv/Zicfilp_common.adoc[]
 
-===== ZicfilpU User-Mode Landing Pads
+===== Zicfilp_U User-Mode Landing Pads
 
-include::{testplansdir}/priv/ZicfilpU.adoc[]
+include::{testplansdir}/priv/Zicfilp_U.adoc[]
 
-===== ZicfilpSm Machine-Mode Landing Pads
+===== Zicfilp_Sm Machine-Mode Landing Pads
 
-include::{testplansdir}/priv/ZicfilpSm.adoc[]
+include::{testplansdir}/priv/Zicfilp_Sm.adoc[]
 
-===== ZicfilpS Supervisor-Mode Landing Pads
+===== Zicfilp_S Supervisor-Mode Landing Pads
 
-include::{testplansdir}/priv/ZicfilpS.adoc[]
+include::{testplansdir}/priv/Zicfilp_S.adoc[]
 
 include::norm/Zicfilp_norm_rules.adoc[]
 
@@ -157,7 +180,7 @@ include::norm/SdtrigSm_norm_rules.adoc[]
 
 As of 10/22/26, the SdtrigSm, SdtrigS and SdtrigU tests and coverpoints exercise the mcontrol6, icount, itrigger and etrigger trigger types, `textra`,
 access to the trigger registers, and address matching on scalar, compressed, atomic, vector, cache-block and translated accesses.
-Sail models Sdtrig and is the reference for the Sdtrig tests. Spike and Whisper pass; Whisper can also be run against Spike with `make whisper-rv64-max-spike-ref EXTENSIONS=SdtrigSm`.
+Sail models Sdtrig and is the reference for the Sdtrig tests. Spike and Whisper pass.
 Imperas passes with HMC's engineering build of the model. Stock Imperas, QEMU and XiangShan are excluded because of filed bugs,
 listed in their `ci.yaml` files; the QEMU issues are also tracked
 https://docs.google.com/spreadsheets/d/1EuG4LV1TQDx4wTzYDWEAvq0fwaWjNuxenwDARZmrN-E/edit?gid=0#gid=0[here].

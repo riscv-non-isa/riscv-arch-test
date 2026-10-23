@@ -748,7 +748,6 @@ params:
   # "vstvec_d = {csr_wdata[63:2], 1'b0, csr_wdata[0]};" (csr_bsc.sv#L1484)
   VSTVEC_MODES: [0, 1]
   TRAP_ON_ECALL_FROM_VS: true
-  # hvip.VSSIP/VSTIP/VSEIP are writable (csr_bsc.sv#L1352-L1358).
   # vstval takes the same ex_tval as stval (csr_bsc.sv#L2003-L2019, #L2084).
   REPORT_VA_IN_VSTVAL_ON_BREAKPOINT: true
   REPORT_VA_IN_VSTVAL_ON_LOAD_MISALIGNED: true
