@@ -91,12 +91,14 @@
   // to reimplement many parts of this macro.
   rvtest_code_end:
 
-  // The RVTEST_TSBI_GOTO_MMODE sits BELOW rvtest_code_end (not at it) because
-  // rvtest_code_end is also reached from the default unexpected-interrupt handlers,
-  // which can run in S/U/VS/VU mode. The checks and epilogs read M-mode CSRs, so
-  // every entry path must switch to M-mode first.
+  // The checks and epilogs read M-mode CSRs. Switch to M-mode unless the test is
+  // already there; an ecall from M-mode can be a double trap when Smdbltrp is enabled.
     #ifdef STANDARD_SM_SUPPORTED
+      LA(T1, rvtest_current_mode)
+      LREG T1, 0(T1)
+      beqz T1, rvtest_code_end_mmode
       RVTEST_TSBI_GOTO_MMODE
+    rvtest_code_end_mmode:
     #endif
 
   #ifndef RVTEST_NOSIG
@@ -193,10 +195,13 @@
     LI(T5, 0)                         // normal termination
     j   run_epilogs_body
 
-  // Failure reporting reaches this entry after printing its diagnostic. Run the epilogs
-  // before the failure halt, while preserving the failure status in T5.
+  // Failure reporting reaches this entry after printing its diagnostic. Switch to M-mode
+  // only when needed, then run the epilogs before the failure halt.
   rvtest_fail_epilogs:
     #ifdef STANDARD_SM_SUPPORTED
+      LA(T1, rvtest_current_mode)
+      LREG T1, 0(T1)
+      beqz T1, rvtest_fail_epilogs_mmode
       RVTEST_TSBI_GOTO_MMODE
     #endif
 
@@ -245,7 +250,7 @@
   rvtest_trap_fail_summary_mmode:
     LA(a0, failstr)
     call rvmodel_io_write_str
-    j       rvtest_fail_epilogs_mmode
+    j       rvtest_fail_epilogs
 
   rvtest_trap_setup_failed:
     bnez T5, 1f                       // failure path already printed failstr
@@ -301,6 +306,9 @@
 
   // Model specific boot code
   rvmodel_boot:
+    // Boot starts in M-mode. T-SBI mode handlers update this after each transition.
+    LA(T1, rvtest_current_mode)
+    SREG zero, 0(T1)
     #ifdef RVMODEL_BOOT
       RVMODEL_BOOT
     #endif
@@ -934,6 +942,12 @@
   .p2align 3
   .global rvtest_trap_count
   rvtest_trap_count:
+    .dword 0
+
+  // Current privilege class: M=0, lower modes=1.
+  .p2align 3
+  .global rvtest_current_mode
+  rvtest_current_mode:
     .dword 0
 
   .p2align 4
