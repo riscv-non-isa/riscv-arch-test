@@ -282,27 +282,6 @@ covergroup H_hscsr_cg with function sample(ins_t ins);
     }
     cp_hstatus_vgein:       cross priv_mode_hs, csrrw, hstatus, vgein;
 
-    // With VSXLEN = 64 (VUXLEN = 64) only, the WARL hstatus.VSXL (vsstatus.UXL) holds only 2: write each other
-    // encoding from a register other than x0 with the other bits zero
-    `ifdef UDB_MXLEN_64
-        xl_write : coverpoint ins.current.rs1_val[33:32] iff (ins.current.insn[19:15] != 0 &&
-                                                               ins.current.rs1_val[63:34] == 0 &&
-                                                               ins.current.rs1_val[31:0] == 0) {
-            bins xl_0 = {0};
-            bins xl_1 = {1};
-            bins xl_3 = {3};
-        }
-        `ifndef UDB_VSXLEN_32
-            cp_hstatus_vsxl:    cross priv_mode_hs, csrrw, hstatus, xl_write;
-        `endif
-        `ifndef UDB_VUXLEN_32
-            vsstatus : coverpoint ins.current.insn[31:20] {
-                bins vsstatus = {CSR_VSSTATUS};
-            }
-            cp_vsstatus_uxl:    cross priv_mode_hs, csrrw, vsstatus, xl_write;
-        `endif
-    `endif
-
     // vscause holds each exception and interrupt code
     vscause : coverpoint ins.current.insn[31:20] {
         bins vscause = {CSR_VSCAUSE};

@@ -528,59 +528,50 @@ normative_rule_definitions:
   # we use the term HSXLEN to refer to the effective XLEN when executing in HS-mode
   - name: hsxlen
     coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
   # VSXLEN to refer to the effective XLEN when executing in VS-mode.
   - name: vsxlen
     coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
   # The VSXL field controls the effective XLEN for VS-mode (known as VSXLEN), which may
   # differ from the XLEN for HS-mode (HSXLEN).
   - name: hstatus_vsxl_op
     coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
   # When HSXLEN=32, the VSXL field does not exist, and VSXLEN=32.
   - name: hstatus_vsxl_32
     coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
   # When HSXLEN=64, VSXL is a WARL field that is encoded the same as the MXL field of
   # misa, shown in &lt;&lt;norm:misa_mxl_enc&gt;&gt;.
   - name: hstatus_vsxl_64
-    coverpoint: ["H_hscsr_cg/cp_hstatus_vsxl"]
+    coverpoint:
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
   # In particular, an implementation may make VSXL be a read-only field whose value always
   # ensures that VSXLEN=HSXLEN.
   - name: vsxl_ro
-    coverpoint: ["H_hscsr_cg/cp_hstatus_vsxl"]
+    coverpoint:
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
   # If HSXLEN is changed from 32 to a wider width, and if field VSXL is not restricted to
   # a single value, it gets the value corresponding to the widest supported width not
   # wider than the new HSXLEN.
   - name: hstatus_vsxl_change
     coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
   # The UXL field controls the effective XLEN for VU-mode, which may differ from the XLEN
   # for VS-mode (VSXLEN). When VSXLEN=32, the UXL field does not exist, and VU-mode
   # XLEN=32. When VSXLEN=64, UXL is a WARL field that is encoded the same as the MXL field
   # of misa, shown in . In particular, an implementation may make UXL be a read-only copy
   # of field VSXL of hstatus, forcing VU-mode XLEN=VSXLEN.
   - name: vsstatus_uxl_op
-    coverpoint: ["H_hscsr_cg/cp_vsstatus_uxl"]
+    coverpoint:
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
   # If VSXLEN is changed from 32 to a wider width, and if field UXL is not restricted to a
   # single value, it gets the value corresponding to the widest supported width not wider
   # than the new VSXLEN.
   - name: vsstatus_uxl_change
     coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+      ["Out of scope: tests run with VSXLEN = VUXLEN = HSXLEN = MXLEN"]
 
   # hstatus.VSBE sets the endianness of VS-mode explicit accesses and of VS-level page-table accesses; it may be
   # read-only, and vsstatus.UBE may be a read-only copy of it

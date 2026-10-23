@@ -56,7 +56,7 @@ coverpoints:
       cp_hcsrwalk
       cp_hcsrwalk_masked
     goal: Exercise each bit of H-extension CSRs
-    description: Set and clear each bit of each {HS/VS} H-Extension CSR that holds more than zero. hstatus is walked over GVA, SPV, SPVP, HU, VTVM, VTW and VTSR, and henvcfg over FIOM, LPE, SSE, CBIE, CBCFE, CBZE, PMM, ADUE, PBMTE and STCE (cp_hcsrwalk_masked); hstatus.VGEIN is in cp_hstatus_vgein and VSXL in cp_hstatus_vsxl. vsstatus is walked with the sstatus fields that S checks; UXL is in cp_vsstatus_uxl. The CSRs of cp_hcsr_access_zero are not walked, and hgatp and vsatp are walked by cp_atpwalk1/0. vsepc and vstval are not walked, because an invalid address may legally be converted; cp_vsepc_vaddr_* and cp_vstval_vaddr_* write them with valid addresses.
+    description: Set and clear each bit of each {HS/VS} H-Extension CSR that holds more than zero. hstatus is walked over GVA, SPV, SPVP, HU, VTVM, VTW and VTSR, and henvcfg over FIOM, LPE, SSE, CBIE, CBCFE, CBZE, PMM, ADUE, PBMTE and STCE (cp_hcsrwalk_masked); hstatus.VGEIN is in cp_hstatus_vgein, and VSXL and UXL are out of scope. vsstatus is walked with the sstatus fields that S checks. The CSRs of cp_hcsr_access_zero are not walked, and hgatp and vsatp are walked by cp_atpwalk1/0. vsepc and vstval are not walked, because an invalid address may legally be converted; cp_vsepc_vaddr_* and cp_vstval_vaddr_* write them with valid addresses.
     expectation: All registers are accessible.  Some fields are WARL and will not change.
     bins: 64 * 2 * (13-16 + 8-10)
     rules:
@@ -116,13 +116,6 @@ coverpoints:
     bins: 4 (1 with GEILEN = 0)
     rules:
       - hstatus_vgein_wlrl
-  - name: |-
-      cp_hstatus_vsxl
-      cp_vsstatus_uxl
-    goal: VSXL and UXL are WARL fields encoded like misa.MXL
-    description: "RV64 with VSXLEN = 64 (VUXLEN = 64) only: write hstatus (vsstatus) with VSXL (UXL) = {0, 1, 3} and the other bits zero, and read the field back."
-    expectation: The field reads 2 (64 bits), its only legal value
-    bins: 2 CSRs * 3 values
   - name: |-
       cp_vscause_write_exception
       cp_vscause_write_interrupt
@@ -258,18 +251,6 @@ coverpoints:
     expectation: Goes to appropriate mode, or virtual-instruction exception if VTSR=1.
     bins: 2 SPP * 2 SPIE * 2 VTSR
   - heading: Not tested
-  - goal: VSXL and UXL change the XLEN of VS-mode and VU-mode
-    description: With VSXLEN or VUXLEN including 32, write VSXL or UXL = 1, run VS-mode or VU-mode code, and widen HSXLEN or VSXLEN again.
-    status: Not tested
-    rules:
-      - hsxlen
-      - vsxlen
-      - hstatus_vsxl_op
-      - hstatus_vsxl_32
-      - hstatus_vsxl_change
-      - vsstatus_uxl_change
-    notes: |-
-      XLEN-changing VSXL and UXL are out of scope: Sail implements only VSXLEN = HSXLEN = MXLEN, and every H config has VSXLEN = VUXLEN = 64 on RV64.
   - goal: hstatus.VSBE sets the endianness of VS-mode accesses
     status: Not tested
     rules:

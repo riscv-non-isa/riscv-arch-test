@@ -36,518 +36,518 @@ RVTEST_BEGIN
 /////////////////////////////////
 
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x14, -1)
-  LI(x6, 42)
+  LI(x6, -1)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1:
-  csrrw x6, mtval2, x14
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1_str)
-  LI(x6, 42)
+  csrrw x15, mtval2, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0:
-  csrrw x6, mtval2, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0_str)
-  LI(x6, 42)
+  csrrw x15, mtval2, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all:
-  csrrs x6, mtval2, x14
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all_str)
-  LI(x6, 42)
+  csrrs x15, mtval2, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all:
-  csrrc x6, mtval2, x14
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all_str)
-  LI(x6, 42)
+  csrrc x15, mtval2, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrr:
-  csrr x6, mtval2
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrr, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrr_str)
-  LI(x8, -1)
-  LI(x9, 42)
+  csrr x15, mtval2
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrr, H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrr_str)
+  LI(x14, -1)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1:
-  csrrw x9, mtinst, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1_str)
-  LI(x9, 42)
+  csrrw x6, mtinst, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0:
-  csrrw x9, mtinst, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0_str)
-  LI(x9, 42)
+  csrrw x6, mtinst, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all:
-  csrrs x9, mtinst, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all_str)
-  LI(x9, 42)
+  csrrs x6, mtinst, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all:
-  csrrc x9, mtinst, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all_str)
-  LI(x9, 42)
+  csrrc x6, mtinst, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrr:
-  csrr x9, mtinst
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrr, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrr_str)
-  LI(x8, -1)
-  LI(x14, 42)
+  csrr x6, mtinst
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrr, H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrr_str)
+  LI(x9, -1)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1:
-  csrrw x14, hstatus, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1_str)
-  LI(x14, 42)
+  csrrw x15, hstatus, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0:
-  csrrw x14, hstatus, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0_str)
-  LI(x14, 42)
+  csrrw x15, hstatus, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all:
-  csrrs x14, hstatus, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x15, hstatus, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all:
-  csrrc x14, hstatus, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x15, hstatus, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr:
-  csrr x14, hstatus
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr_str)
-  LI(x6, -1)
-  LI(x15, 42)
+  csrr x15, hstatus
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr_str)
+  LI(x14, -1)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1:
-  csrrw x15, hedeleg, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1_str)
-  LI(x15, 42)
+  csrrw x6, hedeleg, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0:
-  csrrw x15, hedeleg, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0_str)
-  LI(x15, 42)
+  csrrw x6, hedeleg, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all:
-  csrrs x15, hedeleg, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x6, hedeleg, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all:
-  csrrc x15, hedeleg, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x6, hedeleg, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr:
-  csrr x15, hedeleg
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr_str)
-  LI(x14, -1)
-  LI(x6, 42)
+  csrr x6, hedeleg
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr_str)
+  LI(x8, -1)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1:
-  csrrw x6, hideleg, x14
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1_str)
-  LI(x6, 42)
+  csrrw x9, hideleg, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0:
-  csrrw x6, hideleg, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0_str)
-  LI(x6, 42)
+  csrrw x9, hideleg, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all:
-  csrrs x6, hideleg, x14
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all_str)
-  LI(x6, 42)
+  csrrs x9, hideleg, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all:
-  csrrc x6, hideleg, x14
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all_str)
-  LI(x6, 42)
+  csrrc x9, hideleg, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr:
-  csrr x6, hideleg
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr_str)
-  LI(x9, -1)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1:
-  csrrw x8, hie, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0:
-  csrrw x8, hie, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all:
-  csrrs x8, hie, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all:
-  csrrc x8, hie, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr:
-  csrr x8, hie
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr_str)
-  LI(x6, -1)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1:
-  csrrw x9, hcounteren, x6
+  csrr x9, hideleg
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1_str)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0:
-  csrrw x9, hcounteren, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0_str)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all:
-  csrrs x9, hcounteren, x6
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all_str)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all:
-  csrrc x9, hcounteren, x6
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all_str)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr:
-  csrr x9, hcounteren
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr_str)
-  LI(x14, -1)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1:
-  csrrw x9, hgeie, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1_str)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0:
-  csrrw x9, hgeie, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0_str)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all:
-  csrrs x9, hgeie, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all_str)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all:
-  csrrc x9, hgeie, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all_str)
-  LI(x9, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr:
-  csrr x9, hgeie
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr_str)
-  LI(x9, -1)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1:
-  csrrw x15, henvcfg, x9
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1_str)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0:
-  csrrw x15, henvcfg, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0_str)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all:
-  csrrs x15, henvcfg, x9
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all_str)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all:
-  csrrc x15, henvcfg, x9
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all_str)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr:
-  csrr x15, henvcfg
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr_str)
-  LI(x15, -1)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1:
-  csrrw x6, htval, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1_str)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0:
-  csrrw x6, htval, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0_str)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all:
-  csrrs x6, htval, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all_str)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all:
-  csrrc x6, htval, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all_str)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr:
-  csrr x6, htval
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr_str)
-  LI(x15, -1)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1:
-  csrrw x8, hip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0:
-  csrrw x8, hip, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all:
-  csrrs x8, hip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all:
-  csrrc x8, hip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr:
-  csrr x8, hip
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr_str)
-  LI(x15, -1)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1:
-  csrrw x8, hvip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0:
-  csrrw x8, hvip, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all:
-  csrrs x8, hvip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all:
-  csrrc x8, hvip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr:
-  csrr x8, hvip
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr_str)
-  LI(x13, -1)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1:
-  csrrw x8, htinst, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0:
-  csrrw x8, htinst, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all:
-  csrrs x8, htinst, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all:
-  csrrc x8, htinst, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr:
-  csrr x8, htinst
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr_str)
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr_str)
   LI(x8, -1)
   LI(x14, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1:
-  csrrw x14, hgatp, x8
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1:
+  csrrw x14, hie, x8
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1_str)
   LI(x14, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0:
-  csrrw x14, hgatp, x0
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0:
+  csrrw x14, hie, x0
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0_str)
   LI(x14, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all:
-  csrrs x14, hgatp, x8
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all:
+  csrrs x14, hie, x8
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all_str)
   LI(x14, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all:
-  csrrc x14, hgatp, x8
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all:
+  csrrc x14, hie, x8
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all_str)
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all_str)
   LI(x14, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr:
-  csrr x14, hgatp
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr:
+  csrr x14, hie
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr_str)
-#if defined(ZICNTR_SUPPORTED)
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr_str)
   LI(x6, -1)
-  LI(x13, 42)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1:
+  csrrw x15, hcounteren, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1_str)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0:
+  csrrw x15, hcounteren, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0_str)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all:
+  csrrs x15, hcounteren, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all_str)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all:
+  csrrc x15, hcounteren, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all_str)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr:
+  csrr x15, hcounteren
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr_str)
+  LI(x14, -1)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1:
+  csrrw x6, hgeie, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1_str)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0:
+  csrrw x6, hgeie, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0_str)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all:
+  csrrs x6, hgeie, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all_str)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all:
+  csrrc x6, hgeie, x14
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all_str)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr:
+  csrr x6, hgeie
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr_str)
+  LI(x9, -1)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1:
+  csrrw x8, henvcfg, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1_str)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0:
+  csrrw x8, henvcfg, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0_str)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all:
+  csrrs x8, henvcfg, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all_str)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all:
+  csrrc x8, henvcfg, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all_str)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr:
+  csrr x8, henvcfg
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr_str)
+  LI(x6, -1)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1:
+  csrrw x9, htval, x6
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0:
+  csrrw x9, htval, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all:
+  csrrs x9, htval, x6
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all:
+  csrrc x9, htval, x6
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr:
+  csrr x9, htval
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr_str)
+  LI(x14, -1)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1:
+  csrrw x9, hip, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0:
+  csrrw x9, hip, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all:
+  csrrs x9, hip, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all:
+  csrrc x9, hip, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr:
+  csrr x9, hip
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr_str)
+  LI(x9, -1)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1:
+  csrrw x15, hvip, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1_str)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0:
+  csrrw x15, hvip, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0_str)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all:
+  csrrs x15, hvip, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all_str)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all:
+  csrrc x15, hvip, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all_str)
+  LI(x15, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr:
+  csrr x15, hvip
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr_str)
+  LI(x15, -1)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1:
+  csrrw x6, htinst, x15
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1_str)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0:
+  csrrw x6, htinst, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0_str)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all:
+  csrrs x6, htinst, x15
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all_str)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all:
+  csrrc x6, htinst, x15
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all_str)
+  LI(x6, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr:
+  csrr x6, htinst
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr_str)
+  LI(x15, -1)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1:
+  csrrw x8, hgatp, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1_str)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0:
+  csrrw x8, hgatp, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0_str)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all:
+  csrrs x8, hgatp, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all_str)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all:
+  csrrc x8, hgatp, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all_str)
+  LI(x8, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr:
+  csrr x8, hgatp
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr_str)
+#if defined(ZICNTR_SUPPORTED)
+  LI(x15, -1)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1:
-  csrrw x13, htimedelta, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1_str)
-  LI(x13, 42)
+  csrrw x8, htimedelta, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0:
-  csrrw x13, htimedelta, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0_str)
-  LI(x13, 42)
+  csrrw x8, htimedelta, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all:
-  csrrs x13, htimedelta, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x8, htimedelta, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all:
-  csrrc x13, htimedelta, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x8, htimedelta, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr:
-  csrr x13, htimedelta
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr_str)
+  csrr x8, htimedelta
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr_str)
 #endif // defined(ZICNTR_SUPPORTED)
 #if __riscv_xlen == 32 && defined(SM1P13P0_OR_LATER_SUPPORTED)
 #ifdef SMSTATEEN_SUPPORTED
   RVTEST_TSBI_CSR_SET(CSR_MSTATEEN0H, MSTATEEN0H_PRIV113)
 #endif
-  LI(x14, -1)
-  LI(x9, 42)
+  LI(x13, -1)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1:
-  csrrw x9, hedelegh, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1_str)
-  LI(x9, 42)
+  csrrw x8, hedelegh, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0:
-  csrrw x9, hedelegh, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0_str)
-  LI(x9, 42)
+  csrrw x8, hedelegh, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all:
-  csrrs x9, hedelegh, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all_str)
-  LI(x9, 42)
+  csrrs x8, hedelegh, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all:
-  csrrc x9, hedelegh, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all_str)
-  LI(x9, 42)
+  csrrc x8, hedelegh, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr:
-  csrr x9, hedelegh
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr_str)
+  csrr x8, hedelegh
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr_str)
 #ifdef SMSTATEEN_SUPPORTED
   RVTEST_TSBI_CSR_CLEAR(CSR_MSTATEEN0H, MSTATEEN0H_PRIV113)
 #endif
 #endif // __riscv_xlen == 32 && defined(SM1P13P0_OR_LATER_SUPPORTED)
 #if __riscv_xlen == 32 && defined(ZICNTR_SUPPORTED)
-  LI(x6, -1)
-  LI(x15, 42)
+  LI(x8, -1)
+  LI(x14, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1:
-  csrrw x15, htimedeltah, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1_str)
-  LI(x15, 42)
+  csrrw x14, htimedeltah, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1_str)
+  LI(x14, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0:
-  csrrw x15, htimedeltah, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0_str)
-  LI(x15, 42)
+  csrrw x14, htimedeltah, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0_str)
+  LI(x14, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all:
-  csrrs x15, htimedeltah, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x14, htimedeltah, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all_str)
+  LI(x14, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all:
-  csrrc x15, htimedeltah, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x14, htimedeltah, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all_str)
+  LI(x14, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr:
-  csrr x15, htimedeltah
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr_str)
+  csrr x14, htimedeltah
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr_str)
 #endif // __riscv_xlen == 32 && defined(ZICNTR_SUPPORTED)
 #if __riscv_xlen == 32
-  LI(x13, -1)
-  LI(x14, 42)
+  LI(x6, -1)
+  LI(x13, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1:
-  csrrw x14, henvcfgh, x13
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1_str)
-  LI(x14, 42)
+  csrrw x13, henvcfgh, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1_str)
+  LI(x13, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0:
-  csrrw x14, henvcfgh, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0_str)
-  LI(x14, 42)
+  csrrw x13, henvcfgh, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0_str)
+  LI(x13, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all:
-  csrrs x14, henvcfgh, x13
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x13, henvcfgh, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all_str)
+  LI(x13, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all:
-  csrrc x14, henvcfgh, x13
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x13, henvcfgh, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all_str)
+  LI(x13, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr:
-  csrr x14, henvcfgh
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr_str)
+  csrr x13, henvcfgh
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr_str)
 #endif // __riscv_xlen == 32
-  LI(x15, -1)
-  LI(x8, 42)
+  LI(x14, -1)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1:
-  csrrw x8, hgeip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1_str)
-  LI(x8, 42)
+  csrrw x9, hgeip, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0:
-  csrrw x8, hgeip, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0_str)
-  LI(x8, 42)
+  csrrw x9, hgeip, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all:
-  csrrs x8, hgeip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x9, hgeip, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all:
-  csrrc x8, hgeip, x15
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x9, hgeip, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr:
-  csrr x8, hgeip
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr_str)
-  LI(x13, -1)
+  csrr x9, hgeip
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr_str)
+  LI(x6, -1)
   LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1:
-  csrrw x15, vsstatus, x13
+  csrrw x15, vsstatus, x6
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1_str)
   LI(x15, 42)
@@ -557,12 +557,12 @@ H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0_str)
   LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all:
-  csrrs x15, vsstatus, x13
+  csrrs x15, vsstatus, x6
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all_str)
   LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all:
-  csrrc x15, vsstatus, x13
+  csrrc x15, vsstatus, x6
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all_str)
   LI(x15, 42)
@@ -571,10 +571,10 @@ H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr:
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr_str)
   RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, MIP_VS_MASK)
-  LI(x9, -1)
+  LI(x13, -1)
   LI(x14, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1:
-  csrrw x14, vsie, x9
+  csrrw x14, vsie, x13
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1_str)
   LI(x14, 42)
@@ -584,12 +584,12 @@ H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0_str)
   LI(x14, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all:
-  csrrs x14, vsie, x9
+  csrrs x14, vsie, x13
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all_str)
   LI(x14, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all:
-  csrrc x14, vsie, x9
+  csrrc x14, vsie, x13
   # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all_str)
   LI(x14, 42)
@@ -599,195 +599,195 @@ H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr:
   RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr_str)
   RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, 0)
   LI(x15, -1)
-  LI(x13, 42)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1:
-  csrrw x13, vstval, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1_str)
-  LI(x13, 42)
+  csrrw x8, vstval, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0:
-  csrrw x13, vstval, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0_str)
-  LI(x13, 42)
+  csrrw x8, vstval, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all:
-  csrrs x13, vstval, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x8, vstval, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all:
-  csrrc x13, vstval, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x8, vstval, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr:
-  csrr x13, vstval
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr_str)
+  csrr x8, vstval
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr_str)
   RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, MIP_VS_MASK)
-  LI(x8, -1)
-  LI(x9, 42)
+  LI(x13, -1)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1:
-  csrrw x9, vsip, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1_str)
-  LI(x9, 42)
+  csrrw x15, vsip, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0:
-  csrrw x9, vsip, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0_str)
-  LI(x9, 42)
+  csrrw x15, vsip, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all:
-  csrrs x9, vsip, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all_str)
-  LI(x9, 42)
+  csrrs x15, vsip, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all:
-  csrrc x9, vsip, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all_str)
-  LI(x9, 42)
+  csrrc x15, vsip, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr:
-  csrr x9, vsip
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr_str)
+  csrr x15, vsip
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr_str)
   RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, 0)
-  LI(x13, -1)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1:
-  csrrw x8, vstvec, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0:
-  csrrw x8, vstvec, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all:
-  csrrs x8, vstvec, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all:
-  csrrc x8, vstvec, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all_str)
-  LI(x8, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr:
-  csrr x8, vstvec
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr_str)
-  LI(x13, -1)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1:
-  csrrw x15, vsscratch, x13
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1_str)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0:
-  csrrw x15, vsscratch, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0_str)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all:
-  csrrs x15, vsscratch, x13
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all_str)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all:
-  csrrc x15, vsscratch, x13
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all_str)
-  LI(x15, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr:
-  csrr x15, vsscratch
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr_str)
   LI(x9, -1)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1:
-  csrrw x6, vsepc, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1_str)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0:
-  csrrw x6, vsepc, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0_str)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all:
-  csrrs x6, vsepc, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all_str)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all:
-  csrrc x6, vsepc, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all_str)
-  LI(x6, 42)
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr:
-  csrr x6, vsepc
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr_str)
+  LI(x14, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1:
+  csrrw x14, vstvec, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1_str)
+  LI(x14, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0:
+  csrrw x14, vstvec, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0_str)
+  LI(x14, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all:
+  csrrs x14, vstvec, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all_str)
+  LI(x14, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all:
+  csrrc x14, vstvec, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all_str)
+  LI(x14, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr:
+  csrr x14, vstvec
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr_str)
+  LI(x15, -1)
+  LI(x13, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1:
+  csrrw x13, vsscratch, x15
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1_str)
+  LI(x13, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0:
+  csrrw x13, vsscratch, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0_str)
+  LI(x13, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all:
+  csrrs x13, vsscratch, x15
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all_str)
+  LI(x13, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all:
+  csrrc x13, vsscratch, x15
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all_str)
+  LI(x13, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr:
+  csrr x13, vsscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr_str)
   LI(x8, -1)
-  LI(x15, 42)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1:
+  csrrw x9, vsepc, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0:
+  csrrw x9, vsepc, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all:
+  csrrs x9, vsepc, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all:
+  csrrc x9, vsepc, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all_str)
+  LI(x9, 42)
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr:
+  csrr x9, vsepc
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr_str)
+  LI(x13, -1)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1:
-  csrrw x15, vsatp, x8
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1_str)
-  LI(x15, 42)
+  csrrw x8, vsatp, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0:
-  csrrw x15, vsatp, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0_str)
-  LI(x15, 42)
+  csrrw x8, vsatp, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all:
-  csrrs x15, vsatp, x8
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x8, vsatp, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all:
-  csrrc x15, vsatp, x8
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x8, vsatp, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all_str)
+  LI(x8, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr:
-  csrr x15, vsatp
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr_str)
+  csrr x8, vsatp
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr_str)
 #if defined(SSTC_SUPPORTED)
 #if __riscv_xlen == 64
   RVTEST_TSBI_CSR_SET(CSR_MENVCFG, MENVCFG_STCE)
 #else
   RVTEST_TSBI_CSR_SET(CSR_MENVCFGH, MENVCFGH_STCE)
 #endif
-  LI(x15, -1)
-  LI(x13, 42)
+  LI(x13, -1)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1:
-  csrrw x13, vstimecmp, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1_str)
-  LI(x13, 42)
+  csrrw x15, vstimecmp, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0:
-  csrrw x13, vstimecmp, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0_str)
-  LI(x13, 42)
+  csrrw x15, vstimecmp, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all:
-  csrrs x13, vstimecmp, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x15, vstimecmp, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all:
-  csrrc x13, vstimecmp, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x15, vstimecmp, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr:
-  csrr x13, vstimecmp
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr_str)
+  csrr x15, vstimecmp
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr_str)
 #if __riscv_xlen == 64
   RVTEST_TSBI_CSR_CLEAR(CSR_MENVCFG, MENVCFG_STCE)
 #else
@@ -800,32 +800,32 @@ H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr:
 #else
   RVTEST_TSBI_CSR_SET(CSR_MENVCFGH, MENVCFGH_STCE)
 #endif
-  LI(x15, -1)
-  LI(x9, 42)
+  LI(x9, -1)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1:
-  csrrw x9, vstimecmph, x15
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1_str)
-  LI(x9, 42)
+  csrrw x6, vstimecmph, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0:
-  csrrw x9, vstimecmph, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0_str)
-  LI(x9, 42)
+  csrrw x6, vstimecmph, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all:
-  csrrs x9, vstimecmph, x15
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all_str)
-  LI(x9, 42)
+  csrrs x6, vstimecmph, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all:
-  csrrc x9, vstimecmph, x15
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all_str)
-  LI(x9, 42)
+  csrrc x6, vstimecmph, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all_str)
+  LI(x6, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr:
-  csrr x9, vstimecmph
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr_str)
+  csrr x6, vstimecmph
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr_str)
 #if __riscv_xlen == 64
   RVTEST_TSBI_CSR_CLEAR(CSR_MENVCFG, MENVCFG_STCE)
 #else
@@ -833,36 +833,36 @@ H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr:
 #endif
 #endif // __riscv_xlen == 32 && defined(SSTC_SUPPORTED)
   LI(x8, -1)
-  LI(x14, 42)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1:
-  csrrw x14, vscause, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1_str)
-  LI(x14, 42)
+  csrrw x15, vscause, x8
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0:
-  csrrw x14, vscause, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0_str)
-  LI(x14, 42)
+  csrrw x15, vscause, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all:
-  csrrs x14, vscause, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x15, vscause, x8
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all:
-  csrrc x14, vscause, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x15, vscause, x8
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr:
-  csrr x14, vscause
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr_str)
+  csrr x15, vscause
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr, H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr_str)
 #if __riscv_xlen == 64
-  LI(x9, -1)
+  LI(x15, -1)
   LI(x13, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1:
-  csrrw x13, CSR_HEDELEGH, x9
+  csrrw x13, CSR_HEDELEGH, x15
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1_str)
   LI(x13, 42)
@@ -872,12 +872,12 @@ H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0_str)
   LI(x13, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all:
-  csrrs x13, CSR_HEDELEGH, x9
+  csrrs x13, CSR_HEDELEGH, x15
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all_str)
   LI(x13, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all:
-  csrrc x13, CSR_HEDELEGH, x9
+  csrrc x13, CSR_HEDELEGH, x15
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all_str)
   LI(x13, 42)
@@ -887,88 +887,88 @@ H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr:
   RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr, H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x14, -1)
-  LI(x15, 42)
+  LI(x15, -1)
+  LI(x9, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1:
-  csrrw x15, CSR_HTIMEDELTAH, x14
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1_str)
-  LI(x15, 42)
+  csrrw x9, CSR_HTIMEDELTAH, x15
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0:
-  csrrw x15, CSR_HTIMEDELTAH, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0_str)
-  LI(x15, 42)
+  csrrw x9, CSR_HTIMEDELTAH, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all:
-  csrrs x15, CSR_HTIMEDELTAH, x14
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x9, CSR_HTIMEDELTAH, x15
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all:
-  csrrc x15, CSR_HTIMEDELTAH, x14
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x9, CSR_HTIMEDELTAH, x15
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all_str)
+  LI(x9, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr:
-  csrr x15, CSR_HTIMEDELTAH
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr_str)
+  csrr x9, CSR_HTIMEDELTAH
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr, H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x9, -1)
-  LI(x8, 42)
+  LI(x8, -1)
+  LI(x14, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1:
-  csrrw x8, CSR_HENVCFGH, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1_str)
-  LI(x8, 42)
+  csrrw x14, CSR_HENVCFGH, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1_str)
+  LI(x14, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0:
-  csrrw x8, CSR_HENVCFGH, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0_str)
-  LI(x8, 42)
+  csrrw x14, CSR_HENVCFGH, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0_str)
+  LI(x14, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all:
-  csrrs x8, CSR_HENVCFGH, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x14, CSR_HENVCFGH, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all_str)
+  LI(x14, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all:
-  csrrc x8, CSR_HENVCFGH, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x14, CSR_HENVCFGH, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all_str)
+  LI(x14, 42)
 H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr:
-  csrr x8, CSR_HENVCFGH
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr_str)
+  csrr x14, CSR_HENVCFGH
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr, H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
   LI(x9, -1)
-  LI(x15, 42)
+  LI(x13, 42)
 H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1:
-  csrrw x15, CSR_VSTIMECMPH, x9
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1_str)
-  LI(x15, 42)
+  csrrw x13, CSR_VSTIMECMPH, x9
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1_str)
+  LI(x13, 42)
 H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0:
-  csrrw x15, CSR_VSTIMECMPH, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0_str)
-  LI(x15, 42)
+  csrrw x13, CSR_VSTIMECMPH, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0_str)
+  LI(x13, 42)
 H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all:
-  csrrs x15, CSR_VSTIMECMPH, x9
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x13, CSR_VSTIMECMPH, x9
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all_str)
+  LI(x13, 42)
 H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all:
-  csrrc x15, CSR_VSTIMECMPH, x9
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x13, CSR_VSTIMECMPH, x9
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all_str)
+  LI(x13, 42)
 H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr:
-  csrr x15, CSR_VSTIMECMPH
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr_str)
+  csrr x13, CSR_VSTIMECMPH
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr, H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr_str)
 #endif // __riscv_xlen == 64
   RVTEST_TSBI_GOTO_SMODE
 
@@ -980,35 +980,35 @@ H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr:
   RVTEST_TSBI_GOTO_VSMODE
 
 # CSR Access Tests for scounteren
-  csrr x8, scounteren    # Save CSR
-  LI(x9, -1)             # write all 1s
+  csrr x14, scounteren    # Save CSR
+  LI(x15, -1)             # write all 1s
 H_vscsr_cg_cp_nonreplica_scounteren_csrrw1:
-  csrw scounteren, x9    # Write all 1s to CSR
-  # Read scounteren into x6 and check against expected.
-  RVTEST_SIGUPD_CSR_READ(scounteren, x6, H_vscsr_cg_cp_nonreplica_scounteren_csrrw1, H_vscsr_cg_cp_nonreplica_scounteren_csrrw1_str)
+  csrw scounteren, x15    # Write all 1s to CSR
+  # Read scounteren into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scounteren, x9, H_vscsr_cg_cp_nonreplica_scounteren_csrrw1, H_vscsr_cg_cp_nonreplica_scounteren_csrrw1_str)
 
 H_vscsr_cg_cp_nonreplica_scounteren_csrrw0:
   csrw scounteren, zero   # Write all 0s to CSR
-  # Read scounteren into x6 and check against expected.
-  RVTEST_SIGUPD_CSR_READ(scounteren, x6, H_vscsr_cg_cp_nonreplica_scounteren_csrrw0, H_vscsr_cg_cp_nonreplica_scounteren_csrrw0_str)
+  # Read scounteren into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scounteren, x9, H_vscsr_cg_cp_nonreplica_scounteren_csrrw0, H_vscsr_cg_cp_nonreplica_scounteren_csrrw0_str)
 
 H_vscsr_cg_cp_nonreplica_scounteren_csrs_all:
-  csrs scounteren, x9    # Set all 1s
-  # Read scounteren into x6 and check against expected.
-  RVTEST_SIGUPD_CSR_READ(scounteren, x6, H_vscsr_cg_cp_nonreplica_scounteren_csrs_all, H_vscsr_cg_cp_nonreplica_scounteren_csrs_all_str)
+  csrs scounteren, x15    # Set all 1s
+  # Read scounteren into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scounteren, x9, H_vscsr_cg_cp_nonreplica_scounteren_csrs_all, H_vscsr_cg_cp_nonreplica_scounteren_csrs_all_str)
 
 H_vscsr_cg_cp_nonreplica_scounteren_csrrc_all:
-  csrc scounteren, x9    # Clear all 1s
-  # Read scounteren into x6 and check against expected.
-  RVTEST_SIGUPD_CSR_READ(scounteren, x6, H_vscsr_cg_cp_nonreplica_scounteren_csrrc_all, H_vscsr_cg_cp_nonreplica_scounteren_csrrc_all_str)
-  csrw scounteren, x8       # Restore CSR
+  csrc scounteren, x15    # Clear all 1s
+  # Read scounteren into x9 and check against expected.
+  RVTEST_SIGUPD_CSR_READ(scounteren, x9, H_vscsr_cg_cp_nonreplica_scounteren_csrrc_all, H_vscsr_cg_cp_nonreplica_scounteren_csrrc_all_str)
+  csrw scounteren, x14       # Restore CSR
 #if defined(S1P12P0_OR_LATER_SUPPORTED)
 
 # CSR Access Tests for senvcfg
-  csrr x13, senvcfg    # Save CSR
-  LI(x15, -1)             # write all 1s
+  csrr x8, senvcfg    # Save CSR
+  LI(x9, -1)             # write all 1s
 H_vscsr_cg_cp_nonreplica_senvcfg_csrrw1:
-  csrw senvcfg, x15    # Write all 1s to CSR
+  csrw senvcfg, x9    # Write all 1s to CSR
   # Read senvcfg into x14 and check against expected.
   RVTEST_SIGUPD_CSR_READ(senvcfg, x14, H_vscsr_cg_cp_nonreplica_senvcfg_csrrw1, H_vscsr_cg_cp_nonreplica_senvcfg_csrrw1_str)
 
@@ -1018,15 +1018,15 @@ H_vscsr_cg_cp_nonreplica_senvcfg_csrrw0:
   RVTEST_SIGUPD_CSR_READ(senvcfg, x14, H_vscsr_cg_cp_nonreplica_senvcfg_csrrw0, H_vscsr_cg_cp_nonreplica_senvcfg_csrrw0_str)
 
 H_vscsr_cg_cp_nonreplica_senvcfg_csrs_all:
-  csrs senvcfg, x15    # Set all 1s
+  csrs senvcfg, x9    # Set all 1s
   # Read senvcfg into x14 and check against expected.
   RVTEST_SIGUPD_CSR_READ(senvcfg, x14, H_vscsr_cg_cp_nonreplica_senvcfg_csrs_all, H_vscsr_cg_cp_nonreplica_senvcfg_csrs_all_str)
 
 H_vscsr_cg_cp_nonreplica_senvcfg_csrrc_all:
-  csrc senvcfg, x15    # Clear all 1s
+  csrc senvcfg, x9    # Clear all 1s
   # Read senvcfg into x14 and check against expected.
   RVTEST_SIGUPD_CSR_READ(senvcfg, x14, H_vscsr_cg_cp_nonreplica_senvcfg_csrrc_all, H_vscsr_cg_cp_nonreplica_senvcfg_csrrc_all_str)
-  csrw senvcfg, x13       # Restore CSR
+  csrw senvcfg, x8       # Restore CSR
 #endif // defined(S1P12P0_OR_LATER_SUPPORTED)
 
 
@@ -1037,976 +1037,976 @@ H_vscsr_cg_cp_nonreplica_senvcfg_csrrc_all:
 /////////////////////////////////
 
 # Setup
-  SET_MSB(x9) # put a 1 in the msb of x9 (XLEN-1)
-  csrr x13, sstatus        # read and save sstatus
-  # set up x8 with sstatus except SD, FS, XS, VS cleared
-  not x6, x9              # x6 has all but msb set
-  and x8, x13, x6 # clear SD bit
-  LI(x6, 0x1E600)              # x6 has all FS, XS, VS bits set (bits [14:13], [16:15], [10:9], respectively)
-  not x6, x6              # x6 has all but FS, XS, VS bits set
-  and x8, x8, x6     # clear FS, XS, VS bits
+  SET_MSB(x6) # put a 1 in the msb of x6 (XLEN-1)
+  csrr x8, sstatus        # read and save sstatus
+  # set up x14 with sstatus except SD, FS, XS, VS cleared
+  not x15, x6              # x15 has all but msb set
+  and x14, x8, x15 # clear SD bit
+  LI(x15, 0x1E600)              # x15 has all FS, XS, VS bits set (bits [14:13], [16:15], [10:9], respectively)
+  not x15, x15              # x15 has all but FS, XS, VS bits set
+  and x14, x14, x15     # clear FS, XS, VS bits
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 00, vs = 00
-  LI(x15, 0x00000000)  # fs = 00 xs = 00 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00000000)  # fs = 00 xs = 00 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 00, vs = 01
-  LI(x15, 0x00000200)  # fs = 00 xs = 00 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00000200)  # fs = 00 xs = 00 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 00, vs = 10
-  LI(x15, 0x00000400)  # fs = 00 xs = 00 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00000400)  # fs = 00 xs = 00 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 00, vs = 11
-  LI(x15, 0x00000600)  # fs = 00 xs = 00 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00000600)  # fs = 00 xs = 00 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 01, vs = 00
-  LI(x15, 0x00008000)  # fs = 00 xs = 01 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00008000)  # fs = 00 xs = 01 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 01, vs = 01
-  LI(x15, 0x00008200)  # fs = 00 xs = 01 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00008200)  # fs = 00 xs = 01 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 01, vs = 10
-  LI(x15, 0x00008400)  # fs = 00 xs = 01 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00008400)  # fs = 00 xs = 01 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 01, vs = 11
-  LI(x15, 0x00008600)  # fs = 00 xs = 01 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00008600)  # fs = 00 xs = 01 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 10, vs = 00
-  LI(x15, 0x00010000)  # fs = 00 xs = 10 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00010000)  # fs = 00 xs = 10 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 10, vs = 01
-  LI(x15, 0x00010200)  # fs = 00 xs = 10 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00010200)  # fs = 00 xs = 10 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 10, vs = 10
-  LI(x15, 0x00010400)  # fs = 00 xs = 10 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00010400)  # fs = 00 xs = 10 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 10, vs = 11
-  LI(x15, 0x00010600)  # fs = 00 xs = 10 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00010600)  # fs = 00 xs = 10 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 11, vs = 00
-  LI(x15, 0x00018000)  # fs = 00 xs = 11 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00018000)  # fs = 00 xs = 11 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 11, vs = 01
-  LI(x15, 0x00018200)  # fs = 00 xs = 11 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00018200)  # fs = 00 xs = 11 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 11, vs = 10
-  LI(x15, 0x00018400)  # fs = 00 xs = 11 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00018400)  # fs = 00 xs = 11 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 00, xs = 11, vs = 11
-  LI(x15, 0x00018600)  # fs = 00 xs = 11 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00018600)  # fs = 00 xs = 11 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 00, vs = 00
-  LI(x15, 0x00002000)  # fs = 01 xs = 00 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00002000)  # fs = 01 xs = 00 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 00, vs = 01
-  LI(x15, 0x00002200)  # fs = 01 xs = 00 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00002200)  # fs = 01 xs = 00 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 00, vs = 10
-  LI(x15, 0x00002400)  # fs = 01 xs = 00 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00002400)  # fs = 01 xs = 00 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 00, vs = 11
-  LI(x15, 0x00002600)  # fs = 01 xs = 00 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00002600)  # fs = 01 xs = 00 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 01, vs = 00
-  LI(x15, 0x0000a000)  # fs = 01 xs = 01 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000a000)  # fs = 01 xs = 01 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 01, vs = 01
-  LI(x15, 0x0000a200)  # fs = 01 xs = 01 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000a200)  # fs = 01 xs = 01 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 01, vs = 10
-  LI(x15, 0x0000a400)  # fs = 01 xs = 01 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000a400)  # fs = 01 xs = 01 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 01, vs = 11
-  LI(x15, 0x0000a600)  # fs = 01 xs = 01 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000a600)  # fs = 01 xs = 01 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 10, vs = 00
-  LI(x15, 0x00012000)  # fs = 01 xs = 10 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00012000)  # fs = 01 xs = 10 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 10, vs = 01
-  LI(x15, 0x00012200)  # fs = 01 xs = 10 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00012200)  # fs = 01 xs = 10 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 10, vs = 10
-  LI(x15, 0x00012400)  # fs = 01 xs = 10 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00012400)  # fs = 01 xs = 10 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 10, vs = 11
-  LI(x15, 0x00012600)  # fs = 01 xs = 10 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00012600)  # fs = 01 xs = 10 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 11, vs = 00
-  LI(x15, 0x0001a000)  # fs = 01 xs = 11 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001a000)  # fs = 01 xs = 11 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 11, vs = 01
-  LI(x15, 0x0001a200)  # fs = 01 xs = 11 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001a200)  # fs = 01 xs = 11 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 11, vs = 10
-  LI(x15, 0x0001a400)  # fs = 01 xs = 11 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001a400)  # fs = 01 xs = 11 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 01, xs = 11, vs = 11
-  LI(x15, 0x0001a600)  # fs = 01 xs = 11 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001a600)  # fs = 01 xs = 11 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 00, vs = 00
-  LI(x15, 0x00004000)  # fs = 10 xs = 00 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00004000)  # fs = 10 xs = 00 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 00, vs = 01
-  LI(x15, 0x00004200)  # fs = 10 xs = 00 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00004200)  # fs = 10 xs = 00 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 00, vs = 10
-  LI(x15, 0x00004400)  # fs = 10 xs = 00 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00004400)  # fs = 10 xs = 00 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 00, vs = 11
-  LI(x15, 0x00004600)  # fs = 10 xs = 00 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00004600)  # fs = 10 xs = 00 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 01, vs = 00
-  LI(x15, 0x0000c000)  # fs = 10 xs = 01 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000c000)  # fs = 10 xs = 01 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 01, vs = 01
-  LI(x15, 0x0000c200)  # fs = 10 xs = 01 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000c200)  # fs = 10 xs = 01 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 01, vs = 10
-  LI(x15, 0x0000c400)  # fs = 10 xs = 01 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000c400)  # fs = 10 xs = 01 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 01, vs = 11
-  LI(x15, 0x0000c600)  # fs = 10 xs = 01 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000c600)  # fs = 10 xs = 01 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 10, vs = 00
-  LI(x15, 0x00014000)  # fs = 10 xs = 10 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00014000)  # fs = 10 xs = 10 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 10, vs = 01
-  LI(x15, 0x00014200)  # fs = 10 xs = 10 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00014200)  # fs = 10 xs = 10 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 10, vs = 10
-  LI(x15, 0x00014400)  # fs = 10 xs = 10 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00014400)  # fs = 10 xs = 10 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 10, vs = 11
-  LI(x15, 0x00014600)  # fs = 10 xs = 10 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00014600)  # fs = 10 xs = 10 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 11, vs = 00
-  LI(x15, 0x0001c000)  # fs = 10 xs = 11 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001c000)  # fs = 10 xs = 11 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 11, vs = 01
-  LI(x15, 0x0001c200)  # fs = 10 xs = 11 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001c200)  # fs = 10 xs = 11 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 11, vs = 10
-  LI(x15, 0x0001c400)  # fs = 10 xs = 11 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001c400)  # fs = 10 xs = 11 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 10, xs = 11, vs = 11
-  LI(x15, 0x0001c600)  # fs = 10 xs = 11 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001c600)  # fs = 10 xs = 11 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 00, vs = 00
-  LI(x15, 0x00006000)  # fs = 11 xs = 00 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00006000)  # fs = 11 xs = 00 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 00, vs = 01
-  LI(x15, 0x00006200)  # fs = 11 xs = 00 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00006200)  # fs = 11 xs = 00 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 00, vs = 10
-  LI(x15, 0x00006400)  # fs = 11 xs = 00 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00006400)  # fs = 11 xs = 00 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 00, vs = 11
-  LI(x15, 0x00006600)  # fs = 11 xs = 00 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00006600)  # fs = 11 xs = 00 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 01, vs = 00
-  LI(x15, 0x0000e000)  # fs = 11 xs = 01 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000e000)  # fs = 11 xs = 01 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 01, vs = 01
-  LI(x15, 0x0000e200)  # fs = 11 xs = 01 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000e200)  # fs = 11 xs = 01 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 01, vs = 10
-  LI(x15, 0x0000e400)  # fs = 11 xs = 01 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000e400)  # fs = 11 xs = 01 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 01, vs = 11
-  LI(x15, 0x0000e600)  # fs = 11 xs = 01 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000e600)  # fs = 11 xs = 01 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 10, vs = 00
-  LI(x15, 0x00016000)  # fs = 11 xs = 10 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00016000)  # fs = 11 xs = 10 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 10, vs = 01
-  LI(x15, 0x00016200)  # fs = 11 xs = 10 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00016200)  # fs = 11 xs = 10 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 10, vs = 10
-  LI(x15, 0x00016400)  # fs = 11 xs = 10 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00016400)  # fs = 11 xs = 10 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 10, vs = 11
-  LI(x15, 0x00016600)  # fs = 11 xs = 10 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00016600)  # fs = 11 xs = 10 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_11_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 11, vs = 00
-  LI(x15, 0x0001e000)  # fs = 11 xs = 11 vs = 00
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001e000)  # fs = 11 xs = 11 vs = 00
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_00_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 11, vs = 01
-  LI(x15, 0x0001e200)  # fs = 11 xs = 11 vs = 01
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001e200)  # fs = 11 xs = 11 vs = 01
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_01_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 11, vs = 10
-  LI(x15, 0x0001e400)  # fs = 11 xs = 11 vs = 10
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001e400)  # fs = 11 xs = 11 vs = 10
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_10_str)
 
 # Testcase: set sstatus to sd = 0, fs = 11, xs = 11, vs = 11
-  LI(x15, 0x0001e600)  # fs = 11 xs = 11 vs = 11
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001e600)  # fs = 11 xs = 11 vs = 11
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 00, vs = 00
-  LI(x15, 0x00000000)  # fs = 00 xs = 00 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00000000)  # fs = 00 xs = 00 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 00, vs = 01
-  LI(x15, 0x00000200)  # fs = 00 xs = 00 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00000200)  # fs = 00 xs = 00 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 00, vs = 10
-  LI(x15, 0x00000400)  # fs = 00 xs = 00 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00000400)  # fs = 00 xs = 00 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 00, vs = 11
-  LI(x15, 0x00000600)  # fs = 00 xs = 00 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00000600)  # fs = 00 xs = 00 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 01, vs = 00
-  LI(x15, 0x00008000)  # fs = 00 xs = 01 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00008000)  # fs = 00 xs = 01 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 01, vs = 01
-  LI(x15, 0x00008200)  # fs = 00 xs = 01 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00008200)  # fs = 00 xs = 01 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 01, vs = 10
-  LI(x15, 0x00008400)  # fs = 00 xs = 01 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00008400)  # fs = 00 xs = 01 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 01, vs = 11
-  LI(x15, 0x00008600)  # fs = 00 xs = 01 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00008600)  # fs = 00 xs = 01 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 10, vs = 00
-  LI(x15, 0x00010000)  # fs = 00 xs = 10 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00010000)  # fs = 00 xs = 10 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 10, vs = 01
-  LI(x15, 0x00010200)  # fs = 00 xs = 10 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00010200)  # fs = 00 xs = 10 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 10, vs = 10
-  LI(x15, 0x00010400)  # fs = 00 xs = 10 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00010400)  # fs = 00 xs = 10 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 10, vs = 11
-  LI(x15, 0x00010600)  # fs = 00 xs = 10 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00010600)  # fs = 00 xs = 10 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 11, vs = 00
-  LI(x15, 0x00018000)  # fs = 00 xs = 11 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00018000)  # fs = 00 xs = 11 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 11, vs = 01
-  LI(x15, 0x00018200)  # fs = 00 xs = 11 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00018200)  # fs = 00 xs = 11 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 11, vs = 10
-  LI(x15, 0x00018400)  # fs = 00 xs = 11 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00018400)  # fs = 00 xs = 11 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 00, xs = 11, vs = 11
-  LI(x15, 0x00018600)  # fs = 00 xs = 11 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00018600)  # fs = 00 xs = 11 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 00, vs = 00
-  LI(x15, 0x00002000)  # fs = 01 xs = 00 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00002000)  # fs = 01 xs = 00 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 00, vs = 01
-  LI(x15, 0x00002200)  # fs = 01 xs = 00 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00002200)  # fs = 01 xs = 00 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 00, vs = 10
-  LI(x15, 0x00002400)  # fs = 01 xs = 00 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00002400)  # fs = 01 xs = 00 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 00, vs = 11
-  LI(x15, 0x00002600)  # fs = 01 xs = 00 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00002600)  # fs = 01 xs = 00 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 01, vs = 00
-  LI(x15, 0x0000a000)  # fs = 01 xs = 01 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000a000)  # fs = 01 xs = 01 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 01, vs = 01
-  LI(x15, 0x0000a200)  # fs = 01 xs = 01 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000a200)  # fs = 01 xs = 01 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 01, vs = 10
-  LI(x15, 0x0000a400)  # fs = 01 xs = 01 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000a400)  # fs = 01 xs = 01 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 01, vs = 11
-  LI(x15, 0x0000a600)  # fs = 01 xs = 01 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000a600)  # fs = 01 xs = 01 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 10, vs = 00
-  LI(x15, 0x00012000)  # fs = 01 xs = 10 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00012000)  # fs = 01 xs = 10 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 10, vs = 01
-  LI(x15, 0x00012200)  # fs = 01 xs = 10 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00012200)  # fs = 01 xs = 10 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 10, vs = 10
-  LI(x15, 0x00012400)  # fs = 01 xs = 10 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00012400)  # fs = 01 xs = 10 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 10, vs = 11
-  LI(x15, 0x00012600)  # fs = 01 xs = 10 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00012600)  # fs = 01 xs = 10 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 11, vs = 00
-  LI(x15, 0x0001a000)  # fs = 01 xs = 11 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001a000)  # fs = 01 xs = 11 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 11, vs = 01
-  LI(x15, 0x0001a200)  # fs = 01 xs = 11 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001a200)  # fs = 01 xs = 11 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 11, vs = 10
-  LI(x15, 0x0001a400)  # fs = 01 xs = 11 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001a400)  # fs = 01 xs = 11 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 01, xs = 11, vs = 11
-  LI(x15, 0x0001a600)  # fs = 01 xs = 11 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001a600)  # fs = 01 xs = 11 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 00, vs = 00
-  LI(x15, 0x00004000)  # fs = 10 xs = 00 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00004000)  # fs = 10 xs = 00 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 00, vs = 01
-  LI(x15, 0x00004200)  # fs = 10 xs = 00 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00004200)  # fs = 10 xs = 00 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 00, vs = 10
-  LI(x15, 0x00004400)  # fs = 10 xs = 00 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00004400)  # fs = 10 xs = 00 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 00, vs = 11
-  LI(x15, 0x00004600)  # fs = 10 xs = 00 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00004600)  # fs = 10 xs = 00 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 01, vs = 00
-  LI(x15, 0x0000c000)  # fs = 10 xs = 01 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000c000)  # fs = 10 xs = 01 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 01, vs = 01
-  LI(x15, 0x0000c200)  # fs = 10 xs = 01 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000c200)  # fs = 10 xs = 01 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 01, vs = 10
-  LI(x15, 0x0000c400)  # fs = 10 xs = 01 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000c400)  # fs = 10 xs = 01 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 01, vs = 11
-  LI(x15, 0x0000c600)  # fs = 10 xs = 01 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000c600)  # fs = 10 xs = 01 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 10, vs = 00
-  LI(x15, 0x00014000)  # fs = 10 xs = 10 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00014000)  # fs = 10 xs = 10 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 10, vs = 01
-  LI(x15, 0x00014200)  # fs = 10 xs = 10 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00014200)  # fs = 10 xs = 10 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 10, vs = 10
-  LI(x15, 0x00014400)  # fs = 10 xs = 10 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00014400)  # fs = 10 xs = 10 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 10, vs = 11
-  LI(x15, 0x00014600)  # fs = 10 xs = 10 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00014600)  # fs = 10 xs = 10 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 11, vs = 00
-  LI(x15, 0x0001c000)  # fs = 10 xs = 11 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001c000)  # fs = 10 xs = 11 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 11, vs = 01
-  LI(x15, 0x0001c200)  # fs = 10 xs = 11 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001c200)  # fs = 10 xs = 11 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 11, vs = 10
-  LI(x15, 0x0001c400)  # fs = 10 xs = 11 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001c400)  # fs = 10 xs = 11 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 10, xs = 11, vs = 11
-  LI(x15, 0x0001c600)  # fs = 10 xs = 11 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001c600)  # fs = 10 xs = 11 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 00, vs = 00
-  LI(x15, 0x00006000)  # fs = 11 xs = 00 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00006000)  # fs = 11 xs = 00 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 00, vs = 01
-  LI(x15, 0x00006200)  # fs = 11 xs = 00 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00006200)  # fs = 11 xs = 00 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 00, vs = 10
-  LI(x15, 0x00006400)  # fs = 11 xs = 00 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00006400)  # fs = 11 xs = 00 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 00, vs = 11
-  LI(x15, 0x00006600)  # fs = 11 xs = 00 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00006600)  # fs = 11 xs = 00 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 01, vs = 00
-  LI(x15, 0x0000e000)  # fs = 11 xs = 01 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000e000)  # fs = 11 xs = 01 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 01, vs = 01
-  LI(x15, 0x0000e200)  # fs = 11 xs = 01 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000e200)  # fs = 11 xs = 01 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 01, vs = 10
-  LI(x15, 0x0000e400)  # fs = 11 xs = 01 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000e400)  # fs = 11 xs = 01 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 01, vs = 11
-  LI(x15, 0x0000e600)  # fs = 11 xs = 01 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0000e600)  # fs = 11 xs = 01 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 10, vs = 00
-  LI(x15, 0x00016000)  # fs = 11 xs = 10 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00016000)  # fs = 11 xs = 10 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 10, vs = 01
-  LI(x15, 0x00016200)  # fs = 11 xs = 10 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00016200)  # fs = 11 xs = 10 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 10, vs = 10
-  LI(x15, 0x00016400)  # fs = 11 xs = 10 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00016400)  # fs = 11 xs = 10 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 10, vs = 11
-  LI(x15, 0x00016600)  # fs = 11 xs = 10 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x00016600)  # fs = 11 xs = 10 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_11_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 11, vs = 00
-  LI(x15, 0x0001e000)  # fs = 11 xs = 11 vs = 00
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001e000)  # fs = 11 xs = 11 vs = 00
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_00:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_00_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_00, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_00_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 11, vs = 01
-  LI(x15, 0x0001e200)  # fs = 11 xs = 11 vs = 01
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001e200)  # fs = 11 xs = 11 vs = 01
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_01:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_01_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_01, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_01_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 11, vs = 10
-  LI(x15, 0x0001e400)  # fs = 11 xs = 11 vs = 10
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001e400)  # fs = 11 xs = 11 vs = 10
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_10:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_10_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_10, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_10_str)
 
 # Testcase: set sstatus to sd = 1, fs = 11, xs = 11, vs = 11
-  LI(x15, 0x0001e600)  # fs = 11 xs = 11 vs = 11
-  or x15, x15, x9      # set SD bit
-  or x15, x15, x8   # value to write to sstatus with SD/FS/XS/VS bits set/clear
+  LI(x9, 0x0001e600)  # fs = 11 xs = 11 vs = 11
+  or x9, x9, x6      # set SD bit
+  or x9, x9, x14   # value to write to sstatus with SD/FS/XS/VS bits set/clear
 H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_11:
-  # Write x15 to sstatus, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(sstatus, x15, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_11_str)
+  # Write x9 to sstatus, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(sstatus, x9, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_11, H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_11_str)
 
-  csrw sstatus, x13    # restore CSR
+  csrw sstatus, x8    # restore CSR
   RVTEST_TSBI_GOTO_SMODE
 
 /////////////////////////////////
@@ -2016,32 +2016,32 @@ H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_11:
 
   RVTEST_TSBI_GOTO_VSMODE
 #if defined(SSCCFG_SUPPORTED)
-  LI(x6, -1)
-  LI(x14, 42)
+  LI(x13, -1)
+  LI(x15, 42)
 H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw1:
-  csrrw x14, scountinhibit, x6
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw1, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw1_str)
-  LI(x14, 42)
+  csrrw x15, scountinhibit, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw1, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw1_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw0:
-  csrrw x14, scountinhibit, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw0, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw0_str)
-  LI(x14, 42)
+  csrrw x15, scountinhibit, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw0, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw0_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrs_all:
-  csrrs x14, scountinhibit, x6
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrs_all, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x15, scountinhibit, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrs_all, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrs_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrc_all:
-  csrrc x14, scountinhibit, x6
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrc_all, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x15, scountinhibit, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrc_all, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrc_all_str)
+  LI(x15, 42)
 H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrr:
-  csrr x14, scountinhibit
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrr, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrr_str)
+  csrr x15, scountinhibit
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrr, H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrr_str)
 #endif // defined(SSCCFG_SUPPORTED)
   RVTEST_TSBI_GOTO_SMODE
 
@@ -2055,317 +2055,317 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1_str: .string "\"test: 3189; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrw1\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0_str: .string "\"test: 3190; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrw0\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all_str: .string "\"test: 3191; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrs_all\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all_str: .string "\"test: 3192; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrc_all\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrr_str: .string "\"test: 3193; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrr\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1_str: .string "\"test: 3194; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrw1\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0_str: .string "\"test: 3195; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrw0\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all_str: .string "\"test: 3196; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrs_all\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all_str: .string "\"test: 3197; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrc_all\""
-H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrr_str: .string "\"test: 3198; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1_str: .string "\"test: 3199; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0_str: .string "\"test: 3200; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all_str: .string "\"test: 3201; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all_str: .string "\"test: 3202; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr_str: .string "\"test: 3203; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1_str: .string "\"test: 3204; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0_str: .string "\"test: 3205; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all_str: .string "\"test: 3206; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all_str: .string "\"test: 3207; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr_str: .string "\"test: 3208; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1_str: .string "\"test: 3209; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0_str: .string "\"test: 3210; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all_str: .string "\"test: 3211; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all_str: .string "\"test: 3212; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr_str: .string "\"test: 3213; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1_str: .string "\"test: 3214; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0_str: .string "\"test: 3215; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all_str: .string "\"test: 3216; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all_str: .string "\"test: 3217; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr_str: .string "\"test: 3218; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1_str: .string "\"test: 3219; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0_str: .string "\"test: 3220; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all_str: .string "\"test: 3221; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all_str: .string "\"test: 3222; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr_str: .string "\"test: 3223; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1_str: .string "\"test: 3224; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0_str: .string "\"test: 3225; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all_str: .string "\"test: 3226; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all_str: .string "\"test: 3227; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr_str: .string "\"test: 3228; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1_str: .string "\"test: 3229; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0_str: .string "\"test: 3230; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all_str: .string "\"test: 3231; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all_str: .string "\"test: 3232; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr_str: .string "\"test: 3233; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1_str: .string "\"test: 3234; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0_str: .string "\"test: 3235; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all_str: .string "\"test: 3236; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all_str: .string "\"test: 3237; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr_str: .string "\"test: 3238; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1_str: .string "\"test: 3239; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0_str: .string "\"test: 3240; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all_str: .string "\"test: 3241; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all_str: .string "\"test: 3242; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr_str: .string "\"test: 3243; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1_str: .string "\"test: 3244; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0_str: .string "\"test: 3245; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all_str: .string "\"test: 3246; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all_str: .string "\"test: 3247; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr_str: .string "\"test: 3248; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1_str: .string "\"test: 3249; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0_str: .string "\"test: 3250; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all_str: .string "\"test: 3251; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all_str: .string "\"test: 3252; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr_str: .string "\"test: 3253; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1_str: .string "\"test: 3254; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0_str: .string "\"test: 3255; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all_str: .string "\"test: 3256; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all_str: .string "\"test: 3257; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr_str: .string "\"test: 3258; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1_str: .string "\"test: 3259; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0_str: .string "\"test: 3260; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all_str: .string "\"test: 3261; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all_str: .string "\"test: 3262; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr_str: .string "\"test: 3263; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1_str: .string "\"test: 3264; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0_str: .string "\"test: 3265; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all_str: .string "\"test: 3266; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all_str: .string "\"test: 3267; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr_str: .string "\"test: 3268; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1_str: .string "\"test: 3269; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0_str: .string "\"test: 3270; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all_str: .string "\"test: 3271; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all_str: .string "\"test: 3272; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr_str: .string "\"test: 3273; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1_str: .string "\"test: 3274; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0_str: .string "\"test: 3275; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all_str: .string "\"test: 3276; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all_str: .string "\"test: 3277; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr_str: .string "\"test: 3278; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1_str: .string "\"test: 3279; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0_str: .string "\"test: 3280; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all_str: .string "\"test: 3281; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all_str: .string "\"test: 3282; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr_str: .string "\"test: 3283; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1_str: .string "\"test: 3284; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0_str: .string "\"test: 3285; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all_str: .string "\"test: 3286; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all_str: .string "\"test: 3287; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr_str: .string "\"test: 3288; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1_str: .string "\"test: 3289; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0_str: .string "\"test: 3290; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all_str: .string "\"test: 3291; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all_str: .string "\"test: 3292; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr_str: .string "\"test: 3293; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1_str: .string "\"test: 3294; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0_str: .string "\"test: 3295; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all_str: .string "\"test: 3296; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all_str: .string "\"test: 3297; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr_str: .string "\"test: 3298; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1_str: .string "\"test: 3299; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0_str: .string "\"test: 3300; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all_str: .string "\"test: 3301; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all_str: .string "\"test: 3302; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr_str: .string "\"test: 3303; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1_str: .string "\"test: 3304; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0_str: .string "\"test: 3305; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all_str: .string "\"test: 3306; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all_str: .string "\"test: 3307; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr_str: .string "\"test: 3308; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1_str: .string "\"test: 3309; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0_str: .string "\"test: 3310; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all_str: .string "\"test: 3311; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all_str: .string "\"test: 3312; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr_str: .string "\"test: 3313; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1_str: .string "\"test: 3314; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0_str: .string "\"test: 3315; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all_str: .string "\"test: 3316; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all_str: .string "\"test: 3317; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr_str: .string "\"test: 3318; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1_str: .string "\"test: 3319; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0_str: .string "\"test: 3320; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all_str: .string "\"test: 3321; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all_str: .string "\"test: 3322; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr_str: .string "\"test: 3323; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1_str: .string "\"test: 3324; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0_str: .string "\"test: 3325; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all_str: .string "\"test: 3326; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all_str: .string "\"test: 3327; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr_str: .string "\"test: 3328; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1_str: .string "\"test: 3329; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0_str: .string "\"test: 3330; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all_str: .string "\"test: 3331; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all_str: .string "\"test: 3332; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr_str: .string "\"test: 3333; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrr\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1_str: .string "\"test: 3334; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrw1\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0_str: .string "\"test: 3335; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrw0\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all_str: .string "\"test: 3336; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrs_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all_str: .string "\"test: 3337; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrc_all\""
-H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr_str: .string "\"test: 3338; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrr\""
-H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1_str: .string "\"test: 3339; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrw1\""
-H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0_str: .string "\"test: 3340; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrw0\""
-H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all_str: .string "\"test: 3341; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrs_all\""
-H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all_str: .string "\"test: 3342; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrc_all\""
-H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr_str: .string "\"test: 3343; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrr\""
-H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1_str: .string "\"test: 3344; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrw1\""
-H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0_str: .string "\"test: 3345; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrw0\""
-H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all_str: .string "\"test: 3346; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrs_all\""
-H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all_str: .string "\"test: 3347; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrc_all\""
-H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr_str: .string "\"test: 3348; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrr\""
-H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1_str: .string "\"test: 3349; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrw1\""
-H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0_str: .string "\"test: 3350; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrw0\""
-H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all_str: .string "\"test: 3351; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrs_all\""
-H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all_str: .string "\"test: 3352; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrc_all\""
-H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr_str: .string "\"test: 3353; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrr\""
-H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1_str: .string "\"test: 3354; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrw1\""
-H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0_str: .string "\"test: 3355; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrw0\""
-H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all_str: .string "\"test: 3356; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrs_all\""
-H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all_str: .string "\"test: 3357; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrc_all\""
-H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr_str: .string "\"test: 3358; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrr\""
-H_vscsr_cg_cp_nonreplica_scounteren_csrrw1_str: .string "\"test: 3359; cg: H_vscsr_cg; cp: cp_nonreplica; bin: scounteren_csrrw1\""
-H_vscsr_cg_cp_nonreplica_scounteren_csrrw0_str: .string "\"test: 3360; cg: H_vscsr_cg; cp: cp_nonreplica; bin: scounteren_csrrw0\""
-H_vscsr_cg_cp_nonreplica_scounteren_csrs_all_str: .string "\"test: 3361; cg: H_vscsr_cg; cp: cp_nonreplica; bin: scounteren_csrs_all\""
-H_vscsr_cg_cp_nonreplica_scounteren_csrrc_all_str: .string "\"test: 3362; cg: H_vscsr_cg; cp: cp_nonreplica; bin: scounteren_csrrc_all\""
-H_vscsr_cg_cp_nonreplica_senvcfg_csrrw1_str: .string "\"test: 3363; cg: H_vscsr_cg; cp: cp_nonreplica; bin: senvcfg_csrrw1\""
-H_vscsr_cg_cp_nonreplica_senvcfg_csrrw0_str: .string "\"test: 3364; cg: H_vscsr_cg; cp: cp_nonreplica; bin: senvcfg_csrrw0\""
-H_vscsr_cg_cp_nonreplica_senvcfg_csrs_all_str: .string "\"test: 3365; cg: H_vscsr_cg; cp: cp_nonreplica; bin: senvcfg_csrs_all\""
-H_vscsr_cg_cp_nonreplica_senvcfg_csrrc_all_str: .string "\"test: 3366; cg: H_vscsr_cg; cp: cp_nonreplica; bin: senvcfg_csrrc_all\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_00_str: .string "\"test: 3367; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_00_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_01_str: .string "\"test: 3368; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_00_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_10_str: .string "\"test: 3369; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_00_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_11_str: .string "\"test: 3370; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_00_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_00_str: .string "\"test: 3371; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_01_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_01_str: .string "\"test: 3372; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_01_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_10_str: .string "\"test: 3373; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_01_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_11_str: .string "\"test: 3374; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_01_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_00_str: .string "\"test: 3375; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_10_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_01_str: .string "\"test: 3376; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_10_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_10_str: .string "\"test: 3377; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_10_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_11_str: .string "\"test: 3378; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_10_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_00_str: .string "\"test: 3379; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_11_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_01_str: .string "\"test: 3380; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_11_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_10_str: .string "\"test: 3381; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_11_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_11_str: .string "\"test: 3382; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_11_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_00_str: .string "\"test: 3383; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_00_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_01_str: .string "\"test: 3384; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_00_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_10_str: .string "\"test: 3385; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_00_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_11_str: .string "\"test: 3386; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_00_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_00_str: .string "\"test: 3387; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_01_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_01_str: .string "\"test: 3388; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_01_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_10_str: .string "\"test: 3389; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_01_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_11_str: .string "\"test: 3390; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_01_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_00_str: .string "\"test: 3391; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_10_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_01_str: .string "\"test: 3392; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_10_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_10_str: .string "\"test: 3393; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_10_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_11_str: .string "\"test: 3394; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_10_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_00_str: .string "\"test: 3395; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_11_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_01_str: .string "\"test: 3396; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_11_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_10_str: .string "\"test: 3397; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_11_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_11_str: .string "\"test: 3398; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_11_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_00_str: .string "\"test: 3399; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_00_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_01_str: .string "\"test: 3400; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_00_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_10_str: .string "\"test: 3401; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_00_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_11_str: .string "\"test: 3402; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_00_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_00_str: .string "\"test: 3403; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_01_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_01_str: .string "\"test: 3404; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_01_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_10_str: .string "\"test: 3405; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_01_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_11_str: .string "\"test: 3406; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_01_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_00_str: .string "\"test: 3407; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_10_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_01_str: .string "\"test: 3408; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_10_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_10_str: .string "\"test: 3409; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_10_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_11_str: .string "\"test: 3410; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_10_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_00_str: .string "\"test: 3411; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_11_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_01_str: .string "\"test: 3412; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_11_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_10_str: .string "\"test: 3413; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_11_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_11_str: .string "\"test: 3414; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_11_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_00_str: .string "\"test: 3415; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_00_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_01_str: .string "\"test: 3416; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_00_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_10_str: .string "\"test: 3417; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_00_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_11_str: .string "\"test: 3418; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_00_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_00_str: .string "\"test: 3419; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_01_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_01_str: .string "\"test: 3420; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_01_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_10_str: .string "\"test: 3421; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_01_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_11_str: .string "\"test: 3422; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_01_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_00_str: .string "\"test: 3423; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_10_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_01_str: .string "\"test: 3424; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_10_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_10_str: .string "\"test: 3425; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_10_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_11_str: .string "\"test: 3426; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_10_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_00_str: .string "\"test: 3427; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_11_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_01_str: .string "\"test: 3428; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_11_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_10_str: .string "\"test: 3429; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_11_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_11_str: .string "\"test: 3430; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_11_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_00_str: .string "\"test: 3431; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_00_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_01_str: .string "\"test: 3432; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_00_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_10_str: .string "\"test: 3433; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_00_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_11_str: .string "\"test: 3434; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_00_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_00_str: .string "\"test: 3435; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_01_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_01_str: .string "\"test: 3436; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_01_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_10_str: .string "\"test: 3437; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_01_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_11_str: .string "\"test: 3438; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_01_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_00_str: .string "\"test: 3439; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_10_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_01_str: .string "\"test: 3440; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_10_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_10_str: .string "\"test: 3441; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_10_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_11_str: .string "\"test: 3442; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_10_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_00_str: .string "\"test: 3443; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_11_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_01_str: .string "\"test: 3444; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_11_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_10_str: .string "\"test: 3445; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_11_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_11_str: .string "\"test: 3446; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_11_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_00_str: .string "\"test: 3447; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_00_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_01_str: .string "\"test: 3448; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_00_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_10_str: .string "\"test: 3449; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_00_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_11_str: .string "\"test: 3450; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_00_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_00_str: .string "\"test: 3451; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_01_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_01_str: .string "\"test: 3452; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_01_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_10_str: .string "\"test: 3453; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_01_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_11_str: .string "\"test: 3454; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_01_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_00_str: .string "\"test: 3455; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_10_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_01_str: .string "\"test: 3456; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_10_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_10_str: .string "\"test: 3457; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_10_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_11_str: .string "\"test: 3458; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_10_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_00_str: .string "\"test: 3459; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_11_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_01_str: .string "\"test: 3460; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_11_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_10_str: .string "\"test: 3461; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_11_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_11_str: .string "\"test: 3462; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_11_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_00_str: .string "\"test: 3463; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_00_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_01_str: .string "\"test: 3464; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_00_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_10_str: .string "\"test: 3465; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_00_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_11_str: .string "\"test: 3466; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_00_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_00_str: .string "\"test: 3467; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_01_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_01_str: .string "\"test: 3468; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_01_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_10_str: .string "\"test: 3469; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_01_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_11_str: .string "\"test: 3470; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_01_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_00_str: .string "\"test: 3471; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_10_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_01_str: .string "\"test: 3472; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_10_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_10_str: .string "\"test: 3473; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_10_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_11_str: .string "\"test: 3474; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_10_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_00_str: .string "\"test: 3475; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_11_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_01_str: .string "\"test: 3476; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_11_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_10_str: .string "\"test: 3477; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_11_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_11_str: .string "\"test: 3478; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_11_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_00_str: .string "\"test: 3479; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_00_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_01_str: .string "\"test: 3480; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_00_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_10_str: .string "\"test: 3481; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_00_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_11_str: .string "\"test: 3482; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_00_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_00_str: .string "\"test: 3483; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_01_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_01_str: .string "\"test: 3484; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_01_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_10_str: .string "\"test: 3485; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_01_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_11_str: .string "\"test: 3486; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_01_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_00_str: .string "\"test: 3487; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_10_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_01_str: .string "\"test: 3488; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_10_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_10_str: .string "\"test: 3489; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_10_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_11_str: .string "\"test: 3490; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_10_vs_11\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_00_str: .string "\"test: 3491; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_11_vs_00\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_01_str: .string "\"test: 3492; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_11_vs_01\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_10_str: .string "\"test: 3493; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_11_vs_10\""
-H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_11_str: .string "\"test: 3494; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_11_vs_11\""
-H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw1_str: .string "\"test: 3495; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrrw1\""
-H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw0_str: .string "\"test: 3496; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrrw0\""
-H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrs_all_str: .string "\"test: 3497; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrrs_all\""
-H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrc_all_str: .string "\"test: 3498; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrrc_all\""
-H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrr_str: .string "\"test: 3499; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrr\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1_str: .string "\"test: 3183; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrw1\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0_str: .string "\"test: 3184; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrw0\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all_str: .string "\"test: 3185; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrs_all\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all_str: .string "\"test: 3186; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrc_all\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtval2_csrr_str: .string "\"test: 3187; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrr\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1_str: .string "\"test: 3188; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrw1\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0_str: .string "\"test: 3189; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrw0\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all_str: .string "\"test: 3190; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrs_all\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all_str: .string "\"test: 3191; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrc_all\""
+H_vscsr_cg_cp_hcsr_inaccessible_mtinst_csrr_str: .string "\"test: 3192; cg: H_vscsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1_str: .string "\"test: 3193; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0_str: .string "\"test: 3194; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all_str: .string "\"test: 3195; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all_str: .string "\"test: 3196; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr_str: .string "\"test: 3197; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1_str: .string "\"test: 3198; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0_str: .string "\"test: 3199; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all_str: .string "\"test: 3200; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all_str: .string "\"test: 3201; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr_str: .string "\"test: 3202; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1_str: .string "\"test: 3203; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0_str: .string "\"test: 3204; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all_str: .string "\"test: 3205; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all_str: .string "\"test: 3206; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr_str: .string "\"test: 3207; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1_str: .string "\"test: 3208; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0_str: .string "\"test: 3209; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all_str: .string "\"test: 3210; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all_str: .string "\"test: 3211; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr_str: .string "\"test: 3212; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1_str: .string "\"test: 3213; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0_str: .string "\"test: 3214; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all_str: .string "\"test: 3215; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all_str: .string "\"test: 3216; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr_str: .string "\"test: 3217; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1_str: .string "\"test: 3218; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0_str: .string "\"test: 3219; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all_str: .string "\"test: 3220; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all_str: .string "\"test: 3221; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr_str: .string "\"test: 3222; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1_str: .string "\"test: 3223; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0_str: .string "\"test: 3224; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all_str: .string "\"test: 3225; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all_str: .string "\"test: 3226; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr_str: .string "\"test: 3227; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1_str: .string "\"test: 3228; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0_str: .string "\"test: 3229; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all_str: .string "\"test: 3230; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all_str: .string "\"test: 3231; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr_str: .string "\"test: 3232; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1_str: .string "\"test: 3233; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0_str: .string "\"test: 3234; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all_str: .string "\"test: 3235; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all_str: .string "\"test: 3236; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr_str: .string "\"test: 3237; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1_str: .string "\"test: 3238; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0_str: .string "\"test: 3239; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all_str: .string "\"test: 3240; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all_str: .string "\"test: 3241; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr_str: .string "\"test: 3242; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1_str: .string "\"test: 3243; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0_str: .string "\"test: 3244; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all_str: .string "\"test: 3245; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all_str: .string "\"test: 3246; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr_str: .string "\"test: 3247; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1_str: .string "\"test: 3248; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0_str: .string "\"test: 3249; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all_str: .string "\"test: 3250; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all_str: .string "\"test: 3251; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr_str: .string "\"test: 3252; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1_str: .string "\"test: 3253; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0_str: .string "\"test: 3254; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all_str: .string "\"test: 3255; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all_str: .string "\"test: 3256; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr_str: .string "\"test: 3257; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1_str: .string "\"test: 3258; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0_str: .string "\"test: 3259; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all_str: .string "\"test: 3260; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all_str: .string "\"test: 3261; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr_str: .string "\"test: 3262; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1_str: .string "\"test: 3263; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0_str: .string "\"test: 3264; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all_str: .string "\"test: 3265; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all_str: .string "\"test: 3266; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr_str: .string "\"test: 3267; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1_str: .string "\"test: 3268; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0_str: .string "\"test: 3269; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all_str: .string "\"test: 3270; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all_str: .string "\"test: 3271; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr_str: .string "\"test: 3272; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1_str: .string "\"test: 3273; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0_str: .string "\"test: 3274; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all_str: .string "\"test: 3275; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all_str: .string "\"test: 3276; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr_str: .string "\"test: 3277; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1_str: .string "\"test: 3278; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0_str: .string "\"test: 3279; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all_str: .string "\"test: 3280; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all_str: .string "\"test: 3281; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr_str: .string "\"test: 3282; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1_str: .string "\"test: 3283; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0_str: .string "\"test: 3284; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all_str: .string "\"test: 3285; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all_str: .string "\"test: 3286; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr_str: .string "\"test: 3287; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1_str: .string "\"test: 3288; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0_str: .string "\"test: 3289; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all_str: .string "\"test: 3290; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all_str: .string "\"test: 3291; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr_str: .string "\"test: 3292; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1_str: .string "\"test: 3293; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0_str: .string "\"test: 3294; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all_str: .string "\"test: 3295; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all_str: .string "\"test: 3296; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr_str: .string "\"test: 3297; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1_str: .string "\"test: 3298; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0_str: .string "\"test: 3299; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all_str: .string "\"test: 3300; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all_str: .string "\"test: 3301; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr_str: .string "\"test: 3302; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1_str: .string "\"test: 3303; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0_str: .string "\"test: 3304; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all_str: .string "\"test: 3305; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all_str: .string "\"test: 3306; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr_str: .string "\"test: 3307; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1_str: .string "\"test: 3308; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0_str: .string "\"test: 3309; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all_str: .string "\"test: 3310; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all_str: .string "\"test: 3311; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr_str: .string "\"test: 3312; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1_str: .string "\"test: 3313; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0_str: .string "\"test: 3314; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all_str: .string "\"test: 3315; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all_str: .string "\"test: 3316; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr_str: .string "\"test: 3317; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1_str: .string "\"test: 3318; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0_str: .string "\"test: 3319; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all_str: .string "\"test: 3320; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all_str: .string "\"test: 3321; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr_str: .string "\"test: 3322; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1_str: .string "\"test: 3323; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0_str: .string "\"test: 3324; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all_str: .string "\"test: 3325; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all_str: .string "\"test: 3326; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr_str: .string "\"test: 3327; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrr\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1_str: .string "\"test: 3328; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrw1\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0_str: .string "\"test: 3329; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrw0\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all_str: .string "\"test: 3330; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrs_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all_str: .string "\"test: 3331; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrc_all\""
+H_vscsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr_str: .string "\"test: 3332; cg: H_vscsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrr\""
+H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1_str: .string "\"test: 3333; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrw1\""
+H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0_str: .string "\"test: 3334; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrw0\""
+H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all_str: .string "\"test: 3335; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrs_all\""
+H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all_str: .string "\"test: 3336; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrc_all\""
+H_vscsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr_str: .string "\"test: 3337; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrr\""
+H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1_str: .string "\"test: 3338; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrw1\""
+H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0_str: .string "\"test: 3339; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrw0\""
+H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all_str: .string "\"test: 3340; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrs_all\""
+H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all_str: .string "\"test: 3341; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrc_all\""
+H_vscsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr_str: .string "\"test: 3342; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrr\""
+H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1_str: .string "\"test: 3343; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrw1\""
+H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0_str: .string "\"test: 3344; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrw0\""
+H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all_str: .string "\"test: 3345; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrs_all\""
+H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all_str: .string "\"test: 3346; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrc_all\""
+H_vscsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr_str: .string "\"test: 3347; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrr\""
+H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1_str: .string "\"test: 3348; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrw1\""
+H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0_str: .string "\"test: 3349; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrw0\""
+H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all_str: .string "\"test: 3350; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrs_all\""
+H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all_str: .string "\"test: 3351; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrc_all\""
+H_vscsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr_str: .string "\"test: 3352; cg: H_vscsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrr\""
+H_vscsr_cg_cp_nonreplica_scounteren_csrrw1_str: .string "\"test: 3353; cg: H_vscsr_cg; cp: cp_nonreplica; bin: scounteren_csrrw1\""
+H_vscsr_cg_cp_nonreplica_scounteren_csrrw0_str: .string "\"test: 3354; cg: H_vscsr_cg; cp: cp_nonreplica; bin: scounteren_csrrw0\""
+H_vscsr_cg_cp_nonreplica_scounteren_csrs_all_str: .string "\"test: 3355; cg: H_vscsr_cg; cp: cp_nonreplica; bin: scounteren_csrs_all\""
+H_vscsr_cg_cp_nonreplica_scounteren_csrrc_all_str: .string "\"test: 3356; cg: H_vscsr_cg; cp: cp_nonreplica; bin: scounteren_csrrc_all\""
+H_vscsr_cg_cp_nonreplica_senvcfg_csrrw1_str: .string "\"test: 3357; cg: H_vscsr_cg; cp: cp_nonreplica; bin: senvcfg_csrrw1\""
+H_vscsr_cg_cp_nonreplica_senvcfg_csrrw0_str: .string "\"test: 3358; cg: H_vscsr_cg; cp: cp_nonreplica; bin: senvcfg_csrrw0\""
+H_vscsr_cg_cp_nonreplica_senvcfg_csrs_all_str: .string "\"test: 3359; cg: H_vscsr_cg; cp: cp_nonreplica; bin: senvcfg_csrs_all\""
+H_vscsr_cg_cp_nonreplica_senvcfg_csrrc_all_str: .string "\"test: 3360; cg: H_vscsr_cg; cp: cp_nonreplica; bin: senvcfg_csrrc_all\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_00_str: .string "\"test: 3361; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_00_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_01_str: .string "\"test: 3362; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_00_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_10_str: .string "\"test: 3363; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_00_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_00_vs_11_str: .string "\"test: 3364; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_00_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_00_str: .string "\"test: 3365; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_01_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_01_str: .string "\"test: 3366; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_01_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_10_str: .string "\"test: 3367; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_01_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_01_vs_11_str: .string "\"test: 3368; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_01_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_00_str: .string "\"test: 3369; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_10_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_01_str: .string "\"test: 3370; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_10_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_10_str: .string "\"test: 3371; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_10_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_10_vs_11_str: .string "\"test: 3372; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_10_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_00_str: .string "\"test: 3373; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_11_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_01_str: .string "\"test: 3374; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_11_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_10_str: .string "\"test: 3375; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_11_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_00_xs_11_vs_11_str: .string "\"test: 3376; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_00_xs_11_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_00_str: .string "\"test: 3377; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_00_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_01_str: .string "\"test: 3378; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_00_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_10_str: .string "\"test: 3379; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_00_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_00_vs_11_str: .string "\"test: 3380; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_00_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_00_str: .string "\"test: 3381; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_01_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_01_str: .string "\"test: 3382; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_01_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_10_str: .string "\"test: 3383; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_01_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_01_vs_11_str: .string "\"test: 3384; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_01_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_00_str: .string "\"test: 3385; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_10_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_01_str: .string "\"test: 3386; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_10_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_10_str: .string "\"test: 3387; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_10_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_10_vs_11_str: .string "\"test: 3388; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_10_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_00_str: .string "\"test: 3389; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_11_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_01_str: .string "\"test: 3390; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_11_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_10_str: .string "\"test: 3391; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_11_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_01_xs_11_vs_11_str: .string "\"test: 3392; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_01_xs_11_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_00_str: .string "\"test: 3393; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_00_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_01_str: .string "\"test: 3394; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_00_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_10_str: .string "\"test: 3395; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_00_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_00_vs_11_str: .string "\"test: 3396; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_00_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_00_str: .string "\"test: 3397; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_01_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_01_str: .string "\"test: 3398; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_01_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_10_str: .string "\"test: 3399; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_01_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_01_vs_11_str: .string "\"test: 3400; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_01_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_00_str: .string "\"test: 3401; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_10_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_01_str: .string "\"test: 3402; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_10_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_10_str: .string "\"test: 3403; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_10_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_10_vs_11_str: .string "\"test: 3404; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_10_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_00_str: .string "\"test: 3405; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_11_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_01_str: .string "\"test: 3406; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_11_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_10_str: .string "\"test: 3407; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_11_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_10_xs_11_vs_11_str: .string "\"test: 3408; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_10_xs_11_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_00_str: .string "\"test: 3409; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_00_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_01_str: .string "\"test: 3410; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_00_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_10_str: .string "\"test: 3411; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_00_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_00_vs_11_str: .string "\"test: 3412; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_00_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_00_str: .string "\"test: 3413; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_01_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_01_str: .string "\"test: 3414; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_01_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_10_str: .string "\"test: 3415; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_01_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_01_vs_11_str: .string "\"test: 3416; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_01_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_00_str: .string "\"test: 3417; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_10_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_01_str: .string "\"test: 3418; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_10_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_10_str: .string "\"test: 3419; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_10_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_10_vs_11_str: .string "\"test: 3420; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_10_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_00_str: .string "\"test: 3421; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_11_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_01_str: .string "\"test: 3422; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_11_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_10_str: .string "\"test: 3423; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_11_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_0_fs_11_xs_11_vs_11_str: .string "\"test: 3424; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_0_fs_11_xs_11_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_00_str: .string "\"test: 3425; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_00_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_01_str: .string "\"test: 3426; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_00_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_10_str: .string "\"test: 3427; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_00_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_00_vs_11_str: .string "\"test: 3428; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_00_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_00_str: .string "\"test: 3429; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_01_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_01_str: .string "\"test: 3430; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_01_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_10_str: .string "\"test: 3431; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_01_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_01_vs_11_str: .string "\"test: 3432; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_01_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_00_str: .string "\"test: 3433; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_10_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_01_str: .string "\"test: 3434; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_10_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_10_str: .string "\"test: 3435; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_10_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_10_vs_11_str: .string "\"test: 3436; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_10_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_00_str: .string "\"test: 3437; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_11_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_01_str: .string "\"test: 3438; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_11_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_10_str: .string "\"test: 3439; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_11_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_00_xs_11_vs_11_str: .string "\"test: 3440; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_00_xs_11_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_00_str: .string "\"test: 3441; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_00_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_01_str: .string "\"test: 3442; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_00_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_10_str: .string "\"test: 3443; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_00_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_00_vs_11_str: .string "\"test: 3444; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_00_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_00_str: .string "\"test: 3445; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_01_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_01_str: .string "\"test: 3446; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_01_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_10_str: .string "\"test: 3447; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_01_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_01_vs_11_str: .string "\"test: 3448; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_01_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_00_str: .string "\"test: 3449; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_10_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_01_str: .string "\"test: 3450; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_10_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_10_str: .string "\"test: 3451; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_10_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_10_vs_11_str: .string "\"test: 3452; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_10_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_00_str: .string "\"test: 3453; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_11_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_01_str: .string "\"test: 3454; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_11_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_10_str: .string "\"test: 3455; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_11_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_01_xs_11_vs_11_str: .string "\"test: 3456; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_01_xs_11_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_00_str: .string "\"test: 3457; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_00_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_01_str: .string "\"test: 3458; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_00_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_10_str: .string "\"test: 3459; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_00_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_00_vs_11_str: .string "\"test: 3460; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_00_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_00_str: .string "\"test: 3461; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_01_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_01_str: .string "\"test: 3462; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_01_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_10_str: .string "\"test: 3463; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_01_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_01_vs_11_str: .string "\"test: 3464; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_01_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_00_str: .string "\"test: 3465; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_10_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_01_str: .string "\"test: 3466; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_10_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_10_str: .string "\"test: 3467; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_10_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_10_vs_11_str: .string "\"test: 3468; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_10_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_00_str: .string "\"test: 3469; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_11_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_01_str: .string "\"test: 3470; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_11_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_10_str: .string "\"test: 3471; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_11_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_10_xs_11_vs_11_str: .string "\"test: 3472; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_10_xs_11_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_00_str: .string "\"test: 3473; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_00_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_01_str: .string "\"test: 3474; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_00_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_10_str: .string "\"test: 3475; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_00_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_00_vs_11_str: .string "\"test: 3476; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_00_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_00_str: .string "\"test: 3477; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_01_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_01_str: .string "\"test: 3478; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_01_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_10_str: .string "\"test: 3479; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_01_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_01_vs_11_str: .string "\"test: 3480; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_01_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_00_str: .string "\"test: 3481; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_10_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_01_str: .string "\"test: 3482; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_10_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_10_str: .string "\"test: 3483; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_10_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_10_vs_11_str: .string "\"test: 3484; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_10_vs_11\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_00_str: .string "\"test: 3485; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_11_vs_00\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_01_str: .string "\"test: 3486; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_11_vs_01\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_10_str: .string "\"test: 3487; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_11_vs_10\""
+H_vscsr_cg_cp_vsstatus_sd_write_sd_1_fs_11_xs_11_vs_11_str: .string "\"test: 3488; cg: H_vscsr_cg; cp: cp_vsstatus_sd_write; bin: sd_1_fs_11_xs_11_vs_11\""
+H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw1_str: .string "\"test: 3489; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrrw1\""
+H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrw0_str: .string "\"test: 3490; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrrw0\""
+H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrs_all_str: .string "\"test: 3491; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrrs_all\""
+H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrrc_all_str: .string "\"test: 3492; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrrc_all\""
+H_vscsr_cg_cp_scountinhibit_vs_scountinhibit_csrr_str: .string "\"test: 3493; cg: H_vscsr_cg; cp: cp_scountinhibit_vs; bin: scountinhibit_csrr\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
