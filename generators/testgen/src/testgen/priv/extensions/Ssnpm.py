@@ -214,7 +214,7 @@ def _ssnpm_chunk(
 # privilege, so senvcfg.PMM governs the pointer masking and mseccfg.PMM does not apply.
 @add_priv_test_generator(
     "Ssnpm",
-    required_extensions=["Ssnpm"],
+    required_extensions=["Ssnpm", "Sm"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
 )

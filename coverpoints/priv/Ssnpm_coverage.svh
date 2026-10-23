@@ -68,6 +68,7 @@ covergroup Ssnpm_cg with function sample(ins_t ins);
 
 endgroup
 
+`ifndef EXCLUDE_SM
 covergroup Ssnpm_Sm_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -116,8 +117,11 @@ covergroup Ssnpm_Sm_cg with function sample(ins_t ins);
     `endif // SMMPM_SUPPORTED
 
 endgroup
+`endif // EXCLUDE_SM
 
 function void ssnpm_sample(int hart, int issue, ins_t ins);
     Ssnpm_cg.sample(ins);
-    Ssnpm_Sm_cg.sample(ins);
+    `ifndef EXCLUDE_SM
+        Ssnpm_Sm_cg.sample(ins);
+    `endif
 endfunction
