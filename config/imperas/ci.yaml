@@ -75,6 +75,9 @@
 #   Sail, Spike, Whisper and QEMU all clear it. Zicfilp_U passes. ZicfilpH fails on the same bug
 #   for an SRET executed in VS-mode (vsstatus.SPELP stays 1).
 #   (fixed in Imperas-HMC101126-eng-build)
+# - SmstateenH: bit 63 of hstateen0-3 stays writable and reads back as set while bit 63 of the matching mstateen CSR
+#   is 0 (riscvCSR.c hstateenMask ORs bit 63 in unconditionally), so SmstateenH_m fails (Solvnet case pending)
+#   (fixed in Imperas-HMC101126-eng-build)
 # - Svnapot: Imperas accepts N=1 on superpage leaf PTEs instead of page faulting
 #   (validSvnapotEntry checks only for a leaf, not level 0, and fillTLBEntry skips the alignment check):
 #   https://solvnetplus.synopsys.com/s/case/500WQ00002AsSN9YAN/svnapot-n1-accepted-on-superpage-leaf-ptes-instead-of-raising-a-page-fault
