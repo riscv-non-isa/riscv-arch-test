@@ -40,8 +40,8 @@ from testgen.priv.extensions.StateenHCommon import (
 from testgen.priv.registry import add_priv_test_generator
 
 # hstateen0 bits checked by the walk with every mstateen0 bit set: all but C (custom state is optional) and CTR,
-# CONTEXT, IMSIC, AIA and CSRIND, whose state Sail does not model (riscv/sail-riscv#222, #956)
-HSTATEEN0_ALL_MASK = 0xE1BFFFFFFFFFFFFE
+# IMSIC, AIA and CSRIND, whose state Sail does not model (riscv/sail-riscv#222, #956)
+HSTATEEN0_ALL_MASK = 0xE3BFFFFFFFFFFFFE
 
 
 def _covergroup(mode: str) -> str:

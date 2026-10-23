@@ -28,7 +28,7 @@ coverpoints:
     bins: csrrs/csrrc * hstateen0 (and hstateen0h) * XLEN walking ones
   - name: cp_hs_hstateen0_walk
     goal: hstateen0 bits are writable when their mstateen0 bit is 1
-    description: With every mstateen0 bit set, walk a 1 and a 0 through hstateen0 (and hstateen0h on RV32) in HS-mode with csrrs and csrrc, and read each value back.  C (custom state is optional) and CTR, CONTEXT, IMSIC, AIA and CSRIND (state Sail does not model) are left out of the check.
+    description: With every mstateen0 bit set, walk a 1 and a 0 through hstateen0 (and hstateen0h on RV32) in HS-mode with csrrs and csrrc, and read each value back.  C (custom state is optional) and CTR, IMSIC, AIA and CSRIND (state Sail does not model) are left out of the check.
     expectation: Bits whose state the hart implements are writable; the rest read as zero
     bins: csrrs/csrrc * hstateen0 (and hstateen0h) * XLEN walking ones
   - heading: VS-mode (SmstateenH_vs_cg)
@@ -45,7 +45,7 @@ coverpoints:
   - name: cp_vs_mstateen0_p1p13
     goal: mstateen0.P1P13 controls access to hedelegh
     description: RV32 with Sm1p13 only.  Read hedelegh in VS-mode with mstateen0.P1P13 = 0 and 1
-    expectation: With P1P13 = 0, either illegal instruction (the stateen rule) or virtual instruction (hedeleg is accessible in HS-mode whatever P1P13 is, so the high-half hypervisor CSR rule applies); the test accepts either.  With P1P13 = 1, virtual instruction
+    expectation: With P1P13 = 0, illegal instruction, because hedelegh then does not exist and the high-half hypervisor CSR rule does not apply (riscv/riscv-isa-manual#3459).  With P1P13 = 1, virtual instruction
     bins: 2 mstateen0.P1P13
   - heading: VU-mode (SmstateenH_vu_cg)
   - name: cp_vu_mstateen0_se0
@@ -61,7 +61,7 @@ coverpoints:
   - name: cp_vu_mstateen0_p1p13
     goal: mstateen0.P1P13 controls access to hedelegh
     description: RV32 with Sm1p13 only.  Read hedelegh in VU-mode with mstateen0.P1P13 = 0 and 1
-    expectation: With P1P13 = 0, either illegal instruction (the stateen rule) or virtual instruction (hedeleg is accessible in HS-mode whatever P1P13 is, so the high-half hypervisor CSR rule applies); the test accepts either.  With P1P13 = 1, virtual instruction
+    expectation: With P1P13 = 0, illegal instruction, because hedelegh then does not exist and the high-half hypervisor CSR rule does not apply (riscv/riscv-isa-manual#3459).  With P1P13 = 1, virtual instruction
     bins: 2 mstateen0.P1P13
   - heading: M-mode (SmstateenH_m_cg)
   - name: cp_m_hstateen123_bit63
@@ -69,3 +69,12 @@ coverpoints:
     description: In M-mode, for each of hstateen1-3 (hstateen1h-3h on RV32, bit 31), set bit 63 of the matching mstateen CSR and clear and set bit 63 of hstateen with csrrc and csrrs; then clear the mstateen bit and set and clear the hstateen bit.  Read both CSRs back after each write.
     expectation: mstateen bit 63 reads back as written (it may be read-only zero only without H).  The hstateen bit reads back as written while the mstateen bit is 1, and reads as zero while it is 0, including just after the mstateen bit is cleared with the hstateen bit set
     bins: csrrs/csrrc * 3 CSRs * 2 mstateen bit 63
+  - heading: Not tested
+  - goal: mstateen0.CSRIND, IMSIC and CTR control HS-mode and VS-mode access to vsiselect, vsireg*, vstopei and vsctrctl
+    description: Access vsiselect, vsireg*, vstopei and vsctrctl in HS-mode, and their supervisor names in VS-mode, with the mstateen0 bit = 0 and 1.
+    status: Not tested
+    notes: Sail 0.16 models none of Ssaia, Smctr and Ssctr, and its mstateen0 has no CSRIND, IMSIC, AIA or CTR bit, so the reference cannot give the results.  cp_hs_hstateen0_walk leaves these hstateen0 bits out.
+    rules:
+      - mstateen0_csrind_op
+      - mstateen0_imsic_op
+      - mstateen_ctr0_except_csr_access
