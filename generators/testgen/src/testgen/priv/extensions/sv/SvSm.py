@@ -1,7 +1,7 @@
 ##################################
 # priv/extensions/sv/SvSm.py
 #
-# SvSm suite: virtual-memory behavior that needs M-mode (MPRV, TVM, SBE, M-mode satp access).
+# Sv suite, Sm group: virtual-memory behavior that needs M-mode (MPRV, TVM, SBE, M-mode satp access).
 # umer@riscv.org September 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
@@ -37,7 +37,7 @@ from testgen.priv.extensions.sv.Sv import (
 )
 from testgen.priv.registry import add_priv_test_generator
 
-MPRV_CG = "SvSm_mstatus_mprv_cg"
+MPRV_CG = "Sv_Sm_mstatus_mprv_cg"
 _MPRV = Crosses(MPRV_CG, "cp_mprv_store", "cp_mprv_load", "cp_mprv_ins")
 _UPAGE_MPRV = {
     "set": Crosses(
@@ -61,7 +61,7 @@ def _t_mstatus_mprv(test_data: TestData, test_chunks: list[TestChunk], sv: SvMod
     for mode in ("Smode", "Umode"):
         regs = SvRegs.allocate(test_data)
         chunk = begin_sv_test(
-            test_data, regs, sv, mode, f"{sv.name}_mstatus_mprv_{mode}", coverpoint=cross_names(_MPRV)
+            test_data, regs, sv, mode, f"Sm_{sv.name}_mstatus_mprv_{mode}", coverpoint=cross_names(_MPRV)
         )
         style = "mprv_s" if mode == "Smode" else "mprv_u"
         for number, level in enumerate(sv.levels_desc, start=1):
@@ -92,7 +92,9 @@ def _t_upage_mprv(test_data: TestData, test_chunks: list[TestChunk], sv: SvMode)
         regs = SvRegs.allocate(test_data)
         sum_state = "set" if faults_per_case == 0 else "unset"
         crosses = _UPAGE_MPRV[sum_state]
-        chunk = begin_sv_test(test_data, regs, sv, "Smode", f"{sv.name}_{topic}_Smode", coverpoint=cross_names(crosses))
+        chunk = begin_sv_test(
+            test_data, regs, sv, "Smode", f"Sm_{sv.name}_{topic}_Smode", coverpoint=cross_names(crosses)
+        )
         expected = "No Fault" if faults_per_case == 0 else "Load & Store page fault"
         for number, level in enumerate(sv.levels_desc, start=1):
             chunk.code.extend(
@@ -163,7 +165,7 @@ def _t_mstatus_sbe(test_data: TestData, sv: SvMode) -> list[TestChunk]:
             regs,
             sv,
             "Smode",
-            f"{sv.name}_{topic}_Smode",
+            f"Sm_{sv.name}_{topic}_Smode",
             coverpoint="cp_mstatus_sbe_write, cp_mstatus_sbe_read",
             setup_asm=_sbe_setup(sv, with_sum, regs.scratch),
         )
@@ -208,7 +210,7 @@ def _t_satp_access(test_data: TestData, test_chunks: list[TestChunk], sv: SvMode
     if sv.name not in ("sv32", "sv39"):
         return
     value_reg, bit_reg, check_reg = test_data.int_regs.get_registers(3, exclude_regs=[0])
-    chunk = test_data.begin_test_chunk(f"{sv.name}_satp_access_Mmode")
+    chunk = test_data.begin_test_chunk(f"Sm_{sv.name}_satp_access_Mmode")
     chunk.section_header = comment_banner("cp_satp_access")
     # MODE = sv with PPN = 0 (M-mode is not translated), then set and clear the lowest ASID bit.
     asid_shift = SATP_FIELDS[sv.name][2]
@@ -229,7 +231,7 @@ def _make_svsm(test_data: TestData, sv: SvMode) -> list[TestChunk]:
 
 
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "Sv32"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -239,7 +241,7 @@ def make_svsm_sv32(test_data: TestData) -> list[TestChunk]:
 
 
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "Sv39"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -249,7 +251,7 @@ def make_svsm_sv39(test_data: TestData) -> list[TestChunk]:
 
 
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "Sv48"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -259,7 +261,7 @@ def make_svsm_sv48(test_data: TestData) -> list[TestChunk]:
 
 
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "Sv57"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -271,7 +273,7 @@ def make_svsm_sv57(test_data: TestData) -> list[TestChunk]:
 # TODO: drop NORUN once a DUT and the reference model implement big-endian implicit
 # page-table accesses (mstatus.SBE=1); until then no configuration can run this test.
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "Sv32", "NORUN"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -283,7 +285,7 @@ def make_svsm_sv32_sbe(test_data: TestData) -> list[TestChunk]:
 # TODO: drop NORUN once a DUT and the reference model implement big-endian implicit
 # page-table accesses (mstatus.SBE=1); until then no configuration can run this test.
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "Sv39", "NORUN"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -295,7 +297,7 @@ def make_svsm_sv39_sbe(test_data: TestData) -> list[TestChunk]:
 # TODO: drop NORUN once a DUT and the reference model implement big-endian implicit
 # page-table accesses (mstatus.SBE=1); until then no configuration can run this test.
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "Sv48", "NORUN"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -307,7 +309,7 @@ def make_svsm_sv48_sbe(test_data: TestData) -> list[TestChunk]:
 # TODO: drop NORUN once a DUT and the reference model implement big-endian implicit
 # page-table accesses (mstatus.SBE=1); until then no configuration can run this test.
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "Sv57", "NORUN"],
     march_extensions=[],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -317,19 +319,19 @@ def make_svsm_sv57_sbe(test_data: TestData) -> list[TestChunk]:
 
 
 @add_priv_test_generator(
-    "SvSm",
+    "Sv",
     required_extensions=["Sm", "S"],
     extra_defines=["#define BOOT_TO_MMODE"],
 )
 def make_svsm_mstatus_tvm(test_data: TestData) -> list[TestChunk]:
     value_reg, check_reg = test_data.int_regs.get_registers(2, exclude_regs=[0])
-    chunk = test_data.begin_test_chunk("sv_mstatus_tvm_test")
+    chunk = test_data.begin_test_chunk("Sm_sv_mstatus_tvm_test")
     chunk.section_header = comment_banner("cp_access_m")
     chunk.code.extend(
         [
             f"LI(x{value_reg}, MSTATUS_TVM)",
             f"csrs mstatus, x{value_reg}",
-            *satp_csr_read(test_data, "tvm", check_reg, "mstatus"),
+            *satp_csr_read(test_data, "tvm", check_reg, "mstatus", "Mmode"),
         ]
     )
     chunk.code.extend(

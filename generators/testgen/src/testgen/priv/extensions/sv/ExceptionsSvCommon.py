@@ -47,7 +47,7 @@ class _Target:
     ``mode`` executes the accesses. When it is M-mode, mstatus.MPRV makes them use ``effective_mode``.
     """
 
-    suite: str
+    group: str
     operation: str
     mode: str
     effective_mode: str
@@ -93,7 +93,7 @@ def _atomic_access(
     *,
     faults: bool,
 ) -> list[str]:
-    covergroup = f"{target.suite}_cg"
+    covergroup = f"Sv_{target.group}_cg"
     labels = {
         op: test_data.add_testcase(f"{name}_{op}", coverpoint, covergroup).removesuffix(":")
         for op, coverpoint in coverpoints.items()
@@ -166,7 +166,7 @@ def _add_access(
             repeat_setup=target.mprv,
             physical_fetch=target.mprv,
             coverpoints=coverpoints,
-            covergroup=f"{target.suite}_cg",
+            covergroup=f"Sv_{target.group}_cg",
         )
     else:
         faults = not valid or misaligned or physical_address != "rvtest_data_1"
@@ -227,7 +227,7 @@ def _make_mode_test(
         regs,
         sv,
         target.effective_mode,
-        f"{sv.name}_{topic}{operation_name}_{mode_name}",
+        f"{target.group}_{sv.name}_{topic}{operation_name}_{mode_name}",
         coverpoint=banner,
         va_defs=(("va_data", sv.data_va), ("va_data_invalid", _INVALID_VA[sv.name])),
         setup_asm=setup_asm,
@@ -274,17 +274,17 @@ def _make_mode_test(
 
 
 def make_exception_suite(
-    test_data: TestData, sv: SvMode, *, suite: str, operation: str, machine_state: bool
+    test_data: TestData, sv: SvMode, *, group: str, operation: str, machine_state: bool
 ) -> list[TestChunk]:
-    """Generate the virtual-memory exception tests for one suite.
+    """Generate the virtual-memory exception tests for one group of the Sv suite.
 
-    Suites without ``machine_state`` run the base cases from S-mode and U-mode. Suites with it add the medeleg
+    Groups without ``machine_state`` run the base cases from S-mode and U-mode. Groups with it add the medeleg
     walk to each mode and run the base cases in M-mode with mstatus.MPRV set.
     """
     if not machine_state:
         return [
             _make_mode_test(
-                test_data, sv, _Target(suite, operation, mode, mode, "Smode"), base_cases=True, medeleg_cases=False
+                test_data, sv, _Target(group, operation, mode, mode, "Smode"), base_cases=True, medeleg_cases=False
             )
             for mode in ("Smode", "Umode")
         ]
@@ -295,7 +295,7 @@ def make_exception_suite(
         _make_mode_test(
             test_data,
             sv,
-            _Target(suite, operation, mode, effective_mode, "Mmode"),
+            _Target(group, operation, mode, effective_mode, "Mmode"),
             base_cases=base_cases,
             medeleg_cases=True,
         )
