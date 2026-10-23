@@ -176,13 +176,14 @@ def _priority_s_tests(test_data: TestData) -> list[str]:
 
 
 def _priority_lcofi_tests(test_data: TestData) -> list[str]:
-    """A pending LCOFI is taken after the VS-level interrupts."""
+    """A pending LCOFI is taken after the VS-level interrupts.  While it is pending with hideleg bit 13 = 0, vsip and
+    vsie show no LCOFI."""
     tmp_reg = test_data.int_regs.get_register()
     lines = [
         comment_banner(
-            "cp_priority_lcofi",
-            "With hvip = hie = 0x444, hideleg = 0 and sie.LCOFIE = 1, raise LCOFI, then set sstatus.SIE.\n"
-            "HS-mode takes VSEI, VSSI and VSTI, then LCOFI",
+            "cp_priority_lcofi, cp_vsip_vsie_lcofi",
+            "With hvip = hie = 0x444, hideleg = 0 and sie.LCOFIE = 1, raise LCOFI and read sip, vsip and vsie, then\n"
+            "set sstatus.SIE.  vsip.LCOFIP and vsie.LCOFIE read 0; HS-mode takes VSEI, VSSI and VSTI, then LCOFI",
         ),
         "#ifdef SSCOFPMF_SUPPORTED",
         "csrw hideleg, zero",
@@ -195,6 +196,12 @@ def _priority_lcofi_tests(test_data: TestData) -> list[str]:
         f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg})",
         test_data.add_testcase("lcofi", "cp_priority_lcofi", _CG),
         f"csrr x{tmp_reg}, sip",
+        write_sigupd(tmp_reg, test_data),
+        test_data.add_testcase("vsip", "cp_vsip_vsie_lcofi", _CG),
+        f"csrr x{tmp_reg}, vsip",
+        write_sigupd(tmp_reg, test_data),
+        test_data.add_testcase("vsie", "cp_vsip_vsie_lcofi", _CG),
+        f"csrr x{tmp_reg}, vsie",
         write_sigupd(tmp_reg, test_data),
         "csrsi sstatus, SSTATUS_SIE",
         f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg})",
@@ -258,15 +265,18 @@ def _alias_tests(test_data: TestData) -> list[str]:
             "csrw hvip, zero",
             comment_banner(
                 "cp_hideleg",
-                "Write hideleg = 0xFFFF.  Bits 10, 6 and 2 are writable.  Bit 13 is writable only with Shlcofideleg,\n"
-                "which UDB and the reference model do not describe, so it is not checked",
+                "Write hideleg = 0xFFFF.  Bits 10, 6 and 2 are writable.  Bit 13 is read-only zero without\n"
+                "Shlcofideleg; with it, bit 13 is writable, which the reference model does not describe, so it is\n"
+                "not checked",
             ),
             f"LI(x{tmp_reg}, 0xFFFF)",
             test_data.add_testcase("ones", "cp_hideleg", _CG),
             f"csrw hideleg, x{tmp_reg}",
             f"csrr x{tmp_reg}, hideleg",
+            "#ifdef SHLCOFIDELEG_SUPPORTED",
             f"LI(x{mask_reg}, ~MIP_LCOFIP)",
             f"and x{tmp_reg}, x{tmp_reg}, x{mask_reg}",
+            "#endif",
             write_sigupd(tmp_reg, test_data),
         ]
     )

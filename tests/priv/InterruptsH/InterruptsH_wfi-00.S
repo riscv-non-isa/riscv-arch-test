@@ -227,14 +227,14 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw0_str: .string "\"test: 711; cg: InterruptsH_hs_cg; cp: cp_wfi_vs; bin: tw0_vtw0\""
-InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1_str: .string "\"test: 712; cg: InterruptsH_hs_cg; cp: cp_wfi_vs; bin: tw0_vtw1\""
-InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0_str: .string "\"test: 713; cg: InterruptsH_hs_cg; cp: cp_wfi_vs; bin: tw1_vtw0\""
-InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw1_str: .string "\"test: 714; cg: InterruptsH_hs_cg; cp: cp_wfi_vs; bin: tw1_vtw1\""
-InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw0_str: .string "\"test: 715; cg: InterruptsH_hs_cg; cp: cp_wfi_vu; bin: tw0_vtw0\""
-InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw1_str: .string "\"test: 716; cg: InterruptsH_hs_cg; cp: cp_wfi_vu; bin: tw0_vtw1\""
-InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw0_str: .string "\"test: 717; cg: InterruptsH_hs_cg; cp: cp_wfi_vu; bin: tw1_vtw0\""
-InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw1_str: .string "\"test: 718; cg: InterruptsH_hs_cg; cp: cp_wfi_vu; bin: tw1_vtw1\""
+InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw0_str: .string "\"test: 713; cg: InterruptsH_hs_cg; cp: cp_wfi_vs; bin: tw0_vtw0\""
+InterruptsH_hs_cg_cp_wfi_vs_tw0_vtw1_str: .string "\"test: 714; cg: InterruptsH_hs_cg; cp: cp_wfi_vs; bin: tw0_vtw1\""
+InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw0_str: .string "\"test: 715; cg: InterruptsH_hs_cg; cp: cp_wfi_vs; bin: tw1_vtw0\""
+InterruptsH_hs_cg_cp_wfi_vs_tw1_vtw1_str: .string "\"test: 716; cg: InterruptsH_hs_cg; cp: cp_wfi_vs; bin: tw1_vtw1\""
+InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw0_str: .string "\"test: 717; cg: InterruptsH_hs_cg; cp: cp_wfi_vu; bin: tw0_vtw0\""
+InterruptsH_hs_cg_cp_wfi_vu_tw0_vtw1_str: .string "\"test: 718; cg: InterruptsH_hs_cg; cp: cp_wfi_vu; bin: tw0_vtw1\""
+InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw0_str: .string "\"test: 719; cg: InterruptsH_hs_cg; cp: cp_wfi_vu; bin: tw1_vtw0\""
+InterruptsH_hs_cg_cp_wfi_vu_tw1_vtw1_str: .string "\"test: 720; cg: InterruptsH_hs_cg; cp: cp_wfi_vu; bin: tw1_vtw1\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

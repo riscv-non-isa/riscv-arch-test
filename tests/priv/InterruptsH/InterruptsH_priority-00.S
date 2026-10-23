@@ -15,7 +15,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 15
+#define SIGUPD_COUNT 17
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_SMODE
@@ -1531,9 +1531,9 @@ InterruptsH_hs_cg_cp_priority_s_none:
 
 
 /////////////////////////////////
-// cp_priority_lcofi
-//   With hvip = hie = 0x444, hideleg = 0 and sie.LCOFIE = 1, raise LCOFI, then set sstatus.SIE.
-//   HS-mode takes VSEI, VSSI and VSTI, then LCOFI
+// cp_priority_lcofi, cp_vsip_vsie_lcofi
+//   With hvip = hie = 0x444, hideleg = 0 and sie.LCOFIE = 1, raise LCOFI and read sip, vsip and vsie, then
+//   set sstatus.SIE.  vsip.LCOFIP and vsie.LCOFIE read 0; HS-mode takes VSEI, VSSI and VSTI, then LCOFI
 /////////////////////////////////
 #ifdef SSCOFPMF_SUPPORTED
   csrw hideleg, zero
@@ -1548,6 +1548,14 @@ InterruptsH_hs_cg_cp_priority_lcofi_lcofi:
   csrr x13, sip
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, InterruptsH_hs_cg_cp_priority_lcofi_lcofi, InterruptsH_hs_cg_cp_priority_lcofi_lcofi_str)
+InterruptsH_hs_cg_cp_vsip_vsie_lcofi_vsip:
+  csrr x13, vsip
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, InterruptsH_hs_cg_cp_vsip_vsie_lcofi_vsip, InterruptsH_hs_cg_cp_vsip_vsie_lcofi_vsip_str)
+InterruptsH_hs_cg_cp_vsip_vsie_lcofi_vsie:
+  csrr x13, vsie
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, InterruptsH_hs_cg_cp_vsip_vsie_lcofi_vsie, InterruptsH_hs_cg_cp_vsip_vsie_lcofi_vsie_str)
   csrsi sstatus, SSTATUS_SIE
   RVTEST_IDLE_FOR_INTERRUPT(x13)
   csrci sstatus, SSTATUS_SIE
@@ -1700,6 +1708,8 @@ InterruptsH_hs_cg_cp_priority_s_sti_str: .string "\"test: 163; cg: InterruptsH_h
 InterruptsH_hs_cg_cp_priority_s_ssi_str: .string "\"test: 164; cg: InterruptsH_hs_cg; cp: cp_priority_s; bin: ssi\""
 InterruptsH_hs_cg_cp_priority_s_none_str: .string "\"test: 165; cg: InterruptsH_hs_cg; cp: cp_priority_s; bin: none\""
 InterruptsH_hs_cg_cp_priority_lcofi_lcofi_str: .string "\"test: 166; cg: InterruptsH_hs_cg; cp: cp_priority_lcofi; bin: lcofi\""
+InterruptsH_hs_cg_cp_vsip_vsie_lcofi_vsip_str: .string "\"test: 167; cg: InterruptsH_hs_cg; cp: cp_vsip_vsie_lcofi; bin: vsip\""
+InterruptsH_hs_cg_cp_vsip_vsie_lcofi_vsie_str: .string "\"test: 168; cg: InterruptsH_hs_cg; cp: cp_vsip_vsie_lcofi; bin: vsie\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

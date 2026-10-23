@@ -32,5 +32,5 @@ normative_rule_definitions:
   - names: [mideleg_hroz]
     coverpoint:
       [
-        "Not tested: mideleg bits 10, 6 and 2 are read-only one, so the rule is observable only for hideleg bit 13 with Shlcofideleg, which UDB and the reference model do not describe",
+        "Not tested: mideleg bits 10, 6 and 2 are read-only one, so the rule is observable only for hideleg bit 13 with Shlcofideleg, which Sail 0.16 does not model",
       ]

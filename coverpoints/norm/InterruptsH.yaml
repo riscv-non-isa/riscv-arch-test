@@ -144,7 +144,8 @@ normative_rule_definitions:
     coverpoint:
       ["InterruptsH_hs_cg/cp_{hip_hie_vs, hip_hie_vu, vsint_vectored}"]
 
-  - name: vstvec_img
+  # With MODE = Vectored, asynchronous interrupts set pc to BASE + 4 x cause
+  - names: [vstvec_img, stvec_mode_enc]
     coverpoint: ["InterruptsH_hs_cg/cp_vsint_vectored"]
   # The vstvec register is a VSXLEN-bit read/write register that is VS-mode’s version of
   # supervisor register stvec, formatted as shown in . When V=1, vstvec substitutes for
@@ -158,11 +159,20 @@ normative_rule_definitions:
   - names: [vsip_vsie_lcofi]
     coverpoint:
       [
+        "InterruptsH_hs_cg/cp_{hideleg, vsip_vsie_lcofi}",
         "H_hscsr_cg/cp_hcsrwalk (vsie and vsip bit 13 read zero while hideleg bit 13 is zero)",
-        "Not tested: Shlcofideleg, which UDB and the reference model do not describe",
+        "Not tested: hideleg bit 13 = 1 needs Shlcofideleg, which Sail 0.16 does not model",
       ]
 
   # WFI in VS-mode with hstatus.VTW = 1 and mstatus.TW = 0 raises virtual instruction unless it completes within
-  # an implementation-specific time, and may raise it even with a globally-disabled interrupt pending
-  - names: [hstatus_vtw_op, H_virtinst_wfi_vtw1_tw0, vtw_virtinstr]
+  # an implementation-specific time
+  - names: [hstatus_vtw_op, H_virtinst_wfi_vtw1_tw0]
     coverpoint: ["InterruptsH_hs_cg/cp_wfi_vs"]
+
+  # An implementation may have WFI always raise virtual instruction in VS-mode when VTW=1, even with a
+  # globally-disabled interrupt pending
+  - names: [vtw_virtinstr]
+    coverpoint:
+      [
+        "Not tested: implementation-specific, and neither UDB nor Sail describes an implementation that always traps",
+      ]

@@ -134,6 +134,22 @@ covergroup InterruptsH_hs_cg with function sample(ins_t ins);
             bins lcofi = {4'b1000};
         }
         cp_priority_lcofi: cross priv_mode_hs, set_sie, sip_lcofi, sie_lcofi, hvip_all, hie_all, hideleg_none;
+
+        // vsip.LCOFIP and vsie.LCOFIE read zero while hideleg bit 13 is zero, with LCOFI pending and enabled
+        vsip_vsie : coverpoint ins.current.insn[31:20] {
+            bins vsip = {CSR_VSIP};
+            bins vsie = {CSR_VSIE};
+        }
+        hideleg_lcofi_zero : coverpoint ins.prev.csr[CSR_HIDELEG][13] {
+            bins zero = {0};
+        }
+        sip_lcofi_one : coverpoint ins.prev.csr[CSR_SIP][13] {
+            bins one = {1};
+        }
+        sie_lcofi_one : coverpoint ins.prev.csr[CSR_SIE][13] {
+            bins one = {1};
+        }
+        cp_vsip_vsie_lcofi: cross priv_mode_hs, csrr, vsip_vsie, hideleg_lcofi_zero, sip_lcofi_one, sie_lcofi_one;
     `endif
 
     // hie, hip, vsie and vsip through hideleg
