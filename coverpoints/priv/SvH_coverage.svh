@@ -304,6 +304,14 @@ covergroup SvH_twostage_cg with function sample(ins_t ins);
     page_end : coverpoint ins.current.rs1_val[11:0] {
         bins page_end = {12'hffe};
     }
+    ldst : coverpoint ins.current.insn {
+        wildcard bins lw = {LW};
+        wildcard bins sw = {SW};
+    }
+    // A word two bytes below the end of a page
+    ldst_page_end : coverpoint ((ins.current.rs1_val + ins.current.imm) & 'hFFF) {
+        bins page_end = {'hFFE};
+    }
     `ifdef UDB_MXLEN_64
         menvcfg_adue : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "adue") {
             bins off = {0};
@@ -383,6 +391,12 @@ covergroup SvH_twostage_cg with function sample(ins_t ins);
     `ifdef ZCA_SUPPORTED
         // A fetch straddling a page boundary faults on the second page
         cp_straddle    : cross priv_mode_vs, jalr, vsatp_paged, hgatp_paged, page_end, trap;
+    `endif
+    `ifdef UDB_MISALIGNED_LDST
+    `ifdef UDB_MISALIGNED_SPLIT_STRATEGY_SEQUENTIAL_BYTES
+        // A misaligned store or load straddling a page boundary, performed byte by byte, faults on the second page
+        cp_ldst_straddle : cross priv_mode_vs, ldst, vsatp_paged, hgatp_paged, ldst_page_end, trap;
+    `endif
     `endif
     `ifdef UDB_MXLEN_64
         `ifdef SVNAPOT_SUPPORTED

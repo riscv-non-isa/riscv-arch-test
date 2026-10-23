@@ -93,9 +93,10 @@ normative_rule_definitions:
         "SvH_twostage_cg/cp_implicit_gpf",
       ]
 
-  # A fetch that straddles a page boundary reports the address of the faulting page
+  # A fetch or a misaligned load or store that straddles a page boundary reports the address of the faulting page
   - names: [H_straddle]
-    coverpoint: ["SvH_twostage_cg/cp_straddle"]
+    coverpoint:
+      ["SvH_twostage_cg/cp_straddle", "SvH_twostage_cg/cp_ldst_straddle"]
 
   # hedeleg can delegate page faults, but not guest-page faults, to VS-mode
   - names: [hedeleg_op, H_trap_deleg]

@@ -848,6 +848,45 @@ def _t_page_sizes(test_data: TestData, test_chunks: list[TestChunk], g: SvMode, 
     test_chunks.append(test_data.end_test_chunk())
 
 
+# (name, VS-stage leaf of the next page valid, G-stage leaf of the next page valid)
+STRADDLE_CASES = (("mapped", True, True), ("g_invalid", True, False), ("vs_invalid", False, True))
+
+
+def map_straddle_pages(
+    test_data: TestData, g: SvMode, vs: SvMode, *, user: bool = False, vs_valid: bool = True, g_valid: bool = True
+) -> list[str]:
+    """Map svh_page as map_test_page does, and the next guest page to the page after svh_page, whose VS-stage and
+    G-stage leaves are valid or not."""
+    next_va = f"({vs.data_va} + 0x1000)"
+    next_gpa = f"({g.data_va} + 0x1000)"
+    pte, addr, tmp = test_data.int_regs.get_registers(3)
+    regs = (pte, addr, tmp)
+    lines = [
+        *map_test_page(test_data, g, vs, vs_flags=PteFlags(user=user)),
+        *write_pte(
+            vs,
+            level=0,
+            flags=PteFlags(user=user, valid=vs_valid),
+            virtual_address=next_va,
+            physical_address=next_gpa,
+            regs=regs,
+            pa_is_label=False,
+        ),
+        *write_pte(
+            g,
+            level=0,
+            flags=PteFlags(user=True, valid=g_valid),
+            virtual_address=next_gpa,
+            physical_address="svh_page + 0x1000",
+            regs=regs,
+        ),
+        "hfence.vvma",
+        "hfence.gvma",
+    ]
+    test_data.int_regs.return_registers(list(regs))
+    return lines
+
+
 def _t_straddle(test_data: TestData, test_chunks: list[TestChunk], g: SvMode, vs: SvMode) -> None:
     """An instruction fetch that straddles a page boundary faults on the second page."""
     chunk = begin_chunk(
@@ -859,37 +898,32 @@ def _t_straddle(test_data: TestData, test_chunks: list[TestChunk], g: SvMode, vs
         "stval holds the address of the next page",
         stages=(g, vs),
     )
-    next_va = f"({vs.data_va} + 0x1000)"
-    next_gpa = f"({g.data_va} + 0x1000)"
     code = guest_chunk_setup(test_data, g, vs, "VS")
-    for name, vs_valid, g_valid in (("mapped", True, True), ("g_invalid", True, False), ("vs_invalid", False, True)):
-        pte, addr, tmp = test_data.int_regs.get_registers(3)
-        regs = (pte, addr, tmp)
-        setup = [
-            *map_test_page(test_data, g, vs),
-            *write_pte(
-                vs,
-                level=0,
-                flags=PteFlags(valid=vs_valid),
-                virtual_address=next_va,
-                physical_address=next_gpa,
-                regs=regs,
-                pa_is_label=False,
-            ),
-            *write_pte(
-                g,
-                level=0,
-                flags=PteFlags(user=True, valid=g_valid),
-                virtual_address=next_gpa,
-                physical_address="svh_page + 0x1000",
-                regs=regs,
-            ),
-            "hfence.vvma",
-            "hfence.gvma",
-        ]
-        test_data.int_regs.return_registers(list(regs))
+    for name, vs_valid, g_valid in STRADDLE_CASES:
+        setup = map_straddle_pages(test_data, g, vs, vs_valid=vs_valid, g_valid=g_valid)
         va = f"{vs.data_va} + 0xffe"
         code.extend(guest_access(test_data, TWO_CG, "cp_straddle", name, "VS", va, setup=setup, ops=("exec",)))
+    chunk.code.extend([*code, *guest_chunk_teardown(test_data, g.xlen)])
+    test_chunks.append(test_data.end_test_chunk())
+
+
+def _t_ldst_straddle(test_data: TestData, test_chunks: list[TestChunk], g: SvMode, vs: SvMode) -> None:
+    """A misaligned store or load that straddles a page boundary faults on the second page."""
+    chunk = begin_chunk(
+        test_data,
+        f"{g.name}_ldst_straddle",
+        "cp_ldst_straddle",
+        "In VS-mode, store and load the word two bytes below the end of a page whose next page is mapped, has an\n"
+        "invalid G-stage leaf (guest-page fault) or an invalid VS-stage leaf (page fault).  The hart performs\n"
+        "misaligned accesses byte by byte, so stval holds the address of the next page",
+        stages=(g, vs),
+    )
+    code = guest_chunk_setup(test_data, g, vs, "VS")
+    for name, vs_valid, g_valid in STRADDLE_CASES:
+        setup = map_straddle_pages(test_data, g, vs, vs_valid=vs_valid, g_valid=g_valid)
+        va = f"{vs.data_va} + 0xff6"
+        ops = ("store", "load")
+        code.extend(guest_access(test_data, TWO_CG, "cp_ldst_straddle", name, "VS", va, setup=setup, ops=ops))
     chunk.code.extend([*code, *guest_chunk_teardown(test_data, g.xlen)])
     test_chunks.append(test_data.end_test_chunk())
 
@@ -1435,6 +1469,12 @@ def _make_svh_straddle(test_data: TestData, g: SvMode, vs: SvMode) -> list[TestC
     return test_chunks
 
 
+def _make_svh_ldst_straddle(test_data: TestData, g: SvMode, vs: SvMode) -> list[TestChunk]:
+    test_chunks: list[TestChunk] = []
+    _t_ldst_straddle(test_data, test_chunks, g, vs)
+    return test_chunks
+
+
 def _make_svh_napot(test_data: TestData, g: SvMode, vs: SvMode) -> list[TestChunk]:
     test_chunks: list[TestChunk] = []
     for mode in ("VS", "VU"):
@@ -1447,6 +1487,7 @@ SV32_PARAMS = ["SV32X4_TRANSLATION: true", "SV32_VSMODE_TRANSLATION: true"]
 SV39_PARAMS = ["SV39X4_TRANSLATION: true", "SV39_VSMODE_TRANSLATION: true"]
 SV48_PARAMS = ["SV48X4_TRANSLATION: true", "SV48_VSMODE_TRANSLATION: true"]
 SV57_PARAMS = ["SV57X4_TRANSLATION: true", "SV57_VSMODE_TRANSLATION: true"]
+MISALIGNED_PARAMS = ["MISALIGNED_LDST: true", "MISALIGNED_SPLIT_STRATEGY: sequential_bytes"]
 BOOT = ["#define BOOT_TO_SMODE"]
 
 
@@ -1469,6 +1510,21 @@ def make_svh_straddle_sv32(test_data: TestData) -> list[TestChunk]:
 @add_priv_test_generator("SvH", required_extensions=["H", "Zca"], extra_defines=BOOT, params=SV39_PARAMS)
 def make_svh_straddle_sv39(test_data: TestData) -> list[TestChunk]:
     return _make_svh_straddle(test_data, SV39X4, VS_SV39)
+
+
+# The hart performs misaligned accesses byte by byte, so it faults only on the second page
+@add_priv_test_generator(
+    "SvH", required_extensions=["H"], extra_defines=BOOT, params=[*SV32_PARAMS, *MISALIGNED_PARAMS]
+)
+def make_svh_ldst_straddle_sv32(test_data: TestData) -> list[TestChunk]:
+    return _make_svh_ldst_straddle(test_data, SV32X4, VS_SV32)
+
+
+@add_priv_test_generator(
+    "SvH", required_extensions=["H"], extra_defines=BOOT, params=[*SV39_PARAMS, *MISALIGNED_PARAMS]
+)
+def make_svh_ldst_straddle_sv39(test_data: TestData) -> list[TestChunk]:
+    return _make_svh_ldst_straddle(test_data, SV39X4, VS_SV39)
 
 
 @add_priv_test_generator("SvH", required_extensions=["H", "Svnapot"], extra_defines=BOOT, params=SV39_PARAMS)
