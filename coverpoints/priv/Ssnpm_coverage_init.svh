@@ -10,3 +10,5 @@
 
 Ssnpm_cg = new();
 Ssnpm_cg.set_inst_name("obj_Ssnpm");
+Ssnpm_Sm_cg = new();
+Ssnpm_Sm_cg.set_inst_name("obj_Ssnpm_Sm");
