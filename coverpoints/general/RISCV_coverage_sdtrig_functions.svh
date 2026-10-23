@@ -235,16 +235,19 @@ endfunction
 function automatic int sdtrig_ms_when(ins_t ins);
     return sdtrig_exec_fired(ins) ? `SAMPLE_AFTER : `SAMPLE_BEFORE;
 endfunction
-// For an armed select = 1 mcontrol6 trigger whose x/s/l bits are exactly xsl (execute = 3'b100, store = 3'b010,
-// load = 3'b001): 1 = an access of the trigger's size fired it, 2 = an access of that size did not, 3 = an access of
-// another width did not; 0 = anything else. Execution counts only the test's targets: addi/slti x0 hints, c.nop
-// hints and CSR instructions on tdata1/tdata3 (which include the csrw tdata1, x0 that disarms the trigger)
+// For a select = 1 mcontrol6 trigger armed for the mode the instruction runs in (sdtrig_trap_origin) whose x/s/l
+// bits are exactly xsl (execute = 3'b100, store = 3'b010, load = 3'b001): 1 = an access of the trigger's size fired
+// it, 2 = an access of that size did not, 3 = an access of another width did not; 0 = anything else. Execution
+// counts only the test's targets: addi/slti x0 hints, c.nop hints and CSR instructions on tdata1/tdata3 (which
+// include the csrw tdata1, x0 that disarms the trigger)
 function automatic logic [1:0] sdtrig_ms_case(ins_t ins, logic [2:0] xsl);
     int when = sdtrig_ms_when(ins);
+    logic [1:0] origin = sdtrig_trap_origin(ins);
+    string mode_bit = (origin == 2'd3) ? "m" : (origin == 2'd1) ? "s" : "u";
     int bytes, size_bytes;
     logic fired;
     if (get_csr_val(ins.hart, ins.issue, when, "tdata1", "type")[3:0] != 4'd6 ||
-        get_csr_val(ins.hart, ins.issue, when, "tdata1", "m")[0] != 1'b1 ||
+        get_csr_val(ins.hart, ins.issue, when, "tdata1", mode_bit)[0] != 1'b1 ||
         get_csr_val(ins.hart, ins.issue, when, "tdata1", "chain")[0] != 1'b0 ||
         get_csr_val(ins.hart, ins.issue, when, "tdata1", "select")[0] != 1'b1 ||
         {get_csr_val(ins.hart, ins.issue, when, "tdata1", "execute")[0], get_csr_val(ins.hart, ins.issue, when, "tdata1", "store")[0],

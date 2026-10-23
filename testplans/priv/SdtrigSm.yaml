@@ -881,8 +881,11 @@ coverpoints:
     description: |-
       The cases of cp_mcontrol6_match_size_execute that execute a 32-bit target on a size = 2 trigger whose tdata2
       the target satisfies for each legal match (ZCA and size 2 legal)
-    expectation: No breakpoint exception
-    bins: NTRIG * legal matches
+    expectation: |-
+      No breakpoint exception.
+      On RV64 no 32-bit instruction satisfies mask high or not mask high (its high half is 0, see
+      cp_mcontrol6_match_size_execute), so those matches are not in the cross.
+    bins: NTRIG * legal matches (RV64 without 5 and 13)
     rules:
       - Sdtrig_mcontrol6_size_16bit
       - Sdtrig_mcontrol6_select_data

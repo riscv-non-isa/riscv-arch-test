@@ -447,7 +447,7 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     `ifdef SDTRIG_MATCH_SIZE_EXEC
         cp_mcontrol6_match_size_execute: cross priv_mode_m, triggernum_mcontrol6, ms_match_exec, ms_size_exec, ms_exec_case; // NTRIG * legal matches * sizes 2/3 * 2
         `ifdef SDTRIG_MATCH_SIZE_EXEC16
-            cp_mcontrol6_match_size_execute_other: cross priv_mode_m, triggernum_mcontrol6, ms_match, ms_size_exec16, ms_exec_other; // NTRIG * legal matches
+            cp_mcontrol6_match_size_execute_other: cross priv_mode_m, triggernum_mcontrol6, ms_match_exec, ms_size_exec16, ms_exec_other; // NTRIG * legal matches (RV64: but 5, 13)
         `endif
     `endif
     `ifdef SDTRIG_CHAIN_3

@@ -375,7 +375,7 @@ size_data_outcome: coverpoint sdtrig_bp_taken(ins) == (sdtrig_size_data_case(ins
 `ifdef SDTRIG_MATCH_SIZE_EXEC
     // On RV64 the high half of an instruction is 0, so mask high (5) and not mask high (13) on a 32-bit
     // instruction either fire on every instruction, including the csrw that disarms the trigger, or on none:
-    // only the never-firing groups are tested, and the cross leaves those matches out
+    // only the never-firing groups are tested, and the crosses leave those matches out
     ms_match_exec: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "match")[3:0] {
         type_option.weight = 0;
         bins equal = {4'd0};
