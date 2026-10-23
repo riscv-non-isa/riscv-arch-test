@@ -1,9 +1,8 @@
 ##################################
 # priv/extensions/sv/Svinval.py
 #
-# Svinval instruction tests. Groups: Svinval (S and U, mstatus.TVM=0) and Sm (M, S and U, mstatus.TVM=0 and 1).
+# Svinval instruction tests.
 # Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-# umer@riscv.org September 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
@@ -19,9 +18,6 @@ _OPERATIONS = (
     ("sfence_inval_ir", "sfence.inval.ir"),
     ("sfence_vma", "sfence.vma x0, x0"),
 )
-
-_SVINVAL_CG = "Svinval_cg"
-_SM_CG = "Svinval_Sm_cg"
 
 
 def add_operations(test_data: TestData, number: int, covergroup: str) -> list[str]:
@@ -46,9 +42,9 @@ def make_svinval(test_data: TestData) -> list[TestChunk]:
     chunk = test_data.begin_test_chunk("Svinval")
     chunk.code.extend(
         [
-            *add_operations(test_data, 1, _SVINVAL_CG),
+            *add_operations(test_data, 1, "Svinval_cg"),
             "RVTEST_TSBI_GOTO_UMODE",
-            *add_operations(test_data, 2, _SVINVAL_CG),
+            *add_operations(test_data, 2, "Svinval_cg"),
             "RVTEST_TSBI_GOTO_SMODE",
         ]
     )
@@ -60,13 +56,12 @@ def make_svinval(test_data: TestData) -> list[TestChunk]:
     "Svinval",
     required_extensions=["Sm", "S", "Svinval"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="SvinvalSm",
 )
 def make_svinvalsm_tvm(test_data: TestData) -> list[TestChunk]:
     tvm_reg = test_data.int_regs.get_register(exclude_regs=[0])
     chunk = test_data.begin_test_chunk("Sm_Svinval_mstatus_tvm")
     # The mstatus readback checks the setup that the cp_tvm coverpoint samples.
-    tvm_label = test_data.add_testcase("tvm", "cp_tvm", _SM_CG).removesuffix(":")
+    tvm_label = test_data.add_testcase("tvm", "cp_tvm", "Svinval_Sm_cg").removesuffix(":")
     number = 0
     code: list[str] = []
     for tvm in (0, 1):
@@ -83,7 +78,7 @@ def make_svinvalsm_tvm(test_data: TestData) -> list[TestChunk]:
         for mode in ("Mmode", "Smode", "Umode"):
             number += 1
             switch = [] if mode == previous else [f"RVTEST_TSBI_GOTO_{mode.upper()}"]
-            code.extend([*switch, *add_operations(test_data, number, _SM_CG)])
+            code.extend([*switch, *add_operations(test_data, number, "Svinval_Sm_cg")])
             previous = mode
         if previous != "Mmode":
             code.append("RVTEST_TSBI_GOTO_MMODE")
