@@ -75,7 +75,7 @@ coverpoints:
       sw to the access-fault address
       ecall
     expectation: The exception traps to M-mode with mtval2 = 0 and mtinst = 0, or for lw and sw the transformed instruction.
-    bins: 7
+    bins: "7"
   - name: |-
       cp_xtinst_instr_misaligned
       cp_xtinst_load_misaligned
@@ -83,6 +83,6 @@ coverpoints:
     goal: Misaligned exceptions taken into M-mode write mtval2 and mtinst
     description: As above, attempt a jump to a misaligned address, a misaligned lw and a misaligned sw.
     expectation: The exception traps to M-mode with mtval2 = 0 and mtinst = 0, or for lw and sw the transformed instruction.
-    bins: 3
+    bins: "3"
     notes: |-
       cp_xtinst_instr_misaligned is compiled only without Zca, and the load and store cases only when the hart does not perform misaligned loads and stores (UDB MISALIGNED_LDST = false).  Of the current H configurations only sargantana-rv64imafdb assembles them.
