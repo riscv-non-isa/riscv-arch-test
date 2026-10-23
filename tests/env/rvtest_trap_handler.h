@@ -695,6 +695,17 @@
 // PRECONDITION: a0 must be non-zero (it always is during normal test execution)
 //==============================================================================
 
+// rvtest_current_mode is zero in M-mode and nonzero in lower modes. The T-SBI mode
+// handlers maintain it so failure paths can avoid issuing an ecall from M-mode.
+#define RVTEST_MODE_M      0
+#define RVTEST_MODE_LOWER  1
+
+.macro RVTEST_SET_CURRENT_MODE mode
+  LA(T1, rvtest_current_mode)
+  LI(T2, \mode)
+  SREG T2, 0(T1)
+.endm
+
 // Switch to M-mode via T-SBI.
 // After this macro, the processor is in M-mode and a0 is undefined.
 // The S-mode handler forwards a GOTO_MMODE from U, VS or VU to M-mode and then
@@ -866,7 +877,7 @@
 // SECTION 11: DEFAULT INTERRUPT MACROS
 //
 // If the DUT does not define RVMODEL_SET/CLR_xxx_INT macros, these defaults
-// are used. The default action is to jump to cleanup_epilogs, which terminates
+// are used. The default action is to jump to rvtest_code_end, which terminates
 // the test. This ensures that if an unexpected interrupt fires for an
 // undefined interrupt type, the test fails cleanly rather than hanging.
 //
@@ -874,7 +885,7 @@
 // RVMODEL macros in their rvmodel_macros.h to actually set/clear the interrupt.
 //==============================================================================
 
-#define RVTEST_DFLT_INT_HNDLR      la T1, cleanup_epilogs; jr T1  // default: abort test on unexpected interrupt
+#define RVTEST_DFLT_INT_HNDLR      la T1, rvtest_code_end; jr T1  // default: abort test on unexpected interrupt
 
 // M-mode interrupt defaults
 #ifndef RVMODEL_SET_MSW_INT
@@ -1120,6 +1131,7 @@ endcopy_\__MODE__\()tramp:
 abort\__MODE__\()test:
         LA(     T6, rvtest_trap_prolog_error)
         SREG    T5, 0(T6)
+        LI(     T5, 0)                              // mark setup failure as not yet reported
         LA(     T2, exit_\__MODE__\()cleanup)        // load address of cleanup label
         jr      T2                                   // long jump to cleanup; x7 does not set ELP (Zicfilp)
 
@@ -1278,11 +1290,15 @@ rvtest_\__MODE__\()prolog_done:
   .endr
 //---------- End-of-test trampoline ----------
 // Reached for impossible/unhandled interrupt causes.
-// Long-jumps to rvtest_Xend which is the epilog cleanup entry.
+// Long-jumps to the failure summary entry, which prints the summary and runs the epilogs.
 
 rvtest_\__MODE__\()endtest:                      // impossible cause landed here
-        LA(     T2, rvtest_\__MODE__\()end)      // load epilog cleanup address (may be far away)
-        jr      T2                                // long jump to epilog cleanup; x7 does not set ELP (Zicfilp)
+.ifc \__MODE__ , M
+        LA(     T2, rvtest_trap_fail_summary_mmode) // M-mode is already in trap context
+.else
+        LA(     T2, rvtest_trap_fail_summary)     // switch to M-mode before reporting
+.endif
+        jr      T2                                // long jump to failure summary and cleanup
 
 //---------- Common Handler ----------
 // Entered via jal from per-cause stub. T6 has the stub's return address
@@ -1440,6 +1456,7 @@ tsbi_\__MODE__\()goto_mode:
         //--- GOTO M-mode: set MPP=11 (M), clear MPV ---
 tsbi_\__MODE__\()goto_m:
         RVTEST_PREPARE_MEDELEG_FOR_M sp, T2, T4
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_M
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask (bits 12:11)
         csrs    CSR_MSTATUS, T4                       // set MPP = 11 (M-mode): sets both bits
   #ifdef H_SUPPORTED
@@ -1458,6 +1475,7 @@ tsbi_\__MODE__\()goto_m:
         //--- GOTO S-mode: set MPP=01 (S), clear MPV ---
 tsbi_\__MODE__\()goto_s:
         RVTEST_PREPARE_MEDELEG_FOR_LOWER sp, T2, T4
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_LOWER
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask
         csrc    CSR_MSTATUS, T4                       // clear MPP bits first (to 00)
         LI(     T4, MPP_SMODE)                        // T4 = 01 << 11 (S-mode MPP value)
@@ -1478,6 +1496,7 @@ tsbi_\__MODE__\()goto_s:
         //--- GOTO U-mode: set MPP=00 (U), clear MPV ---
 tsbi_\__MODE__\()goto_u:
         RVTEST_PREPARE_MEDELEG_FOR_LOWER sp, T2, T4
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_LOWER
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask
         csrc    CSR_MSTATUS, T4                       // clear MPP = 00 (U-mode)
   #ifdef H_SUPPORTED
@@ -1497,6 +1516,7 @@ tsbi_\__MODE__\()goto_u:
         //--- GOTO VS-mode: set MPP=01 (S), set MPV=1 (virtual) ---
 tsbi_\__MODE__\()goto_vs:
         RVTEST_PREPARE_MEDELEG_FOR_LOWER sp, T2, T4
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_LOWER
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask
         csrc    CSR_MSTATUS, T4                       // clear MPP first
         LI(     T4, MPP_SMODE)                        // T4 = S-mode MPP value (VS uses S-mode MPP with MPV=1)
@@ -1515,6 +1535,7 @@ tsbi_\__MODE__\()goto_vs:
         //--- GOTO VU-mode: set MPP=00 (U), set MPV=1 (virtual) ---
 tsbi_\__MODE__\()goto_vu:
         RVTEST_PREPARE_MEDELEG_FOR_LOWER sp, T2, T4
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_LOWER
         LI(     T4, MSTATUS_MPP)                     // T4 = MPP field mask
         csrc    CSR_MSTATUS, T4                       // clear MPP = 00 (U-mode)
         LI(     T2, (1<<MPV_LSB))                    // T2 = MPV bit mask
@@ -1654,6 +1675,7 @@ tsbi_\__MODE__\()goto_mode:
         j       resto_\__MODE__\()rtn
 
 tsbi_\__MODE__\()goto_s:                          // Return to HS/S-mode via sret
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_LOWER
         LI(     T3, SSTATUS_SPP)                   // T3 = SPP bit mask (bit 8)
         csrs    CSR_XSTATUS, T3                     // set sstatus.SPP = 1 (sret -> S-mode)
 #ifdef H_SUPPORTED
@@ -1663,6 +1685,7 @@ tsbi_\__MODE__\()goto_s:                          // Return to HS/S-mode via sre
         j       resto_\__MODE__\()rtn              // sret returns to HS-mode at sepc
 
 tsbi_\__MODE__\()goto_u:                          // Return to U-mode via sret
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_LOWER
         LI(     T3, SSTATUS_SPP)                   // T3 = SPP bit mask
         csrc    CSR_XSTATUS, T3                     // clear sstatus.SPP = 0 (sret -> U-mode)
 #ifdef H_SUPPORTED
@@ -1673,6 +1696,7 @@ tsbi_\__MODE__\()goto_u:                          // Return to U-mode via sret
 
   #ifdef H_SUPPORTED
 tsbi_\__MODE__\()goto_vs:                         // Return to VS-mode via sret
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_LOWER
         LI(     T3, SSTATUS_SPP)                   // T3 = SPP bit mask
         csrs    CSR_XSTATUS, T3                     // set sstatus.SPP = 1 (virtual supervisor)
         LI(     T3, HSTATUS_SPV)                    // enter virtual mode
@@ -1680,6 +1704,7 @@ tsbi_\__MODE__\()goto_vs:                         // Return to VS-mode via sret
         j       resto_\__MODE__\()rtn              // sret returns to VS-mode at sepc
 
 tsbi_\__MODE__\()goto_vu:                         // Return to VU-mode via sret
+        RVTEST_SET_CURRENT_MODE RVTEST_MODE_LOWER
         LI(     T3, SSTATUS_SPP)                   // T3 = SPP bit mask
         csrc    CSR_XSTATUS, T3                     // clear sstatus.SPP = 0 (virtual user)
         LI(     T3, HSTATUS_SPV)                    // enter virtual mode
@@ -1788,7 +1813,7 @@ tsbi_\__MODE__\()instr_dispatch:
           lwu     T3, 0(T2)                       // T3 = table instruction
         #endif
         beq     T3, a0, tsbi_\__MODE__\()instr_found
-        beqz    T3, tsbi_instr_not_found
+        beqz    T3, tsbi_\__MODE__\()instr_not_found
         addi    T2, T2, 8                          // skip instruction and ret
         j       1b
 tsbi_\__MODE__\()instr_found:
@@ -1800,8 +1825,28 @@ tsbi_\__MODE__\()instr_found:
         csrw    CSR_XEPC, T3                     // xepc += 4
         j       resto_\__MODE__\()rtn           // restore handler regs and xret
 
+.ifnc \__MODE__ , M
+
+tsbi_\__MODE__\()instr_not_found:
+        // Lower modes cannot print or run the M-mode epilogs: switch to M-mode first.
+        // Leave the handler (restore regs and sp) before the ecall, as tsbi_forward_goto_m does,
+        // so the mode switch is not nested in a live trap context. a1 keeps the encoding.
+        mv      a1, a0
+        LREG    T1, trap_sv_off+1*REGWIDTH(sp)    // restore T1 (x6)
+        LREG    T2, trap_sv_off+2*REGWIDTH(sp)    // restore T2 (x7)
+        LREG    T3, trap_sv_off+3*REGWIDTH(sp)    // restore T3 (x8)
+        LREG    T4, trap_sv_off+4*REGWIDTH(sp)    // restore T4 (x9)
+        LREG    T5, trap_sv_off+5*REGWIDTH(sp)    // restore T5 (x14)
+        LREG    T6, trap_sv_off+6*REGWIDTH(sp)    // restore T6 (x15)
+        LREG    sp, trap_sv_off+7*REGWIDTH(sp)    // restore original sp (undo the xSCRATCH swap)
+        RVTEST_TSBI_GOTO_MMODE
+        mv      a0, a1
+        j       tsbi_instr_not_found
+.endif
+
 .ifc \__MODE__ , M
 
+tsbi_Minstr_not_found:
 tsbi_instr_not_found:
         // Requested instruction is not in the table: print the offending encoding and
         // terminate the simulation. Registers may be clobbered freely: this never returns.
@@ -1817,7 +1862,8 @@ tsbi_instr_not_found:
         call    rvmodel_io_write_str
         LA(a0, failstr)                         // RVCP-SUMMARY: TEST FAILED line so the harness classifies this run
         call    rvmodel_io_write_str
-        call    rvmodel_halt_fail
+        LA(     T1, rvtest_fail_epilogs_mmode)
+        jr      T1
 
 .macro TSBI_CSR_INSTR_TABLE csr_addr
         .word (\csr_addr << 20) | (0x02573) // csrr a0, csr_addr
