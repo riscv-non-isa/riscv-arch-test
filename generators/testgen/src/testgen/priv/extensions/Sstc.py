@@ -6,11 +6,7 @@
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""Sstc stimecmp access tests: supervisor and user modes (Sstc), and machine mode (Sm group).
-
-``mode`` is "machine", "supervisor" or "user", as in the coverpoint names.  M-mode CSRs are written directly in
-machine mode and through T-SBI otherwise; user-mode tests are entered from S-mode with RVTEST_TSBI_GOTO_UMODE.
-"""
+"""Sstc stimecmp access tests"""
 
 from testgen.asm.csr import write_stce
 from testgen.asm.helpers import comment_banner
@@ -147,13 +143,12 @@ def make_sstc(test_data: TestData) -> list[TestChunk]:
     "Sstc",
     required_extensions=["Sm", "Sstc"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="SstcSm",
 )
 def make_sstcsm(test_data: TestData) -> list[TestChunk]:
     """Generate tests for Sm-group Sstc coverpoints; the group boots to and stays in M-mode."""
     tc = test_data.begin_test_chunk("Sm")
     tc.code = [
-        comment_banner("SstcSm", "Supervisor timer (Sstc) stimecmp access tests from M-mode"),
+        comment_banner("Sstc_Sm", "Supervisor timer (Sstc) stimecmp access tests from M-mode"),
         "",
     ]
     tc.code += tm_tests(test_data, _CG_SM, "machine")

@@ -47,7 +47,6 @@ class PrivTestRegistryEntry:
     march_extensions: list[str] | None = None
     params: list[str] | None = None
     testcases_per_file: int = TESTCASES_PER_PRIV_FILE
-    seed_name: str | None = None
 
 
 # Registry: dict mapping each testsuite name to one or more generator entries
@@ -63,7 +62,6 @@ def add_priv_test_generator(
     march_extensions: list[str] | None = None,
     params: list[str] | None = None,
     testcases_per_file: int = TESTCASES_PER_PRIV_FILE,
-    seed_name: str | None = None,
 ) -> Callable[[PrivTestGenerator], PrivTestGenerator]:
     """
     Decorator to register a privileged test generator.
@@ -85,8 +83,6 @@ def add_priv_test_generator(
         testcases_per_file: Optional max testcases per generated test file for this testsuite.
                             Defaults to TESTCASES_PER_PRIV_FILE. Individual test chunks are never
                             split, so a chunk larger than this still produces an oversized file.
-        seed_name: Optional name used in place of testsuite to seed register allocation. A suite folded into
-                   another passes its former name so its generated tests stay byte-identical.
     """
 
     def decorator(func: PrivTestGenerator) -> PrivTestGenerator:
@@ -98,7 +94,6 @@ def add_priv_test_generator(
             march_extensions=march_extensions,
             params=params,
             testcases_per_file=testcases_per_file,
-            seed_name=seed_name,
         )
         _PRIV_TEST_GENERATORS.setdefault(testsuite, []).append(entry)
         return func
