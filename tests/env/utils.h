@@ -234,11 +234,22 @@
   #elif defined(S_SUPPORTED)
     #define RVTEST_TEST_CSR sepc
     #define BOOT_TO_SMODE
-  #elif defined(ZICNTR_SUPPORTED) && defined(U_SUPPORTED)
+  #elif defined(ZICNTR_SUPPORTED) && defined(U_SUPPORTED) && defined(UDB_MCOUNTENABLE_EN_2)
+    // instret is read from U-mode, so mcounteren.IR must be writable (boot sets mcounteren to all 1s)
     #define RVTEST_TEST_CSR instret
     #define RVTEST_READ_ONLY_TEST_CSR
   #else
     #define RVTEST_TEST_CSR mepc
+    #define BOOT_TO_MMODE
+  #endif
+#endif
+
+// Select the cycle counter for timing tests (Zkt). Without Zicntr, read mcycle in M-mode.
+#ifdef RVTEST_USES_CYCLE_CSR
+  #ifdef ZICNTR_SUPPORTED
+    #define RVTEST_CYCLE_CSR cycle
+  #else
+    #define RVTEST_CYCLE_CSR mcycle
     #define BOOT_TO_MMODE
   #endif
 #endif
@@ -728,7 +739,7 @@
 #define RVTEST_CLR_SSTC_STCE1_INT_U RVTEST_CLR_SSTC_STCE0_INT_S
 
 
-// V-mode interrupts not yet supported in Sail reference model
+// Raising VS-level interrupts is not implemented in these macros yet
 // Define as empty to prevent assembly errors
 #define RVTEST_SET_VSW_INT
 #define RVTEST_CLR_VSW_INT

@@ -1234,7 +1234,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "Sm_mcsr_cg/cp_cntr_access/{mcycleh, minstreth, mhpmcounter3h}",
-        "SscofpmfSm_cg/cp_sscofpmf_access",
+        "Sscofpmf_Sm_cg/cp_sscofpmf_access",
       ]
 
   # The minstret CSR counts the number of instructions the hart has retired.
@@ -1669,7 +1669,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "Sm_mcsr_cg/cp_mtime_wraparound",
-        "ZawrsSm_cg/cp_wrs_resume",
+        "Zawrs_Sm_cg/cp_wrs_resume",
         "Atomicity is not observable in a single-hart test",
       ]
 

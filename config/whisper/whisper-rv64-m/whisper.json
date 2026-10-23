@@ -141,22 +141,22 @@
   ],
   "triggers": [
     {
-      "reset": [0, 0, 0, "0x8078"],
+      "reset": [0, 0, 0, "0x1008078"],
       "mask": ["0xfc00000001ffffff", "0xffffffffffffffff", "0x0", 0],
       "poke_mask": ["0xfc00000001ffffff", "0xffffffffffffffff", "0x0", 0]
     },
     {
-      "reset": [0, 0, 0, "0x8078"],
+      "reset": [0, 0, 0, "0x1008078"],
       "mask": ["0xfc00000001ffffff", "0xffffffffffffffff", "0x0", 0],
       "poke_mask": ["0xfc00000001ffffff", "0xffffffffffffffff", "0x0", 0]
     },
     {
-      "reset": [0, 0, 0, "0x8078"],
+      "reset": [0, 0, 0, "0x1008078"],
       "mask": ["0xfc00000001ffffff", "0xffffffffffffffff", "0x0", 0],
       "poke_mask": ["0xfc00000001ffffff", "0xffffffffffffffff", "0x0", 0]
     },
     {
-      "reset": [0, 0, 0, "0x8078"],
+      "reset": [0, 0, 0, "0x1008078"],
       "mask": ["0xfc00000001ffffff", "0xffffffffffffffff", "0x0", 0],
       "poke_mask": ["0xfc00000001ffffff", "0xffffffffffffffff", "0x0", 0]
     }

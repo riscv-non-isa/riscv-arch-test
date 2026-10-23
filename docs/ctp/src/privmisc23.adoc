@@ -3,7 +3,25 @@
 
 ==== Sscofpmf Counter filtering
 
-include::{testplansdir}/priv/Sscofpmf.adoc[]
+The Sscofpmf suite has one covergroup per privilege mode the tests run in: Sscofpmf_Sm_cg (M-mode), Sscofpmf_S_cg (S-mode) and Sscofpmf_U_cg (U-mode).
+The setup table applies to all three.
+The Sscofpmf_Sm tests require Sm, so they are not part of a certificate without Sm, such as RVA23.
+
+include::{testplansdir}/priv/Sscofpmf_common.adoc[]
+
+===== Sscofpmf_Sm
+
+include::{testplansdir}/priv/Sscofpmf_Sm.adoc[]
+
+===== Sscofpmf_S
+
+include::{testplansdir}/priv/Sscofpmf_S.adoc[]
+
+===== Sscofpmf_U
+
+include::{testplansdir}/priv/Sscofpmf_U.adoc[]
+
+===== Sscofpmf Normative Rules
 
 include::norm/Sscofpmf_norm_rules.adoc[]
 
@@ -11,7 +29,9 @@ include::norm/Sscofpmf_norm_rules.adoc[]
 
 include::{testplansdir}/priv/Ssstateen.adoc[]
 
-The same normative rules apply to Ssstateen as to Smstateen (see <<t-Smstateen-normative-rules>>).
+include::norm/Ssstateen_norm_rules.adoc[]
+
+The normative rules that apply to every level of stateen CSR are listed with Smstateen (see <<t-Smstateen-normative-rules>>).
 
 ==== Ssu64xl 64-bit User Mode
 
@@ -54,8 +74,13 @@ include::norm/Ss1p13_norm_rules.adoc[]
 
 ==== Ssnpm Pointer Masking
 
+===== Ssnpm
+
 include::{testplansdir}/priv/Ssnpm.adoc[]
-include::{testplansdir}/priv/SsnpmSm.adoc[]
+
+===== Ssnpm_Sm
+
+include::{testplansdir}/priv/Ssnpm_Sm.adoc[]
 
 include::norm/Ssnpm_norm_rules.adoc[]
 
@@ -78,21 +103,21 @@ See <<t-Ssnpm-normative-rules>> for normative rules.
 
 ==== Zicfilp Landing Pads
 
-In Privileged section because it has both unpriv and privileged behaviors.  The common coverpoints are defined once and re-executed by the ZicfilpU, ZicfilpSm and ZicfilpS suites in their privilege mode; each of those suites adds the coverpoints for its mode's `xPELP` handling.  ZicfilpH covers VS/VU-mode (see <<t-ZicfilpH-coverpoints>>).
+In Privileged section because it has both unpriv and privileged behaviors.  The common coverpoints are defined once and re-executed by the Zicfilp_U, Zicfilp_Sm and Zicfilp_S groups in their privilege mode; each of those groups adds the coverpoints for its mode's `xPELP` handling.  ZicfilpH covers VS/VU-mode (see <<t-ZicfilpH-coverpoints>>).
 
-include::{testplansdir}/priv/Zicfilp_common_reference.adoc[]
+include::{testplansdir}/priv/Zicfilp_common.adoc[]
 
-===== ZicfilpU User-Mode Landing Pads
+===== Zicfilp_U User-Mode Landing Pads
 
-include::{testplansdir}/priv/ZicfilpU.adoc[]
+include::{testplansdir}/priv/Zicfilp_U.adoc[]
 
-===== ZicfilpSm Machine-Mode Landing Pads
+===== Zicfilp_Sm Machine-Mode Landing Pads
 
-include::{testplansdir}/priv/ZicfilpSm.adoc[]
+include::{testplansdir}/priv/Zicfilp_Sm.adoc[]
 
-===== ZicfilpS Supervisor-Mode Landing Pads
+===== Zicfilp_S Supervisor-Mode Landing Pads
 
-include::{testplansdir}/priv/ZicfilpS.adoc[]
+include::{testplansdir}/priv/Zicfilp_S.adoc[]
 
 include::norm/Zicfilp_norm_rules.adoc[]
 
@@ -116,20 +141,28 @@ include::norm/Zicfiss_norm_rules.adoc[]
 
 ==== Zawrs Wait on Reservation Set
 
+The Zawrs suite has one covergroup per privilege mode the tests run in: Zawrs_Sm_cg (M-mode), Zawrs_S_cg (S-mode) and Zawrs_U_cg (U-mode).
 Waits until timer interrupt or timeout on a single hart that cannot modify the reservation set.  Tests behave differently in
-different privilege modes, so a suite is defined for each.
+different privilege modes, so a group is defined for each.
+The Zawrs_Sm tests require Sm, so they are not part of a certificate without Sm, such as RVA23.
 
-include::{testplansdir}/priv/ZawrsSm.adoc[]
+include::{testplansdir}/priv/Zawrs_common.adoc[]
 
-include::{testplansdir}/priv/ZawrsS.adoc[]
+===== Zawrs_Sm
 
-include::{testplansdir}/priv/ZawrsU.adoc[]
+include::{testplansdir}/priv/Zawrs_Sm.adoc[]
 
-include::norm/ZawrsSm_norm_rules.adoc[]
+===== Zawrs_S
 
-include::norm/ZawrsS_norm_rules.adoc[]
+include::{testplansdir}/priv/Zawrs_S.adoc[]
 
-include::norm/ZawrsU_norm_rules.adoc[]
+===== Zawrs_U
+
+include::{testplansdir}/priv/Zawrs_U.adoc[]
+
+===== Zawrs Normative Rules
+
+include::norm/Zawrs_norm_rules.adoc[]
 
 These tests require support for MTI and/or STI interrupts.
 Note that these tests can have race conditions of timeouts, timer interrupts, and spontaneous resumption, and thus may be fussy on different implementations.
