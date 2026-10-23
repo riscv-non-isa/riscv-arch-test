@@ -1249,19 +1249,15 @@ function void exceptions_sample(int hart, int issue, ins_t ins);
 `ifdef ZCA_SUPPORTED
     Exceptions_Zc_cg.sample(ins);
 `endif // ZCA_SUPPORTED
-`ifdef S_SUPPORTED
 `ifdef EXCEPTIONS_ZICBO_ANY
-    Exceptions_ZicboS_cg.sample(ins);
+  `ifdef S_SUPPORTED
+      Exceptions_ZicboS_cg.sample(ins);
+  `endif // S_SUPPORTED
+  `ifndef EXCLUDE_SM
+      Exceptions_ZicboSm_cg.sample(ins);
+  `endif // EXCLUDE_SM
+  `ifdef U_SUPPORTED
+      Exceptions_ZicboU_cg.sample(ins);
+  `endif // U_SUPPORTED
 `endif // EXCEPTIONS_ZICBO_ANY
-`endif // S_SUPPORTED
-`ifndef EXCLUDE_SM
-`ifdef EXCEPTIONS_ZICBO_ANY
-    Exceptions_ZicboSm_cg.sample(ins);
-`endif // EXCEPTIONS_ZICBO_ANY
-`endif // EXCLUDE_SM
-`ifdef U_SUPPORTED
-`ifdef EXCEPTIONS_ZICBO_ANY
-    Exceptions_ZicboU_cg.sample(ins);
-`endif // EXCEPTIONS_ZICBO_ANY
-`endif // U_SUPPORTED
 endfunction
