@@ -3787,7 +3787,15 @@ def _generate_itrigger_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             if cause_gated:
                                 lines.append("#ifdef S_SUPPORTED")
                             lines.extend(_global_ie(mode, enable=False))
-                            wait = [f"RVTEST_IDLE_FOR_INTERRUPT(x{t1})"] if cause in (3, 7, 11) else []
+                            # The M-level sources reach mip only eventually. They are raised only with origin Sm,
+                            # so the wait runs in M-mode and polls mip instead of idling for the whole latency.
+                            wait = (
+                                [
+                                    f"RVTEST_WAIT_MIP_PENDING_M(x{t1}, x{t2}, {cause}) # until interrupt {cause} is pending"
+                                ]
+                                if cause in (3, 7, 11)
+                                else []
+                            )
                             if mode == "Sm":
                                 lines.append("csrci mstatus, 0x2 # SIE=0 while the source is prepared")
                                 if gated:
