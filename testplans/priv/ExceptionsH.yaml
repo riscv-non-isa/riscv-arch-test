@@ -2,93 +2,118 @@
 suite: ExceptionsH
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=1980169189#gid=1980169189
 notes: |
-  Note: M trap handler should log mcause/mepc/mtval/mstatus/mtinst/mtval2. Only certain mstatus bits need to be saved: GVA, SPP, MPP, SPIE, MPIE, MPV.
-  HS trap handler should log scause/sepc/stval/sstatus/hstatus/htinst/htval.  Only certain bits of status: hstatus.GVA/SPV/SPVP.  sstatus.SPP, SPIE
+  The suite boots to HS-mode.  medeleg delegates to HS-mode every exception but the ecalls from HS-mode and M-mode (bits 9 and 11 are 0, so T-SBI calls from HS-mode reach M-mode).  hedeleg is 0 except where a test delegates to VS-mode.  Traps that must be taken in M-mode are in ExceptionsHSm.
+  The trap handlers record every trap.  An HS-mode record holds scause, sepc, stval, htval, htinst, sstatus.SPP/SPIE and hstatus.SPVP/SPV/GVA.  An M-mode record holds mcause, mepc, mtval, mtval2, mtinst, mstatus.MPP/MPIE and mstatus.MPV/GVA.  A VS-mode record holds vscause, vsepc, vstval and vsstatus.SPP/SPIE/SIE.
+  Each checked ecall is the T-SBI call RVTEST_TSBI_ECALL_RECORD, which the handler that takes it records like any other exception.
+  htinst and mtinst are checked on every trap: zero, or for a load, store, AMO, HLV, HLVX or HSV exception (causes 4-7, 13, 15, 21, 23) the transformed instruction with Addr. Offset equal to xtval minus the original address.  A required pseudoinstruction must match the reference model exactly.
 coverpoints:
-  - heading: VS trap handler should log scause/spec/stval/sstatus (these will be the VS versions).  Save sstatu.SPP, SPIE
-  - name: cp_hedeleg
+  - name: |-
+      cp_hedeleg_instr_misaligned_jalr
+      cp_hedeleg_instr_access_fault
+      cp_hedeleg_illegal_instruction
+      cp_hedeleg_breakpoint
+      cp_hedeleg_load_misaligned
+      cp_hedeleg_load_access_fault
+      cp_hedeleg_store_misaligned
+      cp_hedeleg_store_access_fault
+      cp_hedeleg_ecall
     goal: Delegation to HS or VS
-    description: Attempt {instruction/load/store access fault, instruction/load/store misaligned fault, illegal instruction, ebreak, ecall} crossed with privilege mode M/HS/VS/VU/U crossed with medeleg = {0s/1111_0000_1011_0111_1111_111?} crossed with hedeleg = {0s/ 0000_11?0_1?11_0001_1111_111?/(walking 1s in hedeleg[8:1])}
+    description: |-
+      In VS-mode and VU-mode, attempt {jalr to an aligned and a misaligned target at the access-fault address, jalr to the access-fault address, illegal instruction all 0s and all 1s, ebreak, each load and store at scratch + 0-7, each load and store at the access-fault address, ecall} with medeleg as set by the boot, crossed with hedeleg = {0, each of bits 0-8 alone, all writable bits}.
+      hedeleg bit 0 is a bin only when IALIGN = 32; bits 16 and 20-23 are read-only 0.  The access-fault cases need RVMODEL_ACCESS_FAULT_ADDRESS.
     expectation: |-
-      VU/U/VS delegate to VS when bit is set in both delegation registers.
-      Check xcause, xtval, xtinst, xepc, mtval2, xstatus.GVA field, other xtstaus bits relevant to traps and other fields visible at the receiving priv level.
-      The ecall is checked through the trap record, which shows the mode that took it and its cause.
-    bins: |-
-      9 exceptions * 5 priv modes  * 2 medeleg * 9 hedeleg
-      *** might be too many
-    id: "*** a version of this is needed in VMH for page faults.  Umer doing this."
+      An exception goes to VS-mode when its bit is set in both medeleg and hedeleg, and otherwise to HS-mode.  An ecall from VS-mode always goes to HS-mode (hedeleg[10] is read-only 0).  Misaligned fetches, loads and stores trap or complete as the reference model does.
+      The trap record holds xcause, xepc, xtval, the status fields written by the trap and, in HS-mode, htval and htinst.
+    bins: 9 exceptions * 2 modes * 11 hedeleg (* 8 offsets for misaligned loads and stores)
     notes: |-
-      Also covers {m/h}status.GVA; see also cp_gva
+      Also covers hstatus.GVA, which these traps set when they write a guest virtual address to stval.  Page-fault and guest-page-fault delegation is in SvH cp_hedeleg_page_fault and cp_hedeleg_guest_page_fault.
+  - name: cp_hedeleg_hs_u
+    goal: Traps from HS and U ignore hedeleg
+    description: In HS-mode and U-mode with hedeleg = all writable bits, raise the same exceptions as cp_hedeleg.
+    expectation: Only traps from V = 1 consult hedeleg.  Each exception goes to HS-mode, except an ecall from HS-mode, which goes to M-mode (medeleg[9] = 0).
+    bins: 9 exceptions * 2 modes
   - name: cp_ecall_to_vs
     goal: ecall to VS sets status bits
-    description: Delegate ecalls from VU to VS with medeleg and hedeleg.  Make ecall from VU to VS. Check vsstatus.SPP, vsstatus.SPIE, vsstatus.SIE.
-    expectation: status bits written per spec
-    bins: 1 priv modes
+    description: With medeleg[8] = hedeleg[8] = 1 and vsstatus.SIE = {0/1}, ecall from VU-mode.
+    expectation: Trap to VS-mode with vscause = 8, vsstatus.SPP = 0, vsstatus.SPIE = the old SIE and vsstatus.SIE = 0.
+    bins: 2 vsstatus.SIE
   - name: cp_ecall_to_hs
     goal: ecall to HS sets status bits
-    description: Delegate ecalls from {U, VS, VU} to HS with medeleg with hedeleg = 0.  Make ecall to HS cross with hstatus.SPVP={0/1}.  Check hstatus.SPP/SPV/SPVP/GVA, sstatus.SIE/SPIE
-    expectation: status bits written per spec
-    bins: "4"
-  - name: cp_ecall_to_m
-    goal: ecall to M sets status bits
-    description: No delegation of ecalls.  Make ecall from M/HS/U/VS/VU to M.  Check mstatus.MPV/MPP/GVA/MPIE/MIE
-    expectation: status bits written per spec
-    bins: "5"
-    id: mode x medeleg ecall bits 0 x mstatus
-    notes: |-
-      note: medelg ecall bits 0 (check for this)
-  - name: cp_ebreak_to_m
-    goal: ebreak to M sets status bits
-    description: No delegation of ebreak.  Make ebreak from M/HS/U/VS/VU to M.  Check mstatus.MPV/MPP/GVA/MPIE/MIE
-    expectation: status bits written per spec
-    bins: "5"
+    description: With hedeleg = 0 and medeleg delegating ecalls from U and VS, ecall from {U, VS, VU} crossed with hstatus.SPVP = {0/1}, set before the ecall.
+    expectation: |-
+      Trap to HS-mode with scause = 8 (U, VU) or 10 (VS), sstatus.SPP = the nominal privilege, sstatus.SPIE = the old SIE, sstatus.SIE = 0, hstatus.SPV = the old V and hstatus.GVA = 0.
+      hstatus.SPVP becomes the nominal privilege for traps from VS and VU, and is unchanged for traps from U.
+    bins: 3 modes * 2 SPVP
   - name: cp_vstvec
-    goal: ecall to VS uses vstvec
-    description: Delegate ecall from {VU, VS} to VS with medeleg and hedeleg. Point vstvec to a different trap handler than stvec.  Make ecall to VS from VU/VS
-    expectation: Goes to vstvec handler
-    bins: "2"
-    notes: |-
-      Should this move to SvH because of page faults?
+    goal: Traps delegated to VS use vstvec
+    description: With hedeleg[3] = hedeleg[8] = 1 and vstvec pointing to a different trap handler than stvec, ebreak from VS-mode and ebreak and ecall from VU-mode.
+    expectation: Each trap goes to the vstvec handler.  An ecall from VS-mode is never delegated to VS-mode (hedeleg[10] is read-only 0), so it is not part of this coverpoint.
+    bins: "3"
   - name: cp_priority
     goal: priority of illegal/virtual instruction, misaligned, access fault
-    description: Execute {hlv.w / hsv.w} x {legal/illegal address} x {addr[1:0] = 00/01} x {priv=M/HS/VS/VU/U} x hstatus.HU={0/1} to cause all combinations of illegal, virtual, access fault misaligned
-    expectation: Highest priority exception should occur
-    bins: 2 instr * 2 access * 2 misaligned * 5 priv * 2 HU
-  - name: cp_virtual_instr_vs
+    description: In each of HS, VS, U and VU modes with hstatus.HU = {0/1}, execute {hlv.w / hsv.w} x {scratch / access-fault address} x {addr[1:0] = 00/01}.  vsatp and hgatp are Bare.
+    expectation: |-
+      Virtual instruction in VS and VU.  Illegal instruction in U with HU = 0.  Otherwise an aligned access to scratch completes, and the other accesses raise the access fault or address-misaligned exception the reference model raises (misaligned accesses to scratch may complete; the order of address-misaligned and access faults is implementation-defined).
+      HU has no effect outside U-mode.
+    bins: 4 priv * 2 instr * 2 access * 2 misaligned * 2 HU
+  - name: |-
+      cp_virtual_instr_vs_instret
+      cp_virtual_instr_vs_rv32_instreth_mcounter
+      cp_virtual_instr_vs_execute_hypervisor
+      cp_virtual_instr_vs_read_vstval_htval
+      cp_virtual_instr_vs_mstatus_vsatp
+      cp_virtual_instr_vs_mstatus_hgatp
+      cp_virtual_instr_vs_sret
+      cp_virtual_instr_vs_s_vma_instr
+      cp_virtual_instr_vs_satp
+      cp_virtual_instr_vs_rv32_hedelegh
     goal: exercise all ways to trigger virtual-instruction exceptions from VS
     description: |-
-      read instret with hcounteren[2] = 0, mcounteren[2] = 1
+      In VS-mode with mstatus.TVM = TW = 0:
+      read instret with hcounteren[2] = 0, mcounteren[2] = 1 (Zicntr)
       execute hlv.w, hlvx.wu, hsv.w, hfence.vvma, hfence.gvma
-      read vstval, htval
-      with mstatus.TVM = 0, read satp, vsatp
-      sret with hstatus.VTSR=1
-      {sfence.vma, sinval.vma, read satp} with hstatus.VTVM=1
+      read vstval, htval, vsatp, hgatp
+      sret with hstatus.VTSR = 1
+      {sfence.vma, sinval.vma (Svinval), read satp} with hstatus.VTVM = 1
       RV32 only:
-      access instreth with hcounteren[2] = 0, mcounteren[2] = 1
-      read hedelegh
-    expectation: virtual instruction exception
-    bins: 14+
-    id: "*** check which fences belong in each."
-    notes: wfi with hstatus.VTW=1 moved to InterruptsH cp_wfi_vs.
-  - name: cp_virtual_instr_vu
+      read instreth with hcounteren[2] = 0, mcounteren[2] = 1 (Zicntr)
+      read hedelegh (Priv 1.13)
+    expectation: virtual instruction exception; rd keeps its value and hsv.w does not write memory
+    bins: 14, + 2 on RV32
+    notes: |-
+      wfi with hstatus.VTW = 1 is in InterruptsH cp_wfi_vs.  Some of these cases are also sampled by H, HSm and ZicntrH coverage.
+  - name: |-
+      cp_virtual_instr_vu_instret_1
+      cp_virtual_instr_vu_instret_2
+      cp_virtual_instr_vu_rv32_instreth_1
+      cp_virtual_instr_vu_rv32_instreth_2
+      cp_virtual_instr_vu_execute_h
+      cp_virtual_instr_vu_read_vstval_htval
+      cp_virtual_instr_vu_read_stval
+      cp_virtual_instr_vu_satp
+      cp_virtual_instr_vu_vsatp
+      cp_virtual_instr_vu_wfi
+      cp_virtual_instr_vu_sret
+      cp_virtual_instr_vu_sfence_vma
+      cp_virtual_instr_vu_rv32_hedelegh
     goal: exercise all ways to trigger virtual-instruction exceptions from VU
     description: |-
-      in VU:
-      read instret with hcounteren[2] = 0, scounteren[2] = 1, mcounteren[2] = 1
-      read instret with hcounteren[2] = 1, scounteren[2] = 0, mcounteren[2] = 1
+      In VU-mode with mstatus.TVM = TW = 0:
+      read instret with hcounteren[2] = 0, scounteren[2] = 1, mcounteren[2] = 1 (Zicntr)
+      read instret with hcounteren[2] = 1, scounteren[2] = 0, mcounteren[2] = 1 (Zicntr)
       execute hlv.w, hlvx.wu, hsv.w, hfence.vvma, hfence.gvma
       read vstval, htval
-      read stval
-      with mstatus.TVM = 0, read satp, vsatp
-      wfi with mstatus.TW=0, no interrupt firing
+      read stval, satp, vsatp
+      wfi
       sret, sfence.vma
       RV32 only:
-      read instreth with hcounteren[2] = 0, scounteren[2] = 1, mcounteren[2] = 1
-      read instreth with hcounteren[2] = 1, scounteren[2] = 0, mcounteren[2] = 1
-      read hedelegh
-    expectation: virtual instruction exception
-    bins: 14+
-    id: "*** check which fences belong in each."
+      read instreth with hcounteren[2] = 0, scounteren[2] = 1, mcounteren[2] = 1 (Zicntr)
+      read instreth with hcounteren[2] = 1, scounteren[2] = 0, mcounteren[2] = 1 (Zicntr)
+      read hedelegh (Priv 1.13)
+    expectation: virtual instruction exception; rd keeps its value and hsv.w does not write memory
+    bins: 15, + 3 on RV32
+    notes: |-
+      Some of these cases are also sampled by H, HSm and ZicntrH coverage.
   - name: cp_virtual_instr_vs_tvm
     goal: mstatus.TVM does not affect VS-mode
     description: With mstatus.TVM = 1 and hstatus.VTVM = 0, in VS-mode csrr hgatp and vsatp
@@ -99,89 +124,69 @@ coverpoints:
     description: With mstatus.TVM = 1 and hstatus.VTVM = 0, in VU-mode csrr satp, vsatp and hgatp
     expectation: Virtual instruction exception, not illegal instruction
     bins: 3 CSRs
-  - name: cp_tsr_vs_sret
-    goal: mstatus.TSR does not affect VS-mode
-    description: "ExceptionsHSm (boots to M-mode): with mstatus.TSR = 1 and hstatus.VTSR = {0/1}, execute sret in VS-mode with vsstatus.SPP = 1 and SPIE = 0"
-    expectation: sret executes and stays in VS-mode when VTSR = 0; virtual instruction exception when VTSR = 1
-    bins: 2 VTSR
   - name: cp_loadstore_priv
     goal: Valid privilege modes of hypervisor load/store
-    description: In each privilege mode {M/HS/VS/U/VU} with hstatus.HU={0/1}, attempt {HLV.W, HLVX.W, HSV.W} from scratch memory
-    expectation: succeeds in M, HS; virtual-instruction in VS,VU; illegal instruction in U with HU=0
-    bins: 5 priv * 2 HU
-  - name: cp_hfence_priv
-    goal: valid priv mode of hypervisor fences
-    description: In each privilege mode {M/HS/VS/U/VU} with mstatus.TVM={0/1}, hstatus.VTVM = {0/1}, attempt {sfence.vma, hfence.vvma, hfence.gvma}
-    expectation: Illegal instruction in U/VU-mode or in HS-mode with TVM=1.  Virtual instruction exception in VS-mode.  Otherwise succeed.
-    bins: 5 priv * 2 TVM * 2 VTMV
-  - name: cp_hlv_address_misaligned
-    goal: Hypervisor Load Misaligned
-    description: In M mode with identity page tables set up and XR permission, attempt hlv.{b, bu, h, hu, w} and hlvx.{hu, wu} with every combination of three lsbs:000-111.  For RV64, also hlv.d and hlv.wu
-    expectation: Success or load misaligned, affected by Zicclsm
-    bins: 8 instr * 8 addr
-  - name: cp_hlv_access_fault
-    goal: Hypervisor Load Access Fault
-    description: In M mode with identity page tables set up and XR permission, attempt hlv.{b, bu, h, hu, w} and hlvx.{hu, wu} from an illegal address (parameterized).  For RV64, also hlv.d and hlv.wu
-    expectation: Access fault
-    bins: 8 instr
-  - name: cp_hsv_address_misaligned
-    goal: Hypervisor Store Misaligned
-    description: In M mode with identity page tables set up and WR permission, attempt hsv.{b, h, w} with every combination of three lsbs:000-111.  For RV64, also hsv.d.
-    expectation: Success or store misaligned, affected by Zicclsm
-    bins: 3 instr * 8 addr
-  - name: cp_hsv_access_fault
-    goal: Hypervisor Store Access Fault
-    description: In M mode with identity page tables set up and WR permission, attempt hsv.{b, h, w} from an illegal address (parameterized).  For RV64, also hsv.d.
-    expectation: Access fault
-    bins: 3 instr
+    description: In each privilege mode {HS/VS/U/VU} with hstatus.HU = {0/1}, attempt {HLV.W, HLVX.WU, HSV.W} on scratch memory.  vsatp and hgatp are Bare.
+    expectation: Succeeds in HS, and in U with HU = 1; virtual instruction in VS and VU; illegal instruction in U with HU = 0.  The hsv.w result is read back.
+    bins: 4 priv * 3 instr * 2 HU
+  - name: cp_hstatus_gva
+    goal: An HLV or HSV fault taken into HS-mode sets hstatus.GVA
+    description: In HS-mode, and in U-mode with hstatus.HU = 1, execute hlv.w and hsv.w at the access-fault address (part of the cp_priority test).
+    expectation: Access fault into HS-mode with stval = the guest virtual address and hstatus.GVA = 1.
+    bins: 2 modes * 2 instr
   - name: cp_xtinst_instr_misaligned
     goal: Instruction address misaligned writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, random value written to mtinst and mtval2, jump to misaligned address.  Note medeleg 0/1 refers to all bits except ecall from M/HS mode
-    expectation: If Zca supported, no fault.  Otherwise, Instruction misaligned trap with {m/h}tinst = 0 or custom,  Trap to machine also sets mtval2 = 0.
-    bins: "2"
-    id: mtinst could be hardwired to 0 and would ignore random value
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, jump to a misaligned address.
+    expectation: Instruction misaligned trap into HS-mode with htval = 0 and htinst = 0.
+    bins: "1"
+    notes: |-
+      Compiled only without Zca, when misaligned fetches trap.  Of the current H configurations only sargantana-rv64imafdb assembles it.
   - name: cp_xtinst_instr_access
-    goal: Instruction acc fault writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, random value written to mtinst and mtval2, jump to access fault address
-    expectation: Inst Access fault with {m/h}tinst = 0.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    goal: Instruction access fault writes xtinst
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, jump to the access-fault address.
+    expectation: Instruction access fault into HS-mode with htval = 0 and htinst = 0.
+    bins: "1"
   - name: cp_xtinst_illegalinstr
     goal: Illegal instruction writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, execute illegal instruction all 0s
-    expectation: Illegal Instr fault with {m/h}tinst = 0.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, execute illegal instruction all 0s.
+    expectation: Illegal instruction fault into HS-mode with htval = 0 and htinst = 0.
+    bins: "1"
   - name: cp_xtinst_breakpoint
     goal: breakpoint writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, execute ebreak
-    expectation: Breakpoint exception with {m/h}tinst = 0 or custom.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, execute ebreak.
+    expectation: Breakpoint exception into HS-mode with htval = 0 and htinst = 0.
+    bins: "1"
   - name: cp_xtinst_virtinstr
     goal: Virtual instruction writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, csrr vstval
-    expectation: Virtual instr exception with {m/h}tinst = 0 or custom.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, csrr vstval.
+    expectation: Virtual instruction exception into HS-mode with htval = 0 and htinst = 0.
+    bins: "1"
   - name: cp_xtinst_load_misaligned
     goal: load misaligned writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, misaligned load
-    expectation: If Zicclsm supported, no fault.  Otherwise Load misaligned exception with {m/h}tinst = 0 or transformed or custom.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, misaligned lw.
+    expectation: Load misaligned exception into HS-mode with htval = 0 and htinst = 0 or the transformed lw.
+    bins: "1"
+    notes: |-
+      Compiled only when the hart does not perform misaligned loads and stores (UDB MISALIGNED_LDST = false).  Of the current H configurations only sargantana-rv64imafdb assembles it.
   - name: cp_xtinst_load_access
-    goal: load access writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, load access fault
-    expectation: Load access exception with {m/h}tinst = 0 or transformed or custom.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    goal: load access fault writes xtinst
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, lw from the access-fault address.
+    expectation: Load access fault into HS-mode with htval = 0 and htinst = 0 or the transformed lw.
+    bins: "1"
   - name: cp_xtinst_store_misaligned
     goal: store misaligned writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, misaligned store
-    expectation: Store misaligned exception with {m/h}tinst = 0 or transformed or custom.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, misaligned sw.
+    expectation: Store misaligned exception into HS-mode with htval = 0 and htinst = 0 or the transformed sw.
+    bins: "1"
+    notes: |-
+      Compiled only when the hart does not perform misaligned loads and stores (UDB MISALIGNED_LDST = false).  Of the current H configurations only sargantana-rv64imafdb assembles it.
   - name: cp_xtinst_store_access
-    goal: store access writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0, store access fault
-    expectation: If Zicclsm supported, no trap. Otherwise store access exception with {m/h}tinst = 0 or transformed or custom.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    goal: store access fault writes xtinst
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, sw to the access-fault address.
+    expectation: Store access fault into HS-mode with htval = 0 and htinst = 0 or the transformed sw.
+    bins: "1"
   - name: cp_xtinst_ecall
     goal: ecall writes xtinst
-    description: From VS mode with medeleg = {0/1}, hedeleg = 0,ecall
-    expectation: ecall from vs mode with {m/h}tinst = 0 or custom.  Trap to machine also sets mtval2 = 0.
-    bins: "2"
+    description: From VS mode with hedeleg = 0, after HS-mode writes a nonzero value to htval and htinst, ecall.
+    expectation: Environment call from VS-mode (cause 10) into HS-mode with htval = 0 and htinst = 0.
+    bins: "1"
