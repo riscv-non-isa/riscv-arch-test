@@ -197,7 +197,6 @@ def gen_seed_entropy_zero_non_es16_tests(test_data: TestData, covergroup: str, m
     "Zkr",
     required_extensions=["Zkr", "Sm"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="ZkrSm",
 )
 def make_zkrsm(test_data: TestData) -> list[TestChunk]:
     """Generate the Zkr seed tests in M-mode."""
@@ -216,7 +215,6 @@ def make_zkrsm(test_data: TestData) -> list[TestChunk]:
     "Zkr",
     required_extensions=["Zkr", "S"],
     extra_defines=["#define BOOT_TO_SMODE"],
-    seed_name="ZkrS",
 )
 def make_zkrs(test_data: TestData) -> list[TestChunk]:
     """Generate the Zkr seed tests in S-mode."""
@@ -234,7 +232,6 @@ def make_zkrs(test_data: TestData) -> list[TestChunk]:
 @add_priv_test_generator(
     "Zkr",
     required_extensions=["Zkr", "U"],
-    seed_name="ZkrU",
 )
 def make_zkru(test_data: TestData) -> list[TestChunk]:
     """Generate the Zkr seed tests in U-mode."""
