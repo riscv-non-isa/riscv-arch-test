@@ -11,13 +11,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 `define COVER_EXCEPTIONS
-`ifdef EXCLUDE_SM
-    `ifdef U_SUPPORTED
-        `define EXCEPTIONS_SM_OR_U
-    `endif
-`else
-    `define EXCEPTIONS_SM_OR_U
-`endif
+
 `ifdef ZICBOM_SUPPORTED
     `define EXCEPTIONS_ZICBO_ANY
 `elsif ZICBOZ_SUPPORTED
@@ -27,7 +21,6 @@
 `endif
 
 `ifdef F_SUPPORTED
-`ifdef EXCEPTIONS_SM_OR_U
 covergroup Exceptions_F_cg with function sample(ins_t ins);
     option.per_instance = 0;
 
@@ -135,7 +128,6 @@ covergroup Exceptions_F_cg with function sample(ins_t ins);
     `endif
 endgroup
 
-`endif // EXCEPTIONS_SM_OR_U
 `endif // F_SUPPORTED
 
 `ifdef S_SUPPORTED
@@ -681,7 +673,6 @@ endgroup
 `endif // U_SUPPORTED
 
 `ifdef ZAAMO_SUPPORTED
-`ifdef EXCEPTIONS_SM_OR_U
 covergroup Exceptions_Zaamo_cg with function sample(ins_t ins);
     option.per_instance = 0;
 
@@ -752,11 +743,9 @@ covergroup Exceptions_Zaamo_cg with function sample(ins_t ins);
 
 endgroup
 
-`endif // EXCEPTIONS_SM_OR_U
 `endif // ZAAMO_SUPPORTED
 
 `ifdef ZALRSC_SUPPORTED
-`ifdef EXCEPTIONS_SM_OR_U
 covergroup Exceptions_Zalrsc_cg with function sample(ins_t ins);
     option.per_instance = 0;
 
@@ -862,11 +851,9 @@ covergroup Exceptions_Zalrsc_cg with function sample(ins_t ins);
     `endif
 endgroup
 
-`endif // EXCEPTIONS_SM_OR_U
 `endif // ZALRSC_SUPPORTED
 
 `ifdef ZCA_SUPPORTED
-`ifdef EXCEPTIONS_SM_OR_U
 covergroup Exceptions_Zc_cg with function sample(ins_t ins);
     option.per_instance = 0;
 
@@ -939,7 +926,6 @@ covergroup Exceptions_Zc_cg with function sample(ins_t ins);
     `endif
 endgroup
 
-`endif // EXCEPTIONS_SM_OR_U
 `endif // ZCA_SUPPORTED
 
 `ifdef S_SUPPORTED
@@ -1243,9 +1229,7 @@ endgroup
 
 function void exceptions_sample(int hart, int issue, ins_t ins);
 `ifdef F_SUPPORTED
-`ifdef EXCEPTIONS_SM_OR_U
     Exceptions_F_cg.sample(ins);
-`endif // EXCEPTIONS_SM_OR_U
 `endif // F_SUPPORTED
 `ifdef S_SUPPORTED
     Exceptions_S_cg.sample(ins);
@@ -1257,19 +1241,13 @@ function void exceptions_sample(int hart, int issue, ins_t ins);
     Exceptions_U_cg.sample(ins);
 `endif // U_SUPPORTED
 `ifdef ZAAMO_SUPPORTED
-`ifdef EXCEPTIONS_SM_OR_U
     Exceptions_Zaamo_cg.sample(ins);
-`endif // EXCEPTIONS_SM_OR_U
 `endif // ZAAMO_SUPPORTED
 `ifdef ZALRSC_SUPPORTED
-`ifdef EXCEPTIONS_SM_OR_U
     Exceptions_Zalrsc_cg.sample(ins);
-`endif // EXCEPTIONS_SM_OR_U
 `endif // ZALRSC_SUPPORTED
 `ifdef ZCA_SUPPORTED
-`ifdef EXCEPTIONS_SM_OR_U
     Exceptions_Zc_cg.sample(ins);
-`endif // EXCEPTIONS_SM_OR_U
 `endif // ZCA_SUPPORTED
 `ifdef S_SUPPORTED
 `ifdef EXCEPTIONS_ZICBO_ANY
