@@ -426,17 +426,9 @@
         `cover_info("//      Zama16b - Enabled");
         `include "Zama16b_coverage_init.svh"
     `endif
-    `ifdef COVER_ZAWRSS
-        `cover_info("//      ZawrsS - Enabled");
-        `include "ZawrsS_coverage_init.svh"
-    `endif
-    `ifdef COVER_ZAWRSSM
-        `cover_info("//      ZawrsSm - Enabled");
-        `include "ZawrsSm_coverage_init.svh"
-    `endif
-    `ifdef COVER_ZAWRSU
-        `cover_info("//      ZawrsU - Enabled");
-        `include "ZawrsU_coverage_init.svh"
+    `ifdef COVER_ZAWRS
+        `cover_info("//      Zawrs - Enabled");
+        `include "Zawrs_coverage_init.svh"
     `endif
     `ifdef COVER_ZBA
         `cover_info("//      Zba - Enabled");

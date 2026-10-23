@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: ZawrsS
+suite: Zawrs_S
 source: https://docs.google.com/spreadsheets/d/1LpZQ1LwAInN2jjq_oDn_r8xIuPU7h_R_SpbgVbmUf54/edit?gid=0#gid=0
 notes: |
-  covergroup Zawrs
+  covergroup Zawrs_S
 coverpoints:
   - heading: tests for single core
   - name: cp_wrs_sto_timeout
@@ -122,9 +122,3 @@ coverpoints:
   - name: norm
     description: Since the timeout limit can be different across platforms, cannot test WRS.STO with a timer interrupt soon
     status: Zawrs_wrs-nto_stall_exec
-  - heading: "spec:"
-  - heading: As implementations are free to implement WFI as a NOP, software must explicitly check for
-  - heading: any relevant pending but disabled interrupts in the code following an WFI, and should loop
-  - heading: back to the WFI if no suitable interrupt was detected. The mip or sip registers can be
-  - heading: interrogated to determine the presence of any interrupt in machine or supervisor mode
-  - heading: respectively.
