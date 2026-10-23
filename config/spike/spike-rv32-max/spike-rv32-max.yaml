@@ -604,7 +604,8 @@ params:
   VSSTAGE_MODE_BARE: true
   VSTVEC_MODES: [0, 1]
   HSTATEEN_ENVCFG_TYPE: rw
-  IGNORE_INVALID_VSATP_MODE_WRITES_WHEN_V_EQ_ZERO: true
+  # Spike treats vsatp as WARL (base_atp_csr_t::compute_new_satp in riscv/csrs.cc); on RV32 every MODE is supported
+  IGNORE_INVALID_VSATP_MODE_WRITES_WHEN_V_EQ_ZERO: false
   # Spike's IMSIC has 31 guest interrupt files (GEILEN in riscv/platform.h), whatever the XLEN
   NUM_EXTERNAL_GUEST_INTERRUPTS: 31
   REPORT_ENCODING_IN_VSTVAL_ON_ILLEGAL_INSTRUCTION: true
