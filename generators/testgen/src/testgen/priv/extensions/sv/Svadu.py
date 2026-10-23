@@ -421,7 +421,6 @@ def _make_svadupmp(test_data: TestData, sv: SvMode) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "Svadu",
-    seed_name="SvaduPMP",
     required_extensions=["Sv32", "Svadu", "Sm"],
     march_extensions=["Svadu"],
     params=["NUM_PMP_ENTRIES: '>0'"],
@@ -433,7 +432,6 @@ def make_svadupmp_sv32(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "Svadu",
-    seed_name="SvaduPMP",
     required_extensions=["Sv39", "Svadu", "Sm"],
     march_extensions=["Svadu"],
     params=["NUM_PMP_ENTRIES: '>0'"],
@@ -445,7 +443,6 @@ def make_svadupmp_sv39(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "Svadu",
-    seed_name="SvaduPMP",
     required_extensions=["Sv48", "Svadu", "Sm"],
     march_extensions=["Svadu"],
     params=["NUM_PMP_ENTRIES: '>0'"],
@@ -457,7 +454,6 @@ def make_svadupmp_sv48(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "Svadu",
-    seed_name="SvaduPMP",
     required_extensions=["Sv57", "Svadu", "Sm"],
     march_extensions=["Svadu"],
     params=["NUM_PMP_ENTRIES: '>0'"],
