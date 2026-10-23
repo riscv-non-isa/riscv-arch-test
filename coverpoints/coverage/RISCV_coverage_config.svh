@@ -362,8 +362,8 @@
 `ifdef ZIBI_COVERAGE
   `include "Zibi_coverage.svh"
 `endif
-`ifdef ZIC64BZICBOZ_COVERAGE
-  `include "Zic64bZicboz_coverage.svh"
+`ifdef ZIC64B_COVERAGE
+  `include "Zic64b_coverage.svh"
 `endif
 `ifdef ZICBOM_COVERAGE
   `include "Zicbom_coverage.svh"
