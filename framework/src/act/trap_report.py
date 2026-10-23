@@ -59,11 +59,8 @@ INTERRUPT_CAUSES: dict[int, str] = {
 }
 
 # Mode encoding from signature
-# Mode 0 marks the reduced entry the M-mode T-SEE writes for TSBI_ECALL_TEST: it holds only
-# xEPC (word 2); the cause, status and other words are zero.
-TSEE_MODE = 0
 MODE_NAMES: dict[int, str] = {
-    TSEE_MODE: "T-SEE",
+    0: "Unknown",
     1: "S/HS",
     2: "VS",
     3: "M",
@@ -212,12 +209,9 @@ def _decode_all_traps(
         if pos + entry_size > len(raw_words):
             break
 
-        # Word 1: xcause (not recorded in a T-SEE entry)
+        # Word 1: xcause
         cause = raw_words[pos + 1]
-        if mode_raw == TSEE_MODE:
-            is_interrupt, cause_name = False, "ECALL_TEST; cause not recorded"
-        else:
-            is_interrupt, cause_name = _decode_cause(cause, xlen)
+        is_interrupt, cause_name = _decode_cause(cause, xlen)
 
         # Words 2+ depend on interrupt vs exception and entry size
         xepc: int | None = None
@@ -330,8 +324,6 @@ def _format_trap_report(entries: list[TrapEntry], test_name: str, xlen: int) -> 
         if entry.xepc is not None:
             label_str = f"  ({entry.test_label})" if entry.test_label else ""
             lines.append(f"  XEPC:    {_format_hex(entry.xepc, xlen)}{label_str}")
-        if entry.mode == MODE_NAMES[TSEE_MODE]:
-            continue  # a T-SEE entry records only xEPC
         if entry.xtval is not None:
             lines.append(f"  XTVAL:   {_format_hex(entry.xtval, xlen)}")
         if entry.xip is not None:

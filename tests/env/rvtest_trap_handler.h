@@ -106,9 +106,7 @@
 //      translation on and has registered a code alias for its code region
 //      (see TSBI_RELOCATE_EPC).
 //    TSBI_ECALL_TEST  (a0=0x73)       — Record the ecall in the trap signature and return
-//                                       past it with xEPC in a0. The S, HS and VS handlers
-//                                       record a full entry. The M-mode T-SEE records only
-//                                       xEPC, with mode 0 in word 0 (see TSEE_SIG).
+//                                       past it with xEPC in a0
 //    CSR_ACCESS       (a0=CSR opcode) — Execute CSR instruction; rd must be a0
 //    TSBI_LW/LWP4/LD  (a0=load opcode) — Load from physical address a1 into a0
 //    TSBI_SW/SWP4/SD  (a0=store opcode)— Store a2 to physical address a1
@@ -235,8 +233,7 @@
 // SECTION 5: MODE ENCODING CONSTANTS
 //
 // These constants encode privilege modes in various formats:
-//   - *MODE_SIG: 2-bit mode identifier stored in trap signature word 0 (bits 1:0);
-//                TSEE_SIG marks an ECALL_TEST entry written by the M-mode T-SEE
+//   - *MODE_SIG: 2-bit mode identifier stored in trap signature word 0 (bits 1:0)
 //   - MPP_*:     mstatus.MPP field values (bits 12:11)
 //   - *_LSB:     bit positions of key mstatus/hstatus fields
 //
@@ -247,7 +244,6 @@
 .set MMODE_SIG, 3                                // M-mode signature encoding (bits 1:0 = 11)
 .set SMODE_SIG, 1                                // S-mode signature encoding (bits 1:0 = 01)
 .set VMODE_SIG, 2                                // VS-mode signature encoding (bits 1:0 = 10)
-.set TSEE_SIG,  0                                // M-mode T-SEE ECALL_TEST entry (bits 1:0 = 00)
 
 #define GVA_LSB    6                             // hstatus.GVA bit position (guest virtual address indicator)
 #define MPP_LSB   11                             // mstatus.MPP LSB position (previous privilege mode, 2 bits)
@@ -750,8 +746,8 @@
 .endm
 
 // Test the ecall trap path via T-SBI. The handler records the ecall in the trap
-// signature (a reduced entry in the M-mode T-SEE) and returns past it. After this
-// macro, a0 contains the address of the ecall instruction itself.
+// signature and returns past it. After this macro, a0 contains the address of the
+// ecall instruction itself.
 .macro RVTEST_TSBI_ECALL_TEST
   .option push
   .option norvc                                  // ensure consistent code size
@@ -1351,7 +1347,7 @@ common_\__MODE__\()entry:                       // common entry for all traps in
 //   1. Check if cause is an ecall (causes 8..11) -> if not, go to normal trap sig
 //   2. Dispatch on the caller's a0 (still live — the handler never touches a0/a1):
 //      a. a0 in [1..5] -> GOTO_xMODE (set MPP/MPV, bump mepc, mret)
-//      b. a0 == 0x73   -> ECALL_TEST (reduced T-SEE trap record, xEPC in a0, bump mepc)
+//      b. a0 == 0x73   -> ECALL_TEST (record trap, return xEPC in a0, bump mepc)
 //      c. a0[6:0]==0x73 && a0[14:12]!=0 -> CSR_ACCESS (execute dynamic CSR instr)
 //      d. Otherwise    -> RESERVED (return -1 in a0)
 //   3. If not an SBI call: fall through to normal trap signature recording
@@ -1391,13 +1387,11 @@ tsbi_\__MODE__\()dispatch:
         //--------------------------------------------------------------
         // T-SBI ECALL_TEST handler (M-mode)
         //
-        // Records the ecall in the trap signature. M-mode trap state is part of the
-        // T-SEE, which a DUT may replace and whose behaviour is outside the tests' scope,
-        // so the record path writes a reduced entry that holds only mepc (see
-        // \__MODE__\()tsee_ecall_record). Returns past the ecall with a0 = mepc.
+        // Records the ecall in the trap signature and returns past it with a0 = mepc.
         //--------------------------------------------------------------
 tsbi_\__MODE__\()ecall_test:
-        j       \__MODE__\()trapsig_ptr_upd       // the M record path writes the reduced entry
+        csrr    a0, CSR_XEPC                       // a0 = mepc = ecall address (the record path keeps a0)
+        j       \__MODE__\()trapsig_ptr_upd       // record the trap and return past the ecall
 
         //--------------------------------------------------------------
         // T-SBI GOTO_xMODE handler (M-mode)
@@ -1660,7 +1654,7 @@ tsbi_\__MODE__\()reserved:                        // Unrecognized SBI operation
         j       resto_\__MODE__\()rtn              // sret to caller with a0 = -1
   .endif
 
-        //--- S-mode and VS-mode ECALL_TEST: record it like any other exception ---
+        //--- ECALL_TEST: record it like any other exception ---
 tsbi_\__MODE__\()ecall_test:
         csrr    a0, CSR_XEPC                       // a0 = sepc = ecall address (the record path keeps a0)
         j       \__MODE__\()trapsig_ptr_upd       // record the trap and return past the ecall
@@ -2238,41 +2232,9 @@ tsbi_instr_table:
         add     T4, T1, T2                          // T4 = this mode's updated trap sig write pointer
         bgtu    T4, T3, trap_sig_overflow           // overrun -> fail before corrupting the signature/tohost
 
-.ifc \__MODE__ , M
-        // In the M-mode handler, an ecall reaches the record path only as ECALL_TEST: the
-        // T-SBI dispatch services or rejects every other ecall. Its entry is reduced to what
-        // any T-SEE can supply. Word 0 holds the entry size with mode TSEE_SIG, word 2 holds
-        // mepc, and the other words are zero, because M-mode trap state such as the cause and
-        // mstatus is outside the tests' scope when the DUT supplies its own T-SEE.
-        LI(T4,(1<<(UDB_MXLEN-1))+((1<<12)-1))        // T4 = mask: MSB + cause[11:0]
-        and     T4, T4, T5                          // T4 = masked mcause
-        addi    T4, T4, -CAUSE_USER_ECALL           // maps ecall causes 8..11 to 0..3
-        srli    T4, T4, 2                           // 0 only for an ecall
-        bnez    T4, sv_\__MODE__\()vect            // not an ecall -> full entry
-\__MODE__\()tsee_ecall_record:
-        addi    T3, T2, TSEE_SIG                    // word 0: entry size in bits 5:2, mode TSEE_SIG
-        TRAP_SIGUPD(T4, T3, 0, sv_\__MODE__\()vect, sv_\__MODE__\()vect_str)
-        // word 1: cause not recorded
-        TRAP_SIGUPD(T4, x0, 1, sv_\__MODE__\()cause, sv_\__MODE__\()cause_str)
-        csrr    T3, CSR_XEPC                        // word 2: mepc
-        TRAP_SIGUPD(T4, T3, 2, sv_\__MODE__\()epc, sv_\__MODE__\()epc_str)
-        // word 3: mtval not recorded
-        TRAP_SIGUPD(T4, x0, 3, sv_\__MODE__\()tval, sv_\__MODE__\()tval_str)
-  #ifdef H_SUPPORTED
-        // words 4 and 5: mtval2 and mtinst not recorded
-        TRAP_SIGUPD(T4, x0, 4, sv_\__MODE__\()Mtval2, sv_Mtval2_str)
-        TRAP_SIGUPD(T4, x0, 5, sv_\__MODE__\()Mtinst, sv_Mtinst_str)
-  #endif
-        csrr    a0, CSR_XEPC                        // a0 = mepc = address of the ecall
-        addi    T3, a0, 4                           // skip the ecall
-        csrw    CSR_XEPC, T3
-        j       resto_\__MODE__\()rtn              // restore regs and mret (a0 carries the return value)
-.endif
-
 //---------- Trap Signature Word 0: vect+mode+status ----------
 // Packed format:
-//   bits  1: 0 = mode (MMODE_SIG=3, SMODE_SIG=1, VMODE_SIG=2; TSEE_SIG=0 for the reduced
-//                M-mode ECALL_TEST entry, whose other fields are zero)
+//   bits  1: 0 = mode (MMODE_SIG=3, SMODE_SIG=1, VMODE_SIG=2)
 //   bits  5: 2 = entry size in bytes (bits 1:0 of the size are zero)
 //   bits 10: 6 = vector number (compressed from 12*N to 5 bits)
 //   bit    11 = xIE[cause] (interrupt enable for this cause)

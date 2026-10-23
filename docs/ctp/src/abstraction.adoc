@@ -283,7 +283,7 @@ The SBI is invoked with the `ecall` instruction.  The operation is passed in `a0
 [%AUTOWIDTH]
 |===
 |Function Name|Operation(`a0`)|Description
-|TSBI_ECALL_TEST|0x00000073|Test `ecall` to the execution environment.  The trap handler records the `ecall` in the trap signature and returns past it with xEPC in `a0`.  An S-mode, HS-mode or VS-mode handler records a full entry.  The M-mode T-SEE records a reduced entry: word 0 holds the entry size with mode 0, word 2 holds `mepc`, and the other words are zero, because M-mode trap state is not part of the T-SEE's interface.
+|TSBI_ECALL_TEST|0x00000073|Test `ecall` to the execution environment.  The trap handler records the `ecall` in the trap signature and returns past it with xEPC in `a0`.
 |TSBI_CSR_SET|0x<CSR>5a073|Performs the functionality of a CSRS instruction specified by the opcode. `a1` contains the value to write. <CSR> is the 12-bit CSR encoding.
 |TSBI_CSR_CLEAR|0x<CSR>5b073|Performs CSRC instruction specified by the opcode.  `a1` contains the value to write.
 |TSBI_CSR_WRITE|0x<CSR>59073|Performs CSRW instruction specified by the opcode.  `a1` contains the value to write.
