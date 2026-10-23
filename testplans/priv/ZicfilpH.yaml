@@ -1,8 +1,14 @@
 # yaml-language-server: $schema=testplan.schema.json
 suite: ZicfilpH
 source: https://docs.google.com/spreadsheets/d/1ED9ontJZP-Dg2MAF-4mkhqKFgpjf6Fp6yeXKuW61FOY/edit?gid=1715431862#gid=1715431862
+notes: |
+  ZicfilpH boots to HS-mode and sets the landing pad enables from there: menvcfg.LPE through T-SBI, henvcfg.LPE and
+  senvcfg.LPE directly.  henvcfg.LPE enables landing pads in VS-mode and senvcfg.LPE in VU-mode.  hedeleg = 0, so
+  software-check exceptions are taken in HS-mode unless a test delegates them to VS-mode.  The trap record does not
+  hold SPELP, so the tests observe it through the instruction after the handler returns, which raises a
+  software-check exception exactly when ELP was restored to LP_EXPECTED.  The number of traps is recorded after each
+  case.
 coverpoints:
-  - heading: "General Test Environment: \n(VS/VU-mode, H-extension)\nThe suite boots to HS-mode and sets the landing pad enables from there: menvcfg.LPE through T-SBI, henvcfg.LPE and senvcfg.LPE directly. \nhenvcfg.LPE enables landing pads in VS-mode and senvcfg.LPE in VU-mode. \nhedeleg = 0, so software-check exceptions are taken in HS-mode unless a test delegates them to VS-mode. \nThe trap record does not hold SPELP, so the tests observe it through the instruction after the handler returns, which raises a software-check exception exactly when ELP was restored to LP_EXPECTED. The number of traps is recorded after each case."
   - name: cp_vs_lpe
     goal: henvcfg.LPE, not menvcfg.LPE, enables landing pads in VS-mode
     description: |-
