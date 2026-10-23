@@ -398,14 +398,8 @@
 `ifdef ZICCLSM_COVERAGE
   `include "Zicclsm_coverage.svh"
 `endif
-`ifdef ZICFILPS_COVERAGE
-  `include "ZicfilpS_coverage.svh"
-`endif
-`ifdef ZICFILPSM_COVERAGE
-  `include "ZicfilpSm_coverage.svh"
-`endif
-`ifdef ZICFILPU_COVERAGE
-  `include "ZicfilpU_coverage.svh"
+`ifdef ZICFILP_COVERAGE
+  `include "Zicfilp_coverage.svh"
 `endif
 `ifdef ZICNTR_COVERAGE
   `include "Zicntr_coverage.svh"

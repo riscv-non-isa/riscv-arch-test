@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: Zicfilp_common_reference
+suite: Zicfilp_common
 title: Zicfilp Common Coverpoints
 source: https://docs.google.com/spreadsheets/d/1ED9ontJZP-Dg2MAF-4mkhqKFgpjf6Fp6yeXKuW61FOY/edit?gid=1319034416#gid=1319034416
 coverpoints:

@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: ZicfilpS
+suite: Zicfilp_S
 source: https://docs.google.com/spreadsheets/d/1ED9ontJZP-Dg2MAF-4mkhqKFgpjf6Fp6yeXKuW61FOY/edit?gid=779370838#gid=779370838
 coverpoints:
   - heading: "In this sheet, all Zicfilp tests from the Zicfilp_common_reference sheet are re-executed in Supervisor Mode (S-mode).\n\nEnvironment:\n- Zicfilp extension enabled, Zicsr enabled.\n- Landing Pad Enabled (LPE) set according to privilege mode.\n- Tests execute in S-mode.\n\nExecution Notes:\n- All indirect branch instructions (JALR, C.JALR, C.JR) are exercised as in the M/U-mode sheet.\n- LPAD behavior, label matching, immediate encoding, and software-check exceptions are tested as per normative rules defined in the spec.\n- Privilege-specific CSRs (SPELP, sstatus) are used for capturing and verifying ELP state in S-mode.\n- Trap entry and return tests replicate M-mode tests but with S-mode as trap target.\n- All other assumptions, instruction types, and execution conditions are identical to the original Zicfilp testplan."

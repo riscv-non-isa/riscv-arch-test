@@ -1,12 +1,12 @@
 ##################################
-# priv/extensions/ZicfilpCommon.py
+# priv/extensions/Zicfilp.py
 #
-# Shared generators for the ZicfilpSm / ZicfilpS / ZicfilpU landing pad test suites.
+# Landing pad test generators for the Zicfilp suites (Sm, S and U groups).
 # umer@riscv.org Sep 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""Shared Zicfilp landing pad test generators, parameterized by the privilege mode the suite runs in."""
+"""ZicfilpSm, ZicfilpS and ZicfilpU privileged test generators, shared helpers and per-mode registrations."""
 
 from itertools import product
 from typing import Literal
@@ -15,6 +15,7 @@ from testgen.asm.helpers import arch_block, comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
+from testgen.priv.registry import add_priv_test_generator
 
 Priv = Literal["M", "S"]
 Mode = Literal["M", "S", "U"]
@@ -36,6 +37,11 @@ RESUME = [
     "addi x0, x0, 0 # ELP must be NO_LP_EXPECTED here, otherwise software-check exception",
     "lpad 0         # resume point after a software-check exception on the nop",
 ]
+
+
+def _split(covergroup: str) -> str:
+    """Split name for a test chunk: the group (Sm, S or U) of the covergroup."""
+    return covergroup.removeprefix("Zicfilp_").removesuffix("_cg")
 
 
 def set_lpe(priv: Mode, mode: Mode, reg: int, enable: bool) -> list[str]:
@@ -112,7 +118,7 @@ def indirect_elp_state_update_tests(test_data: TestData, priv: Mode, covergroup:
     """Every rs1 x {LPE disabled, enabled} x {LPAD, non-LPAD target} for one indirect jump kind."""
     coverpoint = f"cp_zicfilp_indirect_elp_state_update{'_c' if kind != 'jalr' else ''}"
     save_reg, temp_reg = test_data.int_regs.get_registers(2)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     tc.code.append(
         comment_banner(
             f"{coverpoint} ({kind})",
@@ -155,7 +161,7 @@ def indirect_elp_state_update_tests(test_data: TestData, priv: Mode, covergroup:
 def lpad_label_tests(test_data: TestData, priv: Mode, covergroup: str) -> TestChunk:
     """LPAD at the target of an ELP-setting jalr, c.jr and c.jalr: LPL and x7 label combinations."""
     jump_reg, save_reg, temp_reg = test_data.int_regs.get_registers(3)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     lines = [
         comment_banner(
             "cp_zicfilp_lpad_*",
@@ -231,7 +237,7 @@ def lpe_disabled_tests(test_data: TestData, priv: Mode, covergroup: str) -> Test
     """With xLPE=0, an LPAD reached by an indirect jump never checks its label."""
     coverpoint = "cp_disabled_zicfilp"
     jump_reg, save_reg, temp_reg = test_data.int_regs.get_registers(3)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     lines = [
         comment_banner(
             coverpoint,
@@ -270,7 +276,7 @@ def exception_priority_tests(test_data: TestData, priv: Mode, covergroup: str) -
     """Instruction access fault > software-check exception > illegal-instruction exception at an LPAD target."""
     coverpoint = "cp_exception_priority_zicfilp"
     jump_reg, save_reg, temp_reg = test_data.int_regs.get_registers(3)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     tc.code.extend(
         [
             comment_banner(
@@ -310,7 +316,7 @@ def lpad_nop_tests(test_data: TestData, priv: Mode, covergroup: str) -> TestChun
     """With xLPE=1 but ELP=NO_LP_EXPECTED, an LPAD is a no-op whatever its label or alignment."""
     coverpoint = "cp_lpad_nop_no_lp_expected_zicfilp"
     temp_reg = test_data.int_regs.get_register()
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     tc.code.extend(
         [
             comment_banner(
@@ -344,7 +350,7 @@ def lpad_alignment_tests(test_data: TestData, priv: Mode, covergroup: str) -> Te
     """With Zca an indirect jump may reach an LPAD at pc[1:0]=2, which raises a software-check exception."""
     coverpoint = "cp_lpad_alignment_exception_zicfilp"
     jump_reg, temp_reg = test_data.int_regs.get_registers(2)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     lines = [
         "#ifdef ZCA_SUPPORTED",
         comment_banner(
@@ -388,7 +394,7 @@ def direct_jump_tests(test_data: TestData, priv: Mode, covergroup: str) -> TestC
     """Direct jumps and taken branches are not indirect jumps, so they leave ELP=NO_LP_EXPECTED."""
     coverpoint = "cp_zicfilp_direct_ct_no_elp"
     temp_reg = test_data.int_regs.get_register()
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     lines = [
         comment_banner(
             coverpoint,
@@ -448,7 +454,7 @@ def trap_entry_tests(test_data: TestData, priv: Mode, covergroup: str) -> TestCh
     """A trap taken with ELP=NO_LP_EXPECTED saves xPELP=0, so xRET does not restore ELP."""
     coverpoint = "cp_pelp_trap_entry_zicfilp"
     temp_reg = test_data.int_regs.get_register()
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     tc.code.extend(
         [
             comment_banner(
@@ -471,7 +477,7 @@ def guarded_trap_entry_tests(test_data: TestData, priv: Mode, covergroup: str) -
     """Software-guarded branches (rs1 = x1/x5/x7) do not set ELP, so a trap at the target saves xPELP=0."""
     coverpoint = "cp_pelp_trap_entry_guarded_zicfilp"
     save_reg, temp_reg = test_data.int_regs.get_registers(2)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     lines = [
         comment_banner(
             coverpoint,
@@ -513,7 +519,7 @@ def elp_state_preservation_tests(test_data: TestData, priv: Mode, covergroup: st
     coverpoint = "cp_elp_state_preservation_zicfilp"
     origins = ("S", "U") if priv == "M" else ("U",)
     jump_reg, temp_reg = test_data.int_regs.get_registers(2)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     lines = [
         comment_banner(
             coverpoint,
@@ -652,7 +658,7 @@ def async_interrupt_tests(test_data: TestData, covergroup: str) -> TestChunk:
     """An interrupt taken right after an MRET that restored ELP=LP_EXPECTED saves MPELP=1."""
     coverpoint = "cp_elp_async_interrupt_zicfilp"
     temp_reg, save_reg, mie_reg = test_data.int_regs.get_registers(3)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     tc.code.extend(
         [
             "#ifdef S_SUPPORTED",
@@ -695,7 +701,7 @@ def trap_return_tests(test_data: TestData, priv: Priv, covergroup: str) -> TestC
     """xRET sets ELP=xPELP only if xLPE of the new mode is 1, and clears xPELP."""
     coverpoint = "cp_pelp_trap_return_zicfilp"
     temp_reg, mask_reg = test_data.int_regs.get_registers(2)
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(_split(covergroup))
     lines = [
         comment_banner(
             coverpoint,
@@ -724,3 +730,47 @@ def trap_return_tests(test_data: TestData, priv: Priv, covergroup: str) -> TestC
     tc.code.extend(lines)
     test_data.int_regs.return_registers([temp_reg, mask_reg])
     return test_data.end_test_chunk()
+
+
+@add_priv_test_generator(
+    "Zicfilp",
+    required_extensions=["Sm", "Zicfilp"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+)
+def make_zicfilpsm(test_data: TestData) -> list[TestChunk]:
+    """Generate Zicfilp landing pad tests in M-mode."""
+    covergroup = "Zicfilp_Sm_cg"
+    return [
+        *make_zicfilp_tests(test_data, "M", covergroup),
+        trap_entry_tests(test_data, "M", covergroup),
+        guarded_trap_entry_tests(test_data, "M", covergroup),
+        elp_state_preservation_tests(test_data, "M", covergroup),
+        trap_return_tests(test_data, "M", covergroup),
+        async_interrupt_tests(test_data, covergroup),
+    ]
+
+
+@add_priv_test_generator(
+    "Zicfilp",
+    required_extensions=["S", "Zicfilp"],
+    extra_defines=["#define BOOT_TO_SMODE"],
+)
+def make_zicfilps(test_data: TestData) -> list[TestChunk]:
+    """Generate Zicfilp landing pad tests in S-mode."""
+    covergroup = "Zicfilp_S_cg"
+    return [
+        *make_zicfilp_tests(test_data, "S", covergroup),
+        trap_entry_tests(test_data, "S", covergroup),
+        guarded_trap_entry_tests(test_data, "S", covergroup),
+        elp_state_preservation_tests(test_data, "S", covergroup),
+        trap_return_tests(test_data, "S", covergroup),
+    ]
+
+
+@add_priv_test_generator(
+    "Zicfilp",
+    required_extensions=["U", "Zicfilp"],
+)
+def make_zicfilpu(test_data: TestData) -> list[TestChunk]:
+    """Generate Zicfilp landing pad tests in U-mode."""
+    return make_zicfilp_tests(test_data, "U", "Zicfilp_U_cg")

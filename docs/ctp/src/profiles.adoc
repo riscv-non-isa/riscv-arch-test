@@ -209,9 +209,7 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Zacas|Atomic Compare-And-Swap|<<t-Zacas-coverpoints>>||||o|o
 |Zabha|Subword Atomics|<<t-Zabha-coverpoints>>||||o|o
 |Zama16b|Main memory PMA supports misaligned atomics within 16-byte regions|<<t-Zama16b-coverpoints>>|||||x
-|ZicfilpU|User Landing Pads|<<t-ZicfilpU-coverpoints>>||||o|o
-|ZicfilpSm|Machine Landing Pads|<<t-ZicfilpSm-coverpoints>>||||o|o
-|ZicfilpS|Supervisor Landing Pads|<<t-ZicfilpS-coverpoints>>||||o|o
+|Zicfilp|Landing Pads|<<t-Zicfilp_common-coverpoints>>||||o|o
 |ZicfissU|User Shadow Stack|<<t-ZicfissU-coverpoints>>||||o|o
 |ZicfissS|Supervisor Shadow Stack|<<t-ZicfissS-coverpoints>>||||o|o
 |ZicfissSm|Machine Shadow Stack|<<t-ZicfissSm-coverpoints>>||||o|o
