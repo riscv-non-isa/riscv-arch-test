@@ -425,9 +425,6 @@ _GUEST_SCENARIOS = [
         (_table("vlvl0", 9),),
         _INVALID,
     ),
-]
-
-_GSTAGE_SCENARIOS = [
     _table_scenario("hlvl1", "cp_pmp_pt", "G-stage"),
     _table_scenario("hlvl0", "cp_pmp_pt", "G-stage"),
     _Scenario(
@@ -443,9 +440,8 @@ _HLV_SCENARIOS = [
     _Scenario("none", "cp_pmp_hlv_pt", "PMP denies nothing"),
     *(_table_scenario(name, "cp_pmp_hlv_pt", "VS-stage") for name in ("Vroot", "vlvl1", "vlvl0")),
     _Scenario("spa", "cp_pmp_hlv_pt", "PMP denies the supervisor physical address", (_SPA,)),
+    *(_table_scenario(name, "cp_pmp_hlv_pt", "G-stage") for name in ("Hroot", "hlvl1", "hlvl0")),
 ]
-
-_HLV_GSTAGE_SCENARIOS = [_table_scenario(name, "cp_pmp_hlv_pt", "G-stage") for name in ("Hroot", "hlvl1", "hlvl0")]
 
 
 def _two_stage_chunk(
@@ -472,15 +468,13 @@ def _two_stage_chunk(
 
 def _make_two_stage_chunks(test_data: TestData) -> list[TestChunk]:
     """PMP on the final address and on the page tables of two-stage translation."""
-    # TODO: G-stage page-table reads have their own file (gstage_pt) because Sail writes mtval2 = GPA >> 2 on their
-    # access faults; hypervisor.adoc requires mtval2 = 0
     return [
         _two_stage_chunk(
             test_data,
             "guest",
-            "cp_pmp_after_translation, cp_pmp_pt, cp_pmp_pf_priority, cp_pmp_pt_priority",
+            "cp_pmp_after_translation, cp_pmp_pt, cp_pmp_pt_gpa, cp_pmp_pf_priority, cp_pmp_pt_priority",
             "jalr, sw and lw from VS-mode and VU-mode through a VS-stage and a G-stage kilopage mapping, under\n"
-            "PMP regions at the guest virtual, supervisor physical and VS-stage page-table addresses",
+            "PMP regions at the guest virtual, supervisor physical and page-table addresses",
             _GUEST_SCENARIOS,
             [],
         ),
@@ -488,19 +482,10 @@ def _make_two_stage_chunks(test_data: TestData) -> list[TestChunk]:
             test_data,
             "hlv_translated",
             "cp_pmp_hlv_pt",
-            "hsv.w, hlv.w and hlvx.wu from HS-mode through both mappings, under PMP regions at the VS-stage\n"
-            "page tables and the supervisor physical address",
+            "hsv.w, hlv.w and hlvx.wu from HS-mode through both mappings, under PMP regions at the page tables of\n"
+            "both stages and the supervisor physical address",
             [],
             _HLV_SCENARIOS,
-        ),
-        _two_stage_chunk(
-            test_data,
-            "gstage_pt",
-            "cp_pmp_pt, cp_pmp_pt_priority, cp_pmp_hlv_pt",
-            "PMP denies G-stage page tables for jalr, sw and lw from VS-mode and VU-mode, and for hsv.w, hlv.w\n"
-            "and hlvx.wu from HS-mode.  Accesses whose G-stage walk reads a denied table raise access faults",
-            _GSTAGE_SCENARIOS,
-            _HLV_GSTAGE_SCENARIOS,
         ),
     ]
 
