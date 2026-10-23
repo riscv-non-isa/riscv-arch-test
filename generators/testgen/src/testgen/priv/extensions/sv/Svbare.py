@@ -1,9 +1,8 @@
 ##################################
 # priv/extensions/sv/Svbare.py
 #
-# Svbare tests. The Sm group (formerly SvbareSm) holds the Bare-mode MPRV accesses, which need M-mode.
+# Svbare tests.
 # Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-# umer@riscv.org September 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
@@ -18,8 +17,7 @@ from testgen.priv.extensions.sv.generate import SvRegs, data_region, end_sv_test
 from testgen.priv.registry import add_priv_test_generator
 
 BARE_CROSSES = Crosses("Svbare_cg", "cp_satp_bare_store", "cp_satp_bare_load", "cp_satp_bare_exec")
-_SM_CG = "Svbare_Sm_cg"
-_MPRV_CROSSES = Crosses(_SM_CG, "cp_satp_bare_mprv_store", "cp_satp_bare_mprv_load", "cp_satp_bare_mprv_exec")
+_MPRV_CROSSES = Crosses("Svbare_Sm_cg", "cp_satp_bare_mprv_store", "cp_satp_bare_mprv_load", "cp_satp_bare_mprv_exec")
 
 
 def bare_rwx(
@@ -93,15 +91,14 @@ def make_svbare_umode(test_data: TestData) -> list[TestChunk]:
     "Svbare",
     required_extensions=["Sm", "S", "Svbare"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="SvbareSm",
 )
 def make_svbaresm_mprv(test_data: TestData) -> list[TestChunk]:
     regs = SvRegs.allocate(test_data)
-    chunk = begin_bare_test(test_data, regs, "Sm_Svbare_mstatus_mprv", _SM_CG)
+    chunk = begin_bare_test(test_data, regs, "Sm_Svbare_mstatus_mprv", "Svbare_Sm_cg")
     t = f"x{regs.scratch}"
     for number, mpp in ((1, "S"), (2, "U")):
         # The mstatus readback checks the setup that the mprv_mstatus coverpoint samples.
-        label = test_data.add_testcase(f"test{number}_mstatus", "mprv_mstatus", _SM_CG)
+        label = test_data.add_testcase(f"test{number}_mstatus", "mprv_mstatus", "Svbare_Sm_cg")
         chunk.code.extend(
             [
                 f"LI({t}, MSTATUS_MPRV)",
