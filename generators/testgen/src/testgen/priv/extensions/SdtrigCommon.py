@@ -3410,7 +3410,7 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
 # A case is (label, value, width): the access of `width` bits whose compare value is `value` (the data stored or
 # loaded, or the instruction encoding). A group is one tdata2 with the cases run against it: (tdata2, fire, nofire).
 # Each group has cases that fire and narrow cases that don't, each chosen to fire if size or match were misread:
-#   - tdata2 has bits set above N, and a stored register or the loaded word has other bits set above N, so a hart
+#   - a stored register or the loaded word has bits set above N (and tdata2 too, see _MS_TDATA2_ABOVE), so a hart
 #     that compares more than the low N bits misses the cases that should fire (norm:Sdtrig_mcontrol6_comparisons);
 #   - the data values have bit N-1 set and loads sign-extend, so an XLEN-wide or signed compare goes wrong;
 #   - equal/not-equal miss by one bit (the lowest and the top compared bits), ge/lt miss by one step and by a
@@ -3424,7 +3424,9 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
 _MS_MATCHES = (0, 1, 2, 3, 4, 5, 8, 9, 12, 13)
 _MS_SIZE_CODE = {8: 1, 16: 2, 32: 3, 64: 5}
 _MS_DATA = {8: 0xB6, 16: 0xB65A, 32: 0xB65A3C96, 64: 0xB65A3C960F1E2D4B}  # bit N-1 set
-_MS_TDATA2_ABOVE = 0xA5A5A5A5A5A5A5A5  # tdata2 bits above N
+# TODO: set to 0xA5A5A5A5A5A5A5A5 once ACT moves to a Sail release that compares only the low N bits of tdata2
+# (sail-riscv#2038). Sail 0.16 compares all of tdata2, so its expected signatures would fail a correct DUT
+_MS_TDATA2_ABOVE = 0  # tdata2 bits above N
 _MS_DATA_ABOVE = 0x5A5A5A5A5A5A5A5A  # stored register / loaded word bits above N
 _MS_STORE = {8: "sb", 16: "sh", 32: "sw", 64: "sd"}
 _MS_LOAD = {8: "lb", 16: "lh", 32: "lw", 64: "ld"}  # sign-extending, so the register differs from the compare value
