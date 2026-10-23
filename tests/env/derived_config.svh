@@ -144,14 +144,4 @@
   `define UDB_VLEN 0
 `endif
 
-// UDB_SCONTEXT_AVAILABLE: mirrors derived_config.h; remove once UDB emits it
-// (https://github.com/riscv/riscv-unified-db/pull/2069).
-`ifdef SDTRIG_SUPPORTED
-  `ifdef S_SUPPORTED
-    `ifndef UDB_SCONTEXT_AVAILABLE
-      `define UDB_SCONTEXT_AVAILABLE
-    `endif
-  `endif
-`endif
-
 `endif // DERIVED_CONFIG_SVH
