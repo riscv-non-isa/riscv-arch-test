@@ -974,7 +974,6 @@ covergroup Sm_VF_cg with function sample(ins_t ins);
 endgroup
 `endif
 
-`ifndef EXCLUDE_SM
 `ifdef ZICNTR_SUPPORTED
 covergroup Sm_Zicntr_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -1842,7 +1841,6 @@ covergroup Sm_Zicntr_cg with function sample(ins_t ins);
     `endif
 
 endgroup
-`endif
 `endif
 
 function void sm_sample(int hart, int issue, ins_t ins);
