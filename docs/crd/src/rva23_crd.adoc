@@ -28,7 +28,7 @@ a| * Do not test traps into M-mode except ecall from S-mode.
 | August 6, 2026
 | 0.3
 a| * Removed "custom M-mode"; made clarifications.
-| October 6, 2026
+| October 16, 2026
 | 0.4
 a| * Editorial and technical review.
 
