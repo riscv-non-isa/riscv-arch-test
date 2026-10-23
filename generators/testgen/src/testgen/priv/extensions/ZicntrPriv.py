@@ -1,18 +1,21 @@
 ##################################
-# priv/extensions/ZicntrCommon.py
+# priv/extensions/ZicntrPriv.py
 #
-# Shared Zicntr test generation for the Sm/S/U suites: counter-enable walks and instret retirement.
-# David_Harris@hmc.edu 30 August 2026
+# ZicntrPriv privileged extension test generators for the Sm, S and U groups: counter-enable walks and
+# instret retirement.
+# Written by: David_Harris@hmc.edu (Sm, shared helpers), ellyu@g.hmc.edu (S, U)
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""Functions for generating Zicntr counter-enable and instret retirement tests in all priv modes"""
+"""ZicntrPriv privileged test generators. Each group is one old suite: Sm (ZicntrSm), S (ZicntrS), U (ZicntrU)."""
 
 from typing import Literal
 
 from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
+from testgen.data.test_chunk import TestChunk
+from testgen.priv.registry import add_priv_test_generator
 
 Mode = Literal["M", "S", "U"]
 Counteren = Literal["ones", "zeros"]
@@ -433,3 +436,147 @@ def instret_interrupt_tests(test_data: TestData, covergroup: str, mode: Mode) ->
         "#endif // ZAWRS_SUPPORTED",
     ]
     return lines
+
+
+@add_priv_test_generator(
+    "ZicntrPriv",
+    required_extensions=[
+        "Sm",
+        "Zicntr",
+    ],
+    march_extensions=["Zicntr", "Zihpm", "Zawrs"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    seed_name="ZicntrSm",
+)
+def make_zicntrsm(test_data: TestData) -> list[TestChunk]:
+    """Generate tests for the Sm group: the M-mode halves of the Zicntr counter-enable tests."""
+    covergroup = "ZicntrPriv_Sm_cg"
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("Sm")
+
+    tc.code.append("#ifdef U_SUPPORTED")
+    tc.code.extend(
+        counteren_walk_tests(
+            test_data,
+            covergroup,
+            "cp_mcounteren_access_m",
+            "Write walking 1s and 0s to mcounteren.  Read from corresponding counter and counterh in M-mode",
+            csrs=["mcounteren"],
+            mode="M",
+        )
+    )
+    tc.code.append("#endif // U_SUPPORTED")
+    tc.code.append("#ifdef S_SUPPORTED")
+    for setting in ("ones", "zeros"):
+        tc.code.extend(
+            counteren_walk_tests(
+                test_data,
+                covergroup,
+                "cp_scounteren_access_m",
+                f"Write walking 1s and 0s to scounteren with mcounteren = all {setting}.  Read from corresponding counter and counterh in M-mode",
+                csrs=["scounteren"],
+                mode="M",
+                mcounteren=setting,
+                tag=f"mcounteren_{setting}_",
+            )
+        )
+    tc.code.append("#endif // S_SUPPORTED")
+
+    tc.code.extend(instret_retire_tests(test_data, covergroup, "M"))
+    tc.code.extend(instret_exception_tests(test_data, covergroup, "M"))
+    tc.code.extend(instret_interrupt_tests(test_data, covergroup, "M"))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "ZicntrPriv",
+    required_extensions=["S", "Zicntr"],
+    march_extensions=["Zicntr", "Zihpm"],
+    extra_defines=["#define BOOT_TO_SMODE"],
+    seed_name="ZicntrS",
+)
+def make_zicntrs(test_data: TestData) -> list[TestChunk]:
+    """Generate tests for the S group: counter access from S- and U-mode."""
+    covergroup = "ZicntrPriv_S_cg"
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("S")
+
+    tc.code.extend(
+        counteren_walk_tests(
+            test_data,
+            covergroup,
+            "cp_mcounteren_access_s",
+            "Write walking 1s and 0s to mcounteren.  Read from corresponding counter and counterh in S-mode",
+            csrs=["mcounteren"],
+            mode="S",
+        )
+    )
+    tc.code.extend(
+        counteren_walk_tests(
+            test_data,
+            covergroup,
+            "cp_scounteren_access_s",
+            "Write walking 1s and 0s to scounteren with mcounteren = all 1s.  Read from corresponding counter and counterh in S-mode",
+            csrs=["scounteren"],
+            mode="S",
+            mcounteren="ones",
+        )
+    )
+    tc.code.append("RVTEST_TSBI_GOTO_UMODE")
+    tc.code.extend(
+        counteren_walk_tests(
+            test_data,
+            covergroup,
+            "cp_scounteren_access_u",
+            "Write walking 1s and 0s to scounteren with mcounteren = all 1s.  Read from corresponding counter and counterh in U-mode",
+            csrs=["scounteren"],
+            mode="U",
+            mcounteren="ones",
+        )
+    )
+    tc.code.extend(
+        counteren_walk_tests(
+            test_data,
+            covergroup,
+            "cp_mscounteren_access_u",
+            "Write walking 1s and 0s to both mcounteren and scounteren (same value in each).  Read from corresponding counter and counterh in U-mode",
+            csrs=["mcounteren", "scounteren"],
+            mode="U",
+        )
+    )
+    tc.code.append("RVTEST_TSBI_GOTO_SMODE")
+    tc.code.extend(counter_inc_inaccessible_tests(test_data, covergroup, "S"))
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "ZicntrPriv",
+    required_extensions=["U", "Zicntr"],
+    march_extensions=["Zicntr", "Zihpm", "Zawrs"],
+    seed_name="ZicntrU",
+)
+def make_zicntru(test_data: TestData) -> list[TestChunk]:
+    """Generate tests for the U group: counter access from U-mode."""
+    covergroup = "ZicntrPriv_U_cg"
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("U")
+    tc.code.extend(
+        counteren_walk_tests(
+            test_data,
+            covergroup,
+            "cp_mcounteren_access_u",
+            "If S_SUPPORTED, write scounteren = 1s.  Write walking 1s and 0s to mcounteren.  Read from corresponding counter and counterh in U-mode",
+            csrs=["mcounteren"],
+            mode="U",
+            scounteren_ones=True,
+        )
+    )
+    tc.code.extend(counter_inc_inaccessible_tests(test_data, covergroup, "U"))
+    tc.code.extend(instret_retire_tests(test_data, covergroup, "U"))  # add
+    tc.code.extend(instret_exception_tests(test_data, covergroup, "U"))
+    tc.code.extend(instret_interrupt_tests(test_data, covergroup, "U"))
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks

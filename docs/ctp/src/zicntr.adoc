@@ -6,22 +6,15 @@ from lower privilege modes, as controlled by `mcounteren` and `scounteren`.
 Note that the <<t-Zicntr-coverpoints, Zicntr>> and <<t-Zihpm-coverpoints, Zihpm>> unprivileged tests exercise access to these counters
 from U-mode (or from M-mode when U-mode is not supported), and the <<t-Sm-coverpoints, Sm>> tests exercise access to `mcycle`, `minstret`, `mhpmcounter`, etc. from M-mode.
 
-==== ZicntrS Supervisor-Mode Counter Reads
+==== ZicntrPriv Counter Reads
 
-[[t-ZicntrS-coverpoints]]
-.ZicntrS Coverpoints
+The ZicntrPriv suite has one covergroup per privilege mode the tests run in: ZicntrPriv_Sm_cg (M-mode), ZicntrPriv_S_cg (S-mode) and ZicntrPriv_U_cg (U-mode).
+The ZicntrPriv_Sm tests require Sm, so they are not part of a certificate without Sm, such as RVA23.
+
+[[t-ZicntrPriv-coverpoints]]
+.ZicntrPriv Coverpoints
 ,===
 https://docs.google.com/spreadsheets/d/10NX0T4MgueqA4p7JNg4whCq2k3YZ9R73UCV88MtcIUA/edit?gid=1677990180#gid=1677990180[Google Sheet Testplan]
 ,===
 
-include::norm/ZicntrS_norm_rules.adoc[]
-
-==== ZicntrU User-Mode Counter Reads
-
-[[t-ZicntrU-coverpoints]]
-.ZicntrU Coverpoints
-,===
-https://docs.google.com/spreadsheets/d/10NX0T4MgueqA4p7JNg4whCq2k3YZ9R73UCV88MtcIUA/edit?gid=1677990180#gid=1677990180[Google Sheet Testplan]
-,===
-
-include::norm/ZicntrU_norm_rules.adoc[]
+include::norm/ZicntrPriv_norm_rules.adoc[]

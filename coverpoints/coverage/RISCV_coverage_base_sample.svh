@@ -424,14 +424,8 @@
     `ifdef COVER_ZICNTRH
         zicntrh_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_ZICNTRS
-        zicntrs_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZICNTRSM
-        zicntrsm_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZICNTRU
-        zicntru_sample(hart, issue, ins);
+    `ifdef COVER_ZICNTRPRIV
+        zicntrpriv_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZICOND
         zicond_sample(hart, issue, ins);

@@ -8,4 +8,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    ZicntrU_cg = new();         ZicntrU_cg.set_inst_name("obj_ZicntrU");
+`ifndef EXCLUDE_SM
+    ZicntrPriv_Sm_cg = new();   ZicntrPriv_Sm_cg.set_inst_name("obj_ZicntrPriv_Sm");
+`endif
+    ZicntrPriv_S_cg = new();    ZicntrPriv_S_cg.set_inst_name("obj_ZicntrPriv_S");
+    ZicntrPriv_U_cg = new();    ZicntrPriv_U_cg.set_inst_name("obj_ZicntrPriv_U");

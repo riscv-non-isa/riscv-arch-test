@@ -94,7 +94,7 @@ include::norm/Zicond_norm_rules.adoc[]
 
 Zicntr provides unprivileged read access to the `cycle`, `time`, and `instret` counters.
 Note that, like all other unprivileged tests, these tests are performed in M-mode.
-The <<t-ZicntrS-coverpoints, ZicntrS>> and <<t-ZicntrU-coverpoints, ZicntrU>> privileged tests exercise reading the counters in S-mode and U-mode,
+The <<t-ZicntrPriv-coverpoints, ZicntrPriv>> privileged tests exercise reading the counters in M-mode, S-mode and U-mode,
 with control by `mcounteren` and `scounteren` CSRs.
 The <<t-Sm-coverpoints, Sm>> privileged tests exercise `mcycle`, `minstret`, and HPMs from M-mode.
 
@@ -149,7 +149,7 @@ See https://github.com/riscv/riscv-isa-manual/issues/2558[RISC-V ISA Manual Issu
 
 [NOTE]
 ====
-MCOUNTENABLE_EN, SCOUNTENABLE_EN and HCOUNTENABLE_EN are exercised by the ZicntrS/U/H `cp_mcounteren_access_*`, `cp_scounteren_access_*` and `cp_hcounteren_access_*` coverpoints (<<t-ZicntrS-coverpoints>>). COUNTINHIBIT_EN is exercised by the Sm `cp_inhibit_*` coverpoints (<<t-Sm-coverpoints>>).
+MCOUNTENABLE_EN, SCOUNTENABLE_EN and HCOUNTENABLE_EN are exercised by the ZicntrPriv and ZicntrH `cp_mcounteren_access_*`, `cp_scounteren_access_*` and `cp_hcounteren_access_*` coverpoints (<<t-ZicntrPriv-coverpoints>>). COUNTINHIBIT_EN is exercised by the Sm `cp_inhibit_*` coverpoints (<<t-Sm-coverpoints>>).
 ====
 
 ==== Zihintpause Pause Hint

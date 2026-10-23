@@ -425,14 +425,8 @@
 `ifdef ZICNTRH_COVERAGE
   `include "ZicntrH_coverage.svh"
 `endif
-`ifdef ZICNTRS_COVERAGE
-  `include "ZicntrS_coverage.svh"
-`endif
-`ifdef ZICNTRSM_COVERAGE
-  `include "ZicntrSm_coverage.svh"
-`endif
-`ifdef ZICNTRU_COVERAGE
-  `include "ZicntrU_coverage.svh"
+`ifdef ZICNTRPRIV_COVERAGE
+  `include "ZicntrPriv_coverage.svh"
 `endif
 `ifdef ZICOND_COVERAGE
   `include "Zicond_coverage.svh"

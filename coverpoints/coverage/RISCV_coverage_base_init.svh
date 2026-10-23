@@ -562,17 +562,9 @@
         `cover_info("//      ZicntrH - Enabled");
         `include "ZicntrH_coverage_init.svh"
     `endif
-    `ifdef COVER_ZICNTRS
-        `cover_info("//      ZicntrS - Enabled");
-        `include "ZicntrS_coverage_init.svh"
-    `endif
-    `ifdef COVER_ZICNTRSM
-        `cover_info("//      ZicntrSm - Enabled");
-        `include "ZicntrSm_coverage_init.svh"
-    `endif
-    `ifdef COVER_ZICNTRU
-        `cover_info("//      ZicntrU - Enabled");
-        `include "ZicntrU_coverage_init.svh"
+    `ifdef COVER_ZICNTRPRIV
+        `cover_info("//      ZicntrPriv - Enabled");
+        `include "ZicntrPriv_coverage_init.svh"
     `endif
     `ifdef COVER_ZICOND
         `cover_info("//      Zicond - Enabled");
