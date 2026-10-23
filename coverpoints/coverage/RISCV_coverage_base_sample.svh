@@ -259,9 +259,6 @@
     `ifdef COVER_SVINVALH
         svinvalh_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_SVINVALSM
-        svinvalsm_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_SVNAPOT
         svnapot_sample(hart, issue, ins);
     `endif
