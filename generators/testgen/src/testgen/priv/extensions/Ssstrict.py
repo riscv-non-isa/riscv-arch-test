@@ -1,8 +1,8 @@
 ##################################
-# priv/extensions/SsstrictCommon.py
+# priv/extensions/Ssstrict.py
 #
-# Shared encoding helpers, illegal-instruction sweep, and compressed-
-# instruction sweep used by SsstrictSm, SsstrictS, and SsstrictU.
+# Ssstrict privileged test generator, one group per privilege mode (Sm, S, U).
+# Tests CSR encodings and reserved instruction encodings from each mode.
 #
 # SPDX-License-Identifier: Apache-2.0
 ##################################
@@ -11,7 +11,7 @@
 
 A Ssstrict suite checks that reserved/illegal instruction encodings and CSR
 accesses trap as expected from a given privilege mode. The mode-specific
-generators (SsstrictSm/S/U) each call ``generate_ssstrict_suite`` with a suite
+generators (groups Sm, S and U) each call ``generate_ssstrict_suite`` with a suite
 name, privilege mode, and the set of CSR addresses to skip; covergroup names
 and per-mode setup are derived from those.
 
@@ -32,6 +32,7 @@ from testgen.asm.helpers import comment_banner, reproducible_hash
 from testgen.data.registers import IntegerRegisterFile
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
+from testgen.priv.registry import add_priv_test_generator
 
 # Number of CSR addresses per CSR-sweep chunk. Each CSR contributes 5 testcases
 # (read / write-ones / write-zeros / set / clear), so this keeps each chunk well
@@ -779,3 +780,105 @@ def generate_ssstrict_suite(
     test_chunks.extend(_generate_compressed_instr(test_data, compressed_covergroup))
     test_chunks.extend(_generate_vector_illegal_instr(test_data, instr_covergroup))
     return test_chunks
+
+
+# ── CSR skip set (U-mode) ─────────────────────────────────────────────────
+
+# Sweep only user-level CSRs (bits[9:8]=00) from U-mode, so skip everything
+# else. S/H/M CSRs are higher privilege and always raise illegal-instruction
+# from U-mode — that is an architecturally known fact, so testing them here
+# adds no value.  Custom and reserved ranges are skipped (undefined behaviour).
+
+_U_CSR_SKIP: frozenset[int] = frozenset(
+    a
+    for a in range(4096)
+    if ((a >> 8) & 3) != 0  # non-user-level (bits[9:8]!=00)
+) | csr_range_set(*USER_CUSTOM_CSR_RANGES)
+
+
+# ── CSR skip set (S-mode) ─────────────────────────────────────────────────
+
+_S_CSR_SKIP: frozenset[int] = frozenset(
+    csr_range_set(*M_PRIV_CSR_RANGES, *S_CUSTOM_CSR_RANGES, *H_CUSTOM_CSR_RANGES, *USER_CUSTOM_CSR_RANGES)
+    | {
+        0x180,  # satp: TLB flush / address-translation mode change
+        0x105,  # stvec: overwriting stvec breaks the delegated-trap handler
+        0x140,  # sscratch: avoid corrupting framework save area
+        0x5A8,  # scontext: Sail traps, Spike does not
+    }
+)
+
+
+# ── CSR skip set ──────────────────────────────────────────────────────────
+
+_M_CSR_SKIP: frozenset[int] = frozenset(
+    csr_range_set(
+        range(0x3A0, 0x3F0),  # PMP regs
+        range(0x7A0, 0x7B0),  # debug trigger regs
+        range(0xFC0, 0x1000),  # M-mode read-only
+        *M_CUSTOM_CSR_RANGES,
+        *S_CUSTOM_CSR_RANGES,
+        *H_CUSTOM_CSR_RANGES,
+        *USER_CUSTOM_CSR_RANGES,
+    )
+    | {
+        0x340,  # mscratch: corrupts trap stack
+        0x305,  # mtvec: breaks trap handler
+        0x747,  # mseccfg: confuses M-mode
+    }
+)
+
+
+# ── Entry points ──────────────────────────────────────────────────────────
+
+
+def _group_chunks(group: str, chunks: list[TestChunk]) -> list[TestChunk]:
+    """Prefix named splits with the group so each group numbers its own files."""
+    for tc in chunks:
+        if tc.split_name is not None:
+            tc.split_name = f"{group}_{tc.split_name}"
+    if chunks and chunks[0].split_name is None:
+        chunks[0].split_name = group
+    return chunks
+
+
+@add_priv_test_generator(
+    "Ssstrict",
+    required_extensions=["Sm", "Ssstrict"],
+    march_extensions=[
+        "I",
+        "V",
+    ],
+    extra_defines=["#define RVTEST_USE_FAST_TRAP_HANDLER", SCRATCH_SIZE_DEFINE, "#define BOOT_TO_MMODE"],
+)
+def make_ssstrictsm(test_data: TestData) -> list[TestChunk]:
+    """Ssstrict machine-mode group (formerly SsstrictSm)."""
+    return _group_chunks("Sm", generate_ssstrict_suite(test_data, "Ssstrict_Sm", "M", _M_CSR_SKIP))
+
+
+@add_priv_test_generator(
+    "Ssstrict",
+    required_extensions=["S", "Ssstrict"],
+    march_extensions=[
+        "I",
+        "V",  # V included: sets vl/vtype for vector loads and stores in the encoding sweep
+    ],
+    extra_defines=["#define RVTEST_USE_FAST_TRAP_HANDLER", SCRATCH_SIZE_DEFINE, "#define BOOT_TO_SMODE"],
+)
+def make_ssstrictss(test_data: TestData) -> list[TestChunk]:
+    """Ssstrict supervisor-mode group (formerly SsstrictS)."""
+    return _group_chunks("S", generate_ssstrict_suite(test_data, "Ssstrict_S", "S", _S_CSR_SKIP))
+
+
+@add_priv_test_generator(
+    "Ssstrict",
+    required_extensions=["U", "Ssstrict"],
+    march_extensions=[
+        "I",
+        "V",
+    ],
+    extra_defines=["#define RVTEST_USE_FAST_TRAP_HANDLER", SCRATCH_SIZE_DEFINE],
+)
+def make_ssstrictu(test_data: TestData) -> list[TestChunk]:
+    """Ssstrict user-mode group (formerly SsstrictU)."""
+    return _group_chunks("U", generate_ssstrict_suite(test_data, "Ssstrict_U", "U", _U_CSR_SKIP))

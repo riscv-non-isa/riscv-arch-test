@@ -38,7 +38,7 @@ include::norm/Zicsr_norm_rules.adoc[]
 
 [NOTE]
 ===
-TRAP_ON_UNIMPLEMENTED_CSR affects the results of Ssstrict/cp_csrr (<<t-SsstrictS-coverpoints>>).  It does not affect Zicsr because this is an unprivileged test that should never perform operations that trap.
+TRAP_ON_UNIMPLEMENTED_CSR affects the results of Ssstrict/cp_csrr (<<t-Ssstrict_S-coverpoints>>).  It does not affect Zicsr because this is an unprivileged test that should never perform operations that trap.
 ===
 
 ==== Zifencei Instruction-Fetch Fence
