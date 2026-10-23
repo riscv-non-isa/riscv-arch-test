@@ -83,6 +83,14 @@ RVA23_EXTENSIONS = frozenset(
         "Zvknhb",
         "Zvksed",
         "Zvksh",
+        # Sh extensions
+        "Shcounterenw",
+        "Shgatpa",
+        "Shlcofideleg",
+        "Shtvala",
+        "Shvsatpa",
+        "Shvstvala",
+        "Shvstvecd",
         # Ss extensions
         "Ssccptr",
         "Sscofpmf",

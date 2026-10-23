@@ -26,8 +26,10 @@ setup:
         write mtvec.MODE = {00, 01} if each supported
       S: Same as Sm
       U: Same as Sm
-      VS: "***"
-      VU: "***"
+      VS: |-
+        Same as Sm
+        mideleg.VS*I are read-only 1 and hideleg boots with 0s, so VS-level interrupts trap to HS
+      VU: Same as VS
     - step: trigger_interrupts <type>
       Sm: |-
         RVTEST_SET_<type>_INT_<priv>
@@ -165,6 +167,34 @@ coverpoints:
       - mstatus_tw_umode_op
       - MSTATUS_TW_TIME_LIMIT
       - MSTATUS_TW_ALWAYS_ILLEGAL
+  - name: cp_wfi_vs
+    goal: WFI waits in VS-mode until timer interrupt
+    description: |-
+      As cp_wfi, in VS-mode, with mstatus.TW = 0 and hstatus.VTW = 0
+    expectation: Wait for timer interrupt.  mstatus.MIE does not affect results.
+    bins: 2 MIE
+    rules:
+      - hstatus_vtw_op
+  - name: |-
+      cp_wfi_timeout_vs
+      cp_wfi_timeout_vs_vtw_one
+    goal: WFI in VS-mode follows mstatus.TW and hstatus.VTW
+    description: |-
+      As cp_wfi_timeout, in VS-mode, with (mstatus.TW, hstatus.VTW) = (1, 0), (1, 1), (0, 1)
+    expectation: TW = 1 raises illegal instruction.  TW = 0, VTW = 1 raises virtual instruction.  Either may instead complete within a bounded time.
+    bins: 3 TW/VTW * 2 MIE * 2 mie.MTIE
+    rules:
+      - hstatus_vtw_op
+      - H_virtinst_wfi_vtw1_tw0
+      - vtw_virtinstr
+  - name: cp_wfi_timeout_vu
+    goal: WFI in VU-mode follows mstatus.TW, not hstatus.VTW
+    description: |-
+      As cp_wfi_timeout, in VU-mode, with mstatus.TW = {0/1} and hstatus.VTW = {0/1}
+    expectation: TW = 1 raises illegal instruction (or completes within a bounded time).  TW = 0 raises virtual instruction whatever VTW is.
+    bins: 2 TW * 2 VTW * 2 MIE * 2 mie.MTIE
+    rules:
+      - H_virtinst_vu_wfi_tw0
   - name: cp_write_stip_sstc
     goal: test STIP writability when SSTC supported
     description: |-
@@ -178,3 +208,54 @@ coverpoints:
       Clear STIP through stimecmp
     expectation: mip.STIP is controlled by stimecmp, ignores writes.
     bins: 2 stimecmp x 2 STIP
+  - heading: From InterruptsH (H implemented), done in M-mode
+  - heading: Following tests are done in M-mode
+  - name: cp_mideleg
+    goal: hypervisor bits of mideleg are read-only 1
+    description: Write 0 to mideleg and read it back.
+    expectation: Bits 10, 6, 2 are 1s.  If GEILEN > 0, bit 12 is also 1.
+    bins: "1"
+  - name: cp_mie
+    goal: mie.VS*IE bits are alias of hie
+    description: With hie = 0x444, read mie.
+    expectation: "0x444"
+    bins: "1"
+  - name: cp_mip
+    goal: mip.VS*IP bits are alias of hip
+    description: With hvip = 0x444, read mip and hip. Note that hip depends on hvip.
+    expectation: "0x444"
+    bins: "1"
+  - name: cp_nohint_m
+    goal: VS*I never causes machine-mode interrupt
+    description: mstatus.MIE=1, hideleg = 0, mie = 0x444, mip = 0x444
+    expectation: No interrupt occurs because these are always delegated to HS or VS
+    bins: "1"
+  - heading: Following tests are done in M-mode if GEILEN > 0
+  - name: cp_mie_gilen
+    goal: mie.SGEIE is alias of hie
+    description: With hie = 0x1444, read mie.
+    expectation: "0x1444"
+    bins: "1"
+  - name: cp_mideleg_mip_vs
+    description: With mstatus.MIE=0, mideleg = {0 / S-level bits SEI, STI, SSI}, mip = {MEIP/MTIP/MSIP/SEI/STI/SSI}, mie = 1s, change to VS-mode with vsstatus.SIE=1.  Only the S-level bits of mideleg are written, not -1, because an implementation may make the M-level bits writable.
+    expectation: Take interrupt to M or HS
+    bins: 2 * 6
+  - name: cp_priority_levels_vs
+    goal: M-level, then HS-level, then VS-level interrupts are taken from VS-mode
+    description: "Boots to M-mode: with mstatus.MIE = 0, mideleg.SSI = 1, hideleg.VSSI = 1, mie.MSIE = mie.SSIE = mie.VSSIE = 1 and vsstatus.SIE = 1, raise {MSI+SSI, MSI+VSSI, SSI+VSSI, MSI+SSI+VSSI} and change to VS-mode"
+    expectation: M-mode takes MSI, then HS-mode takes SSI, then VS-mode takes VSSI
+    bins: 4 (combinations with MSI or SSI only where that interrupt is implemented)
+  - name: cp_mtinst
+    goal: mtinst = 0 on interrupt
+    description: with mtinst randomized, mideleg = 0, exercise each interrupt.
+    expectation: mtinst = 0
+    bins: 10 interrupts
+  - name: cp_mideleg_mip_vu
+    description: With mstatus.MIE=0, mideleg = {0 / S-level bits SEI, STI, SSI}, mip = {MEIP/MTIP/MSIP/SEI/STI/SSI}, mie = 1s, change to VU-mode.  Only the S-level bits of mideleg are written, not -1, because an implementation may make the M-level bits writable.
+    expectation: Take interrupt to M or HS
+    bins: 2 * 6
+  - name: cp_priority_levels_vu
+    goal: M-level, then HS-level, then VS-level interrupts are taken from VU-mode
+    description: "Boots to M-mode: with mstatus.MIE = 0, mideleg.SSI = 1, hideleg.VSSI = 1, mie.MSIE = mie.SSIE = mie.VSSIE = 1 and vsstatus.SIE = 1, raise {MSI+SSI, MSI+VSSI, SSI+VSSI, MSI+SSI+VSSI} and change to VU-mode"
+    expectation: M-mode takes MSI, then HS-mode takes SSI, then VS-mode takes VSSI
+    bins: 4 (combinations with MSI or SSI only where that interrupt is implemented)

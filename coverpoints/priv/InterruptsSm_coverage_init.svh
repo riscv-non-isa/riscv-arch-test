@@ -9,3 +9,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
     InterruptsSm_cg = new();         InterruptsSm_cg.set_inst_name("obj_InterruptsSm");
+    `ifdef H_SUPPORTED
+        InterruptsSm_h_cg = new();      InterruptsSm_h_cg.set_inst_name("obj_InterruptsSm_h");
+    `endif
