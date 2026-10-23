@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: ZicfilpU
+suite: Zicfilp_U
 source: https://docs.google.com/spreadsheets/d/1ED9ontJZP-Dg2MAF-4mkhqKFgpjf6Fp6yeXKuW61FOY/edit?gid=84584846#gid=84584846
 description: |
   In this sheet, all Zicfilp tests from the Zicfilp_Common sheet are
