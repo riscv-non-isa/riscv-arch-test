@@ -1,8 +1,15 @@
 # yaml-language-server: $schema=testplan.schema.json
 suite: ZicfissH
 source: https://docs.google.com/spreadsheets/d/1ED9ontJZP-Dg2MAF-4mkhqKFgpjf6Fp6yeXKuW61FOY/edit?gid=1673462063#gid=1673462063
+notes: |
+  No ZicfissH tests exist yet; every row is planned and not tested.  The ZicfissS, ZicfissSm and ZicfissU suites
+  that ZicfissH would extend to VS-mode and VU-mode are in riscv-arch-test PR 2576, not on this branch.  Sail 0.16
+  models henvcfg.SSE (shadow stack instructions, ssp access, the SS page encoding at VS-stage and the senvcfg.SSE
+  read-only zero at V = 1), so the suite is testable once those suites are merged.
+
+  The tests would run in VS-mode and VU-mode with H, with menvcfg.SSE = 1 and henvcfg.SSE = 1 unless stated
+  otherwise, senvcfg.SSE = 1 in VU-mode, and G-stage translation active (hgatp.MODE != Bare) unless stated otherwise.
 coverpoints:
-  - heading: "General Test Environment (VS/VU-mode, H-extension):\n- Same base environment as ZicfissU plus H-extension implemented.\n- menvcfg.SSE=1 and henvcfg.SSE=1 unless stated otherwise. VU additionally requires senvcfg.SSE=1.\n- G-stage translation active (hgatp.MODE != Bare) unless stated otherwise."
   - name: cp_ssp_csr_gating_virt_zicfiss
     goal: Verify ssp CSR accessibility from VS-mode and VU-mode across the henvcfg.SSE / senvcfg.SSE enable chain
     description: |-
@@ -15,9 +22,12 @@ coverpoints:
        henvcfg.SSE=0 (V=1), or senvcfg.SSE=0 in VU-mode -> VIRTUAL-instruction exception.
       All required bits set for the mode: access allowed.
     bins: mode {VS, VU} x henvcfg.SSE {0,1} x senvcfg.SSE {0,1} x csr_op {read, write} x result {ok, virtual_instruction}
-    id: zicfiss_vs_henvcfg_sse zicfiss_vu_senvcfg_sse zicfiss_ssp_csr zicfiss_sse_access
     rules:
-      - "[norm:zicfiss_vs_henvcfg_sse] [norm:zicfiss_vu_senvcfg_sse] [norm:zicfiss_ssp_csr] [norm:zicfiss_sse_access]"
+      - Zicfiss_vs_henvcfg_sse
+      - Zicfiss_vu_senvcfg_sse
+      - Zicfiss_ssp_csr
+      - Zicfiss_sse_access
+    status: Not tested
   - name: cp_ss_page_enc_virt_zicfiss
     goal: Verify the pte.xwr=010 encoding is reserved at VS/VU level when henvcfg.SSE=0
     description: With menvcfg.SSE=1 and henvcfg.SSE=0, and V=1, build a VS-stage PTE with R=0, W=1, X=0 and access it from VS-mode and VU-mode. Repeat with henvcfg.SSE=1 as the positive control.
@@ -25,9 +35,9 @@ coverpoints:
       henvcfg.SSE=0: the encoding remains reserved at VS and VU levels -- access raises a page-fault.
       henvcfg.SSE=1: recognised as a valid SS page.
     bins: henvcfg.SSE {0,1} x mode {VS, VU} x access {ss_store, ordinary_load} x result {ok, page_fault}
-    id: ssmp_henvcfg_sse
     rules:
-      - "[norm:ssmp_henvcfg_sse]"
+      - ssmp_henvcfg_sse
+    status: Not tested
   - name: cp_ss_g_stage_zicfiss
     goal: Verify G-stage translation requirements and the guest-page-fault code for SS instructions
     description: |-
@@ -40,9 +50,11 @@ coverpoints:
       (c): store/AMO access-fault, cause=7 (vsatp.MODE=Bare with effective privilege < M).
       ssp unchanged in all faulting cases.
     bins: instr {SSPUSH x1, SSPUSH x5, C.SSPUSH x1, SSPOPCHK x1, SSPOPCHK x5, C.SSPOPCHK x5, SSAMOSWAP.W, SSAMOSWAP.D} x mode {VS, VU} x g_stage {no_rw, unmapped, ok} x vsatp.MODE {Bare, Sv} x cause {none, 7, 23}
-    id: active_g_stage_pte ss_fault_exception_code satp_mode_bare
     rules:
-      - "[norm:active_g_stage_pte] [norm:ss_fault_exception_code] [norm:satp_mode_bare]"
+      - active_g_stage_pte
+      - ss_fault_exception_code
+      - satp_mode_bare
+    status: Not tested
   - name: cp_ssamoswap_sse_gating_virt_zicfiss
     goal: Verify SSAMOSWAP.W/D raises a VIRTUAL-instruction exception when the SSE chain is off and V=1
     description: |-
@@ -56,9 +68,11 @@ coverpoints:
       Note the flavour split, which is why this is separate from the U sheet: the SAME gating condition yields ILLEGAL-instruction when V=0 and VIRTUAL-instruction when V=1. Gating by menvcfg.SSE stays ILLEGAL even at V=1.
       Memory, rd and ssp unchanged.
     bins: instr {SSAMOSWAP.W, SSAMOSWAP.D} x mode {VS, VU} x gate {henvcfg.SSE=0, (henvcfg.SSE=1 & senvcfg.SSE=0)} x result {virtual_instruction}
-    id: henvcfg_sse_op senvcfg_sse_Zicfilp menvcfg_sse_op_list
     rules:
-      - "[norm:henvcfg_sse_op] [norm:senvcfg_sse_Zicfilp] [norm:menvcfg_sse_op_list]"
+      - henvcfg_sse_op
+      - senvcfg_sse_Zicfiss
+      - menvcfg_sse_op_list
+    status: Not tested
   - name: cp_envcfg_sse_rdonly0_virt_zicfiss
     goal: Verify the SSE read-only-zero chain through henvcfg and, at V=1, through senvcfg
     description: |-
@@ -71,9 +85,10 @@ coverpoints:
       Positive controls: with the parent field set, the child is writable and reads back what was written.
       Together with cp_senvcfg_sse_rdonly0_s_zicfiss (ZicfissS) and cp_envcfg_sse_rdonly0_zicfiss (ZicfissSm) this closes the whole menvcfg -> henvcfg -> senvcfg chain.
     bins: link {menvcfg->henvcfg, henvcfg->senvcfg@V=1} x parent {0,1} x csr_op {csrw, csrs, csrrw} x written {0,1} x readback {0 when parent=0, written when parent=1}
-    id: menvcfg_sse_rdonly0 henvcfg_sse_op
     rules:
-      - "[norm:menvcfg_sse_rdonly0] [norm:henvcfg_sse_op]"
+      - menvcfg_sse_rdonly0
+      - henvcfg_sse_op
+    status: Not tested
   - name: cp_ss_enable_chain_cross_zicfiss
     goal: Cross all eight menvcfg/senvcfg/henvcfg SSE combinations against every SS instruction in every mode
     description: |-
@@ -90,9 +105,16 @@ coverpoints:
       Where a mode's required bits are all 1 the instruction executes normally; otherwise the MOP-encoded instructions revert to their Zimop/Zcmop no-op and SSAMOSWAP traps.
       Exception flavour follows the gating field, not merely V: menvcfg.SSE=0 gives ILLEGAL-instruction even at V=1, while henvcfg/senvcfg gating at V=1 gives VIRTUAL-instruction.
     bins: "{menvcfg.SSE, senvcfg.SSE, henvcfg.SSE} {000..111} x mode {HS, VS, VU} x instr {SSPUSH x1, SSPUSH x5, C.SSPUSH x1, SSPOPCHK x1, SSPOPCHK x5, C.SSPOPCHK x5, SSRDP, SSAMOSWAP.W, SSAMOSWAP.D} x result {executes, no-op, illegal_instruction, virtual_instruction}"
-    id: zicfiss_ssp_csr zicfiss_m_menvcfg_sse zicfiss_vs_henvcfg_sse zicfiss_vu_senvcfg_sse zicfiss_sse_access henvcfg_sse_op menvcfg_sse_op_list senvcfg_sse_Zicfilp
     rules:
-      - "[norm:zicfiss_ssp_csr] [norm:zicfiss_m_menvcfg_sse] [norm:zicfiss_vs_henvcfg_sse] [norm:zicfiss_vu_senvcfg_sse] [norm:zicfiss_sse_access] [norm:henvcfg_sse_op] [norm:menvcfg_sse_op_list] [norm:senvcfg_sse_Zicfilp]"
+      - Zicfiss_ssp_csr
+      - Zicfiss_m_menvcfg_sse
+      - Zicfiss_vs_henvcfg_sse
+      - Zicfiss_vu_senvcfg_sse
+      - Zicfiss_sse_access
+      - henvcfg_sse_op
+      - menvcfg_sse_op_list
+      - senvcfg_sse_Zicfiss
+    status: Not tested
   - name: cp_ss_g_stage_page_enc_zicfiss
     goal: Verify pte.xwr=010 remains a reserved encoding in G-stage page tables
     description: |-
@@ -100,13 +122,16 @@ coverpoints:
       Map the guest physical page backing the shadow stack with a G-stage PTE of xwr=010, leaving the VS-stage PTE a correct SS page, and attempt every access type from VS and VU: SS instructions, ordinary loads, ordinary stores, and instruction fetch.
       Repeat with menvcfg.SSE=1/henvcfg.SSE=1 and with them cleared, to show the encoding does not become valid at G-stage under any enable setting.
     expectation: |-
-      Every access type raises a store/AMO GUEST-page-fault (cause=23) -- the reserved G-stage encoding makes the second-stage translation invalid, so the access never reaches the shadow stack rules.
-      This holds for loads and instruction fetch as well as stores, and is independent of the SSE enable bits.
+      Every access raises a guest-page fault, independent of the SSE enable bits: the reserved G-stage encoding makes the second-stage translation invalid, so the access never reaches the shadow stack rules.
+      SS instructions and ordinary stores raise a store/AMO guest-page fault (cause 23), ordinary loads a load guest-page fault (21) and instruction fetches an instruction guest-page fault (20).
       Contrast with cp_ss_page_enc_virt_zicfiss, which covers the VS-stage encoding where henvcfg.SSE=0 is what makes xwr=010 reserved.
-    bins: g_stage_pte.xwr {010} x access {SS instr, ordinary load, ordinary store, ifetch} x mode {VS, VU} x {menvcfg.SSE, henvcfg.SSE} {00, 11} x cause {23}
-    id: active_g_stage_pte ss_fault_exception_code H_vm_gstagetrans H_guest_page_fault
+    bins: g_stage_pte.xwr {010} x access {SS instr, ordinary load, ordinary store, ifetch} x mode {VS, VU} x {menvcfg.SSE, henvcfg.SSE} {00, 11} x cause {20, 21, 23}
     rules:
-      - "[norm:active_g_stage_pte] [norm:ss_fault_exception_code] [norm:H_vm_gstagetrans] [norm:H_guest_page_fault]"
+      - active_g_stage_pte
+      - ss_fault_exception_code
+      - H_vm_gstagetrans
+      - H_guest_page_fault
+    status: Not tested
   - name: cp_ss_hlv_hsv_zicfiss
     goal: "Verify hypervisor load/store access to a VS-stage shadow stack page: HLV succeeds, HSV faults"
     description: |-
@@ -117,11 +142,15 @@ coverpoints:
     expectation: |-
       HLV succeeds. The shadow stack is readable by any instruction that only loads ([norm:ssmp_ss_load]), and HLV is such an instruction -- being a hypervisor instruction does not change that.
       HSV faults with a store/AMO access-fault: it is a store, and the set of instructions permitted to write an SS page is exactly SSPUSH, C.SSPUSH, SSAMOSWAP.W and SSAMOSWAP.D. HSV is not in it.
-      With hstatus.HU=0, HLV/HSV from U-mode raise a virtual-instruction exception before any shadow stack rule is consulted.
-    bins: instr {HLV.B, HLV.H, HLV.W, HLV.D, HLVU variants, HSV.B, HSV.H, HSV.W, HSV.D} x hstatus.HU {0,1} x mode {HS, U} x result {ok for HLV, store/AMO access-fault for HSV, virtual_instruction when HU=0 from U}
-    id: hlsv_op hlsv_u_op ssmp_ss_load ssmp_ss_page_access_fault ss_fault_exception_code
+      With hstatus.HU=0, HLV/HSV from U-mode raise an illegal-instruction exception before any shadow stack rule is consulted.
+    bins: instr {HLV.B, HLV.H, HLV.W, HLV.D, HLVU variants, HSV.B, HSV.H, HSV.W, HSV.D} x hstatus.HU {0,1} x mode {HS, U} x result {ok for HLV, store/AMO access-fault for HSV, illegal_instruction when HU=0 from U}
     rules:
-      - "[norm:hlsv_op] [norm:hlsv_u_op] [norm:ssmp_ss_load] [norm:ssmp_ss_page_access_fault] [norm:ss_fault_exception_code]"
+      - hlsv_op
+      - hlsv_u_op
+      - ssmp_ss_load
+      - ssmp_ss_page_access_fault
+      - ss_fault_exception_code
+    status: Not tested
   - name: cp_ss_swcheck_delegation_zicfiss
     goal: Verify the shadow stack software-check exception is delegated correctly through medeleg and hedeleg
     description: |-
@@ -137,9 +166,13 @@ coverpoints:
       The tval code (3, shadow stack fault) must appear in whichever tval register corresponds to the mode the trap landed in, subject to the REPORT_CAUSE_IN_xTVAL_ON_SHADOW_STACK_SOFTWARE_CHECK parameters.
       hedeleg[18] must be writable if the software-check exception is delegatable at all; if the bit is read-only zero the VS case collapses into the HS case and that is what is checked.
     bins: medeleg[18] {0,1} x hedeleg[18] {0,1} x origin_mode {HS, VS, VU} x trap_lands {M, HS, VS} x {xcause==18, xtval==3}
-    id: sspop_exception mtval_swchk_lead-in mtval_swchk_list hedeleg_op medeleg_mideleg_op1
     rules:
-      - "[norm:sspop_exception] [norm:mtval_swchk_lead-in] [norm:mtval_swchk_list] [norm:hedeleg_op] [norm:medeleg_mideleg_op1]"
+      - sspop_exception
+      - mtval_swchk_lead_in
+      - mtval_swchk_list
+      - hedeleg_op
+      - medeleg_mideleg_delegate_op
+    status: Not tested
   - name: (reused) ZicfissU instruction coverpoints, re-run from VS-mode and VU-mode
     goal: Re-run the ZicfissU coverpoints with the hart in VS/VU instead of U
     description: |-
@@ -162,18 +195,4 @@ coverpoints:
       Two V=1 differences apply to every re-run: translation is two-stage, so a fault may surface as a guest-page-fault (cause 23) instead of 15; and the gating flavour differs, ILLEGAL for menvcfg versus VIRTUAL for henvcfg/senvcfg.
     expectation: Identical architectural results to the U-mode runs except where two-stage translation or the enable-chain flavour changes the reported cause, as described above.
     bins: priv_mode {vs, vu} x (all bins of each reused coverpoint)
-    id: (inherits the ID list of each reused coverpoint)
-    rules:
-      - (inherits the normative rules of each reused coverpoint)
-  - goal: Folded into cp_envcfg_sse_rdonly0_virt_zicfiss.
-    description: Write henvcfg.SSE=1 when menvcfg.SSE=0, read back and ensure henvcfg = 0
-  - goal: Folded into cp_envcfg_sse_rdonly0_virt_zicfiss.
-    description: in vs check h0s1 reads back as h0s0
-  - goal: "PROMOTED to its own coverpoint: cp_ss_enable_chain_cross_zicfiss, including the two irrelevance claims (henvcfg at HS, senvcfg at VS)."
-    description: Test SS instructions from HS with henvcfg.SSE=0 and confirm that doesn't matter. Also test from VS with senvcfg.SSE=0, confirm it doesn't matter. Generally cross all 8 m/s/h enables with each instruction.
-  - goal: "PROMOTED to its own coverpoint: cp_ss_g_stage_page_enc_zicfiss."
-    description: Test G-stage PTE of xwr=010 remains reserved, guest page fault for every access type.
-  - goal: "PROMOTED to its own coverpoint: cp_ss_hlv_hsv_zicfiss."
-    description: Test HLV/HSV from HS-mode to VS-stage SS page. HSV faults, HLV ok.
-  - goal: "PROMOTED to its own coverpoint: cp_ss_swcheck_delegation_zicfiss, sweeping medeleg[18] and hedeleg[18] across HS/VS/VU."
-    description: Be sure software check extension is delegated appropriately with hedeleg as well as medeleg.
+    status: Not tested

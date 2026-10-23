@@ -2,5 +2,39 @@
 suite: SsdbltrpH
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=1156592509#gid=1156592509
 notes: |
-  *** develop after Ssdbltrp
-coverpoints: []
+  No SsdbltrpH tests exist yet; every row is planned and not tested.  This branch has no Ssdbltrp suite (Sm only
+  checks that mstatus.SDT is writable with menvcfg.DTE = 1).  Sail 0.16 models henvcfg.DTE, vsstatus.SDT, the SRET
+  rules and the VS-mode double trap, which it takes into M-mode with mcause = 16 and mtval2 = the original cause, so
+  the rows are testable.  The suite would boot to HS-mode with menvcfg.DTE = 1 and delegate the trapping exception
+  to VS-mode with medeleg and hedeleg.
+coverpoints:
+  - goal: henvcfg.DTE = 0 turns Ssdbltrp off for VS-mode and makes vsstatus.SDT read-only zero
+    description: With henvcfg.DTE = 0 and 1, set vsstatus.SDT from HS-mode and read it back, then take an exception into VS-mode and read vsstatus.SDT in the VS-mode handler.
+    expectation: With DTE = 0, vsstatus.SDT reads 0 after the write and after the trap.  With DTE = 1, it reads 1 after the write and is set by the trap.
+    status: Not tested
+    notes: No Ssdbltrp suite exists on this branch.
+    rules:
+      - henvcfg_dte_op
+  - goal: A trap into VS-mode while vsstatus.SDT = 1 is a double trap taken into M-mode
+    description: With henvcfg.DTE = 1 and vsstatus.SDT = 1, raise an exception in VS-mode that hedeleg delegates to VS-mode.
+    expectation: The trap is taken into M-mode with mcause = 16 (double trap), mtval2 = the cause of the delegated exception, and mepc, mtval and mstatus.MPP/MPV as the exception would have written them in M-mode.
+    status: Not tested
+    notes: No Ssdbltrp suite exists on this branch.
+    rules:
+      - vsstatus_sdt_op
+      - sstatus_sdt_trap
+      - mtval2_Ssdbltrp
+  - goal: SRET clears vsstatus.SDT when executed in VS-mode, and when executed in HS-mode with VU-mode as the new mode
+    description: With henvcfg.DTE = 1 and vsstatus.SDT = 1, execute sret in VS-mode, and in HS-mode with hstatus.SPV = 1 and sstatus.SPP = 0 (VU) and 1 (VS); read vsstatus.SDT from HS-mode afterwards.
+    expectation: vsstatus.SDT = 0 after the VS-mode sret and after the HS-mode sret into VU-mode; it stays 1 after the HS-mode sret into VS-mode.
+    status: Not tested
+    notes: No Ssdbltrp suite exists on this branch.
+    rules:
+      - sret_dt
+  - goal: Setting vsstatus.SDT with a CSR write clears vsstatus.SIE
+    description: With henvcfg.DTE = 1, write sstatus with SDT = 1 and SIE = 1 in VS-mode, and vsstatus the same way in HS-mode, and read the value back.
+    expectation: SDT reads 1 and SIE reads 0.
+    status: Not tested
+    notes: No Ssdbltrp suite exists on this branch.
+    rules:
+      - sstatus_sdt_sstatus_sie_overwrite
