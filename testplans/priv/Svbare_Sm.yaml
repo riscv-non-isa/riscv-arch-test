@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: SvbareSm
+suite: Svbare_Sm
 source: https://docs.google.com/spreadsheets/d/1LGwD2e01j4SN9tg85nt6gPwpp7nXyXMF7hqbw3jvXko/edit?gid=2057771753#gid=2057771753
 coverpoints:
   - heading: "General Test Environment (SvbareSm):\n- Sm suite: boots to M-mode (BOOT_TO_MMODE) because each coverpoint needs M-mode state (mstatus.MPRV/MPP, mstatus.TVM, mstatus.SBE or an M-mode CSR access). Mode changes use RVTEST_TSBI_GOTO_*. satp.MODE=Bare with mstatus.MPRV=1 and MPP=S or U.\n- Split from Svbare: cp_satp_bare_mprv_{load,store,exec}."

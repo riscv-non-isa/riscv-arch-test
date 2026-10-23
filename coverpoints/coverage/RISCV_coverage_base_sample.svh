@@ -253,9 +253,6 @@
     `ifdef COVER_SVBARE
         svbare_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_SVBARESM
-        svbaresm_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_SVINVAL
         svinval_sample(hart, issue, ins);
     `endif

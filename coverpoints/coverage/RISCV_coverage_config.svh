@@ -254,9 +254,6 @@
 `ifdef SVBARE_COVERAGE
   `include "Svbare_coverage.svh"
 `endif
-`ifdef SVBARESM_COVERAGE
-  `include "SvbareSm_coverage.svh"
-`endif
 `ifdef SVINVAL_COVERAGE
   `include "Svinval_coverage.svh"
 `endif
