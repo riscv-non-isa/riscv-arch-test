@@ -216,9 +216,7 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Zfbfmin|BF16 Convert|<<t-Zfbfmin-coverpoints>>||||o|o
 |Zimop|Maybe-Ops|<<t-Zimop-coverpoints>>||||x|x
 |Zcmop|Compressed Maybe-Ops|<<t-Zcmop-coverpoints>>||||x|x
-|ZawrsSm|Machine Wait on Reservation Set|<<t-ZawrsSm-coverpoints>>||||x|x
-|ZawrsS|Supervisor Wait on Reservation Set|<<t-ZawrsS-coverpoints>>||||x|x
-|ZawrsU|User Wait on Reservation Set|<<t-ZawrsU-coverpoints>>||||x|x
+|Zawrs|Wait on Reservation Set|<<t-Zawrs_common-coverpoints>>||||x|x
 |SdtrigSm|Debug Triggers|<<t-SdtrigSm-coverpoints>>||||o|o
 8+^|Non-Profile Extensions
 |E|Embedded 16 Regs|<<t-E-normative-rules>>|||||

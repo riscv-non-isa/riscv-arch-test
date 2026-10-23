@@ -1,17 +1,19 @@
 ##################################
-# priv/extensions/ZawrsCommon.py
+# priv/extensions/Zawrs.py
 #
-# Shared Zawrs tests generation
-# ellyu@hmc.edu July 2026
+# Zawrs privileged extension test generators for the Sm, S and U groups.
+# ellyu@hmc.edu June 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
-"""Functions for generating Zawrs tests in all priv modes"""
+"""Zawrs test generators. Each group runs in one privilege mode."""
 
 from testgen.asm.csr import write_stce
 from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call_or_direct
 from testgen.data.state import TestData
+from testgen.data.test_chunk import TestChunk
+from testgen.priv.registry import add_priv_test_generator
 
 
 def _read_trap_count_helper(r_temp: int) -> list[str]:
@@ -531,3 +533,69 @@ def wrs_timeout_helper(
         lines.append("#endif // H_SUPPORTED")
     test_data.int_regs.return_registers([r_cause, r_temp, r_temp2])
     return lines
+
+
+@add_priv_test_generator(
+    "Zawrs",
+    required_extensions=["Sm", "Zawrs", "Zalrsc"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    seed_name="ZawrsSm",
+)
+def make_zawrssm(test_data: TestData) -> list[TestChunk]:
+    """Generate tests for Zawrs WRS instructions at machine-mode."""
+
+    covergroup = "Zawrs_Sm_cg"
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("Sm")
+    tc.code.extend(wrs_no_res_helper(test_data, "M", covergroup))
+    tc.code.extend(wrs_timeout_helper(test_data, "M", covergroup, timeout="short"))
+    tc.code.extend(wrs_resume_helper(test_data, "M", covergroup))
+    tc.code.extend(wrs_no_mie_helper(test_data, "M", covergroup))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "Zawrs",
+    required_extensions=["S", "Zawrs", "Zalrsc"],
+    march_extensions=["H", "Zawrs", "Zalrsc"],
+    extra_defines=["#define BOOT_TO_SMODE"],
+    seed_name="ZawrsS",
+)
+def make_zawrss(test_data: TestData) -> list[TestChunk]:
+    """Generate tests for Zawrs WRS instructions at S-mode (and H if supported)."""
+
+    covergroup = "Zawrs_S_cg"
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("S")
+    tc.code.extend(wrs_no_res_helper(test_data, "S", covergroup))
+    tc.code.extend(wrs_timeout_helper(test_data, "S", covergroup, timeout="short"))
+    tc.code.extend(wrs_timeout_helper(test_data, "S", covergroup, timeout="no"))
+    tc.code.extend(wrs_timeout_helper(test_data, "S", covergroup, timeout="no", virtualized=True))
+    tc.code.extend(wrs_no_mie_helper(test_data, "S", covergroup))
+    tc.code.extend(wrs_resume_helper(test_data, "S", covergroup))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "Zawrs",
+    required_extensions=["U", "Zawrs", "Zalrsc"],
+    seed_name="ZawrsU",
+)
+def make_zawrsu(test_data: TestData) -> list[TestChunk]:
+    """Generate tests for Zawrs WRS instructions at user-mode."""
+
+    covergroup = "Zawrs_U_cg"
+    test_chunks: list[TestChunk] = []
+    tc = test_data.begin_test_chunk("U")
+    tc.code.extend(wrs_no_res_helper(test_data, "U", covergroup))
+    tc.code.extend(wrs_timeout_helper(test_data, "U", covergroup, timeout="short"))
+    tc.code.extend(wrs_timeout_helper(test_data, "U", covergroup, timeout="no"))
+    tc.code.extend(wrs_no_mie_helper(test_data, "U", covergroup))
+    tc.code.extend(wrs_resume_helper(test_data, "U", covergroup))
+
+    test_chunks.append(test_data.end_test_chunk())
+    return test_chunks
