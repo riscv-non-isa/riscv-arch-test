@@ -736,7 +736,6 @@ def trap_return_tests(test_data: TestData, priv: Priv, covergroup: str) -> TestC
     "Zicfilp",
     required_extensions=["Sm", "Zicfilp"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="ZicfilpSm",
 )
 def make_zicfilpsm(test_data: TestData) -> list[TestChunk]:
     """Generate Zicfilp landing pad tests in M-mode."""
@@ -755,7 +754,6 @@ def make_zicfilpsm(test_data: TestData) -> list[TestChunk]:
     "Zicfilp",
     required_extensions=["S", "Zicfilp"],
     extra_defines=["#define BOOT_TO_SMODE"],
-    seed_name="ZicfilpS",
 )
 def make_zicfilps(test_data: TestData) -> list[TestChunk]:
     """Generate Zicfilp landing pad tests in S-mode."""
@@ -772,7 +770,6 @@ def make_zicfilps(test_data: TestData) -> list[TestChunk]:
 @add_priv_test_generator(
     "Zicfilp",
     required_extensions=["U", "Zicfilp"],
-    seed_name="ZicfilpU",
 )
 def make_zicfilpu(test_data: TestData) -> list[TestChunk]:
     """Generate Zicfilp landing pad tests in U-mode."""
