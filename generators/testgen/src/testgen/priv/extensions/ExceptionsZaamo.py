@@ -15,7 +15,7 @@ from testgen.priv.registry import add_priv_test_generator
 
 
 def _generate_amo_address_misaligned_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsZaamo_cg", "cp_amo_address_misaligned"
+    covergroup, coverpoint = "Exceptions_Zaamo_cg", "cp_amo_address_misaligned"
 
     # Reserve dest/source as AMOCAS-capable register pairs for use later
     dest_reg = test_data.int_regs.get_register_pair()
@@ -133,7 +133,7 @@ def _generate_amo_address_misaligned_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_amo_access_fault_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsZaamo_cg", "cp_amo_access_fault"
+    covergroup, coverpoint = "Exceptions_Zaamo_cg", "cp_amo_access_fault"
 
     # Reserve dest/source as AMOCAS-capable register pairs before choosing the
     # long-lived address register so addr_reg cannot break either even/odd pair.
@@ -235,14 +235,14 @@ def _generate_amo_access_fault_tests(test_data: TestData) -> list[str]:
 
 
 @add_priv_test_generator(
-    "ExceptionsZaamo",
+    "Exceptions",
     required_extensions=["Zaamo", ["Sm", "U"]],
     march_extensions=["Zaamo", "Zabha", "Zacas"],
 )
 def make_exceptionszaamo(test_data: TestData) -> list[TestChunk]:
     """Main entry point for Zaamo exception test generation."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk("Zaamo")
 
     tc.code.extend(_generate_amo_address_misaligned_tests(test_data))
     tc.code.extend(_generate_amo_access_fault_tests(test_data))

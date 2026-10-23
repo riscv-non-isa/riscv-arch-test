@@ -332,12 +332,13 @@ def emit_suite(
     test_data: TestData,
     covergroup: str,
     mode: str,  # "Sm" | "S" | "U"
+    group: str,
     cross_senvcfg: bool = False,
     mode_entry: bool = False,
 ) -> list[TestChunk]:
     """Generate the cbie/cbcfe/cbze + access-fault + misaligned tests."""
 
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk(group)
     lines = tc.code
 
     if mode_entry:

@@ -339,7 +339,7 @@ def add_fp_store_misaligned_test(
 
 
 def _generate_mstatus_fs_illegal_instr_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsF_cg", "cp_mstatus_fs_illegal_instr"
+    covergroup, coverpoint = "Exceptions_F_cg", "cp_mstatus_fs_illegal_instr"
     clear_mask_reg, frm_reg, set_mask_reg = test_data.int_regs.get_registers(3)
 
     lines = [
@@ -358,7 +358,7 @@ def _generate_mstatus_fs_illegal_instr_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_mstatus_fs_csr_access_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsF_cg", "cp_mstatus_fs_csr_access"
+    covergroup, coverpoint = "Exceptions_F_cg", "cp_mstatus_fs_csr_access"
     mstatus_fs_mask_reg, check_reg = test_data.int_regs.get_registers(2)
 
     lines = [
@@ -395,7 +395,7 @@ def _generate_mstatus_fs_csr_access_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_mstatus_fs_legal_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsF_cg", "cp_mstatus_fs_legal"
+    covergroup, coverpoint = "Exceptions_F_cg", "cp_mstatus_fs_legal"
     clear_mask_reg, frm_reg, set_mask_reg = test_data.int_regs.get_registers(3)
 
     lines = [
@@ -415,7 +415,7 @@ def _generate_mstatus_fs_legal_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_load_address_misaligned_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsF_cg", "cp_load_address_misaligned"
+    covergroup, coverpoint = "Exceptions_F_cg", "cp_load_address_misaligned"
 
     lines = [
         comment_banner(
@@ -447,7 +447,7 @@ def _generate_load_address_misaligned_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_load_access_fault_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsF_cg", "cp_load_access_fault"
+    covergroup, coverpoint = "Exceptions_F_cg", "cp_load_access_fault"
 
     lines = [
         comment_banner(
@@ -512,7 +512,7 @@ def _generate_load_access_fault_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_store_address_misaligned_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsF_cg", "cp_store_address_misaligned"
+    covergroup, coverpoint = "Exceptions_F_cg", "cp_store_address_misaligned"
 
     lines = [
         comment_banner(
@@ -544,7 +544,7 @@ def _generate_store_address_misaligned_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_store_access_fault_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsF_cg", "cp_store_access_fault"
+    covergroup, coverpoint = "Exceptions_F_cg", "cp_store_access_fault"
 
     lines = [
         comment_banner(
@@ -608,14 +608,14 @@ def _generate_store_access_fault_tests(test_data: TestData) -> list[str]:
 
 
 @add_priv_test_generator(
-    "ExceptionsF",
+    "Exceptions",
     required_extensions=["F", ["Sm", "U"]],
     march_extensions=["Zfa", "D", "Zfhmin"],
 )
 def make_exceptionsf(test_data: TestData) -> list[TestChunk]:
     """Main entry point for F exception test generation."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk("F")
 
     # initialize fp registers
     init_reg = test_data.int_regs.get_register()

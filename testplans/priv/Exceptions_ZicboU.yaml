@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: ExceptionsZicboU
+suite: Exceptions_ZicboU
 source: https://docs.google.com/spreadsheets/d/1W95I4jPbuQBnXzDdIZtOG4kae8vi7djpKtJXWCXPxMU/edit?gid=1054505393#gid=1054505393
 description: |
   Tests done in user mode.  Configure menvcfg via T-SBI.

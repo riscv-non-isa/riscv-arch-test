@@ -224,7 +224,7 @@ def _add_store_fault(
 
 
 def _generate_load_address_misaligned_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsZc_cg", "cp_load_address_misaligned"
+    covergroup, coverpoint = "Exceptions_Zc_cg", "cp_load_address_misaligned"
 
     lines = [comment_banner(coverpoint, "Compressed Misaligned Loads")]
 
@@ -265,7 +265,7 @@ def _generate_load_address_misaligned_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_store_address_misaligned_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsZc_cg", "cp_store_address_misaligned"
+    covergroup, coverpoint = "Exceptions_Zc_cg", "cp_store_address_misaligned"
 
     lines = [comment_banner(coverpoint, "Compressed Misaligned Stores")]
 
@@ -306,7 +306,7 @@ def _generate_store_address_misaligned_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_load_access_fault_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsZc_cg", "cp_load_access_fault"
+    covergroup, coverpoint = "Exceptions_Zc_cg", "cp_load_access_fault"
 
     lines = [
         "#ifdef RVMODEL_ACCESS_FAULT_ADDRESS",
@@ -353,7 +353,7 @@ def _generate_load_access_fault_tests(test_data: TestData) -> list[str]:
 
 
 def _generate_store_access_fault_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsZc_cg", "cp_store_access_fault"
+    covergroup, coverpoint = "Exceptions_Zc_cg", "cp_store_access_fault"
 
     lines = [
         "#ifdef RVMODEL_ACCESS_FAULT_ADDRESS",
@@ -401,7 +401,7 @@ def _generate_store_access_fault_tests(test_data: TestData) -> list[str]:
 
 def _generate_breakpoint_tests(test_data: TestData) -> list[str]:
     """Generate breakpoint exception test."""
-    covergroup, coverpoint = "ExceptionsZc_cg", "cp_breakpoint"
+    covergroup, coverpoint = "Exceptions_Zc_cg", "cp_breakpoint"
 
     lines = [
         comment_banner(coverpoint, "Breakpoint"),
@@ -414,7 +414,7 @@ def _generate_breakpoint_tests(test_data: TestData) -> list[str]:
 
 def _generate_illegal_instruction_tests(test_data: TestData) -> list[str]:
     """Generate illegal compressed instructions."""
-    covergroup, coverpoint = "ExceptionsZc_cg", "cp_illegal_instruction"
+    covergroup, coverpoint = "Exceptions_Zc_cg", "cp_illegal_instruction"
 
     lines = [
         comment_banner(coverpoint, "Illegal Instruction"),
@@ -428,14 +428,14 @@ def _generate_illegal_instruction_tests(test_data: TestData) -> list[str]:
 
 
 @add_priv_test_generator(
-    "ExceptionsZc",
+    "Exceptions",
     required_extensions=[["Sm", "U"], "Zca"],
     march_extensions=["Zca", "Zcb", "Zcd", "C", "F", "D"],
 )
 def make_exceptionszc(test_data: TestData) -> list[TestChunk]:
     """Main entry point for Zc exception test generation."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk("Zc")
 
     addr_reg = test_data.int_regs.get_register()
 

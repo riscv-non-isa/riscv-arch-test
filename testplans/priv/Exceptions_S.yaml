@@ -1,17 +1,19 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: ExceptionsU
-source: https://docs.google.com/spreadsheets/d/1W95I4jPbuQBnXzDdIZtOG4kae8vi7djpKtJXWCXPxMU/edit?gid=593261374#gid=593261374
+suite: Exceptions_S
+source: https://docs.google.com/spreadsheets/d/1W95I4jPbuQBnXzDdIZtOG4kae8vi7djpKtJXWCXPxMU/edit?gid=2127390256#gid=2127390256
+description: |
+  The following exceptions should be exercised in supervisor mode unless otherwise noted.  All inherently require Zicsr.
 coverpoints:
   - name: cp_instr_adr_misaligned_branch
     goal: Instruction Address Misaligned
     description: |-
-      Branch taken to an address that is an odd multiple of 2
+      Each type of branch taken to an address that is an odd multiple of 2
       PC[1] = 0 and imm[1]=1
     expectation: Only throws an exception if C is not supported.
     bins: 6 branches
   - name: cp_instr_adr_misaligned_branch_nottaken
     goal: Instruction Address Misaligned
-    description: Branch not taken to an address that is an odd multiple of 2
+    description: Each type of branch not taken to an address that is an odd multiple of 2
     expectation: No exception
     bins: 6 branches
   - name: cp_instr_adr_misaligned_jal
@@ -30,8 +32,8 @@ coverpoints:
     bins: 4 rs1[1:0] * 4 offset[1:0]
   - name: cp_instr_access_fault
     goal: Instruction Access Fault
-    description: Jump to access fault address
-    expectation: Instruction access fault is raised (trap and mcause)
+    description: Fetch instruction from unimplemented memory
+    expectation: Access fault
     bins: "1"
   - name: cp_illegal_instruction
     goal: Illegal Instruction
@@ -41,14 +43,14 @@ coverpoints:
   - name: cp_illegal_instruction_seed
     goal: Illegal Read-only access to a CSR
     description: |-
-      csrrs x*, seed, x0 throws illegal instruction, as do
+      csrrs x*, seed, x0 throws illegal instruction as do
       csrrc x*, seed, x0
       csrrsi x*, seed, 0
       csrrci x*, seed, 0
-    expectation: illegal instruction exception
+    expectation: Illegal instruction exception
     bins: 4 csr ops
-    rules:
-      - "*** move to Zkr"
+    notes: |-
+      *** this could be reserved and should be moved to an Zkr spreadsheet for all priv modes
   - name: cp_breakpoint
     goal: Breakpoint
     description: |-
@@ -64,7 +66,7 @@ coverpoints:
   - name: cp_load_access_fault
     goal: Load Access Fault
     description: Attempt lb, lbu, lh, lhu, lw, lwu, ld from an illegal address (parameterized)
-    expectation: load access fault
+    expectation: Load access fault
     bins: 7 ops
   - name: cp_store_address_misaligned
     goal: Store Misaligned
@@ -74,20 +76,26 @@ coverpoints:
   - name: cp_store_access_fault
     goal: Store Access Fault
     description: Attempt sb, sh, sw, sd from an illegal address (parameterized)
-    expectation: store access fault
+    expectation: Store access fault
     bins: 4 ops
-  - name: cp_ecall_u
+  - name: cp_ecall_s
     goal: ecall
-    description: ecall from user mode
-    expectation: throws ecall user exception (trap and mcause)
+    description: ecall from supervisor mode throws ecall supervisor exception (trap and mcause)
+    expectation: ecall to M-mode (should not be delegated to S-mode because there would be no path to M-mode)
     bins: "1"
   - name: cp_misaligned_priority
     goal: Priority of exceptions
-    description: Attempt lw and sw and fetch from memory location causing access fault and misaligned
-    expectation: priority may vary.
+    description: Attempt lw and sw and fetch from memory location causing  access fault and misaligned
+    expectation: System-dependent
     bins: 3 ops
-  - name: cp_mstatus_ie
+  - name: cp_stvec
+    description: Cause delegated exception in s and u mode with stvec != mtvec
+    expectation: Delegates to stvec handler
+    bins: 2 modes
+  - name: cp_xstatus_ie
     goal: Interrupt Enables
-    description: ecall to machine cross mie = {0/1}
-    expectation: mpie gets xie, mie gets 0
-    bins: 2 mie
+    description: ecall cross {mode = user/supervisor, mstatus.mie = {0/1}, mstatus.sie = {0/1}}
+    expectation: xpie gets xie, xie gets 0
+    bins: 3 modes * 2 medleg * 2 mie * 2 sie
+  - heading: "Note: instruction/load/store fault pages are being tested in ExceptionsSv"
+  - heading: "Note: tests that differ from Exceptions_Sm are cp_medeleg_mu and cp_stvec.  Also, cp_misaligned_priority is not split here."

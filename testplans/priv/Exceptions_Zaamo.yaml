@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: ExceptionsZaamo
+suite: Exceptions_Zaamo
 source: https://docs.google.com/spreadsheets/d/1W95I4jPbuQBnXzDdIZtOG4kae8vi7djpKtJXWCXPxMU/edit?gid=2143559149#gid=2143559149
 coverpoints:
   - name: cp_amo_address_misaligned

@@ -32,7 +32,7 @@ from testgen.priv.extensions.ExceptionsCommon import (
 )
 from testgen.priv.registry import add_priv_test_generator
 
-_CG = "ExceptionsS_cg"
+_CG = "Exceptions_S_cg"
 
 
 def _generate_illegal_instruction_csr_tests(test_data: TestData) -> list[str]:
@@ -141,7 +141,7 @@ def _generate_xstatus_ie_tests(test_data: TestData, mode_tag: str, priv_mode: in
 
 
 @add_priv_test_generator(
-    "ExceptionsS",
+    "Exceptions",
     required_extensions=["S"],
     extra_defines=[
         "#define BOOT_TO_SMODE",
@@ -150,7 +150,7 @@ def _generate_xstatus_ie_tests(test_data: TestData, mode_tag: str, priv_mode: in
 def make_exceptionss(test_data: TestData) -> list[TestChunk]:
     """Main entry point for S-mode exception test generation (refactored)."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk("S")
 
     tc.code.extend(generate_instr_adr_misaligned_jal_tests(test_data, _CG))
     tc.code.extend(generate_instr_adr_misaligned_jalr_tests(test_data, _CG))

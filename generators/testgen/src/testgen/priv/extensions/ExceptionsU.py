@@ -31,11 +31,11 @@ from testgen.priv.extensions.ExceptionsCommon import (
 )
 from testgen.priv.registry import add_priv_test_generator
 
-_CG = "ExceptionsU_cg"
+_CG = "Exceptions_U_cg"
 
 
 def _generate_mstatus_ie_tests(test_data: TestData) -> list[str]:
-    covergroup, coverpoint = "ExceptionsU_cg", "cp_mstatus_ie"
+    covergroup, coverpoint = "Exceptions_U_cg", "cp_mstatus_ie"
     save_reg, mask_reg = test_data.int_regs.get_registers(2)
 
     lines = [
@@ -56,11 +56,11 @@ def _generate_mstatus_ie_tests(test_data: TestData) -> list[str]:
     return lines
 
 
-@add_priv_test_generator("ExceptionsU", required_extensions=["U"])
+@add_priv_test_generator("Exceptions", required_extensions=["U"])
 def make_exceptionsu(test_data: TestData) -> list[TestChunk]:
     """Main entry point for U exception test generation."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk("U")
 
     tc.code.extend(generate_instr_adr_misaligned_branch_tests(test_data, _CG))
     tc.code.extend(generate_instr_adr_misaligned_branch_nottaken(test_data, _CG))

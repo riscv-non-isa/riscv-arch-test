@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: ExceptionsZalrsc
+suite: Exceptions_Zalrsc
 source: https://docs.google.com/spreadsheets/d/1W95I4jPbuQBnXzDdIZtOG4kae8vi7djpKtJXWCXPxMU/edit?gid=891200072#gid=891200072
 coverpoints:
   - name: cp_load_address_misaligned

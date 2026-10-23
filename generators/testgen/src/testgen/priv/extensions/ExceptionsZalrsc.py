@@ -17,7 +17,7 @@ from testgen.priv.registry import add_priv_test_generator
 
 def _generate_load_address_misaligned_tests(test_data: TestData) -> list[str]:
     """Generate load address misaligned exception tests."""
-    covergroup, coverpoint = "ExceptionsZalrsc_cg", "cp_load_address_misaligned"
+    covergroup, coverpoint = "Exceptions_Zalrsc_cg", "cp_load_address_misaligned"
 
     addr_reg, check_reg = test_data.int_regs.get_registers(2)
 
@@ -49,7 +49,7 @@ def _generate_load_address_misaligned_tests(test_data: TestData) -> list[str]:
 
 def _generate_store_address_misaligned_tests(test_data: TestData) -> list[str]:
     """Generate store address misaligned exception tests."""
-    covergroup = "ExceptionsZalrsc_cg"
+    covergroup = "Exceptions_Zalrsc_cg"
     addr_reg, data_reg, rd_reg, temp_reg, base_reg, check_reg = test_data.int_regs.get_registers(6)
 
     def lrsc(width: str, offset: int, coverpoint: str, aligned: bool) -> list[str]:
@@ -114,7 +114,7 @@ def _generate_store_address_misaligned_tests(test_data: TestData) -> list[str]:
 
 def _generate_load_access_fault_tests(test_data: TestData) -> list[str]:
     """Generate load access fault exception tests."""
-    covergroup, coverpoint = "ExceptionsZalrsc_cg", "cp_load_access_fault"
+    covergroup, coverpoint = "Exceptions_Zalrsc_cg", "cp_load_access_fault"
     addr_reg, check_reg = test_data.int_regs.get_registers(2)
 
     lines = [
@@ -142,7 +142,7 @@ def _generate_load_access_fault_tests(test_data: TestData) -> list[str]:
 
 def _generate_load_misaligned_priority_tests(test_data: TestData) -> list[str]:
     """Generate instruction address misaligned and access fault exception tests."""
-    covergroup, coverpoint = "ExceptionsZalrsc_cg", "cp_load_access_misaligned_priority"
+    covergroup, coverpoint = "Exceptions_Zalrsc_cg", "cp_load_access_misaligned_priority"
     addr_reg, check_reg = test_data.int_regs.get_registers(2)
 
     lines = [
@@ -171,7 +171,7 @@ def _generate_load_misaligned_priority_tests(test_data: TestData) -> list[str]:
 
 def _generate_store_access_fault_tests(test_data: TestData) -> list[str]:
     """Generate store access fault exception tests."""
-    covergroup, coverpoint = "ExceptionsZalrsc_cg", "cp_store_access_fault"
+    covergroup, coverpoint = "Exceptions_Zalrsc_cg", "cp_store_access_fault"
     addr_reg, data_reg, rd_reg, temp_reg = test_data.int_regs.get_registers(4)
     # sc.w at illegal address does not trigger exception in QEMU
     # QEMU issue: https://gitlab.com/qemu-project/qemu/-/issues/3323
@@ -210,7 +210,7 @@ def _generate_store_access_fault_tests(test_data: TestData) -> list[str]:
 
 def _generate_store_misaligned_priority_tests(test_data: TestData) -> list[str]:
     """Generate instruction address misaligned and access fault exception tests."""
-    covergroup, coverpoint = "ExceptionsZalrsc_cg", "cp_store_access_misaligned_priority"
+    covergroup, coverpoint = "Exceptions_Zalrsc_cg", "cp_store_access_misaligned_priority"
     addr_reg, data_reg, rd_reg, temp_reg = test_data.int_regs.get_registers(4)
 
     lines = ["#ifdef RVMODEL_ACCESS_FAULT_ADDRESS", comment_banner(coverpoint)]
@@ -248,13 +248,13 @@ def _generate_store_misaligned_priority_tests(test_data: TestData) -> list[str]:
 
 
 @add_priv_test_generator(
-    "ExceptionsZalrsc",
+    "Exceptions",
     required_extensions=["Zalrsc", ["Sm", "U"]],
 )
 def make_exceptionszalrsc(test_data: TestData) -> list[TestChunk]:
     """Generate tests for ExceptionsZalrsc coverpoints"""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk("Zalrsc")
 
     tc.code.extend(_generate_load_address_misaligned_tests(test_data))
     tc.code.extend(_generate_load_access_fault_tests(test_data))

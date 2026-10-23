@@ -13,15 +13,15 @@ from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.ExceptionsZicboCommon import emit_suite
 from testgen.priv.registry import add_priv_test_generator
 
-_CG = "ExceptionsZicboSm_cg"
+_CG = "Exceptions_ZicboSm_cg"
 
 
 @add_priv_test_generator(
-    "ExceptionsZicboSm",
+    "Exceptions",
     required_extensions=["Sm", ["Zicbom", "Zicboz", "Zicbop"]],
     march_extensions=["Zicbom", "Zicboz", "Zicbop"],
     extra_defines=["#define BOOT_TO_MMODE"],
 )
 def make_exceptionszicbosm(test_data: TestData) -> list[TestChunk]:
     """Generate tests for ExceptionsZicboSm coverpoints."""
-    return emit_suite(test_data, _CG, mode="Sm")
+    return emit_suite(test_data, _CG, "Sm", "ZicboSm")

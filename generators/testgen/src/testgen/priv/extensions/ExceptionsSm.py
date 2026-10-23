@@ -31,7 +31,7 @@ from testgen.priv.extensions.ExceptionsCommon import (
 )
 from testgen.priv.registry import add_priv_test_generator
 
-_CG = "ExceptionsSm_cg"
+_CG = "Exceptions_Sm_cg"
 
 
 _MEDELEG_WALK = (
@@ -271,7 +271,7 @@ def _generate_xstatus_ie_tests(test_data: TestData, mode_tag: str, priv_mode: in
 
 
 @add_priv_test_generator(
-    "ExceptionsSm",
+    "Exceptions",
     required_extensions=["Sm"],
     extra_defines=[
         "#define BOOT_TO_MMODE",
@@ -280,7 +280,7 @@ def _generate_xstatus_ie_tests(test_data: TestData, mode_tag: str, priv_mode: in
 def make_exceptionssm(test_data: TestData) -> list[TestChunk]:
     """Main entry point for Sm exception test generation (refactored)."""
     test_chunks: list[TestChunk] = []
-    tc = test_data.begin_test_chunk()
+    tc = test_data.begin_test_chunk("Sm")
 
     tc.code.extend(generate_instr_adr_misaligned_branch_tests(test_data, _CG))
     tc.code.extend(generate_instr_adr_misaligned_branch_nottaken(test_data, _CG))
@@ -317,7 +317,7 @@ def make_exceptionssm(test_data: TestData) -> list[TestChunk]:
     # repeats the misaligned load and store sweeps for every medeleg value, so a DUT that traps on
     # every misaligned access records ~700 traps.
     for mode_tag, priv_mode in (("mode_m", 3), ("mode_s", 1), ("mode_u", 0)):
-        tc = test_data.begin_test_chunk(f"medeleg_{mode_tag[-1]}")
+        tc = test_data.begin_test_chunk(f"Sm_medeleg_{mode_tag[-1]}")
         tc.code.append("#ifdef S_SUPPORTED")
         tc.code.extend(_generate_medeleg_msu_tests(test_data, mode_tag, priv_mode))
         tc.code.append("#endif // S_SUPPORTED")
