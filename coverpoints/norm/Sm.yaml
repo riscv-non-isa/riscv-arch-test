@@ -1243,9 +1243,9 @@ normative_rule_definitions:
       [
         "Sm_mcsr_cg/cp_cntr_access/minstret",
         "Sm_mcsr_cg/cp_minstret_wraparound",
-        "ZicntrSm_cg/cp_instret_add",
-        "ZicntrSm_cg/cp_instret_mret",
-        "ZicntrSm_cg/cp_instret_sret",
+        "Sm_Zicntr_cg/cp_instret_add",
+        "Sm_Zicntr_cg/cp_instret_mret",
+        "Sm_Zicntr_cg/cp_instret_sret",
       ]
 
   # The hardware performance monitor includes 29 additional 64-bit event counters,
@@ -1800,3 +1800,26 @@ normative_rule_definitions:
   - name: nmi_no_rst
     coverpoint:
       ["TODO: needs a platform mechanism (RVMODEL macro) to raise an NMI"]
+
+  # controls the availability of the hardware performance-monitoring counters to the next-lower
+  # privileged mode.
+  - name: mcounteren_op
+    # M-mode reads succeed for every mcounteren value
+    coverpoint: ["Sm_Zicntr_cg/cp_mcounteren_access_m"]
+
+  # When the CY, TM, IR, or HPMn bit in the scounteren register is clear, attempts to read the
+  # cycle, time, instret, or hpmcountern register while executing in U-mode will cause an
+  # illegal-instruction exception.
+  - name: scounteren_op
+    # M-mode reads succeed for every scounteren value
+    coverpoint: ["Sm_Zicntr_cg/cp_scounteren_access_m"]
+
+  # The counters are accessible from M-mode regardless of the counter-enable registers.
+  - name: Zihpm_op_sz_mode_acc_priv
+    coverpoint:
+      ["Sm_Zicntr_cg/{cp_mcounteren_access_m, cp_scounteren_access_m}"]
+
+  # As ECALL and EBREAK cause synchronous exceptions, they are not considered to
+  # retire, and should not increment the minstret CSR.
+  - name: ecall_ebreak_no_minstret_inc
+    coverpoint: ["Sm_Zicntr_cg/{cp_instret_ecall, cp_instret_ebreak}"]
