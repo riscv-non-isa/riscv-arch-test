@@ -27,7 +27,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.sv.generate import guest_translation_setup, guest_translation_teardown
-from testgen.priv.extensions.sv.page_tables import PteFlags, SvMode, create_page_mapping, write_pte
+from testgen.priv.extensions.sv.page_tables import PteFlags, SvMode, create_page_mapping, guest_table_data, write_pte
 
 Operand = Literal["x0", "va", "gpa", "asid", "asidmax", "vmid", "vmidmax"]
 
@@ -256,6 +256,7 @@ def fence_chunk(
             "fence_page_b:",
             ".4byte 0x0b0b0b0b",
             ".skip 4092",
+            *guest_table_data(),
         ]
     )
     code = guest_translation_setup(test_data, g, vs, "VSmode")

@@ -1011,17 +1011,6 @@
       .p2align 12
       rvtest_Vroot_pg_tbl:
         .zero(4096)              // 4KB page table
-      // Lower-level G-stage and VS-stage tables, enough for a kilopage under Sv32x4/Sv32 or Sv39x4/Sv39
-      rvtest_hlvl0_pg_tbl:
-        .zero(4096)
-      rvtest_vlvl0_pg_tbl:
-        .zero(4096)
-      #if __riscv_xlen == 64
-        rvtest_hlvl1_pg_tbl:
-          .zero(4096)
-        rvtest_vlvl1_pg_tbl:
-          .zero(4096)
-      #endif
     #endif
   #endif
 

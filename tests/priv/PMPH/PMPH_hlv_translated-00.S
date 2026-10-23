@@ -681,6 +681,28 @@ RVTEST_DATA_BEGIN
 
 // Test data
 
+  .ifndef rvtest_hlvl0_pg_tbl
+  .p2align 12
+rvtest_hlvl0_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl0_pg_tbl
+  .p2align 12
+rvtest_vlvl0_pg_tbl:
+  .skip 4096
+  .endif
+#if __riscv_xlen == 64
+  .ifndef rvtest_hlvl1_pg_tbl
+  .p2align 12
+rvtest_hlvl1_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl1_pg_tbl
+  .p2align 12
+rvtest_vlvl1_pg_tbl:
+  .skip 4096
+  .endif
+#endif
   .p2align 12
   .p2align (UDB_PMP_GRANULARITY)
   .option push

@@ -30,7 +30,7 @@ from testgen.priv.extensions.ExceptionsCommon import (
     generate_store_address_misaligned_tests,
 )
 from testgen.priv.extensions.HCommon import guest_fault_tests
-from testgen.priv.extensions.sv.page_tables import PteFlags, SvMode, create_page_walk, write_pte
+from testgen.priv.extensions.sv.page_tables import PteFlags, SvMode, create_page_walk, guest_table_data, write_pte
 from testgen.priv.registry import add_priv_test_generator
 
 COVERGROUP = "Shvstvala_cg"
@@ -124,6 +124,7 @@ def make_shvstvala(test_data: TestData) -> list[TestChunk]:
         tc = test_data.new_test_chunk(test_chunks, mode)
         tc.code.extend(_exception_tests(test_data, mode))
     tc = test_data.new_test_chunk(test_chunks, "page_fault")
+    tc.raw_data.extend(guest_table_data())
     faults = [
         (instr, coverpoint, instr, lambda vs, offset=offset: int(vs.data_va, 16) + offset)
         for coverpoint, offset, _, instr in PAGE_FAULTS

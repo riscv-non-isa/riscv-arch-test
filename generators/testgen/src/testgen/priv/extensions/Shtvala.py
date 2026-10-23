@@ -20,7 +20,7 @@ from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.HCommon import TWO_STAGE_GATE, guest_fault_tests
 from testgen.priv.extensions.sv.generate import guest_translation_setup, guest_translation_teardown, per_xlen
-from testgen.priv.extensions.sv.page_tables import PteFlags, SvMode, create_page_mapping, write_pte
+from testgen.priv.extensions.sv.page_tables import PteFlags, SvMode, create_page_mapping, guest_table_data, write_pte
 from testgen.priv.registry import add_priv_test_generator
 
 COVERGROUP = "Shtvala_cg"
@@ -190,6 +190,7 @@ def make_shtvala_straddle(test_data: TestData) -> list[TestChunk]:
         ("straddle", "cp_store_straddle_guest_page_fault", "sw", _straddle_va),
     ]
     tc = test_data.begin_test_chunk("straddle")
+    tc.raw_data.extend(guest_table_data())
     tc.code.extend(
         [
             comment_banner(

@@ -450,6 +450,28 @@ svh_page:
   .4byte 0x00000013    # nop straddling the next page
   .4byte 0x00008067    # ret
   .skip 4096 - 6
+  .ifndef rvtest_hlvl0_pg_tbl
+  .p2align 12
+rvtest_hlvl0_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl0_pg_tbl
+  .p2align 12
+rvtest_vlvl0_pg_tbl:
+  .skip 4096
+  .endif
+#if __riscv_xlen == 64
+  .ifndef rvtest_hlvl1_pg_tbl
+  .p2align 12
+rvtest_hlvl1_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl1_pg_tbl
+  .p2align 12
+rvtest_vlvl1_pg_tbl:
+  .skip 4096
+  .endif
+#endif
 
 // Testcase strings
 SvH_gstage_cg_cp_hgatp_gpa_width_bit48_load_str: .string "\"test: 162; cg: SvH_gstage_cg; cp: cp_hgatp_gpa_width; bin: bit48_load\""

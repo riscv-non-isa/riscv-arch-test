@@ -36,6 +36,8 @@ from testgen.priv.extensions.sv.page_tables import (
     SvMode,
     create_page_mapping,
     create_page_walk,
+    guest_table_data,
+    lower_table_data,
     write_pte,
 )
 from testgen.priv.extensions.sv.Sv import PAGE_PERMS
@@ -79,7 +81,8 @@ def begin_chunk(
 
     svh_page is an odd 4 KiB page, so no superpage leaf maps it aligned.  It starts with ret, holds the load/store
     word at offset 8 and ends with a nop that straddles the next page, which continues with ret.  The framework
-    provides the root and level 0-1 tables; the chunk adds the level 2 and 3 tables that Sv48 and Sv57 walk.
+    provides the root tables; the chunk adds the level 0-1 tables and the level 2 and 3 tables that Sv48 and Sv57
+    walk.
     """
     chunk = test_data.begin_test_chunk(split_name)
     chunk.section_header = comment_banner(title, description)
@@ -97,9 +100,7 @@ def begin_chunk(
             ".skip 4096 - 6",
         ]
     )
-    for stage in stages:
-        for level in range(2, stage.levels - 1):
-            chunk.raw_data.extend([".p2align 12", f"{stage.page_table_label(level)}:", ".skip 4096"])
+    chunk.raw_data.extend([*guest_table_data(), *lower_table_data(*stages)])
     return chunk
 
 

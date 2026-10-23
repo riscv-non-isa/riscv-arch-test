@@ -1864,6 +1864,28 @@ svh_page:
   .4byte 0x00000013    # nop straddling the next page
   .4byte 0x00008067    # ret
   .skip 4096 - 6
+  .ifndef rvtest_hlvl0_pg_tbl
+  .p2align 12
+rvtest_hlvl0_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl0_pg_tbl
+  .p2align 12
+rvtest_vlvl0_pg_tbl:
+  .skip 4096
+  .endif
+#if __riscv_xlen == 64
+  .ifndef rvtest_hlvl1_pg_tbl
+  .p2align 12
+rvtest_hlvl1_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl1_pg_tbl
+  .p2align 12
+rvtest_vlvl1_pg_tbl:
+  .skip 4096
+  .endif
+#endif
 
 // Testcase strings
 SvH_csr_cg_cp_vsatp_mode_field_start0_mode0_str: .string "\"test: 667; cg: SvH_csr_cg; cp: cp_vsatp_mode_field; bin: start0_mode0\""

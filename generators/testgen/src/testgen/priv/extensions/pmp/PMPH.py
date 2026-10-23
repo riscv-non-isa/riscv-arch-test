@@ -40,6 +40,7 @@ from testgen.priv.extensions.sv.page_tables import (
     PteFlags,
     SvMode,
     create_page_mapping,
+    guest_table_data,
     write_pte,
 )
 from testgen.priv.registry import add_priv_test_generator
@@ -448,6 +449,7 @@ def _two_stage_chunk(
     stores in each ``hlv`` scenario, on the TEST_FOR_EXECUTION region under two-stage translation."""
     chunk = test_data.begin_test_chunk(split)
     chunk.section_header = comment_banner(title, description)
+    chunk.raw_data.extend(guest_table_data())
     chunk.code.extend(
         [
             *napot_mask_defines(),

@@ -1729,6 +1729,38 @@ svh_page:
   .4byte 0x00000013    # nop straddling the next page
   .4byte 0x00008067    # ret
   .skip 4096 - 6
+  .ifndef rvtest_hlvl0_pg_tbl
+  .p2align 12
+rvtest_hlvl0_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl0_pg_tbl
+  .p2align 12
+rvtest_vlvl0_pg_tbl:
+  .skip 4096
+  .endif
+#if __riscv_xlen == 64
+  .ifndef rvtest_hlvl1_pg_tbl
+  .p2align 12
+rvtest_hlvl1_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl1_pg_tbl
+  .p2align 12
+rvtest_vlvl1_pg_tbl:
+  .skip 4096
+  .endif
+#endif
+  .ifndef rvtest_hlvl0_pg_tbl
+  .p2align 12
+rvtest_hlvl0_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl0_pg_tbl
+  .p2align 12
+rvtest_vlvl0_pg_tbl:
+  .skip 4096
+  .endif
 
 // Testcase strings
 SvH_hlv_cg_cp_hlv_priv_spvp0_vssum0_ssum0_u0_hlv_str: .string "\"test: 424; cg: SvH_hlv_cg; cp: cp_hlv_priv; bin: spvp0_vssum0_ssum0_u0_hlv\""

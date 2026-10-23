@@ -34,6 +34,7 @@ from testgen.priv.extensions.sv.page_tables import (
     PteFlags,
     SvMode,
     create_page_mapping,
+    guest_table_data,
     write_pte,
 )
 from testgen.priv.registry import add_priv_test_generator
@@ -419,7 +420,7 @@ def make_chunk(
         )
     test_data.int_regs.return_register(chunk.gva)
     tc.code.extend(body)
-    tc.raw_data.extend(_DATA_REGION)
+    tc.raw_data.extend([*_DATA_REGION, *guest_table_data()])
     return test_data.end_test_chunk()
 
 

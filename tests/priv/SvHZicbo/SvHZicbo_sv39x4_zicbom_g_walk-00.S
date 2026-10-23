@@ -442,6 +442,28 @@ RVTEST_DATA_BEGIN
   .p2align 12
 svhzicbo_data:
   .fill 1024, 4, 0x0C0B0000
+  .ifndef rvtest_hlvl0_pg_tbl
+  .p2align 12
+rvtest_hlvl0_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl0_pg_tbl
+  .p2align 12
+rvtest_vlvl0_pg_tbl:
+  .skip 4096
+  .endif
+#if __riscv_xlen == 64
+  .ifndef rvtest_hlvl1_pg_tbl
+  .p2align 12
+rvtest_hlvl1_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl1_pg_tbl
+  .p2align 12
+rvtest_vlvl1_pg_tbl:
+  .skip 4096
+  .endif
+#endif
 
 // Testcase strings
 SvHZicbo_cg_cp_g_pa_vs_sv39x4_l1_nonleaf_access_fault_cbo_clean_str: .string "\"test: 466; cg: SvHZicbo_cg; cp: cp_g_pa; bin: vs_sv39x4_l1_nonleaf_access_fault_cbo.clean\""

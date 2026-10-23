@@ -1939,6 +1939,28 @@ RVTEST_DATA_BEGIN
   .p2align 12
 svhzicbo_data:
   .fill 1024, 4, 0x0C0B0000
+  .ifndef rvtest_hlvl0_pg_tbl
+  .p2align 12
+rvtest_hlvl0_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl0_pg_tbl
+  .p2align 12
+rvtest_vlvl0_pg_tbl:
+  .skip 4096
+  .endif
+#if __riscv_xlen == 64
+  .ifndef rvtest_hlvl1_pg_tbl
+  .p2align 12
+rvtest_hlvl1_pg_tbl:
+  .skip 4096
+  .endif
+  .ifndef rvtest_vlvl1_pg_tbl
+  .p2align 12
+rvtest_vlvl1_pg_tbl:
+  .skip 4096
+  .endif
+#endif
 
 // Testcase strings
 SvHZicbo_cg_cp_vs_pte_vs_sv32_l1_valid_cbo_zero_str: .string "\"test: 1; cg: SvHZicbo_cg; cp: cp_vs_pte; bin: vs_sv32_l1_valid_cbo.zero\""
