@@ -233,11 +233,3 @@ normative_rule_definitions:
       [
         "ExceptionsH_cg/cp_xtinst_{breakpoint, ecall, illegalinstr, instr_access, instr_misaligned, load_access, load_misaligned, store_access, store_misaligned, virtinstr}",
       ]
-
-  # The Addr. Offset field of a transformed instruction is the faulting virtual address minus the original one,
-  # nonzero only for a misaligned access
-  - names: [H_tinst_addr_offset]
-    coverpoint:
-      [
-        "Not tested: TODO misaligned loads and stores from VS-mode whose second page faults, on a configuration that writes transformed instructions to htinst; every configuration writes zero",
-      ]
