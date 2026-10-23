@@ -138,8 +138,7 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Sstvecd|Direct Vector|<<t-Sstvecd-coverpoints>>|||x|x|x
 |Sstvala|stval Addresses|<<t-Sstvala-coverpoints>>|||x|x|x
 8+^|Strict
-|SsstrictSm|Machine Strict (unratified)|<<SsstrictSm>>|||o|o|o
-|SsstrictS|Supervisor Strict|<<SsstrictS>>|||o|o|o
+|Ssstrict|Strict|<<t-Ssstrict_S-coverpoints>>|||o|o|o
 8+^|Vector
 |Vx8|Vector Integer 8-bit|<<t-Vx-coverpoints>>|||o|o|x
 |Vx16|Vector Integer 16-bit|<<t-Vx-coverpoints>>|||o|o|x
@@ -216,9 +215,7 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Zfbfmin|BF16 Convert|<<t-Zfbfmin-coverpoints>>||||o|o
 |Zimop|Maybe-Ops|<<t-Zimop-coverpoints>>||||x|x
 |Zcmop|Compressed Maybe-Ops|<<t-Zcmop-coverpoints>>||||x|x
-|ZawrsSm|Machine Wait on Reservation Set|<<t-ZawrsSm-coverpoints>>||||x|x
-|ZawrsS|Supervisor Wait on Reservation Set|<<t-ZawrsS-coverpoints>>||||x|x
-|ZawrsU|User Wait on Reservation Set|<<t-ZawrsU-coverpoints>>||||x|x
+|Zawrs|Wait on Reservation Set|<<t-Zawrs_common-coverpoints>>||||x|x
 |SdtrigSm|Debug Triggers|<<t-SdtrigSm-coverpoints>>||||o|o
 8+^|Non-Profile Extensions
 |E|Embedded 16 Regs|<<t-E-normative-rules>>|||||

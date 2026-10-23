@@ -8,7 +8,7 @@
 # the Imperas RISC-V model (HMC's fixes for the Solvnet cases below; at HMC:
 # export IMPERAS_VLNV=/proj/wally/imperas/Imperas-HMC101126-eng-build/lib/Linux64/ImperasLib), so they are commented out of
 # exclude_extensions at the end of this file. Use the commented-out line when running stock Y-2026.09.
-# - SsstrictSm/S/U: on the vector configs, Imperas does not enforce the vector register-group
+# - Ssstrict_{Sm,S,U}: on the vector configs, Imperas does not enforce the vector register-group
 #   overlap constraints, so it executes reserved widening encodings such as
 #   vwmaccu.vv v14, v9, v15, v0.t instead of raising an illegal instruction:
 #   https://solvnetplus.synopsys.com/s/case/500WQ0000230O4PYAU/imperas-treats-vwmaccuvv-v14-v9-v15-v0t-as-legal
@@ -58,6 +58,6 @@
 #
 ci_enabled: false
 # Stock ImperasDV Y-2026.09:
-# exclude_extensions: "SsstrictSm,SsstrictS,SsstrictU,Smstateen,ExceptionsVx,SdtrigSm,SdtrigS,SdtrigU,Svnapot,Svadu,Ssnpm,Ssnpm_Sm,SmnpmS,SmnpmSSm,Zicfilp_Sm,Zicfilp_S"
+# exclude_extensions: "Ssstrict_Sm,Ssstrict_S,Ssstrict_U,Smstateen,ExceptionsVx,SdtrigSm,SdtrigS,SdtrigU,Svnapot,Svadu,Ssnpm,Ssnpm_Sm,SmnpmS,SmnpmSSm,Zicfilp_Sm,Zicfilp_S"
 # Imperas-HMC101126-eng-build:
 exclude_extensions: "Zicfilp_Sm,Zicfilp_S"

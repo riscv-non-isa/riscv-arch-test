@@ -141,20 +141,28 @@ include::norm/Zicfiss_norm_rules.adoc[]
 
 ==== Zawrs Wait on Reservation Set
 
+The Zawrs suite has one covergroup per privilege mode the tests run in: Zawrs_Sm_cg (M-mode), Zawrs_S_cg (S-mode) and Zawrs_U_cg (U-mode).
 Waits until timer interrupt or timeout on a single hart that cannot modify the reservation set.  Tests behave differently in
-different privilege modes, so a suite is defined for each.
+different privilege modes, so a group is defined for each.
+The Zawrs_Sm tests require Sm, so they are not part of a certificate without Sm, such as RVA23.
 
-include::{testplansdir}/priv/ZawrsSm.adoc[]
+include::{testplansdir}/priv/Zawrs_common.adoc[]
 
-include::{testplansdir}/priv/ZawrsS.adoc[]
+===== Zawrs_Sm
 
-include::{testplansdir}/priv/ZawrsU.adoc[]
+include::{testplansdir}/priv/Zawrs_Sm.adoc[]
 
-include::norm/ZawrsSm_norm_rules.adoc[]
+===== Zawrs_S
 
-include::norm/ZawrsS_norm_rules.adoc[]
+include::{testplansdir}/priv/Zawrs_S.adoc[]
 
-include::norm/ZawrsU_norm_rules.adoc[]
+===== Zawrs_U
+
+include::{testplansdir}/priv/Zawrs_U.adoc[]
+
+===== Zawrs Normative Rules
+
+include::norm/Zawrs_norm_rules.adoc[]
 
 These tests require support for MTI and/or STI interrupts.
 Note that these tests can have race conditions of timeouts, timer interrupts, and spontaneous resumption, and thus may be fussy on different implementations.

@@ -200,14 +200,8 @@
 `ifdef SSSTATEEN_COVERAGE
   `include "Ssstateen_coverage.svh"
 `endif
-`ifdef SSSTRICTS_COVERAGE
-  `include "SsstrictS_coverage.svh"
-`endif
-`ifdef SSSTRICTSM_COVERAGE
-  `include "SsstrictSm_coverage.svh"
-`endif
-`ifdef SSSTRICTU_COVERAGE
-  `include "SsstrictU_coverage.svh"
+`ifdef SSSTRICT_COVERAGE
+  `include "Ssstrict_coverage.svh"
 `endif
 `ifdef SSSTRICTV_COVERAGE
   `include "SsstrictV_coverage.svh"
@@ -323,14 +317,8 @@
 `ifdef ZAMA16B_COVERAGE
   `include "Zama16b_coverage.svh"
 `endif
-`ifdef ZAWRSS_COVERAGE
-  `include "ZawrsS_coverage.svh"
-`endif
-`ifdef ZAWRSSM_COVERAGE
-  `include "ZawrsSm_coverage.svh"
-`endif
-`ifdef ZAWRSU_COVERAGE
-  `include "ZawrsU_coverage.svh"
+`ifdef ZAWRS_COVERAGE
+  `include "Zawrs_coverage.svh"
 `endif
 `ifdef ZBA_COVERAGE
   `include "Zba_coverage.svh"

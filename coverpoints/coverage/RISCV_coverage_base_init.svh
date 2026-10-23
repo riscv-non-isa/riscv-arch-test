@@ -262,17 +262,9 @@
         `cover_info("//      Ssstateen - Enabled");
         `include "Ssstateen_coverage_init.svh"
     `endif
-    `ifdef COVER_SSSTRICTS
-        `cover_info("//      SsstrictS - Enabled");
-        `include "SsstrictS_coverage_init.svh"
-    `endif
-    `ifdef COVER_SSSTRICTSM
-        `cover_info("//      SsstrictSm - Enabled");
-        `include "SsstrictSm_coverage_init.svh"
-    `endif
-    `ifdef COVER_SSSTRICTU
-        `cover_info("//      SsstrictU - Enabled");
-        `include "SsstrictU_coverage_init.svh"
+    `ifdef COVER_SSSTRICT
+        `cover_info("//      Ssstrict - Enabled");
+        `include "Ssstrict_coverage_init.svh"
     `endif
     `ifdef COVER_SSSTRICTV
         `cover_info("//      SsstrictV - Enabled");
@@ -426,17 +418,9 @@
         `cover_info("//      Zama16b - Enabled");
         `include "Zama16b_coverage_init.svh"
     `endif
-    `ifdef COVER_ZAWRSS
-        `cover_info("//      ZawrsS - Enabled");
-        `include "ZawrsS_coverage_init.svh"
-    `endif
-    `ifdef COVER_ZAWRSSM
-        `cover_info("//      ZawrsSm - Enabled");
-        `include "ZawrsSm_coverage_init.svh"
-    `endif
-    `ifdef COVER_ZAWRSU
-        `cover_info("//      ZawrsU - Enabled");
-        `include "ZawrsU_coverage_init.svh"
+    `ifdef COVER_ZAWRS
+        `cover_info("//      Zawrs - Enabled");
+        `include "Zawrs_coverage_init.svh"
     `endif
     `ifdef COVER_ZBA
         `cover_info("//      Zba - Enabled");

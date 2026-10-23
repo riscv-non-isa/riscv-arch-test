@@ -199,14 +199,8 @@
     `ifdef COVER_SSSTATEEN
         ssstateen_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_SSSTRICTS
-        ssstricts_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SSSTRICTSM
-        ssstrictsm_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SSSTRICTU
-        ssstrictu_sample(hart, issue, ins);
+    `ifdef COVER_SSSTRICT
+        ssstrict_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SSSTRICTV
         ssstrictv_sample(hart, issue, ins);
@@ -322,14 +316,8 @@
     `ifdef COVER_ZAMA16B
         zama16b_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_ZAWRSS
-        zawrss_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZAWRSSM
-        zawrssm_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZAWRSU
-        zawrsu_sample(hart, issue, ins);
+    `ifdef COVER_ZAWRS
+        zawrs_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZBA
         zba_sample(hart, issue, ins);
