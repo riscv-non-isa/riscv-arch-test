@@ -4,11 +4,13 @@ source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR
 coverpoints:
   - name: cp_exceptionsHV_vs
     goal: mstatus.VS and vsstatus.VS are selected correctly according to the privilege level to disable vector instructions when off.
-    description: Set misa.V to 1.  Cross mstatus.VS = {00, 01, 10, 11}, vsstatus.vs = {00, 01 10, 11}, mode = {HS/VS/VU/U}.  Attempt csrr t0, vl, vadd.vv v1, v2, v3 and vsetvli.  Read back mstatus.VS and vssstatus.VS.
+    description: Cross mstatus.VS = {00, 01, 10, 11}, vsstatus.VS = {00, 01, 10, 11}, mode = {HS/VS/VU/U}.  Attempt csrr vl and vadd.vv v1, v1, v2, then separately vsetvli changing vl from 1 to 2.  Read back mstatus.VS and vsstatus.VS.
     expectation: |-
       Illegal instruction if mstatus.VS = 00 or ((mode = VS or VU) and vsstatus.VS = 00).  Otherwise, vadd.vv and vsetvli set mstatus.VS to 11, and also set vsstatus.VS to 11 if mode = VS or VU.
       A field written Initial (01) or Clean (10) and not dirtied reads back exactly only on configurations with precise dirty tracking that support Initial and Clean; otherwise the check is only that it is not Off.
     bins: 4 modes * 4 mstatus.VS * 4 vsstatus.VS * 3 instructions
+    notes: |-
+      M-mode is left out: with V = 0, vsstatus.VS has no effect, and Sm covers mstatus.VS in M-mode.
   - name: |-
       cp_vsstatus_vs_set_dirty_arithmetic
       cp_vsstatus_vs_set_dirty_csr
