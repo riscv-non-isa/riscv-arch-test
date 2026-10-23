@@ -94,7 +94,7 @@ S_SSTATUS_MASK = (
     | (1 << 18)  # SUM:  Supervisor User Memory Access
     | (1 << 19)  # MXR:  Make eXecutable Readable
     | (1 << 23)  # SPELP: Supervisor Previous Expect Landing Pad
-    | (0 << 24)  # SDT: not yet supported by Sail; TODO change to 1 when Ssdbltrp implemented
+    | (1 << 24)  # SDT: Supervisor Disable Trap
     | (1 << 31)  # SD for RV32 (probably shouldn't be tested for RV64, but seems to work ok)
     | (0 << 32)  # UXL:  User-Mode XLEN not changeable in Sail yet; should be tested in Xlen suite
     | (1 << 63)  # SD for RV64
@@ -384,9 +384,7 @@ def priv_inst_trap_tests(
     lines = [
         comment_banner(coverpoint, description),
         test_data.add_testcase("ecall", coverpoint, covergroup),
-        "RVTEST_TSBI_ECALL_TEST  # test ecall to execution environment that just returns",
-        "# ecall returns xepc in a0 (x10).  Store a0 in signature as proof ecall took place.",
-        write_sigupd(10, test_data),
+        "RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature",
     ]
     for name in instrs:
         instr = f"{name}    # test {name} instruction"

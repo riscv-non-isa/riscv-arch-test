@@ -125,9 +125,6 @@
 `ifdef M_COVERAGE
   `include "M_coverage.svh"
 `endif
-`ifdef MISALIGN_COVERAGE
-  `include "Misalign_coverage.svh"
-`endif
 `ifdef MISALIGNV_COVERAGE
   `include "MisalignV_coverage.svh"
 `endif
@@ -158,8 +155,14 @@
 `ifdef S_COVERAGE
   `include "S_coverage.svh"
 `endif
+`ifdef SDTRIGS_COVERAGE
+  `include "SdtrigS_coverage.svh"
+`endif
 `ifdef SDTRIGSM_COVERAGE
   `include "SdtrigSm_coverage.svh"
+`endif
+`ifdef SDTRIGU_COVERAGE
+  `include "SdtrigU_coverage.svh"
 `endif
 `ifdef SM_COVERAGE
   `include "Sm_coverage.svh"
@@ -185,14 +188,8 @@
 `ifdef SSCCPTR_COVERAGE
   `include "Ssccptr_coverage.svh"
 `endif
-`ifdef SSCOFPMFS_COVERAGE
-  `include "SscofpmfS_coverage.svh"
-`endif
-`ifdef SSCOFPMFSM_COVERAGE
-  `include "SscofpmfSm_coverage.svh"
-`endif
-`ifdef SSCOFPMFU_COVERAGE
-  `include "SscofpmfU_coverage.svh"
+`ifdef SSCOFPMF_COVERAGE
+  `include "Sscofpmf_coverage.svh"
 `endif
 `ifdef SSCOUNTERENW_COVERAGE
   `include "Sscounterenw_coverage.svh"
@@ -200,29 +197,17 @@
 `ifdef SSNPM_COVERAGE
   `include "Ssnpm_coverage.svh"
 `endif
-`ifdef SSNPMSM_COVERAGE
-  `include "SsnpmSm_coverage.svh"
-`endif
 `ifdef SSSTATEEN_COVERAGE
   `include "Ssstateen_coverage.svh"
 `endif
-`ifdef SSSTRICTS_COVERAGE
-  `include "SsstrictS_coverage.svh"
-`endif
-`ifdef SSSTRICTSM_COVERAGE
-  `include "SsstrictSm_coverage.svh"
-`endif
-`ifdef SSSTRICTU_COVERAGE
-  `include "SsstrictU_coverage.svh"
+`ifdef SSSTRICT_COVERAGE
+  `include "Ssstrict_coverage.svh"
 `endif
 `ifdef SSSTRICTV_COVERAGE
   `include "SsstrictV_coverage.svh"
 `endif
 `ifdef SSTC_COVERAGE
   `include "Sstc_coverage.svh"
-`endif
-`ifdef SSTCSM_COVERAGE
-  `include "SstcSm_coverage.svh"
 `endif
 `ifdef SSTVALA_COVERAGE
   `include "Sstvala_coverage.svh"
@@ -263,17 +248,11 @@
 `ifdef SVBARE_COVERAGE
   `include "Svbare_coverage.svh"
 `endif
-`ifdef SVBARESM_COVERAGE
-  `include "SvbareSm_coverage.svh"
-`endif
 `ifdef SVINVAL_COVERAGE
   `include "Svinval_coverage.svh"
 `endif
 `ifdef SVINVALH_COVERAGE
   `include "SvinvalH_coverage.svh"
-`endif
-`ifdef SVINVALSM_COVERAGE
-  `include "SvinvalSm_coverage.svh"
 `endif
 `ifdef SVNAPOT_COVERAGE
   `include "Svnapot_coverage.svh"
@@ -338,14 +317,8 @@
 `ifdef ZAMA16B_COVERAGE
   `include "Zama16b_coverage.svh"
 `endif
-`ifdef ZAWRSS_COVERAGE
-  `include "ZawrsS_coverage.svh"
-`endif
-`ifdef ZAWRSSM_COVERAGE
-  `include "ZawrsSm_coverage.svh"
-`endif
-`ifdef ZAWRSU_COVERAGE
-  `include "ZawrsU_coverage.svh"
+`ifdef ZAWRS_COVERAGE
+  `include "Zawrs_coverage.svh"
 `endif
 `ifdef ZBA_COVERAGE
   `include "Zba_coverage.svh"
@@ -410,32 +383,17 @@
 `ifdef ZICBOZ_COVERAGE
   `include "Zicboz_coverage.svh"
 `endif
-`ifdef ZICFILPS_COVERAGE
-  `include "ZicfilpS_coverage.svh"
+`ifdef ZICCLSM_COVERAGE
+  `include "Zicclsm_coverage.svh"
 `endif
-`ifdef ZICFILPSU_COVERAGE
-  `include "ZicfilpSU_coverage.svh"
-`endif
-`ifdef ZICFILPSM_COVERAGE
-  `include "ZicfilpSm_coverage.svh"
-`endif
-`ifdef ZICFILPU_COVERAGE
-  `include "ZicfilpU_coverage.svh"
+`ifdef ZICFILP_COVERAGE
+  `include "Zicfilp_coverage.svh"
 `endif
 `ifdef ZICNTR_COVERAGE
   `include "Zicntr_coverage.svh"
 `endif
 `ifdef ZICNTRH_COVERAGE
   `include "ZicntrH_coverage.svh"
-`endif
-`ifdef ZICNTRS_COVERAGE
-  `include "ZicntrS_coverage.svh"
-`endif
-`ifdef ZICNTRSM_COVERAGE
-  `include "ZicntrSm_coverage.svh"
-`endif
-`ifdef ZICNTRU_COVERAGE
-  `include "ZicntrU_coverage.svh"
 `endif
 `ifdef ZICOND_COVERAGE
   `include "Zicond_coverage.svh"
@@ -470,20 +428,17 @@
 `ifdef ZKNH_COVERAGE
   `include "Zknh_coverage.svh"
 `endif
-`ifdef ZKRS_COVERAGE
-  `include "ZkrS_coverage.svh"
-`endif
-`ifdef ZKRSM_COVERAGE
-  `include "ZkrSm_coverage.svh"
-`endif
-`ifdef ZKRU_COVERAGE
-  `include "ZkrU_coverage.svh"
+`ifdef ZKR_COVERAGE
+  `include "Zkr_coverage.svh"
 `endif
 `ifdef ZKSED_COVERAGE
   `include "Zksed_coverage.svh"
 `endif
 `ifdef ZKSH_COVERAGE
   `include "Zksh_coverage.svh"
+`endif
+`ifdef ZKT_COVERAGE
+  `include "Zkt_coverage.svh"
 `endif
 `ifdef ZMMUL_COVERAGE
   `include "Zmmul_coverage.svh"
