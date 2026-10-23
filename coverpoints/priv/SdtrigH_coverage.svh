@@ -12,6 +12,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
 `define COVER_SDTRIGH
+`include "general/RISCV_coverage_sdtrig_derived.svh"
+`include "general/RISCV_coverage_sdtrig_functions.svh"
 
 // mstateen0 and hstateen0 CONTEXT are in the high-half CSRs on RV32
 `ifdef UDB_MXLEN_64
