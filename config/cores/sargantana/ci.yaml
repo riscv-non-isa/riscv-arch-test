@@ -28,7 +28,7 @@ ci_enabled: true
 #   Sm_mcsr_access, Sm_mcsr_walk, Sm_scsr, Sm_shadow
 #                 mstatus.MPP and menvcfg.CBIE keep the reserved 0b10: csr:csr_bsc.sv#L1525, #L1595; mideleg.SGEI
 #                 is read-only one with GEILEN = 0: csr:csr_bsc.sv#L1559-L1560; misa.V is set without V
-#   SscofpmfSm_mcounteren
+#   Sscofpmf_Sm_mcounteren
 #                 scountovf reads are masked by mcounteren in M mode too: https://github.com/bsc-loca/sargantana/issues/116
 #   U_F           An FP instruction that raises fflags without writing an f register leaves FS clean:
 #                 csr:csr_bsc.sv#L1019-L1021, #L1041-L1044 (https://github.com/bsc-loca/sargantana/issues/117)
@@ -75,7 +75,7 @@ ci_enabled: true
 #   InterruptsS_h_vs, InterruptsS_h_vu, InterruptsSm_h_mideleg_mip, InterruptsSm_h_priority_levels
 #                 Interrupts taken from VS or VU set hstatus.GVA or mstatus.GVA
 #                 (https://github.com/bsc-loca/sargantana/issues/119)
-exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,U_F,InterruptsSm_priority_mideleg,InterruptsSm_trigger,InterruptsSm_enable_VS,InterruptsSm_enable_VU,InterruptsSm_priority_mie_VS,InterruptsSm_priority_mie_VU,InterruptsSm_priority_mip_VS,InterruptsSm_priority_mip_VU,InterruptsSm_wfi_timeout_VU,InterruptsSm_h_mideleg_mip,InterruptsSm_h_priority_levels,InterruptsS_enable_VS,InterruptsS_enable_VU,InterruptsS_priority_sie,InterruptsS_priority_sip,InterruptsS_trigger_VS,InterruptsS_trigger_VU,InterruptsS_wfi_timeout_VU,InterruptsS_h_priority,InterruptsS_h_trigger,InterruptsS_h_vs,InterruptsS_h_vu,SscofpmfSm_mcounteren,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_nleaf_pte_reserved,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H"
+exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,ZicntrSm,ZicntrS,ZicntrU,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,U_F,InterruptsSm_priority_mideleg,InterruptsSm_trigger,InterruptsSm_enable_VS,InterruptsSm_enable_VU,InterruptsSm_priority_mie_VS,InterruptsSm_priority_mie_VU,InterruptsSm_priority_mip_VS,InterruptsSm_priority_mip_VU,InterruptsSm_wfi_timeout_VU,InterruptsSm_h_mideleg_mip,InterruptsSm_h_priority_levels,InterruptsS_enable_VS,InterruptsS_enable_VU,InterruptsS_priority_sie,InterruptsS_priority_sip,InterruptsS_trigger_VS,InterruptsS_trigger_VU,InterruptsS_wfi_timeout_VU,InterruptsS_h_priority,InterruptsS_h_trigger,InterruptsS_h_vs,InterruptsS_h_vu,Sscofpmf_Sm_mcounteren,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_nleaf_pte_reserved,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache device-tree-compiler libboost-dev libboost-regex-dev libboost-system-dev"
 install_script: ".github/scripts/install-sargantana.sh"
