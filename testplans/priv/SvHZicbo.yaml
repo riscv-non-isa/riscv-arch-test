@@ -1,172 +1,51 @@
 # yaml-language-server: $schema=testplan.schema.json
 suite: SvHZicbo
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=2005939128#gid=2005939128
-notes: |
-  SvHZicbo boots to HS-mode with hedeleg clear, so every trap from VS-mode and VU-mode is taken in HS-mode and
-  read from scause.  PMP on the final address of a CBO is checked in SvHZicboSm (cp_pmp), which boots to M-mode.
+notes: |-
+  SvHZicbo boots to HS-mode with hedeleg clear, so every trap from VS-mode and VU-mode is taken in HS-mode and read from scause. PMP on the final address of a CBO is checked in SvHZicboSm (cp_pmp), which boots to M-mode.
+  - The cp_vs_* and cp_g_* files need Sv39x4 and VS-stage Sv39 (RV64) or Sv32x4 and VS-stage Sv32 (RV32). Each case writes the PTEs, executes hfence.gvma and hfence.vvma, and runs the family's CBOs (cbo.clean, cbo.flush and cbo.inval with Zicbom, cbo.zero with Zicboz) once in VS-mode and once in VU-mode. HS-mode checks what cbo.zero wrote.
+  - VS-stage cases use a guest virtual address in a VS-stage mapping over the G-stage identity map. G-stage cases use a G-stage mapping reached through a VS-stage identity superpage. Every level of each stage holds the leaf in turn.
+  - A CBO faults like a store: a store/AMO page fault, guest-page fault or access fault. A cache-block management instruction needs read or write permission and never checks D. cbo.zero needs write permission and checks D (cmo.adoc cbm_access, cbz_access). Boot leaves menvcfg.ADUE = 0, which makes henvcfg.ADUE read-only zero, so a clear A bit, or a clear D bit for cbo.zero, raises a fault (Svade behavior).
+  - The henvcfg files run with vsatp and hgatp Bare and change menvcfg through T-SBI.
 coverpoints:
-  - heading: Be sure hgatp WARL fields are exercised in VM tests.
-  - name: vs_invalid_pte_cbo
-    goal: Verify CBO faulting when VS-stage PTE.V=0
+  - heading: VS-stage PTEs
+  - name: cp_vs_pte
+    goal: Verify the fault that each VS-stage PTE gives a CBO from VS-mode and VU-mode.
     description: |-
-      Environment: vsatp.mode={Sv32,Sv39,Sv48,Sv57}, PMP permits SPA.
-      Test Case: Set PTE.V=0, PTE.R=1, PTE.W=1. Execute CBO from VS and VU.
-    expectation: Store/AMO page fault at VS-stage.
-    bins: satp.mode × {VS,VU}
-  - name: g_invalid_pte_cbo
-    goal: Verify CBO faulting when G-stage PTE.V=0
+      At each VS-stage level, the leaf in turn: valid; V = 0; W without R; W and X without R; R and X without W; X only (cbo.zero only); A = 0; D = 0; a pointer (RWX = 0) at level 0; D, A or U set in the non-leaf PTE above the leaf; a misaligned superpage (levels above 0). VS-mode leaves have U = 0 and VU-mode leaves U = 1; VU-mode also uses a supervisor leaf (U = 0), and VS-mode a user leaf (U = 1) with vsstatus.SUM = 0.
+    expectation: |-
+      No fault for a valid leaf; for R and X without W and for D = 0 with a cache-block management instruction (a load is permitted, and D is not checked).
+      Store/AMO page fault for every other case, and for cbo.zero on R and X without W, X only and D = 0.
+    bins: "{VS, VU} × CBO × {no fault, store/AMO page fault}, with vsatp and hgatp paged"
+  - name: cp_vs_sum
+    goal: Verify that vsstatus.SUM = 1 lets VS-mode CBOs reach VS-stage user pages.
+    description: In VS-mode with vsstatus.SUM = 1, the CBOs at a VS-stage user leaf (U = 1) at each level.
+    expectation: No fault. (With SUM = 0 the same case is a store/AMO page fault in cp_vs_pte.)
+    bins: "VS × CBO × SUM = 1 × no fault"
+  - name: |-
+      cp_vs_gpa
+      cp_vs_gpa_implicit
+    goal: Verify the faults that G-stage translation gives the final address and the VS-stage page-table reads of a CBO.
     description: |-
-      Environment: Valid VS mapping, invalid G PTE.V=0.
-      Test Case: Issue CBO to GVA.
-    expectation: Store/AMO page fault at G-stage.
-    bins: hgatp.mode × {VS,VU}
-  - name: reserved_rwx_vs
-    goal: Detect reserved RWX encoding at VS-stage
+      At each VS-stage level: a leaf whose guest physical address the G-stage does not map; and, below the top level, a non-leaf PTE that points at a table whose guest physical address the G-stage does not map, or maps to the page of RVMODEL_ACCESS_FAULT_ADDRESS (with an index there that selects a PTE inside the access-fault region; only when RVMODEL_ACCESS_FAULT_ADDRESS is defined).
+    expectation: |-
+      Unmapped final address: store/AMO guest-page fault. Unmapped table: store/AMO guest-page fault, with htinst holding the pseudoinstruction for an implicit VS-stage read (0x2000 on RV32, 0x3000 on RV64, cp_vs_gpa_implicit). Table at a faulting supervisor physical address: store/AMO access fault.
+    bins: "{VS, VU} × CBO × {store/AMO guest-page fault, store/AMO access fault}; cp_vs_gpa_implicit: {VS, VU} × CBO × pseudoinstruction"
+  - heading: G-stage PTEs
+  - name: cp_g_pte
+    goal: Verify the fault that each G-stage PTE gives a CBO from VS-mode and VU-mode.
     description: |-
-      Env: Leaf PTE with W=1,R=0.
-      Test Case: Execute CBO on GVA.
-    expectation: Page fault at VS-stage.
-    bins: "{VS,VU} × Levels"
-  - name: reserved_rwx_g
-    goal: Detect reserved RWX encoding at G-stage
+      At each G-stage level, the leaf in turn, as in cp_vs_pte with U = 1: valid; V = 0; W without R; W and X without R; R and X without W; X only (cbo.zero only); A = 0; D = 0; a pointer at level 0; D, A or U set in the non-leaf PTE above the leaf; a misaligned superpage. Also a leaf with U = 0.
+    expectation: |-
+      As cp_vs_pte, with store/AMO guest-page faults in place of page faults. U = 0 is a store/AMO guest-page fault, because every G-stage access is a user access.
+    bins: "{VS, VU} × CBO × {no fault, store/AMO guest-page fault}, with vsatp and hgatp paged"
+  - name: cp_g_pa
+    goal: Verify that a G-stage leaf or table at a faulting supervisor physical address gives a CBO a store/AMO access fault.
     description: |-
-      Env: Leaf G PTE with W=1,R=0.
-      Test Case: Execute CBO on GVA.
-    expectation: Page fault at G-stage.
-    bins: "{VS,VU} × Levels"
-  - name: nonleaf_vs
-    goal: Detect CBO on VS non-leaf PTE at L0
-    description: |-
-      Env: Level0 PTE with RWX=0.
-      Test Case: Execute CBO.
-    expectation: Page fault.
-    bins: "{VS,VU} × satp.mode"
-  - name: nonleaf_g
-    goal: Detect CBO on G non-leaf PTE at L0
-    description: |-
-      Env: G-stage level0 PTE with RWX=0.
-      Test Case: Execute CBO.
-    expectation: Page fault.
-    bins: "{VS,VU} × hgatp.mode"
-  - name: sum_effect_vs
-    goal: Verify SUM effects in VS-stage
-    description: |-
-      Env: PTE.U=1, SUM={0,1}.
-      Test Case: Issue CBO in VS-mode.
-    expectation: SUM=0 → page fault; SUM=1 → no fault.
-    bins: SUM={0,1}
-  - name: hu_effect_cbo
-    goal: Verify hstatus.HU allows U-mode CBO
-    description: |-
-      Env: hstatus.HU={0,1}.
-      Test Case: From U-mode issue CBO.
-    expectation: HU=1 → CBO permitted; HU=0 → illegal.
-    bins: HU={0,1}
-  - name: vs_access_bit
-    goal: Verify PTE.A handling in VS-stage for CBO
-    description: |-
-      Env: Leaf VS PTE.A=0. sfence.vma before.
-      Test Case: Execute CBO.
-    expectation: Page fault if Svade implemented.
-    bins: "{VS,VU} × satp.mode"
-  - name: g_access_bit
-    goal: Verify PTE.A handling in G-stage for CBO
-    description: |-
-      Env: Leaf G PTE.A=0.
-      Test Case: Execute CBO.
-    expectation: Page fault if Svade implemented.
-    bins: hgatp.mode
-  - name: vs_dirty_bit
-    goal: Verify PTE.D handling in VS-stage for CBO
-    description: |-
-      Env: Leaf VS PTE.D=0.
-      Test Case: Execute CBO.
-    expectation: No fault; CBO succeeds.
-    bins: "{VS,VU}"
-  - name: g_dirty_bit
-    goal: Verify PTE.D handling in G-stage for CBO
-    description: |-
-      Env: Leaf G PTE.D=0.
-      Test Case: Execute CBO.
-    expectation: No fault; CBO succeeds.
-    bins: hgatp.mode
-  - name: misaligned_superpage_vs
-    goal: Detect misaligned VS superpage with CBO
-    description: |-
-      Env: Leaf VS PTE with misaligned PPN.
-      Test Case: Execute CBO.
-    expectation: Page fault.
-    bins: "{levels L1–L4}"
-  - name: misaligned_superpage_g
-    goal: Detect misaligned G superpage with CBO
-    description: |-
-      Env: Leaf G PTE with misaligned PPN.
-      Test Case: Execute CBO.
-    expectation: Page fault.
-    bins: "{levels L1–L4}"
-  - name: leaf_invalid_pa_vs
-    goal: Detect invalid PA in VS PTE
-    description: |-
-      Env: VS leaf points to non-existent GPA.
-      Test Case: Execute CBO.
-    expectation: Store access fault.
-    bins: "{VS,VU}"
-  - name: leaf_invalid_pa_g
-    goal: Detect invalid PA in G PTE
-    description: |-
-      Env: G leaf points to non-existent SPA.
-      Test Case: Execute CBO.
-    expectation: Store access fault.
-    bins: hgatp.mode
-  - name: nonleaf_invalid_pa_vs
-    goal: Detect invalid PA in VS non-leaf
-    description: |-
-      Env: Non-leaf VS PTE invalid pointer.
-      Test Case: Execute CBO.
-    expectation: Store access fault.
-    bins: satp.mode
-  - name: nonleaf_invalid_pa_g
-    goal: Detect invalid PA in G non-leaf
-    description: |-
-      Env: Non-leaf G PTE invalid pointer.
-      Test Case: Execute CBO.
-    expectation: Store access fault.
-    bins: hgatp.mode
-  - name: dau_bits_vs
-    goal: Verify DAU bits set in VS non-leaf PTE
-    description: |-
-      Env: Non-leaf VS PTE with D/A/U set.
-      Test Case: Execute CBO.
-    expectation: Store/AMO page fault.
-    bins: "{D,A,U}"
-  - name: dau_bits_g
-    goal: Verify DAU bits set in G non-leaf PTE
-    description: |-
-      Env: Non-leaf G PTE with D/A/U set.
-      Test Case: Execute CBO.
-    expectation: Store/AMO page fault.
-    bins: "{D,A,U}"
-  - name: aliasing_vs_g
-    goal: Check aliasing across 2-stage
-    description: |-
-      Env: Map two GVAs to same SPA via VS+G.
-      Test Case: CBO on GVA1, probe via GVA2.
-    expectation: Both aliases affected.
-    bins: "{cbo.clean,cbo.flush,cbo.inval}"
-  - name: hfence_interaction
-    goal: Verify HFENCE with CBO
-    description: |-
-      Env: Modify VS/G tables; omit/insert HFENCE.VVMA/GVMA.
-      Test Case: Issue CBO post-modification.
-    expectation: Without HFENCE, stale ops; with HFENCE, correct.
-    bins: "{with fence, without fence}"
-  - name: vmid_reuse_cbo
-    goal: Check VMID reuse without flush
-    description: |-
-      Env: Run CBO under VMID1, reuse VMID for new mappings.
-      Test Case: Probe caches.
-    expectation: Without HFENCE, stale; with HFENCE, correct.
-    bins: "{reuse, fresh}"
+      RVMODEL_ACCESS_FAULT_ADDRESS only. At each G-stage level, a leaf that maps RVMODEL_ACCESS_FAULT_ADDRESS; below the top level, a non-leaf G-stage PTE that points at the page of RVMODEL_ACCESS_FAULT_ADDRESS, with an index there that selects a PTE inside the access-fault region.
+    expectation: Store/AMO access fault.
+    bins: "{VS, VU} × CBO × store/AMO access fault"
+  - heading: henvcfg CBO enables
   - name: cp_cbie_vs
     goal: menvcfg.CBIE and henvcfg.CBIE control cbo.inval in VS-mode
     description: |-
@@ -189,3 +68,46 @@ coverpoints:
       Otherwise, if any of the three fields is 01, cbo.inval performs a flush, so the load returns the value stored before it.
       All 11: cbo.inval executes without exception.
     bins: priv_mode VU x cbo.inval x menvcfg.CBIE {00, 01, 11} x henvcfg.CBIE {00, 01, 11} x senvcfg.CBIE {00, 01, 11} x vsatp Bare = 27 bins
+  - name: |-
+      cp_cbcfe_vs
+      cp_cbcfe_vu
+    goal: menvcfg.CBCFE, henvcfg.CBCFE and, in VU-mode, senvcfg.CBCFE control cbo.clean and cbo.flush
+    description: |-
+      Environment: vsatp and hgatp Bare.  From HS-mode, write menvcfg.CBCFE (through T-SBI), henvcfg.CBCFE and, for VU-mode, senvcfg.CBCFE with each of 0 and 1.
+      Test Case: In VS-mode and VU-mode, execute cbo.clean and cbo.flush on a scratch word.
+    expectation: |-
+      menvcfg.CBCFE = 0: illegal-instruction exception.
+      Otherwise henvcfg.CBCFE = 0, or senvcfg.CBCFE = 0 in VU-mode: virtual-instruction exception.
+      Otherwise the instruction executes without exception.
+    bins: "VS × {cbo.clean, cbo.flush} × 2 menvcfg × 2 henvcfg = 8; VU × {cbo.clean, cbo.flush} × 2 menvcfg × 2 henvcfg × 2 senvcfg = 16"
+  - name: |-
+      cp_cbze_vs
+      cp_cbze_vu
+    goal: menvcfg.CBZE, henvcfg.CBZE and, in VU-mode, senvcfg.CBZE control cbo.zero
+    description: |-
+      Environment: vsatp and hgatp Bare.  From HS-mode, write menvcfg.CBZE (through T-SBI), henvcfg.CBZE and, for VU-mode, senvcfg.CBZE with each of 0 and 1.
+      Test Case: In VS-mode and VU-mode, store a nonzero value to a scratch word, execute cbo.zero on it, and load it back.
+    expectation: |-
+      menvcfg.CBZE = 0: illegal-instruction exception.
+      Otherwise henvcfg.CBZE = 0, or senvcfg.CBZE = 0 in VU-mode: virtual-instruction exception.
+      Otherwise cbo.zero zeroes the word.
+    bins: "VS × cbo.zero × 2 menvcfg × 2 henvcfg = 4; VU × cbo.zero × 2 menvcfg × 2 henvcfg × 2 senvcfg = 8"
+  - heading: Not tested
+  - goal: cbo.inval with every CBIE field 11 performs an invalidate
+    status: Not tested
+    notes: |-
+      Whether an invalidate discards stored data depends on the cache hierarchy, so a test cannot tell it from a flush; cp_cbie_vs/vu check only that cbo.inval executes.
+    rules:
+      - cbo-inval_h_mode_inval_enc
+  - goal: Cache-block management instructions on an X-only VS-stage or G-stage page
+    status: Not tested
+    notes: |-
+      Whether a cache-block management instruction may access an execute-only page is UNSPECIFIED (cmo.adoc, after cbm_access), so only cbo.zero is tested on X-only leaves.
+    rules:
+      - cbm_access
+  - goal: CBOs under Sv48x4 and Sv57x4, and VS-stage Sv48 and Sv57
+    status: Not tested
+    notes: |-
+      The framework allocates only the root and two lower tables per stage (rvtest_hlvl0/1, rvtest_vlvl0/1), so the cases run with Sv39x4 and VS-stage Sv39 (RV64) and Sv32x4 and VS-stage Sv32 (RV32) only.
+    rules:
+      - H_vm_twostage

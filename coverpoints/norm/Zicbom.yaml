@@ -53,7 +53,7 @@ normative_rule_definitions:
   # For the purposes of writing the mtinst or htinst register on a trap, the
   # following standard transformation is defined for cache-block management
   # instructions and cache-block zero instructions:
-  # SvHZicbo CBOs from VS-mode and VU-mode trap into M-mode, and the trap handler checks mtinst
+  # SvHZicbo CBOs from VS-mode and VU-mode trap into HS-mode, and the trap handler checks htinst
   - name: H_trans_cache
     coverpoint: ["SvHZicbo_cg/{cp_vs_pte,cp_g_pte,cp_g_pa}"]
 

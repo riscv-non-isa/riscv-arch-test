@@ -2,6 +2,7 @@
 # Generated from riscv-isa-manual normative rule definitions
 
 normative_rule_definitions:
-  # PMP applies to the supervisor physical address of a CBO from VS-mode or VU-mode
-  - names: [H_pmp]
+  # PMP applies to the supervisor physical address of a CBO from VS-mode or VU-mode: a cache-block
+  # management instruction needs read or write permission, and cbo.zero needs write permission
+  - names: [H_pmp, pmp_cbm_fault, pmp_store_fault]
     coverpoint: ["SvHZicboSm_cg/cp_pmp"]

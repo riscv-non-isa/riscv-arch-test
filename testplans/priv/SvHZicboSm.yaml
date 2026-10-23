@@ -17,3 +17,5 @@ coverpoints:
     bins: |-
       {VS, VU} x {cbo.clean, cbo.flush, cbo.inval, cbo.zero} x {VS-stage page, G-stage page} x pmpcfg0 XWR {000, 001}
       cbo.clean/flush/inval only with Zicbom, cbo.zero only with Zicboz
+    notes: |-
+      XWR = 001 follows cmo.adoc cbm_access (a cache-block management instruction may access a block whenever a load or a store may), as Sail and Spike do; machine.adoc pmp_cbm_fault defers to it.

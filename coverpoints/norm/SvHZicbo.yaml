@@ -66,6 +66,7 @@ normative_rule_definitions:
   - names:
       [
         cbm_access,
+        cbm_page_fault,
         cbm_unperm_fault,
         cbz_access,
         cbz_unperm_fault,
