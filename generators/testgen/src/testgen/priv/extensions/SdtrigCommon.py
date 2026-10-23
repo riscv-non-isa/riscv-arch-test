@@ -4143,10 +4143,16 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
         ]
         return [f"\n# trig_num {trig_num}, {trig_type}", *guards, *body, *(["#endif"] * len(guards))]
 
+    def context_access(csr: str, instr: str) -> list[str]:
+        if mode == "S" and csr in ("scontext", "hcontext"):
+            # set up through T-SBI: mstateen0.CONTEXT may make scontext/hcontext illegal below M-mode
+            return [tsbi_call(instr)]
+        return [_csr_access(instr, mode)]
+
     def set_context(csr: str, expr32: str, expr64: str) -> list[str]:
         return [
             *_xlen_li_expr(temp_reg, expr32, expr64),
-            _csr_access(f"csrw {csr}, x{temp_reg} # live context tag", mode),
+            *context_access(csr, f"csrw {csr}, x{temp_reg} # live context tag"),
         ]
 
     ######################################
@@ -4206,9 +4212,9 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                 )
             body.append("#endif")
             lines.extend(per_type(trig_num, trig_type, body))
-    lines.append(_csr_access("csrw scontext, x0 # clear the test context", mode))
+    lines.extend(context_access("scontext", "csrw scontext, x0 # clear the test context"))
     lines.extend(_global_ie(mode, False))
-    lines.append("#endif // scontext textra match")
+    lines.append("#endif // UDB_SCONTEXT_AVAILABLE")
 
     ######################################
     coverpoint = "cp_textra_double_context"
@@ -4247,10 +4253,10 @@ def _generate_textra_tests(test_data: TestData, mode: str) -> list[TestChunk]:
                             body += case(name, coverpoint, trig_num, trig_type, tdata3)
             lines.extend(per_type(trig_num, trig_type, body))
     lines.append(_csr_access("csrw mcontext, x0 # clear the test context", mode))
-    lines.append(_csr_access("csrw scontext, x0 # clear the test context", mode))
+    lines.extend(context_access("scontext", "csrw scontext, x0 # clear the test context"))
     lines.extend(_global_ie(mode, False))
-    lines.append("#endif // scontext textra match")
-    lines.append("#endif // mcontext textra match")
+    lines.append("#endif // UDB_SCONTEXT_AVAILABLE")
+    lines.append("#endif // UDB_MCONTEXT_AVAILABLE")
 
     ######################################
     coverpoint = "cp_textra_asid"
