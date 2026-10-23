@@ -2,11 +2,17 @@
 suite: SvinvalH
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=292965592#gid=292965592
 coverpoints:
-  - name: cr_svinivalH
+  - name: cp_svinval
     goal: Svinval instructions trap appropriately.
-    description: Test all Svinval instructions { sfence.w.inval, sfence.inval.ir, sinval.vma, hinval.vvma, hinval.gvma} in each privilege mode {M/HS/VS/U/VU} with TVM = {0/1} and VTVM = {0/1}
-    expectation: Instruction executes or throws illegal instruction trap.  Doesn't try to check that anything is actually invalidated.
-    bins: 5 instructions x 5 privilege modes x 2 TVM * 2 VTVM
+    description: Execute each Svinval instruction {sfence.w.inval, sinval.vma x0, x0, sfence.inval.ir, hinval.vvma x0, x0, hinval.gvma x0, x0} in each privilege mode {HS/VS/U/VU} with TVM = 0 and VTVM = {0/1}.  Doesn't try to check that anything is actually invalidated.
+    expectation: |-
+      HS: all execute.
+      VS: sfence.w.inval and sfence.inval.ir execute; sinval.vma executes with VTVM = 0 and raises virtual instruction with VTVM = 1; hinval.vvma and hinval.gvma raise virtual instruction.
+      U: all raise illegal instruction.
+      VU: all raise virtual instruction.
+    bins: 5 instructions x 4 privilege modes x TVM = 0 x 2 VTVM
+    notes: |-
+      M-mode and TVM = 1 are in SvinvalHSm, because the HS-mode handler reads satp, which traps with TVM = 1
   - name: |-
       cp_hinval_vvma
       cp_hinval_gvma
