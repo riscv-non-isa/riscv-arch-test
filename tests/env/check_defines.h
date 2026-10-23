@@ -173,15 +173,23 @@
 #endif // STANDARD_SM_SUPPORTED || S_SUPPORTED
 
 ##### Guest External Interrupts #####
-// UDB_SGEI_INTR_IMPL (H with GEILEN > 0, derived_config.h) says guest interrupt files exist.
+// RVTEST_SGEI_INTR_IMPL (H with GEILEN > 0, derived_config.h) says guest interrupt files exist.
 // hgeip is read-only, so the platform must provide a way to raise and clear each hgeip bit.
-#if defined(UDB_SGEI_INTR_IMPL) && !defined(RVMODEL_SET_GUEST_EXT_INT)
+#if defined(RVTEST_SGEI_INTR_IMPL) && !defined(RVMODEL_SET_GUEST_EXT_INT)
   #error "H is implemented with NUM_EXTERNAL_GUEST_INTERRUPTS (GEILEN) > 0 but RVMODEL_SET_GUEST_EXT_INT is not defined. Define it in rvmodel_macros.h, or set GEILEN to 0 if the platform has no guest interrupt files."
 #endif
 
 #ifdef RVMODEL_SET_GUEST_EXT_INT
   #ifndef RVMODEL_CLR_GUEST_EXT_INT
     #error "RVMODEL_SET_GUEST_EXT_INT is defined but RVMODEL_CLR_GUEST_EXT_INT is not. Define both in rvmodel_macros.h."
+  #endif
+
+  #ifndef RVMODEL_CLR_GUEST_EXT_INT_M
+    #define RVMODEL_CLR_GUEST_EXT_INT_M RVMODEL_CLR_GUEST_EXT_INT
+  #endif
+
+  #ifndef RVMODEL_SET_GUEST_EXT_INT_M
+    #define RVMODEL_SET_GUEST_EXT_INT_M RVMODEL_SET_GUEST_EXT_INT
   #endif
 #endif
 

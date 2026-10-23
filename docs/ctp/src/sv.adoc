@@ -6,7 +6,7 @@
 The UDB configuration file determines whether to run tests for Sv32, or for Sv39 and possibly Sv48 and Sv57.
 
 Coverpoints that need M-mode state (`mstatus.MPRV`, `mstatus.TVM`, `mstatus.SBE`, or an M-mode CSR access)
-are in the `Sm` suites: SvSm, SvbareSm and SvinvalSm.
+are in the `Sm` groups.
 The PMP suites (SvPMP, SvPMPZicbo, SvaduPMP) boot to M-mode because they program PMP entries.
 
 include::{testplansdir}/priv/Sv.adoc[]
@@ -30,15 +30,18 @@ include::norm/SvSm_norm_rules.adoc[]
 
 ==== Svbare Virtual Memory Off
 
+The Svbare suite has two covergroups: Svbare_cg (S-mode and U-mode) and Svbare_Sm_cg (M-mode with MPRV).
+The Svbare_Sm tests require Sm, so they are not part of a certificate without Sm, such as RVA23.
+
 include::{testplansdir}/priv/Svbare.adoc[]
 
+===== Svbare_Sm Virtual Memory Off with MPRV
+
+include::{testplansdir}/priv/Svbare_Sm.adoc[]
+
+===== Svbare Normative Rules
+
 include::norm/Svbare_norm_rules.adoc[]
-
-==== SvbareSm Virtual Memory Off with MPRV
-
-include::{testplansdir}/priv/SvbareSm.adoc[]
-
-include::norm/SvbareSm_norm_rules.adoc[]
 
 
 ==== SvPMP VirtMem + PMP
@@ -69,13 +72,11 @@ include::{testplansdir}/priv/Svinval.adoc[]
 
 include::norm/Svinval_norm_rules.adoc[]
 
-==== SvinvalSm Table Invalidation with mstatus.TVM
+===== Svinval_Sm Table Invalidation with mstatus.TVM
 
-Runs the Svinval instructions in M, S and U mode with `mstatus.TVM=1`.
+Runs the Svinval instructions in M, S and U mode with `mstatus.TVM=0` and `mstatus.TVM=1`.
 
-include::{testplansdir}/priv/SvinvalSm.adoc[]
-
-include::norm/SvinvalSm_norm_rules.adoc[]
+include::{testplansdir}/priv/Svinval_Sm.adoc[]
 
 ==== Svade A/D Bit Page Fault Exception
 
