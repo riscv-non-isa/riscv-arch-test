@@ -20,6 +20,13 @@ normative_rule_definitions:
   # Each bit of hedeleg shall be either writable or read-only zero.
   - name: hedeleg_acc
     coverpoint: ["H_hscsr_cg/{cp_hcsr_access, cp_hcsrwalk}/hedeleg"]
+  # Many bits of hedeleg are required specifically to be writable or zero; bit 0 must be writable if IALIGN=32.
+  - names: [hedeleg_bits_required, hedeleg_bit0_ialign32]
+    coverpoint:
+      [
+        "H_hscsr_cg/cp_hcsr_access/hedeleg",
+        "HSm_mcsr_cg/cp_hcsr_access/hedeleg",
+      ]
   - name: hedeleg_img
     coverpoint: ["H_hscsr_cg/{cp_hcsr_access, cp_hcsrwalk}/hedeleg"]
   # Register hideleg is an HSXLEN-bit read/write register, formatted as shown in
@@ -546,17 +553,11 @@ normative_rule_definitions:
   # When HSXLEN=64, VSXL is a WARL field that is encoded the same as the MXL field of
   # misa, shown in &lt;&lt;norm:misa_mxl_enc&gt;&gt;.
   - name: hstatus_vsxl_64
-    coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+    coverpoint: ["H_hscsr_cg/cp_hstatus_vsxl"]
   # In particular, an implementation may make VSXL be a read-only field whose value always
   # ensures that VSXLEN=HSXLEN.
   - name: vsxl_ro
-    coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+    coverpoint: ["H_hscsr_cg/cp_hstatus_vsxl"]
   # If HSXLEN is changed from 32 to a wider width, and if field VSXL is not restricted to
   # a single value, it gets the value corresponding to the widest supported width not
   # wider than the new HSXLEN.
@@ -571,10 +572,7 @@ normative_rule_definitions:
   # of misa, shown in . In particular, an implementation may make UXL be a read-only copy
   # of field VSXL of hstatus, forcing VU-mode XLEN=VSXLEN.
   - name: vsstatus_uxl_op
-    coverpoint:
-      [
-        "Not tested: XLEN-changing VSXL and UXL are out of scope, so tests run with VSXLEN = HSXLEN = MXLEN",
-      ]
+    coverpoint: ["H_hscsr_cg/cp_vsstatus_uxl"]
   # If VSXLEN is changed from 32 to a wider width, and if field UXL is not restricted to a
   # single value, it gets the value corresponding to the widest supported width not wider
   # than the new VSXLEN.

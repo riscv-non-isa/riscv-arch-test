@@ -35,543 +35,543 @@ RVTEST_BEGIN
 /////////////////////////////////
 #if ((__riscv_xlen == 64 && defined(UDB_SV39_VSMODE_TRANSLATION)) || (__riscv_xlen == 32 && defined(UDB_SV32_VSMODE_TRANSLATION))) && ((__riscv_xlen == 64 && defined(UDB_SV39X4_TRANSLATION)) || (__riscv_xlen == 32 && defined(UDB_SV32X4_TRANSLATION)))
 #if __riscv_xlen == 64
-  LA(x14, rvtest_Vroot_pg_tbl + (((0x140802000) >> 30) & 0x1ff) * 8)
+  LA(x13, rvtest_Vroot_pg_tbl + (((0x140802000) >> 30) & 0x1ff) * 8)
   LI(x9, (((0x2C0802000) >> 30) << 28) | (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V))
-  SREG x9, 0(x14)
-  LA(x14, rvtest_Hroot_pg_tbl + (((0x2C0802000) >> 30) & 0x7ff) * 8)
+  SREG x9, 0(x13)
+  LA(x13, rvtest_Hroot_pg_tbl + (((0x2C0802000) >> 30) & 0x7ff) * 8)
   LA(x9, H_hlv_data)
   srli x9, x9, 30
   slli x9, x9, 28
   LI(x6, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
   or x9, x9, x6
-  SREG x9, 0(x14)
-  LA(x8, H_hlv_data)
-  slli x8, x8, 34
-  srli x8, x8, 34
+  SREG x9, 0(x13)
+  LA(x14, H_hlv_data)
+  slli x14, x14, 34
+  srli x14, x14, 34
   LI(x6, ((0x140802000) >> 30) << 30)
-  or x8, x8, x6    # guest virtual address of H_hlv_data
+  or x14, x14, x6    # guest virtual address of H_hlv_data
 // Identity map the test image in both stages
-  LA(x6, rvtest_code_begin)
-  srli x6, x6, 30
-  slli x6, x6, 53
-  srli x6, x6, 50
-  LA(x9, rvtest_Hroot_pg_tbl)
-  add x6, x6, x9
-  LA(x13, rvtest_code_begin)
-  srli x13, x13, 30
-  slli x13, x13, 28
-  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x9
-  SREG x13, 0(x6)
-  LA(x6, rvtest_code_begin)
-  srli x6, x6, 30
-  slli x6, x6, 55
-  srli x6, x6, 52
-  LA(x9, rvtest_Vroot_pg_tbl)
-  add x6, x6, x9
-  LA(x13, rvtest_code_begin)
-  srli x13, x13, 30
-  slli x13, x13, 28
-  LI(x9, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x9
-  SREG x13, 0(x6)
-  LA(x6, rvtest_data_begin)
-  srli x6, x6, 30
-  slli x6, x6, 53
-  srli x6, x6, 50
-  LA(x9, rvtest_Hroot_pg_tbl)
-  add x6, x6, x9
-  LA(x13, rvtest_data_begin)
-  srli x13, x13, 30
-  slli x13, x13, 28
-  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x9
-  SREG x13, 0(x6)
-  LA(x6, rvtest_data_begin)
-  srli x6, x6, 30
-  slli x6, x6, 55
-  srli x6, x6, 52
-  LA(x9, rvtest_Vroot_pg_tbl)
-  add x6, x6, x9
-  LA(x13, rvtest_data_begin)
-  srli x13, x13, 30
-  slli x13, x13, 28
-  LI(x9, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x9
-  SREG x13, 0(x6)
-  LA(x6, rvtest_sig_end)
-  srli x6, x6, 30
-  slli x6, x6, 53
-  srli x6, x6, 50
-  LA(x9, rvtest_Hroot_pg_tbl)
-  add x6, x6, x9
-  LA(x13, rvtest_sig_end)
-  srli x13, x13, 30
-  slli x13, x13, 28
-  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x9
-  SREG x13, 0(x6)
-  LA(x6, rvtest_sig_end)
-  srli x6, x6, 30
-  slli x6, x6, 55
-  srli x6, x6, 52
-  LA(x9, rvtest_Vroot_pg_tbl)
-  add x6, x6, x9
-  LA(x13, rvtest_sig_end)
-  srli x13, x13, 30
-  slli x13, x13, 28
-  LI(x9, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x9
-  SREG x13, 0(x6)
+  LA(x15, rvtest_code_begin)
+  srli x15, x15, 30
+  slli x15, x15, 53
+  srli x15, x15, 50
+  LA(x13, rvtest_Hroot_pg_tbl)
+  add x15, x15, x13
+  LA(x8, rvtest_code_begin)
+  srli x8, x8, 30
+  slli x8, x8, 28
+  LI(x13, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x13
+  SREG x8, 0(x15)
+  LA(x15, rvtest_code_begin)
+  srli x15, x15, 30
+  slli x15, x15, 55
+  srli x15, x15, 52
+  LA(x13, rvtest_Vroot_pg_tbl)
+  add x15, x15, x13
+  LA(x8, rvtest_code_begin)
+  srli x8, x8, 30
+  slli x8, x8, 28
+  LI(x13, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x13
+  SREG x8, 0(x15)
+  LA(x15, rvtest_data_begin)
+  srli x15, x15, 30
+  slli x15, x15, 53
+  srli x15, x15, 50
+  LA(x13, rvtest_Hroot_pg_tbl)
+  add x15, x15, x13
+  LA(x8, rvtest_data_begin)
+  srli x8, x8, 30
+  slli x8, x8, 28
+  LI(x13, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x13
+  SREG x8, 0(x15)
+  LA(x15, rvtest_data_begin)
+  srli x15, x15, 30
+  slli x15, x15, 55
+  srli x15, x15, 52
+  LA(x13, rvtest_Vroot_pg_tbl)
+  add x15, x15, x13
+  LA(x8, rvtest_data_begin)
+  srli x8, x8, 30
+  slli x8, x8, 28
+  LI(x13, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x13
+  SREG x8, 0(x15)
+  LA(x15, rvtest_sig_end)
+  srli x15, x15, 30
+  slli x15, x15, 53
+  srli x15, x15, 50
+  LA(x13, rvtest_Hroot_pg_tbl)
+  add x15, x15, x13
+  LA(x8, rvtest_sig_end)
+  srli x8, x8, 30
+  slli x8, x8, 28
+  LI(x13, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x13
+  SREG x8, 0(x15)
+  LA(x15, rvtest_sig_end)
+  srli x15, x15, 30
+  slli x15, x15, 55
+  srli x15, x15, 52
+  LA(x13, rvtest_Vroot_pg_tbl)
+  add x15, x15, x13
+  LA(x8, rvtest_sig_end)
+  srli x8, x8, 30
+  slli x8, x8, 28
+  LI(x13, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x13
+  SREG x8, 0(x15)
 // Map the code region again at the guest alias
-  LA(x6, rvtest_Hroot_pg_tbl + (((0x240000000) >> 30) & 0x7ff) * 8)
-  LA(x13, rvtest_code_begin)
-  srli x13, x13, 30
-  slli x13, x13, 28
-  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x9
-  SREG x13, 0(x6)
-  LA(x6, rvtest_Vroot_pg_tbl + (((0x180000000) >> 30) & 0x1ff) * 8)
-  LI(x13, (((0x240000000) >> 30) << 28) | (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V))
-  SREG x13, 0(x6)
+  LA(x15, rvtest_Hroot_pg_tbl + (((0x240000000) >> 30) & 0x7ff) * 8)
+  LA(x8, rvtest_code_begin)
+  srli x8, x8, 30
+  slli x8, x8, 28
+  LI(x13, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x13
+  SREG x8, 0(x15)
+  LA(x15, rvtest_Vroot_pg_tbl + (((0x180000000) >> 30) & 0x1ff) * 8)
+  LI(x8, (((0x240000000) >> 30) << 28) | (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V))
+  SREG x8, 0(x15)
 // Register the alias of rvtest_code_begin
-  LI(x13, ((0x180000000) >> 30) << 30)
-  LA(x6, rvtest_code_begin)
-  slli x6, x6, 34
-  srli x6, x6, 34
-  or x13, x13, x6
-  LA(x6, Vtramptbl_sv)
-  SREG x13, code_bgn_off(x6)
+  LI(x8, ((0x180000000) >> 30) << 30)
+  LA(x15, rvtest_code_begin)
+  slli x15, x15, 34
+  srli x15, x15, 34
+  or x8, x8, x15
+  LA(x15, Vtramptbl_sv)
+  SREG x8, code_bgn_off(x15)
 
-  LI(x13, 0x8000000000000000)
-  LA(x6, rvtest_Hroot_pg_tbl)
-  srli x6, x6, 12
-  or x6, x6, x13
-  csrw hgatp, x6
-  LI(x13, 0x8000000000000000)
-  LA(x6, rvtest_Vroot_pg_tbl)
-  srli x6, x6, 12
-  or x6, x6, x13
-  csrw vsatp, x6
+  LI(x8, 0x8000000000000000)
+  LA(x15, rvtest_Hroot_pg_tbl)
+  srli x15, x15, 12
+  or x15, x15, x8
+  csrw hgatp, x15
+  LI(x8, 0x8000000000000000)
+  LA(x15, rvtest_Vroot_pg_tbl)
+  srli x15, x15, 12
+  or x15, x15, x8
+  csrw vsatp, x15
   hfence.gvma
   hfence.vvma
 #else
-  LA(x13, rvtest_Vroot_pg_tbl + (((0x90407000) >> 22) & 0x3ff) * 4)
-  LI(x6, (((0xD0407000) >> 22) << 20) | (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V))
-  SREG x6, 0(x13)
-  LA(x13, rvtest_Hroot_pg_tbl + (((0xD0407000) >> 22) & 0xfff) * 4)
-  LA(x6, H_hlv_data)
-  srli x6, x6, 22
-  slli x6, x6, 20
-  LI(x14, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x6, x6, x14
-  SREG x6, 0(x13)
+  LA(x15, rvtest_Vroot_pg_tbl + (((0x90407000) >> 22) & 0x3ff) * 4)
+  LI(x8, (((0xD0407000) >> 22) << 20) | (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V))
+  SREG x8, 0(x15)
+  LA(x15, rvtest_Hroot_pg_tbl + (((0xD0407000) >> 22) & 0xfff) * 4)
   LA(x8, H_hlv_data)
-  slli x8, x8, 10
-  srli x8, x8, 10
-  LI(x14, ((0x90407000) >> 22) << 22)
-  or x8, x8, x14    # guest virtual address of H_hlv_data
-// Identity map the test image in both stages
-  LA(x14, rvtest_code_begin)
-  srli x14, x14, 22
-  slli x14, x14, 20
-  srli x14, x14, 18
-  LA(x6, rvtest_Hroot_pg_tbl)
-  add x14, x14, x6
-  LA(x13, rvtest_code_begin)
-  srli x13, x13, 22
-  slli x13, x13, 20
-  LI(x6, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x6
-  SREG x13, 0(x14)
-  LA(x14, rvtest_code_begin)
-  srli x14, x14, 22
-  slli x14, x14, 22
-  srli x14, x14, 20
-  LA(x6, rvtest_Vroot_pg_tbl)
-  add x14, x14, x6
-  LA(x13, rvtest_code_begin)
-  srli x13, x13, 22
-  slli x13, x13, 20
-  LI(x6, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x6
-  SREG x13, 0(x14)
-  LA(x14, rvtest_data_begin)
-  srli x14, x14, 22
-  slli x14, x14, 20
-  srli x14, x14, 18
-  LA(x6, rvtest_Hroot_pg_tbl)
-  add x14, x14, x6
-  LA(x13, rvtest_data_begin)
-  srli x13, x13, 22
-  slli x13, x13, 20
-  LI(x6, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x6
-  SREG x13, 0(x14)
-  LA(x14, rvtest_data_begin)
-  srli x14, x14, 22
-  slli x14, x14, 22
-  srli x14, x14, 20
-  LA(x6, rvtest_Vroot_pg_tbl)
-  add x14, x14, x6
-  LA(x13, rvtest_data_begin)
-  srli x13, x13, 22
-  slli x13, x13, 20
-  LI(x6, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x6
-  SREG x13, 0(x14)
-  LA(x14, rvtest_sig_end)
-  srli x14, x14, 22
-  slli x14, x14, 20
-  srli x14, x14, 18
-  LA(x6, rvtest_Hroot_pg_tbl)
-  add x14, x14, x6
-  LA(x13, rvtest_sig_end)
-  srli x13, x13, 22
-  slli x13, x13, 20
-  LI(x6, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x6
-  SREG x13, 0(x14)
-  LA(x14, rvtest_sig_end)
-  srli x14, x14, 22
-  slli x14, x14, 22
-  srli x14, x14, 20
-  LA(x6, rvtest_Vroot_pg_tbl)
-  add x14, x14, x6
-  LA(x13, rvtest_sig_end)
-  srli x13, x13, 22
-  slli x13, x13, 20
-  LI(x6, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x6
-  SREG x13, 0(x14)
-// Map the code region again at the guest alias
-  LA(x14, rvtest_Hroot_pg_tbl + (((0xC0000000) >> 22) & 0xfff) * 4)
-  LA(x13, rvtest_code_begin)
-  srli x13, x13, 22
-  slli x13, x13, 20
-  LI(x6, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
-  or x13, x13, x6
-  SREG x13, 0(x14)
-  LA(x14, rvtest_Vroot_pg_tbl + (((0x30000000) >> 22) & 0x3ff) * 4)
-  LI(x13, (((0xC0000000) >> 22) << 20) | (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V))
-  SREG x13, 0(x14)
-// Register the alias of rvtest_code_begin
-  LI(x13, ((0x30000000) >> 22) << 22)
-  LA(x14, rvtest_code_begin)
+  srli x8, x8, 22
+  slli x8, x8, 20
+  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x9
+  SREG x8, 0(x15)
+  LA(x14, H_hlv_data)
   slli x14, x14, 10
   srli x14, x14, 10
-  or x13, x13, x14
-  LA(x14, Vtramptbl_sv)
-  SREG x13, code_bgn_off(x14)
+  LI(x9, ((0x90407000) >> 22) << 22)
+  or x14, x14, x9    # guest virtual address of H_hlv_data
+// Identity map the test image in both stages
+  LA(x13, rvtest_code_begin)
+  srli x13, x13, 22
+  slli x13, x13, 20
+  srli x13, x13, 18
+  LA(x9, rvtest_Hroot_pg_tbl)
+  add x13, x13, x9
+  LA(x8, rvtest_code_begin)
+  srli x8, x8, 22
+  slli x8, x8, 20
+  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x9
+  SREG x8, 0(x13)
+  LA(x13, rvtest_code_begin)
+  srli x13, x13, 22
+  slli x13, x13, 22
+  srli x13, x13, 20
+  LA(x9, rvtest_Vroot_pg_tbl)
+  add x13, x13, x9
+  LA(x8, rvtest_code_begin)
+  srli x8, x8, 22
+  slli x8, x8, 20
+  LI(x9, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x9
+  SREG x8, 0(x13)
+  LA(x13, rvtest_data_begin)
+  srli x13, x13, 22
+  slli x13, x13, 20
+  srli x13, x13, 18
+  LA(x9, rvtest_Hroot_pg_tbl)
+  add x13, x13, x9
+  LA(x8, rvtest_data_begin)
+  srli x8, x8, 22
+  slli x8, x8, 20
+  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x9
+  SREG x8, 0(x13)
+  LA(x13, rvtest_data_begin)
+  srli x13, x13, 22
+  slli x13, x13, 22
+  srli x13, x13, 20
+  LA(x9, rvtest_Vroot_pg_tbl)
+  add x13, x13, x9
+  LA(x8, rvtest_data_begin)
+  srli x8, x8, 22
+  slli x8, x8, 20
+  LI(x9, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x9
+  SREG x8, 0(x13)
+  LA(x13, rvtest_sig_end)
+  srli x13, x13, 22
+  slli x13, x13, 20
+  srli x13, x13, 18
+  LA(x9, rvtest_Hroot_pg_tbl)
+  add x13, x13, x9
+  LA(x8, rvtest_sig_end)
+  srli x8, x8, 22
+  slli x8, x8, 20
+  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x9
+  SREG x8, 0(x13)
+  LA(x13, rvtest_sig_end)
+  srli x13, x13, 22
+  slli x13, x13, 22
+  srli x13, x13, 20
+  LA(x9, rvtest_Vroot_pg_tbl)
+  add x13, x13, x9
+  LA(x8, rvtest_sig_end)
+  srli x8, x8, 22
+  slli x8, x8, 20
+  LI(x9, PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x9
+  SREG x8, 0(x13)
+// Map the code region again at the guest alias
+  LA(x13, rvtest_Hroot_pg_tbl + (((0xC0000000) >> 22) & 0xfff) * 4)
+  LA(x8, rvtest_code_begin)
+  srli x8, x8, 22
+  slli x8, x8, 20
+  LI(x9, PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V)
+  or x8, x8, x9
+  SREG x8, 0(x13)
+  LA(x13, rvtest_Vroot_pg_tbl + (((0x30000000) >> 22) & 0x3ff) * 4)
+  LI(x8, (((0xC0000000) >> 22) << 20) | (PTE_D | PTE_A | PTE_X | PTE_W | PTE_R | PTE_V))
+  SREG x8, 0(x13)
+// Register the alias of rvtest_code_begin
+  LI(x8, ((0x30000000) >> 22) << 22)
+  LA(x13, rvtest_code_begin)
+  slli x13, x13, 10
+  srli x13, x13, 10
+  or x8, x8, x13
+  LA(x13, Vtramptbl_sv)
+  SREG x8, code_bgn_off(x13)
 
-  LI(x13, 0x80000000)
-  LA(x14, rvtest_Hroot_pg_tbl)
-  srli x14, x14, 12
-  or x14, x14, x13
-  csrw hgatp, x14
-  LI(x13, 0x80000000)
-  LA(x14, rvtest_Vroot_pg_tbl)
-  srli x14, x14, 12
-  or x14, x14, x13
-  csrw vsatp, x14
+  LI(x8, 0x80000000)
+  LA(x13, rvtest_Hroot_pg_tbl)
+  srli x13, x13, 12
+  or x13, x13, x8
+  csrw hgatp, x13
+  LI(x8, 0x80000000)
+  LA(x13, rvtest_Vroot_pg_tbl)
+  srli x13, x13, 12
+  or x13, x13, x8
+  csrw vsatp, x13
   hfence.gvma
   hfence.vvma
 #endif
-  LA(x9, H_hlv_data)
+  LA(x15, H_hlv_data)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_hs_hlv_b:
-  hlv.b x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_hs_hlv_b, H_inst_cg_cp_hlv_hs_hlv_b_str)
+  hlv.b x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_hs_hlv_b, H_inst_cg_cp_hlv_hs_hlv_b_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_hs_hlv_bu:
-  hlv.bu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_hs_hlv_bu, H_inst_cg_cp_hlv_hs_hlv_bu_str)
+  hlv.bu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_hs_hlv_bu, H_inst_cg_cp_hlv_hs_hlv_bu_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_hs_hlv_h:
-  hlv.h x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_hs_hlv_h, H_inst_cg_cp_hlv_hs_hlv_h_str)
+  hlv.h x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_hs_hlv_h, H_inst_cg_cp_hlv_hs_hlv_h_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_hs_hlv_hu:
-  hlv.hu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_hs_hlv_hu, H_inst_cg_cp_hlv_hs_hlv_hu_str)
+  hlv.hu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_hs_hlv_hu, H_inst_cg_cp_hlv_hs_hlv_hu_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_hs_hlv_w:
-  hlv.w x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_hs_hlv_w, H_inst_cg_cp_hlv_hs_hlv_w_str)
+  hlv.w x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_hs_hlv_w, H_inst_cg_cp_hlv_hs_hlv_w_str)
 #if __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_hs_hlv_wu:
-  hlv.wu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_hs_hlv_wu, H_inst_cg_cp_hlv_hs_hlv_wu_str)
+  hlv.wu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_hs_hlv_wu, H_inst_cg_cp_hlv_hs_hlv_wu_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_hs_hlv_d:
-  hlv.d x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_hs_hlv_d, H_inst_cg_cp_hlv_hs_hlv_d_str)
+  hlv.d x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_hs_hlv_d, H_inst_cg_cp_hlv_hs_hlv_d_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlvx_hs_hlvx_hu:
-  hlvx.hu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlvx_hs_hlvx_hu, H_inst_cg_cp_hlvx_hs_hlvx_hu_str)
+  hlvx.hu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlvx_hs_hlvx_hu, H_inst_cg_cp_hlvx_hs_hlvx_hu_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlvx_hs_hlvx_wu:
-  hlvx.wu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlvx_hs_hlvx_wu, H_inst_cg_cp_hlvx_hs_hlvx_wu_str)
-  SREG x0, 0(x9)
+  hlvx.wu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlvx_hs_hlvx_wu, H_inst_cg_cp_hlvx_hs_hlvx_wu_str)
+  SREG x0, 0(x15)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
 H_inst_cg_cp_hsv_hs_hsv_b:
-  hsv.b x15, (x8)
-  LREG x14, 0(x9)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hsv_hs_hsv_b, H_inst_cg_cp_hsv_hs_hsv_b_str)
-  SREG x0, 0(x9)
+  hsv.b x13, (x14)
+  LREG x8, 0(x15)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hsv_hs_hsv_b, H_inst_cg_cp_hsv_hs_hsv_b_str)
+  SREG x0, 0(x15)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
 H_inst_cg_cp_hsv_hs_hsv_h:
-  hsv.h x15, (x8)
-  LREG x14, 0(x9)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hsv_hs_hsv_h, H_inst_cg_cp_hsv_hs_hsv_h_str)
-  SREG x0, 0(x9)
+  hsv.h x13, (x14)
+  LREG x8, 0(x15)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hsv_hs_hsv_h, H_inst_cg_cp_hsv_hs_hsv_h_str)
+  SREG x0, 0(x15)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
 H_inst_cg_cp_hsv_hs_hsv_w:
-  hsv.w x15, (x8)
-  LREG x14, 0(x9)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hsv_hs_hsv_w, H_inst_cg_cp_hsv_hs_hsv_w_str)
+  hsv.w x13, (x14)
+  LREG x8, 0(x15)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hsv_hs_hsv_w, H_inst_cg_cp_hsv_hs_hsv_w_str)
 #if __riscv_xlen == 64
-  SREG x0, 0(x9)
+  SREG x0, 0(x15)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
 H_inst_cg_cp_hsv_hs_hsv_d:
-  hsv.d x15, (x8)
-  LREG x14, 0(x9)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hsv_hs_hsv_d, H_inst_cg_cp_hsv_hs_hsv_d_str)
+  hsv.d x13, (x14)
+  LREG x8, 0(x15)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hsv_hs_hsv_d, H_inst_cg_cp_hsv_hs_hsv_d_str)
 #endif // __riscv_xlen == 64
-  LI(x9, HSTATUS_HU)
-  csrs hstatus, x9
+  LI(x15, HSTATUS_HU)
+  csrs hstatus, x15
   RVTEST_TSBI_GOTO_UMODE
-  LA(x9, H_hlv_data)
+  LA(x15, H_hlv_data)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_u_hlv_b:
-  hlv.b x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_u_hlv_b, H_inst_cg_cp_hlv_u_hlv_b_str)
+  hlv.b x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_u_hlv_b, H_inst_cg_cp_hlv_u_hlv_b_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_u_hlv_bu:
-  hlv.bu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_u_hlv_bu, H_inst_cg_cp_hlv_u_hlv_bu_str)
+  hlv.bu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_u_hlv_bu, H_inst_cg_cp_hlv_u_hlv_bu_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_u_hlv_h:
-  hlv.h x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_u_hlv_h, H_inst_cg_cp_hlv_u_hlv_h_str)
+  hlv.h x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_u_hlv_h, H_inst_cg_cp_hlv_u_hlv_h_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_u_hlv_hu:
-  hlv.hu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_u_hlv_hu, H_inst_cg_cp_hlv_u_hlv_hu_str)
+  hlv.hu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_u_hlv_hu, H_inst_cg_cp_hlv_u_hlv_hu_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_u_hlv_w:
-  hlv.w x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_u_hlv_w, H_inst_cg_cp_hlv_u_hlv_w_str)
+  hlv.w x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_u_hlv_w, H_inst_cg_cp_hlv_u_hlv_w_str)
 #if __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_u_hlv_wu:
-  hlv.wu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_u_hlv_wu, H_inst_cg_cp_hlv_u_hlv_wu_str)
+  hlv.wu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_u_hlv_wu, H_inst_cg_cp_hlv_u_hlv_wu_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlv_u_hlv_d:
-  hlv.d x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlv_u_hlv_d, H_inst_cg_cp_hlv_u_hlv_d_str)
+  hlv.d x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlv_u_hlv_d, H_inst_cg_cp_hlv_u_hlv_d_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlvx_u_hlvx_hu:
-  hlvx.hu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlvx_u_hlvx_hu, H_inst_cg_cp_hlvx_u_hlvx_hu_str)
+  hlvx.hu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlvx_u_hlvx_hu, H_inst_cg_cp_hlvx_u_hlvx_hu_str)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
-  SREG x15, 0(x9)
+  SREG x13, 0(x15)
 H_inst_cg_cp_hlvx_u_hlvx_wu:
-  hlvx.wu x14, (x8)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hlvx_u_hlvx_wu, H_inst_cg_cp_hlvx_u_hlvx_wu_str)
-  SREG x0, 0(x9)
+  hlvx.wu x8, (x14)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hlvx_u_hlvx_wu, H_inst_cg_cp_hlvx_u_hlvx_wu_str)
+  SREG x0, 0(x15)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
 H_inst_cg_cp_hsv_u_hsv_b:
-  hsv.b x15, (x8)
-  LREG x14, 0(x9)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hsv_u_hsv_b, H_inst_cg_cp_hsv_u_hsv_b_str)
-  SREG x0, 0(x9)
+  hsv.b x13, (x14)
+  LREG x8, 0(x15)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hsv_u_hsv_b, H_inst_cg_cp_hsv_u_hsv_b_str)
+  SREG x0, 0(x15)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
 H_inst_cg_cp_hsv_u_hsv_h:
-  hsv.h x15, (x8)
-  LREG x14, 0(x9)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hsv_u_hsv_h, H_inst_cg_cp_hsv_u_hsv_h_str)
-  SREG x0, 0(x9)
+  hsv.h x13, (x14)
+  LREG x8, 0(x15)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hsv_u_hsv_h, H_inst_cg_cp_hsv_u_hsv_h_str)
+  SREG x0, 0(x15)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
 H_inst_cg_cp_hsv_u_hsv_w:
-  hsv.w x15, (x8)
-  LREG x14, 0(x9)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hsv_u_hsv_w, H_inst_cg_cp_hsv_u_hsv_w_str)
+  hsv.w x13, (x14)
+  LREG x8, 0(x15)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hsv_u_hsv_w, H_inst_cg_cp_hsv_u_hsv_w_str)
 #if __riscv_xlen == 64
-  SREG x0, 0(x9)
+  SREG x0, 0(x15)
 #if __riscv_xlen == 64
-  LI(x15, 0x8badf00dfeedc0de)
+  LI(x13, 0x8badf00dfeedc0de)
 #else
-  LI(x15, 0xfeedc0de)
+  LI(x13, 0xfeedc0de)
 #endif
 H_inst_cg_cp_hsv_u_hsv_d:
-  hsv.d x15, (x8)
-  LREG x14, 0(x9)
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_inst_cg_cp_hsv_u_hsv_d, H_inst_cg_cp_hsv_u_hsv_d_str)
+  hsv.d x13, (x14)
+  LREG x8, 0(x15)
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_inst_cg_cp_hsv_u_hsv_d, H_inst_cg_cp_hsv_u_hsv_d_str)
 #endif // __riscv_xlen == 64
   RVTEST_TSBI_GOTO_SMODE
-  LI(x9, HSTATUS_HU)
-  csrc hstatus, x9
+  LI(x15, HSTATUS_HU)
+  csrc hstatus, x15
   csrw vsatp, zero
   csrw hgatp, zero
   hfence.gvma
   hfence.vvma
-  LA(x8, rvtest_code_begin)
-  LA(x15, Vtramptbl_sv)
-  SREG x8, code_bgn_off(x15)
+  LA(x15, rvtest_code_begin)
+  LA(x8, Vtramptbl_sv)
+  SREG x15, code_bgn_off(x8)
 #endif // ((__riscv_xlen == 64 && defined(UDB_SV39_VSMODE_TRANSLATION)) || (__riscv_xlen == 32 && defined(UDB_SV32_VSMODE_TRANSLATION))) && ((__riscv_xlen == 64 && defined(UDB_SV39X4_TRANSLATION)) || (__riscv_xlen == 32 && defined(UDB_SV32X4_TRANSLATION)))
 
 
@@ -597,248 +597,248 @@ H_inst_cg_cp_sret_illegal_vu:
 //   Execute sret with sstatus.SPP = {0, 1}, SPIE = {0, 1} and hstatus.SPV = {0, 1}
 /////////////////////////////////
   RVTEST_TSBI_GOTO_MMODE
-  LI(x13, (1 << CAUSE_ILLEGAL_INSTRUCTION) | (1 << CAUSE_USER_ECALL) | (1 << CAUSE_VIRTUAL_SUPERVISOR_ECALL))
-  csrc medeleg, x13
+  LI(x6, (1 << CAUSE_ILLEGAL_INSTRUCTION) | (1 << CAUSE_USER_ECALL) | (1 << CAUSE_VIRTUAL_SUPERVISOR_ECALL))
+  csrc medeleg, x6
   RVTEST_TSBI_GOTO_SMODE
-  csrr x15, sstatus
+  csrr x14, sstatus
   csrr x8, hstatus
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x13
-  LI(x13, 0)
-  csrs sstatus, x13
-  LI(x13, HSTATUS_SPV)
-  csrc hstatus, x13
-  LA(x13, 1f)
-  csrw sepc, x13
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x6
+  LI(x6, 0)
+  csrs sstatus, x6
+  LI(x6, HSTATUS_SPV)
+  csrc hstatus, x6
+  LA(x6, 1f)
+  csrw sepc, x6
 H_inst_cg_cp_sret_hs_spp0_spie0_spv0:
   sret
 1:
-  LI(x9, 42)
+  LI(x13, 42)
 H_inst_cg_cp_sret_hs_spp0_spie0_spv0_mode:
-  csrr x9, mscratch
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_mode, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_mode_str)
+  csrr x13, mscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_mode, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_mode_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_hs_spp0_spie0_spv0_sstatus:
-  csrr x9, sstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_sstatus, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_sstatus_str)
-  LI(x13, HSTATUS_SPV)
+  csrr x13, sstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_sstatus, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_sstatus_str)
+  LI(x6, HSTATUS_SPV)
 H_inst_cg_cp_sret_hs_spp0_spie0_spv0_hstatus:
-  csrr x9, hstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_hstatus, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_hstatus_str)
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x13
-  LI(x13, 0)
-  csrs sstatus, x13
-  LI(x13, HSTATUS_SPV)
-  csrs hstatus, x13
-  LA(x13, 1f)
-  csrw sepc, x13
+  csrr x13, hstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_hstatus, H_inst_cg_cp_sret_hs_spp0_spie0_spv0_hstatus_str)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x6
+  LI(x6, 0)
+  csrs sstatus, x6
+  LI(x6, HSTATUS_SPV)
+  csrs hstatus, x6
+  LA(x6, 1f)
+  csrw sepc, x6
 H_inst_cg_cp_sret_hs_spp0_spie0_spv1:
   sret
 1:
-  LI(x9, 42)
+  LI(x13, 42)
 H_inst_cg_cp_sret_hs_spp0_spie0_spv1_mode:
-  csrr x9, mscratch
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_mode, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_mode_str)
+  csrr x13, mscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_mode, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_mode_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_hs_spp0_spie0_spv1_sstatus:
-  csrr x9, sstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_sstatus, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_sstatus_str)
-  LI(x13, HSTATUS_SPV)
+  csrr x13, sstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_sstatus, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_sstatus_str)
+  LI(x6, HSTATUS_SPV)
 H_inst_cg_cp_sret_hs_spp0_spie0_spv1_hstatus:
-  csrr x9, hstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_hstatus, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_hstatus_str)
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x13
-  LI(x13, SSTATUS_SPIE)
-  csrs sstatus, x13
-  LI(x13, HSTATUS_SPV)
-  csrc hstatus, x13
-  LA(x13, 1f)
-  csrw sepc, x13
+  csrr x13, hstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_hstatus, H_inst_cg_cp_sret_hs_spp0_spie0_spv1_hstatus_str)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x6
+  LI(x6, SSTATUS_SPIE)
+  csrs sstatus, x6
+  LI(x6, HSTATUS_SPV)
+  csrc hstatus, x6
+  LA(x6, 1f)
+  csrw sepc, x6
 H_inst_cg_cp_sret_hs_spp0_spie1_spv0:
   sret
 1:
-  LI(x9, 42)
+  LI(x13, 42)
 H_inst_cg_cp_sret_hs_spp0_spie1_spv0_mode:
-  csrr x9, mscratch
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_mode, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_mode_str)
+  csrr x13, mscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_mode, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_mode_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_hs_spp0_spie1_spv0_sstatus:
-  csrr x9, sstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_sstatus, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_sstatus_str)
-  LI(x13, HSTATUS_SPV)
+  csrr x13, sstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_sstatus, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_sstatus_str)
+  LI(x6, HSTATUS_SPV)
 H_inst_cg_cp_sret_hs_spp0_spie1_spv0_hstatus:
-  csrr x9, hstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_hstatus, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_hstatus_str)
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x13
-  LI(x13, SSTATUS_SPIE)
-  csrs sstatus, x13
-  LI(x13, HSTATUS_SPV)
-  csrs hstatus, x13
-  LA(x13, 1f)
-  csrw sepc, x13
+  csrr x13, hstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_hstatus, H_inst_cg_cp_sret_hs_spp0_spie1_spv0_hstatus_str)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x6
+  LI(x6, SSTATUS_SPIE)
+  csrs sstatus, x6
+  LI(x6, HSTATUS_SPV)
+  csrs hstatus, x6
+  LA(x6, 1f)
+  csrw sepc, x6
 H_inst_cg_cp_sret_hs_spp0_spie1_spv1:
   sret
 1:
-  LI(x9, 42)
+  LI(x13, 42)
 H_inst_cg_cp_sret_hs_spp0_spie1_spv1_mode:
-  csrr x9, mscratch
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_mode, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_mode_str)
+  csrr x13, mscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_mode, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_mode_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_hs_spp0_spie1_spv1_sstatus:
-  csrr x9, sstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_sstatus, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_sstatus_str)
-  LI(x13, HSTATUS_SPV)
+  csrr x13, sstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_sstatus, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_sstatus_str)
+  LI(x6, HSTATUS_SPV)
 H_inst_cg_cp_sret_hs_spp0_spie1_spv1_hstatus:
-  csrr x9, hstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_hstatus, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_hstatus_str)
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x13
-  LI(x13, SSTATUS_SPP)
-  csrs sstatus, x13
-  LI(x13, HSTATUS_SPV)
-  csrc hstatus, x13
-  LA(x13, 1f)
-  csrw sepc, x13
+  csrr x13, hstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_hstatus, H_inst_cg_cp_sret_hs_spp0_spie1_spv1_hstatus_str)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x6
+  LI(x6, SSTATUS_SPP)
+  csrs sstatus, x6
+  LI(x6, HSTATUS_SPV)
+  csrc hstatus, x6
+  LA(x6, 1f)
+  csrw sepc, x6
 H_inst_cg_cp_sret_hs_spp1_spie0_spv0:
   sret
 1:
-  LI(x9, 42)
+  LI(x13, 42)
 H_inst_cg_cp_sret_hs_spp1_spie0_spv0_mode:
-  csrr x9, mscratch
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_mode, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_mode_str)
+  csrr x13, mscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_mode, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_mode_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_hs_spp1_spie0_spv0_sstatus:
-  csrr x9, sstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_sstatus, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_sstatus_str)
-  LI(x13, HSTATUS_SPV)
+  csrr x13, sstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_sstatus, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_sstatus_str)
+  LI(x6, HSTATUS_SPV)
 H_inst_cg_cp_sret_hs_spp1_spie0_spv0_hstatus:
-  csrr x9, hstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_hstatus, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_hstatus_str)
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x13
-  LI(x13, SSTATUS_SPP)
-  csrs sstatus, x13
-  LI(x13, HSTATUS_SPV)
-  csrs hstatus, x13
-  LA(x13, 1f)
-  csrw sepc, x13
+  csrr x13, hstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_hstatus, H_inst_cg_cp_sret_hs_spp1_spie0_spv0_hstatus_str)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x6
+  LI(x6, SSTATUS_SPP)
+  csrs sstatus, x6
+  LI(x6, HSTATUS_SPV)
+  csrs hstatus, x6
+  LA(x6, 1f)
+  csrw sepc, x6
 H_inst_cg_cp_sret_hs_spp1_spie0_spv1:
   sret
 1:
-  LI(x9, 42)
+  LI(x13, 42)
 H_inst_cg_cp_sret_hs_spp1_spie0_spv1_mode:
-  csrr x9, mscratch
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_mode, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_mode_str)
+  csrr x13, mscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_mode, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_mode_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_hs_spp1_spie0_spv1_sstatus:
-  csrr x9, sstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_sstatus, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_sstatus_str)
-  LI(x13, HSTATUS_SPV)
+  csrr x13, sstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_sstatus, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_sstatus_str)
+  LI(x6, HSTATUS_SPV)
 H_inst_cg_cp_sret_hs_spp1_spie0_spv1_hstatus:
-  csrr x9, hstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_hstatus, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_hstatus_str)
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x13
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrs sstatus, x13
-  LI(x13, HSTATUS_SPV)
-  csrc hstatus, x13
-  LA(x13, 1f)
-  csrw sepc, x13
+  csrr x13, hstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_hstatus, H_inst_cg_cp_sret_hs_spp1_spie0_spv1_hstatus_str)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x6
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrs sstatus, x6
+  LI(x6, HSTATUS_SPV)
+  csrc hstatus, x6
+  LA(x6, 1f)
+  csrw sepc, x6
 H_inst_cg_cp_sret_hs_spp1_spie1_spv0:
   sret
 1:
-  LI(x9, 42)
+  LI(x13, 42)
 H_inst_cg_cp_sret_hs_spp1_spie1_spv0_mode:
-  csrr x9, mscratch
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_mode, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_mode_str)
+  csrr x13, mscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_mode, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_mode_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_hs_spp1_spie1_spv0_sstatus:
-  csrr x9, sstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_sstatus, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_sstatus_str)
-  LI(x13, HSTATUS_SPV)
+  csrr x13, sstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_sstatus, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_sstatus_str)
+  LI(x6, HSTATUS_SPV)
 H_inst_cg_cp_sret_hs_spp1_spie1_spv0_hstatus:
-  csrr x9, hstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_hstatus, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_hstatus_str)
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x13
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE)
-  csrs sstatus, x13
-  LI(x13, HSTATUS_SPV)
-  csrs hstatus, x13
-  LA(x13, 1f)
-  csrw sepc, x13
+  csrr x13, hstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_hstatus, H_inst_cg_cp_sret_hs_spp1_spie1_spv0_hstatus_str)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x6
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE)
+  csrs sstatus, x6
+  LI(x6, HSTATUS_SPV)
+  csrs hstatus, x6
+  LA(x6, 1f)
+  csrw sepc, x6
 H_inst_cg_cp_sret_hs_spp1_spie1_spv1:
   sret
 1:
-  LI(x9, 42)
+  LI(x13, 42)
 H_inst_cg_cp_sret_hs_spp1_spie1_spv1_mode:
-  csrr x9, mscratch
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_mode, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_mode_str)
+  csrr x13, mscratch
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_mode, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_mode_str)
   RVTEST_TSBI_GOTO_SMODE
-  LI(x13, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x6, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_hs_spp1_spie1_spv1_sstatus:
-  csrr x9, sstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_sstatus, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_sstatus_str)
-  LI(x13, HSTATUS_SPV)
+  csrr x13, sstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_sstatus, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_sstatus_str)
+  LI(x6, HSTATUS_SPV)
 H_inst_cg_cp_sret_hs_spp1_spie1_spv1_hstatus:
-  csrr x9, hstatus
-  and x9, x9, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_hstatus, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_hstatus_str)
-  csrw sstatus, x15
+  csrr x13, hstatus
+  and x13, x13, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_hstatus, H_inst_cg_cp_sret_hs_spp1_spie1_spv1_hstatus_str)
+  csrw sstatus, x14
   csrw hstatus, x8
   RVTEST_TSBI_GOTO_MMODE
-  LI(x13, (1 << CAUSE_ILLEGAL_INSTRUCTION) | (1 << CAUSE_USER_ECALL) | (1 << CAUSE_VIRTUAL_SUPERVISOR_ECALL))
-  csrs medeleg, x13
+  LI(x6, (1 << CAUSE_ILLEGAL_INSTRUCTION) | (1 << CAUSE_USER_ECALL) | (1 << CAUSE_VIRTUAL_SUPERVISOR_ECALL))
+  csrs medeleg, x6
   RVTEST_TSBI_GOTO_SMODE
 
 
@@ -848,179 +848,179 @@ H_inst_cg_cp_sret_hs_spp1_spie1_spv1_hstatus:
 //   hstatus.VTSR = {0, 1}.  VTSR = 1 raises virtual instruction
 /////////////////////////////////
   RVTEST_TSBI_GOTO_VSMODE
-  csrr x14, sstatus
+  csrr x8, sstatus
   RVTEST_TSBI_CSR_CLEAR(CSR_HSTATUS, HSTATUS_VTSR)
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x15
-  LI(x15, 0)
-  csrs sstatus, x15
-  LA(x15, 1f)
-  csrw sepc, x15
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x14
+  LI(x14, 0)
+  csrs sstatus, x14
+  LA(x14, 1f)
+  csrw sepc, x14
 H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0:
   sret
 1:
-  LI(x13, 42)
+  LI(x9, 42)
 H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_mode:
-  csrr x13, mscratch
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_mode, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_mode_str)
+  csrr x9, mscratch
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_mode, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_mode_str)
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_vsstatus:
-  csrr x13, sstatus
-  and x13, x13, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_vsstatus, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_vsstatus_str)
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x15
-  LI(x15, SSTATUS_SPIE)
-  csrs sstatus, x15
-  LA(x15, 1f)
-  csrw sepc, x15
+  csrr x9, sstatus
+  and x9, x9, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_vsstatus, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_vsstatus_str)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x14
+  LI(x14, SSTATUS_SPIE)
+  csrs sstatus, x14
+  LA(x14, 1f)
+  csrw sepc, x14
 H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0:
   sret
 1:
-  LI(x13, 42)
+  LI(x9, 42)
 H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_mode:
-  csrr x13, mscratch
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_mode, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_mode_str)
+  csrr x9, mscratch
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_mode, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_mode_str)
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_vsstatus:
-  csrr x13, sstatus
-  and x13, x13, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_vsstatus, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_vsstatus_str)
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x15
-  LI(x15, SSTATUS_SPP)
-  csrs sstatus, x15
-  LA(x15, 1f)
-  csrw sepc, x15
+  csrr x9, sstatus
+  and x9, x9, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_vsstatus, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_vsstatus_str)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x14
+  LI(x14, SSTATUS_SPP)
+  csrs sstatus, x14
+  LA(x14, 1f)
+  csrw sepc, x14
 H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0:
   sret
 1:
-  LI(x13, 42)
+  LI(x9, 42)
 H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_mode:
-  csrr x13, mscratch
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_mode, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_mode_str)
+  csrr x9, mscratch
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_mode, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_mode_str)
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_vsstatus:
-  csrr x13, sstatus
-  and x13, x13, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_vsstatus, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_vsstatus_str)
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x15
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrs sstatus, x15
-  LA(x15, 1f)
-  csrw sepc, x15
+  csrr x9, sstatus
+  and x9, x9, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_vsstatus, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_vsstatus_str)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x14
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrs sstatus, x14
+  LA(x14, 1f)
+  csrw sepc, x14
 H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0:
   sret
 1:
-  LI(x13, 42)
+  LI(x9, 42)
 H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_mode:
-  csrr x13, mscratch
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_mode, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_mode_str)
+  csrr x9, mscratch
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_mode, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_mode_str)
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_vsstatus:
-  csrr x13, sstatus
-  and x13, x13, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_vsstatus, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_vsstatus_str)
+  csrr x9, sstatus
+  and x9, x9, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_vsstatus, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_vsstatus_str)
   RVTEST_TSBI_CSR_SET(CSR_HSTATUS, HSTATUS_VTSR)
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x15
-  LI(x15, 0)
-  csrs sstatus, x15
-  LA(x15, 1f)
-  csrw sepc, x15
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x14
+  LI(x14, 0)
+  csrs sstatus, x14
+  LA(x14, 1f)
+  csrw sepc, x14
 H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1:
   sret
 1:
-  LI(x13, 42)
+  LI(x9, 42)
 H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_mode:
-  csrr x13, mscratch
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_mode, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_mode_str)
+  csrr x9, mscratch
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_mode, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_mode_str)
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_vsstatus:
-  csrr x13, sstatus
-  and x13, x13, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_vsstatus, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_vsstatus_str)
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x15
-  LI(x15, SSTATUS_SPIE)
-  csrs sstatus, x15
-  LA(x15, 1f)
-  csrw sepc, x15
+  csrr x9, sstatus
+  and x9, x9, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_vsstatus, H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_vsstatus_str)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x14
+  LI(x14, SSTATUS_SPIE)
+  csrs sstatus, x14
+  LA(x14, 1f)
+  csrw sepc, x14
 H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1:
   sret
 1:
-  LI(x13, 42)
+  LI(x9, 42)
 H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_mode:
-  csrr x13, mscratch
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_mode, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_mode_str)
+  csrr x9, mscratch
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_mode, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_mode_str)
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_vsstatus:
-  csrr x13, sstatus
-  and x13, x13, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_vsstatus, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_vsstatus_str)
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x15
-  LI(x15, SSTATUS_SPP)
-  csrs sstatus, x15
-  LA(x15, 1f)
-  csrw sepc, x15
+  csrr x9, sstatus
+  and x9, x9, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_vsstatus, H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_vsstatus_str)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x14
+  LI(x14, SSTATUS_SPP)
+  csrs sstatus, x14
+  LA(x14, 1f)
+  csrw sepc, x14
 H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1:
   sret
 1:
-  LI(x13, 42)
+  LI(x9, 42)
 H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_mode:
-  csrr x13, mscratch
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_mode, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_mode_str)
+  csrr x9, mscratch
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_mode, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_mode_str)
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_vsstatus:
-  csrr x13, sstatus
-  and x13, x13, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_vsstatus, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_vsstatus_str)
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrc sstatus, x15
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE)
-  csrs sstatus, x15
-  LA(x15, 1f)
-  csrw sepc, x15
+  csrr x9, sstatus
+  and x9, x9, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_vsstatus, H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_vsstatus_str)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrc sstatus, x14
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE)
+  csrs sstatus, x14
+  LA(x14, 1f)
+  csrw sepc, x14
 H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1:
   sret
 1:
-  LI(x13, 42)
+  LI(x9, 42)
 H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_mode:
-  csrr x13, mscratch
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_mode, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_mode_str)
+  csrr x9, mscratch
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_mode, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_mode_str)
   RVTEST_TSBI_GOTO_VSMODE
-  LI(x15, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
+  LI(x14, SSTATUS_SPP | SSTATUS_SPIE | SSTATUS_SIE)
 H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_vsstatus:
-  csrr x13, sstatus
-  and x13, x13, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_vsstatus, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_vsstatus_str)
+  csrr x9, sstatus
+  and x9, x9, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_vsstatus, H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_vsstatus_str)
   RVTEST_TSBI_CSR_CLEAR(CSR_HSTATUS, HSTATUS_VTSR)
-  csrw sstatus, x14
+  csrw sstatus, x8
   RVTEST_TSBI_GOTO_SMODE
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -1036,92 +1036,92 @@ H_hlv_data:
   .dword 0
 
 // Testcase strings
-H_inst_cg_cp_hlv_hs_hlv_b_str: .string "\"test: 3953; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.b\""
-H_inst_cg_cp_hlv_hs_hlv_bu_str: .string "\"test: 3954; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.bu\""
-H_inst_cg_cp_hlv_hs_hlv_h_str: .string "\"test: 3955; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.h\""
-H_inst_cg_cp_hlv_hs_hlv_hu_str: .string "\"test: 3956; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.hu\""
-H_inst_cg_cp_hlv_hs_hlv_w_str: .string "\"test: 3957; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.w\""
-H_inst_cg_cp_hlv_hs_hlv_wu_str: .string "\"test: 3958; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.wu\""
-H_inst_cg_cp_hlv_hs_hlv_d_str: .string "\"test: 3959; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.d\""
-H_inst_cg_cp_hlvx_hs_hlvx_hu_str: .string "\"test: 3960; cg: H_inst_cg; cp: cp_hlvx; bin: hs_hlvx.hu\""
-H_inst_cg_cp_hlvx_hs_hlvx_wu_str: .string "\"test: 3961; cg: H_inst_cg; cp: cp_hlvx; bin: hs_hlvx.wu\""
-H_inst_cg_cp_hsv_hs_hsv_b_str: .string "\"test: 3962; cg: H_inst_cg; cp: cp_hsv; bin: hs_hsv.b\""
-H_inst_cg_cp_hsv_hs_hsv_h_str: .string "\"test: 3963; cg: H_inst_cg; cp: cp_hsv; bin: hs_hsv.h\""
-H_inst_cg_cp_hsv_hs_hsv_w_str: .string "\"test: 3964; cg: H_inst_cg; cp: cp_hsv; bin: hs_hsv.w\""
-H_inst_cg_cp_hsv_hs_hsv_d_str: .string "\"test: 3965; cg: H_inst_cg; cp: cp_hsv; bin: hs_hsv.d\""
-H_inst_cg_cp_hlv_u_hlv_b_str: .string "\"test: 3966; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.b\""
-H_inst_cg_cp_hlv_u_hlv_bu_str: .string "\"test: 3967; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.bu\""
-H_inst_cg_cp_hlv_u_hlv_h_str: .string "\"test: 3968; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.h\""
-H_inst_cg_cp_hlv_u_hlv_hu_str: .string "\"test: 3969; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.hu\""
-H_inst_cg_cp_hlv_u_hlv_w_str: .string "\"test: 3970; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.w\""
-H_inst_cg_cp_hlv_u_hlv_wu_str: .string "\"test: 3971; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.wu\""
-H_inst_cg_cp_hlv_u_hlv_d_str: .string "\"test: 3972; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.d\""
-H_inst_cg_cp_hlvx_u_hlvx_hu_str: .string "\"test: 3973; cg: H_inst_cg; cp: cp_hlvx; bin: u_hlvx.hu\""
-H_inst_cg_cp_hlvx_u_hlvx_wu_str: .string "\"test: 3974; cg: H_inst_cg; cp: cp_hlvx; bin: u_hlvx.wu\""
-H_inst_cg_cp_hsv_u_hsv_b_str: .string "\"test: 3975; cg: H_inst_cg; cp: cp_hsv; bin: u_hsv.b\""
-H_inst_cg_cp_hsv_u_hsv_h_str: .string "\"test: 3976; cg: H_inst_cg; cp: cp_hsv; bin: u_hsv.h\""
-H_inst_cg_cp_hsv_u_hsv_w_str: .string "\"test: 3977; cg: H_inst_cg; cp: cp_hsv; bin: u_hsv.w\""
-H_inst_cg_cp_hsv_u_hsv_d_str: .string "\"test: 3978; cg: H_inst_cg; cp: cp_hsv; bin: u_hsv.d\""
-H_inst_cg_cp_mret_illegal_hs_str: .string "\"test: 3979; cg: H_inst_cg; cp: cp_mret_illegal; bin: hs\""
-H_inst_cg_cp_mret_illegal_vs_str: .string "\"test: 3980; cg: H_inst_cg; cp: cp_mret_illegal; bin: vs\""
-H_inst_cg_cp_mret_illegal_vu_str: .string "\"test: 3981; cg: H_inst_cg; cp: cp_mret_illegal; bin: vu\""
-H_inst_cg_cp_sret_illegal_vu_str: .string "\"test: 3982; cg: H_inst_cg; cp: cp_sret_illegal; bin: vu\""
-H_inst_cg_cp_sret_hs_spp0_spie0_spv0_str: .string "\"test: 3983; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv0\""
-H_inst_cg_cp_sret_hs_spp0_spie0_spv0_mode_str: .string "\"test: 3984; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv0_mode\""
-H_inst_cg_cp_sret_hs_spp0_spie0_spv0_sstatus_str: .string "\"test: 3985; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv0_sstatus\""
-H_inst_cg_cp_sret_hs_spp0_spie0_spv0_hstatus_str: .string "\"test: 3986; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv0_hstatus\""
-H_inst_cg_cp_sret_hs_spp0_spie0_spv1_str: .string "\"test: 3987; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv1\""
-H_inst_cg_cp_sret_hs_spp0_spie0_spv1_mode_str: .string "\"test: 3988; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv1_mode\""
-H_inst_cg_cp_sret_hs_spp0_spie0_spv1_sstatus_str: .string "\"test: 3989; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv1_sstatus\""
-H_inst_cg_cp_sret_hs_spp0_spie0_spv1_hstatus_str: .string "\"test: 3990; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv1_hstatus\""
-H_inst_cg_cp_sret_hs_spp0_spie1_spv0_str: .string "\"test: 3991; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv0\""
-H_inst_cg_cp_sret_hs_spp0_spie1_spv0_mode_str: .string "\"test: 3992; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv0_mode\""
-H_inst_cg_cp_sret_hs_spp0_spie1_spv0_sstatus_str: .string "\"test: 3993; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv0_sstatus\""
-H_inst_cg_cp_sret_hs_spp0_spie1_spv0_hstatus_str: .string "\"test: 3994; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv0_hstatus\""
-H_inst_cg_cp_sret_hs_spp0_spie1_spv1_str: .string "\"test: 3995; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv1\""
-H_inst_cg_cp_sret_hs_spp0_spie1_spv1_mode_str: .string "\"test: 3996; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv1_mode\""
-H_inst_cg_cp_sret_hs_spp0_spie1_spv1_sstatus_str: .string "\"test: 3997; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv1_sstatus\""
-H_inst_cg_cp_sret_hs_spp0_spie1_spv1_hstatus_str: .string "\"test: 3998; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv1_hstatus\""
-H_inst_cg_cp_sret_hs_spp1_spie0_spv0_str: .string "\"test: 3999; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv0\""
-H_inst_cg_cp_sret_hs_spp1_spie0_spv0_mode_str: .string "\"test: 4000; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv0_mode\""
-H_inst_cg_cp_sret_hs_spp1_spie0_spv0_sstatus_str: .string "\"test: 4001; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv0_sstatus\""
-H_inst_cg_cp_sret_hs_spp1_spie0_spv0_hstatus_str: .string "\"test: 4002; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv0_hstatus\""
-H_inst_cg_cp_sret_hs_spp1_spie0_spv1_str: .string "\"test: 4003; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv1\""
-H_inst_cg_cp_sret_hs_spp1_spie0_spv1_mode_str: .string "\"test: 4004; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv1_mode\""
-H_inst_cg_cp_sret_hs_spp1_spie0_spv1_sstatus_str: .string "\"test: 4005; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv1_sstatus\""
-H_inst_cg_cp_sret_hs_spp1_spie0_spv1_hstatus_str: .string "\"test: 4006; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv1_hstatus\""
-H_inst_cg_cp_sret_hs_spp1_spie1_spv0_str: .string "\"test: 4007; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv0\""
-H_inst_cg_cp_sret_hs_spp1_spie1_spv0_mode_str: .string "\"test: 4008; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv0_mode\""
-H_inst_cg_cp_sret_hs_spp1_spie1_spv0_sstatus_str: .string "\"test: 4009; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv0_sstatus\""
-H_inst_cg_cp_sret_hs_spp1_spie1_spv0_hstatus_str: .string "\"test: 4010; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv0_hstatus\""
-H_inst_cg_cp_sret_hs_spp1_spie1_spv1_str: .string "\"test: 4011; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv1\""
-H_inst_cg_cp_sret_hs_spp1_spie1_spv1_mode_str: .string "\"test: 4012; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv1_mode\""
-H_inst_cg_cp_sret_hs_spp1_spie1_spv1_sstatus_str: .string "\"test: 4013; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv1_sstatus\""
-H_inst_cg_cp_sret_hs_spp1_spie1_spv1_hstatus_str: .string "\"test: 4014; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv1_hstatus\""
-H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_str: .string "\"test: 4015; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr0\""
-H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_mode_str: .string "\"test: 4016; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr0_mode\""
-H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_vsstatus_str: .string "\"test: 4017; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr0_vsstatus\""
-H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_str: .string "\"test: 4018; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr0\""
-H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_mode_str: .string "\"test: 4019; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr0_mode\""
-H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_vsstatus_str: .string "\"test: 4020; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr0_vsstatus\""
-H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_str: .string "\"test: 4021; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr0\""
-H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_mode_str: .string "\"test: 4022; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr0_mode\""
-H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_vsstatus_str: .string "\"test: 4023; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr0_vsstatus\""
-H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_str: .string "\"test: 4024; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr0\""
-H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_mode_str: .string "\"test: 4025; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr0_mode\""
-H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_vsstatus_str: .string "\"test: 4026; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr0_vsstatus\""
-H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_str: .string "\"test: 4027; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr1\""
-H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_mode_str: .string "\"test: 4028; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr1_mode\""
-H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_vsstatus_str: .string "\"test: 4029; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr1_vsstatus\""
-H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_str: .string "\"test: 4030; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr1\""
-H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_mode_str: .string "\"test: 4031; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr1_mode\""
-H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_vsstatus_str: .string "\"test: 4032; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr1_vsstatus\""
-H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_str: .string "\"test: 4033; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr1\""
-H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_mode_str: .string "\"test: 4034; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr1_mode\""
-H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_vsstatus_str: .string "\"test: 4035; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr1_vsstatus\""
-H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_str: .string "\"test: 4036; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr1\""
-H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_mode_str: .string "\"test: 4037; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr1_mode\""
-H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_vsstatus_str: .string "\"test: 4038; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr1_vsstatus\""
+H_inst_cg_cp_hlv_hs_hlv_b_str: .string "\"test: 3960; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.b\""
+H_inst_cg_cp_hlv_hs_hlv_bu_str: .string "\"test: 3961; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.bu\""
+H_inst_cg_cp_hlv_hs_hlv_h_str: .string "\"test: 3962; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.h\""
+H_inst_cg_cp_hlv_hs_hlv_hu_str: .string "\"test: 3963; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.hu\""
+H_inst_cg_cp_hlv_hs_hlv_w_str: .string "\"test: 3964; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.w\""
+H_inst_cg_cp_hlv_hs_hlv_wu_str: .string "\"test: 3965; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.wu\""
+H_inst_cg_cp_hlv_hs_hlv_d_str: .string "\"test: 3966; cg: H_inst_cg; cp: cp_hlv; bin: hs_hlv.d\""
+H_inst_cg_cp_hlvx_hs_hlvx_hu_str: .string "\"test: 3967; cg: H_inst_cg; cp: cp_hlvx; bin: hs_hlvx.hu\""
+H_inst_cg_cp_hlvx_hs_hlvx_wu_str: .string "\"test: 3968; cg: H_inst_cg; cp: cp_hlvx; bin: hs_hlvx.wu\""
+H_inst_cg_cp_hsv_hs_hsv_b_str: .string "\"test: 3969; cg: H_inst_cg; cp: cp_hsv; bin: hs_hsv.b\""
+H_inst_cg_cp_hsv_hs_hsv_h_str: .string "\"test: 3970; cg: H_inst_cg; cp: cp_hsv; bin: hs_hsv.h\""
+H_inst_cg_cp_hsv_hs_hsv_w_str: .string "\"test: 3971; cg: H_inst_cg; cp: cp_hsv; bin: hs_hsv.w\""
+H_inst_cg_cp_hsv_hs_hsv_d_str: .string "\"test: 3972; cg: H_inst_cg; cp: cp_hsv; bin: hs_hsv.d\""
+H_inst_cg_cp_hlv_u_hlv_b_str: .string "\"test: 3973; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.b\""
+H_inst_cg_cp_hlv_u_hlv_bu_str: .string "\"test: 3974; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.bu\""
+H_inst_cg_cp_hlv_u_hlv_h_str: .string "\"test: 3975; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.h\""
+H_inst_cg_cp_hlv_u_hlv_hu_str: .string "\"test: 3976; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.hu\""
+H_inst_cg_cp_hlv_u_hlv_w_str: .string "\"test: 3977; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.w\""
+H_inst_cg_cp_hlv_u_hlv_wu_str: .string "\"test: 3978; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.wu\""
+H_inst_cg_cp_hlv_u_hlv_d_str: .string "\"test: 3979; cg: H_inst_cg; cp: cp_hlv; bin: u_hlv.d\""
+H_inst_cg_cp_hlvx_u_hlvx_hu_str: .string "\"test: 3980; cg: H_inst_cg; cp: cp_hlvx; bin: u_hlvx.hu\""
+H_inst_cg_cp_hlvx_u_hlvx_wu_str: .string "\"test: 3981; cg: H_inst_cg; cp: cp_hlvx; bin: u_hlvx.wu\""
+H_inst_cg_cp_hsv_u_hsv_b_str: .string "\"test: 3982; cg: H_inst_cg; cp: cp_hsv; bin: u_hsv.b\""
+H_inst_cg_cp_hsv_u_hsv_h_str: .string "\"test: 3983; cg: H_inst_cg; cp: cp_hsv; bin: u_hsv.h\""
+H_inst_cg_cp_hsv_u_hsv_w_str: .string "\"test: 3984; cg: H_inst_cg; cp: cp_hsv; bin: u_hsv.w\""
+H_inst_cg_cp_hsv_u_hsv_d_str: .string "\"test: 3985; cg: H_inst_cg; cp: cp_hsv; bin: u_hsv.d\""
+H_inst_cg_cp_mret_illegal_hs_str: .string "\"test: 3986; cg: H_inst_cg; cp: cp_mret_illegal; bin: hs\""
+H_inst_cg_cp_mret_illegal_vs_str: .string "\"test: 3987; cg: H_inst_cg; cp: cp_mret_illegal; bin: vs\""
+H_inst_cg_cp_mret_illegal_vu_str: .string "\"test: 3988; cg: H_inst_cg; cp: cp_mret_illegal; bin: vu\""
+H_inst_cg_cp_sret_illegal_vu_str: .string "\"test: 3989; cg: H_inst_cg; cp: cp_sret_illegal; bin: vu\""
+H_inst_cg_cp_sret_hs_spp0_spie0_spv0_str: .string "\"test: 3990; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv0\""
+H_inst_cg_cp_sret_hs_spp0_spie0_spv0_mode_str: .string "\"test: 3991; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv0_mode\""
+H_inst_cg_cp_sret_hs_spp0_spie0_spv0_sstatus_str: .string "\"test: 3992; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv0_sstatus\""
+H_inst_cg_cp_sret_hs_spp0_spie0_spv0_hstatus_str: .string "\"test: 3993; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv0_hstatus\""
+H_inst_cg_cp_sret_hs_spp0_spie0_spv1_str: .string "\"test: 3994; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv1\""
+H_inst_cg_cp_sret_hs_spp0_spie0_spv1_mode_str: .string "\"test: 3995; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv1_mode\""
+H_inst_cg_cp_sret_hs_spp0_spie0_spv1_sstatus_str: .string "\"test: 3996; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv1_sstatus\""
+H_inst_cg_cp_sret_hs_spp0_spie0_spv1_hstatus_str: .string "\"test: 3997; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie0_spv1_hstatus\""
+H_inst_cg_cp_sret_hs_spp0_spie1_spv0_str: .string "\"test: 3998; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv0\""
+H_inst_cg_cp_sret_hs_spp0_spie1_spv0_mode_str: .string "\"test: 3999; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv0_mode\""
+H_inst_cg_cp_sret_hs_spp0_spie1_spv0_sstatus_str: .string "\"test: 4000; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv0_sstatus\""
+H_inst_cg_cp_sret_hs_spp0_spie1_spv0_hstatus_str: .string "\"test: 4001; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv0_hstatus\""
+H_inst_cg_cp_sret_hs_spp0_spie1_spv1_str: .string "\"test: 4002; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv1\""
+H_inst_cg_cp_sret_hs_spp0_spie1_spv1_mode_str: .string "\"test: 4003; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv1_mode\""
+H_inst_cg_cp_sret_hs_spp0_spie1_spv1_sstatus_str: .string "\"test: 4004; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv1_sstatus\""
+H_inst_cg_cp_sret_hs_spp0_spie1_spv1_hstatus_str: .string "\"test: 4005; cg: H_inst_cg; cp: cp_sret_hs; bin: spp0_spie1_spv1_hstatus\""
+H_inst_cg_cp_sret_hs_spp1_spie0_spv0_str: .string "\"test: 4006; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv0\""
+H_inst_cg_cp_sret_hs_spp1_spie0_spv0_mode_str: .string "\"test: 4007; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv0_mode\""
+H_inst_cg_cp_sret_hs_spp1_spie0_spv0_sstatus_str: .string "\"test: 4008; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv0_sstatus\""
+H_inst_cg_cp_sret_hs_spp1_spie0_spv0_hstatus_str: .string "\"test: 4009; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv0_hstatus\""
+H_inst_cg_cp_sret_hs_spp1_spie0_spv1_str: .string "\"test: 4010; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv1\""
+H_inst_cg_cp_sret_hs_spp1_spie0_spv1_mode_str: .string "\"test: 4011; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv1_mode\""
+H_inst_cg_cp_sret_hs_spp1_spie0_spv1_sstatus_str: .string "\"test: 4012; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv1_sstatus\""
+H_inst_cg_cp_sret_hs_spp1_spie0_spv1_hstatus_str: .string "\"test: 4013; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie0_spv1_hstatus\""
+H_inst_cg_cp_sret_hs_spp1_spie1_spv0_str: .string "\"test: 4014; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv0\""
+H_inst_cg_cp_sret_hs_spp1_spie1_spv0_mode_str: .string "\"test: 4015; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv0_mode\""
+H_inst_cg_cp_sret_hs_spp1_spie1_spv0_sstatus_str: .string "\"test: 4016; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv0_sstatus\""
+H_inst_cg_cp_sret_hs_spp1_spie1_spv0_hstatus_str: .string "\"test: 4017; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv0_hstatus\""
+H_inst_cg_cp_sret_hs_spp1_spie1_spv1_str: .string "\"test: 4018; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv1\""
+H_inst_cg_cp_sret_hs_spp1_spie1_spv1_mode_str: .string "\"test: 4019; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv1_mode\""
+H_inst_cg_cp_sret_hs_spp1_spie1_spv1_sstatus_str: .string "\"test: 4020; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv1_sstatus\""
+H_inst_cg_cp_sret_hs_spp1_spie1_spv1_hstatus_str: .string "\"test: 4021; cg: H_inst_cg; cp: cp_sret_hs; bin: spp1_spie1_spv1_hstatus\""
+H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_str: .string "\"test: 4022; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr0\""
+H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_mode_str: .string "\"test: 4023; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr0_mode\""
+H_inst_cg_cp_sret_vs_spp0_spie0_vtsr0_vsstatus_str: .string "\"test: 4024; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr0_vsstatus\""
+H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_str: .string "\"test: 4025; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr0\""
+H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_mode_str: .string "\"test: 4026; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr0_mode\""
+H_inst_cg_cp_sret_vs_spp0_spie1_vtsr0_vsstatus_str: .string "\"test: 4027; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr0_vsstatus\""
+H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_str: .string "\"test: 4028; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr0\""
+H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_mode_str: .string "\"test: 4029; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr0_mode\""
+H_inst_cg_cp_sret_vs_spp1_spie0_vtsr0_vsstatus_str: .string "\"test: 4030; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr0_vsstatus\""
+H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_str: .string "\"test: 4031; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr0\""
+H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_mode_str: .string "\"test: 4032; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr0_mode\""
+H_inst_cg_cp_sret_vs_spp1_spie1_vtsr0_vsstatus_str: .string "\"test: 4033; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr0_vsstatus\""
+H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_str: .string "\"test: 4034; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr1\""
+H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_mode_str: .string "\"test: 4035; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr1_mode\""
+H_inst_cg_cp_sret_vs_spp0_spie0_vtsr1_vsstatus_str: .string "\"test: 4036; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie0_vtsr1_vsstatus\""
+H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_str: .string "\"test: 4037; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr1\""
+H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_mode_str: .string "\"test: 4038; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr1_mode\""
+H_inst_cg_cp_sret_vs_spp0_spie1_vtsr1_vsstatus_str: .string "\"test: 4039; cg: H_inst_cg; cp: cp_sret_vs; bin: spp0_spie1_vtsr1_vsstatus\""
+H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_str: .string "\"test: 4040; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr1\""
+H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_mode_str: .string "\"test: 4041; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr1_mode\""
+H_inst_cg_cp_sret_vs_spp1_spie0_vtsr1_vsstatus_str: .string "\"test: 4042; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie0_vtsr1_vsstatus\""
+H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_str: .string "\"test: 4043; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr1\""
+H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_mode_str: .string "\"test: 4044; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr1_mode\""
+H_inst_cg_cp_sret_vs_spp1_spie1_vtsr1_vsstatus_str: .string "\"test: 4045; cg: H_inst_cg; cp: cp_sret_vs; bin: spp1_spie1_vtsr1_vsstatus\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

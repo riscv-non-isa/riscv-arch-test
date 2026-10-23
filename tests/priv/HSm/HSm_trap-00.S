@@ -77,10 +77,10 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-HSm_inst_cg_cp_guest_page_fault_hlv_w_bare_str: .string "\"test: 3210; cg: HSm_inst_cg; cp: cp_guest_page_fault; bin: hlv_w_bare\""
-HSm_inst_cg_cp_guest_page_fault_hsv_w_bare_str: .string "\"test: 3211; cg: HSm_inst_cg; cp: cp_guest_page_fault; bin: hsv_w_bare\""
-HSm_inst_cg_cp_guest_page_fault_hlv_w_paged_str: .string "\"test: 3212; cg: HSm_inst_cg; cp: cp_guest_page_fault; bin: hlv_w_paged\""
-HSm_inst_cg_cp_guest_page_fault_hsv_w_paged_str: .string "\"test: 3213; cg: HSm_inst_cg; cp: cp_guest_page_fault; bin: hsv_w_paged\""
+HSm_inst_cg_cp_guest_page_fault_hlv_w_bare_str: .string "\"test: 3211; cg: HSm_inst_cg; cp: cp_guest_page_fault; bin: hlv_w_bare\""
+HSm_inst_cg_cp_guest_page_fault_hsv_w_bare_str: .string "\"test: 3212; cg: HSm_inst_cg; cp: cp_guest_page_fault; bin: hsv_w_bare\""
+HSm_inst_cg_cp_guest_page_fault_hlv_w_paged_str: .string "\"test: 3213; cg: HSm_inst_cg; cp: cp_guest_page_fault; bin: hlv_w_paged\""
+HSm_inst_cg_cp_guest_page_fault_hsv_w_paged_str: .string "\"test: 3214; cg: HSm_inst_cg; cp: cp_guest_page_fault; bin: hsv_w_paged\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

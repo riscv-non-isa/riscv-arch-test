@@ -114,6 +114,39 @@ def _vgein_tests(test_data: TestData) -> list[str]:
     return lines
 
 
+def _xl_tests(test_data: TestData) -> list[str]:
+    """hstatus.VSXL and vsstatus.UXL are WARL; with only 64-bit VS-mode and VU-mode, each reads 2 after any write."""
+    save_reg, val_reg, mask_reg, check_reg = test_data.int_regs.get_registers(4)
+    lines = [
+        comment_banner(
+            "cp_hstatus_vsxl, cp_vsstatus_uxl",
+            "On RV64 with VSXLEN = 64 (VUXLEN = 64) only, write hstatus.VSXL (vsstatus.UXL) = 0, 1 and 3 with\n"
+            "the other bits zero; the field reads 2",
+        ),
+        "#if __riscv_xlen == 64",
+        f"LI(x{mask_reg}, 3 << 32)",
+    ]
+    for csr, field, gate in (
+        ("hstatus", "vsxl", "!defined(UDB_VSXLEN_32)"),
+        ("vsstatus", "uxl", "!defined(UDB_VUXLEN_32)"),
+    ):
+        body = [f"csrr x{save_reg}, {csr}"]
+        for value in (0, 1, 3):
+            body.extend(
+                [
+                    f"LI(x{val_reg}, {value} << 32)",
+                    test_data.add_testcase(f"{field}{value}", f"cp_{csr}_{field}", HS_CG),
+                    f"csrw {csr}, x{val_reg}",
+                    gen_csr_read_sigupd(check_reg, (csr, 3 << 32), test_data, mask_reg),
+                ]
+            )
+        body.append(f"csrw {csr}, x{save_reg}")
+        lines.extend(gated(body, gate))
+    lines.append("#endif")
+    test_data.int_regs.return_registers([save_reg, val_reg, mask_reg, check_reg])
+    return lines
+
+
 def _replica_tests(test_data: TestData) -> list[str]:
     """S CSRs and their VS replicas accessed from HS-mode and from VS-mode, and read back in M-mode."""
     save_s, save_vs, mask_reg, val_reg = test_data.int_regs.get_registers(4)
@@ -346,7 +379,7 @@ def make_h(test_data: TestData) -> list[TestChunk]:
         tc.code.extend(_csr_trap_ops(test_data, csr, HS_CG, "cp_hcsr_inaccessible"))
 
     tc = test_data.new_test_chunk(test_chunks, "hscsr_fields")
-    tc.code.extend([*_vgein_tests(test_data), *scause_write_tests(test_data, "vscause", HS_CG)])
+    tc.code.extend([*_vgein_tests(test_data), *_xl_tests(test_data), *scause_write_tests(test_data, "vscause", HS_CG)])
 
     tc = test_data.new_test_chunk(test_chunks, "replica")
     tc.code.extend(_replica_tests(test_data))

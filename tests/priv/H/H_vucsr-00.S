@@ -36,192 +36,192 @@ RVTEST_BEGIN
 /////////////////////////////////
 
   RVTEST_TSBI_GOTO_VUMODE
-  LI(x13, -1)
-  LI(x14, 42)
+  LI(x8, -1)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1:
-  csrrw x14, mtval2, x13
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1_str)
-  LI(x14, 42)
+  csrrw x13, mtval2, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0:
-  csrrw x14, mtval2, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0_str)
-  LI(x14, 42)
+  csrrw x13, mtval2, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all:
-  csrrs x14, mtval2, x13
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x13, mtval2, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all:
-  csrrc x14, mtval2, x13
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x13, mtval2, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrr:
-  csrr x14, mtval2
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrr, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrr_str)
+  csrr x13, mtval2
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrr, H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrr_str)
   LI(x6, -1)
-  LI(x8, 42)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1:
-  csrrw x8, mtinst, x6
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1_str)
-  LI(x8, 42)
+  csrrw x13, mtinst, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0:
-  csrrw x8, mtinst, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0_str)
-  LI(x8, 42)
+  csrrw x13, mtinst, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all:
-  csrrs x8, mtinst, x6
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x13, mtinst, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all:
-  csrrc x8, mtinst, x6
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x13, mtinst, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrr:
-  csrr x8, mtinst
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrr, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrr_str)
-  LI(x8, -1)
-  LI(x15, 42)
+  csrr x13, mtinst
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrr, H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrr_str)
+  LI(x6, -1)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1:
-  csrrw x15, hstatus, x8
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1_str)
-  LI(x15, 42)
+  csrrw x8, hstatus, x6
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0:
-  csrrw x15, hstatus, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0_str)
-  LI(x15, 42)
+  csrrw x8, hstatus, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all:
-  csrrs x15, hstatus, x8
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x8, hstatus, x6
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all:
-  csrrc x15, hstatus, x8
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x8, hstatus, x6
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr:
-  csrr x15, hstatus
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr_str)
-  LI(x13, -1)
-  LI(x9, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1:
-  csrrw x9, hedeleg, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0:
-  csrrw x9, hedeleg, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all:
-  csrrs x9, hedeleg, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all:
-  csrrc x9, hedeleg, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr:
-  csrr x9, hedeleg
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr_str)
-  LI(x15, -1)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1:
-  csrrw x6, hideleg, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1_str)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0:
-  csrrw x6, hideleg, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0_str)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all:
-  csrrs x6, hideleg, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all_str)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all:
-  csrrc x6, hideleg, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all_str)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr:
-  csrr x6, hideleg
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr_str)
+  csrr x8, hstatus
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr_str)
   LI(x8, -1)
-  LI(x13, 42)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1:
+  csrrw x14, hedeleg, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0:
+  csrrw x14, hedeleg, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all:
+  csrrs x14, hedeleg, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all:
+  csrrc x14, hedeleg, x8
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr:
+  csrr x14, hedeleg
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr_str)
+  LI(x9, -1)
+  LI(x8, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1:
+  csrrw x8, hideleg, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1_str)
+  LI(x8, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0:
+  csrrw x8, hideleg, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0_str)
+  LI(x8, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all:
+  csrrs x8, hideleg, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all_str)
+  LI(x8, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all:
+  csrrc x8, hideleg, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all_str)
+  LI(x8, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr:
+  csrr x8, hideleg
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr_str)
+  LI(x9, -1)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1:
-  csrrw x13, hie, x8
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1_str)
-  LI(x13, 42)
+  csrrw x6, hie, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0:
-  csrrw x13, hie, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0_str)
-  LI(x13, 42)
+  csrrw x6, hie, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all:
-  csrrs x13, hie, x8
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x6, hie, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all:
-  csrrc x13, hie, x8
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x6, hie, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr:
-  csrr x13, hie
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr_str)
-  LI(x6, -1)
-  LI(x13, 42)
+  csrr x6, hie
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr_str)
+  LI(x15, -1)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1:
-  csrrw x13, hcounteren, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1_str)
-  LI(x13, 42)
+  csrrw x8, hcounteren, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0:
-  csrrw x13, hcounteren, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0_str)
-  LI(x13, 42)
+  csrrw x8, hcounteren, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all:
-  csrrs x13, hcounteren, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x8, hcounteren, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all:
-  csrrc x13, hcounteren, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x8, hcounteren, x15
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr:
-  csrr x13, hcounteren
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr_str)
-  LI(x6, -1)
+  csrr x8, hcounteren
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr_str)
+  LI(x14, -1)
   LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1:
-  csrrw x8, hgeie, x6
+  csrrw x8, hgeie, x14
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1_str)
   LI(x8, 42)
@@ -231,12 +231,12 @@ H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0_str)
   LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all:
-  csrrs x8, hgeie, x6
+  csrrs x8, hgeie, x14
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all_str)
   LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all:
-  csrrc x8, hgeie, x6
+  csrrc x8, hgeie, x14
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all_str)
   LI(x8, 42)
@@ -244,88 +244,88 @@ H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr:
   csrr x8, hgeie
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr_str)
-  LI(x8, -1)
-  LI(x14, 42)
+  LI(x6, -1)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1:
-  csrrw x14, henvcfg, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1_str)
-  LI(x14, 42)
+  csrrw x13, henvcfg, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0:
-  csrrw x14, henvcfg, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0_str)
-  LI(x14, 42)
+  csrrw x13, henvcfg, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all:
-  csrrs x14, henvcfg, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x13, henvcfg, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all:
-  csrrc x14, henvcfg, x8
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x13, henvcfg, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr:
-  csrr x14, henvcfg
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr_str)
-  LI(x9, -1)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1:
-  csrrw x8, htval, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0:
-  csrrw x8, htval, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all:
-  csrrs x8, htval, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all:
-  csrrc x8, htval, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr:
-  csrr x8, htval
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr_str)
-  LI(x9, -1)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1:
-  csrrw x6, hip, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1_str)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0:
-  csrrw x6, hip, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0_str)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all:
-  csrrs x6, hip, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all_str)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all:
-  csrrc x6, hip, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all_str)
-  LI(x6, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr:
-  csrr x6, hip
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr_str)
+  csrr x13, henvcfg
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr_str)
   LI(x15, -1)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1:
+  csrrw x14, htval, x15
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0:
+  csrrw x14, htval, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all:
+  csrrs x14, htval, x15
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all:
+  csrrc x14, htval, x15
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr:
+  csrr x14, htval
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr_str)
+  LI(x6, -1)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1:
+  csrrw x15, hip, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0:
+  csrrw x15, hip, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all:
+  csrrs x15, hip, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all:
+  csrrc x15, hip, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr:
+  csrr x15, hip
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr_str)
+  LI(x6, -1)
   LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1:
-  csrrw x8, hvip, x15
+  csrrw x8, hvip, x6
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1_str)
   LI(x8, 42)
@@ -335,12 +335,12 @@ H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0_str)
   LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all:
-  csrrs x8, hvip, x15
+  csrrs x8, hvip, x6
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all_str)
   LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all:
-  csrrc x8, hvip, x15
+  csrrc x8, hvip, x6
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all_str)
   LI(x8, 42)
@@ -348,446 +348,446 @@ H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr:
   csrr x8, hvip
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr_str)
-  LI(x14, -1)
-  LI(x8, 42)
+  LI(x9, -1)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1:
-  csrrw x8, htinst, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1_str)
-  LI(x8, 42)
+  csrrw x14, htinst, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0:
-  csrrw x8, htinst, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0_str)
-  LI(x8, 42)
+  csrrw x14, htinst, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all:
-  csrrs x8, htinst, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x14, htinst, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all:
-  csrrc x8, htinst, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x14, htinst, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr:
-  csrr x8, htinst
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr_str)
-  LI(x6, -1)
-  LI(x13, 42)
+  csrr x14, htinst
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr_str)
+  LI(x9, -1)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1:
-  csrrw x13, hgatp, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1_str)
-  LI(x13, 42)
+  csrrw x6, hgatp, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0:
-  csrrw x13, hgatp, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0_str)
-  LI(x13, 42)
+  csrrw x6, hgatp, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all:
-  csrrs x13, hgatp, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x6, hgatp, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all:
-  csrrc x13, hgatp, x6
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x6, hgatp, x9
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr:
-  csrr x13, hgatp
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr_str)
+  csrr x6, hgatp
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr_str)
 #if defined(ZICNTR_SUPPORTED)
-  LI(x15, -1)
-  LI(x14, 42)
+  LI(x14, -1)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1:
-  csrrw x14, htimedelta, x15
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1_str)
-  LI(x14, 42)
+  csrrw x13, htimedelta, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0:
-  csrrw x14, htimedelta, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0_str)
-  LI(x14, 42)
+  csrrw x13, htimedelta, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all:
-  csrrs x14, htimedelta, x15
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x13, htimedelta, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all:
-  csrrc x14, htimedelta, x15
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x13, htimedelta, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr:
-  csrr x14, htimedelta
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr_str)
+  csrr x13, htimedelta
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr_str)
 #endif // defined(ZICNTR_SUPPORTED)
 #if __riscv_xlen == 32 && defined(SM1P13P0_OR_LATER_SUPPORTED)
 #ifdef SMSTATEEN_SUPPORTED
   RVTEST_TSBI_CSR_SET(CSR_MSTATEEN0H, MSTATEEN0H_PRIV113)
 #endif
-  LI(x6, -1)
-  LI(x15, 42)
+  LI(x9, -1)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1:
-  csrrw x15, hedelegh, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1_str)
-  LI(x15, 42)
+  csrrw x8, hedelegh, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0:
-  csrrw x15, hedelegh, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0_str)
-  LI(x15, 42)
+  csrrw x8, hedelegh, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all:
-  csrrs x15, hedelegh, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x8, hedelegh, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all:
-  csrrc x15, hedelegh, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x8, hedelegh, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr:
-  csrr x15, hedelegh
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr_str)
+  csrr x8, hedelegh
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr_str)
 #ifdef SMSTATEEN_SUPPORTED
   RVTEST_TSBI_CSR_CLEAR(CSR_MSTATEEN0H, MSTATEEN0H_PRIV113)
 #endif
 #endif // __riscv_xlen == 32 && defined(SM1P13P0_OR_LATER_SUPPORTED)
 #if __riscv_xlen == 32 && defined(ZICNTR_SUPPORTED)
-  LI(x6, -1)
-  LI(x8, 42)
+  LI(x9, -1)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1:
-  csrrw x8, htimedeltah, x6
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1_str)
-  LI(x8, 42)
+  csrrw x14, htimedeltah, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0:
-  csrrw x8, htimedeltah, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0_str)
-  LI(x8, 42)
+  csrrw x14, htimedeltah, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all:
-  csrrs x8, htimedeltah, x6
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x14, htimedeltah, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all:
-  csrrc x8, htimedeltah, x6
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x14, htimedeltah, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr:
-  csrr x8, htimedeltah
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr_str)
+  csrr x14, htimedeltah
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr_str)
 #endif // __riscv_xlen == 32 && defined(ZICNTR_SUPPORTED)
 #if __riscv_xlen == 32
-  LI(x9, -1)
-  LI(x14, 42)
+  LI(x14, -1)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1:
-  csrrw x14, henvcfgh, x9
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1_str)
-  LI(x14, 42)
+  csrrw x13, henvcfgh, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0:
-  csrrw x14, henvcfgh, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0_str)
-  LI(x14, 42)
+  csrrw x13, henvcfgh, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all:
-  csrrs x14, henvcfgh, x9
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x13, henvcfgh, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all:
-  csrrc x14, henvcfgh, x9
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x13, henvcfgh, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr:
-  csrr x14, henvcfgh
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr_str)
+  csrr x13, henvcfgh
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr_str)
 #endif // __riscv_xlen == 32
-  LI(x9, -1)
-  LI(x6, 42)
+  LI(x14, -1)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1:
-  csrrw x6, hgeip, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1_str)
-  LI(x6, 42)
+  csrrw x8, hgeip, x14
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0:
-  csrrw x6, hgeip, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0_str)
-  LI(x6, 42)
+  csrrw x8, hgeip, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all:
-  csrrs x6, hgeip, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all_str)
-  LI(x6, 42)
+  csrrs x8, hgeip, x14
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all:
-  csrrc x6, hgeip, x9
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all_str)
-  LI(x6, 42)
+  csrrc x8, hgeip, x14
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr:
-  csrr x6, hgeip
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr_str)
-  LI(x14, -1)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1:
-  csrrw x13, vsstatus, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1_str)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0:
-  csrrw x13, vsstatus, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0_str)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all:
-  csrrs x13, vsstatus, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all_str)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all:
-  csrrc x13, vsstatus, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all_str)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr:
-  csrr x13, vsstatus
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr_str)
-  RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, MIP_VS_MASK)
-  LI(x9, -1)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1:
-  csrrw x8, vsie, x9
+  csrr x8, hgeip
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0:
-  csrrw x8, vsie, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all:
-  csrrs x8, vsie, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all:
-  csrrc x8, vsie, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr:
-  csrr x8, vsie
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr_str)
-  RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, 0)
-  LI(x9, -1)
-  LI(x14, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1:
-  csrrw x14, vstval, x9
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1_str)
-  LI(x14, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0:
-  csrrw x14, vstval, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0_str)
-  LI(x14, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all:
-  csrrs x14, vstval, x9
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all_str)
-  LI(x14, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all:
-  csrrc x14, vstval, x9
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all_str)
-  LI(x14, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr:
-  csrr x14, vstval
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr_str)
-  RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, MIP_VS_MASK)
-  LI(x14, -1)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1:
-  csrrw x13, vsip, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1_str)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0:
-  csrrw x13, vsip, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0_str)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all:
-  csrrs x13, vsip, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all_str)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all:
-  csrrc x13, vsip, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all_str)
-  LI(x13, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr:
-  csrr x13, vsip
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr_str)
-  RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, 0)
-  LI(x14, -1)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1:
-  csrrw x8, vstvec, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0:
-  csrrw x8, vstvec, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all:
-  csrrs x8, vstvec, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all:
-  csrrc x8, vstvec, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all_str)
-  LI(x8, 42)
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr:
-  csrr x8, vstvec
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr_str)
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr_str)
   LI(x6, -1)
   LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1:
+  csrrw x15, vsstatus, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0:
+  csrrw x15, vsstatus, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all:
+  csrrs x15, vsstatus, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all:
+  csrrc x15, vsstatus, x6
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr:
+  csrr x15, vsstatus
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr_str)
+  RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, MIP_VS_MASK)
+  LI(x13, -1)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1:
+  csrrw x15, vsie, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0:
+  csrrw x15, vsie, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all:
+  csrrs x15, vsie, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all:
+  csrrc x15, vsie, x13
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all_str)
+  LI(x15, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr:
+  csrr x15, vsie
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr_str)
+  RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, 0)
+  LI(x13, -1)
+  LI(x9, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1:
+  csrrw x9, vstval, x13
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1_str)
+  LI(x9, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0:
+  csrrw x9, vstval, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0_str)
+  LI(x9, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all:
+  csrrs x9, vstval, x13
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all_str)
+  LI(x9, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all:
+  csrrc x9, vstval, x13
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all_str)
+  LI(x9, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr:
+  csrr x9, vstval
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr_str)
+  RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, MIP_VS_MASK)
+  LI(x15, -1)
+  LI(x6, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1:
+  csrrw x6, vsip, x15
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1_str)
+  LI(x6, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0:
+  csrrw x6, vsip, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0_str)
+  LI(x6, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all:
+  csrrs x6, vsip, x15
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all_str)
+  LI(x6, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all:
+  csrrc x6, vsip, x15
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all_str)
+  LI(x6, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr:
+  csrr x6, vsip
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr_str)
+  RVTEST_TSBI_CSR_WRITE(CSR_HIDELEG, 0)
+  LI(x14, -1)
+  LI(x13, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1:
+  csrrw x13, vstvec, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1_str)
+  LI(x13, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0:
+  csrrw x13, vstvec, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0_str)
+  LI(x13, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all:
+  csrrs x13, vstvec, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all_str)
+  LI(x13, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all:
+  csrrc x13, vstvec, x14
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all_str)
+  LI(x13, 42)
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr:
+  csrr x13, vstvec
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr_str)
+  LI(x9, -1)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1:
-  csrrw x15, vsscratch, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1_str)
-  LI(x15, 42)
+  csrrw x8, vsscratch, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0:
-  csrrw x15, vsscratch, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0_str)
-  LI(x15, 42)
+  csrrw x8, vsscratch, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all:
-  csrrs x15, vsscratch, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x8, vsscratch, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all:
-  csrrc x15, vsscratch, x6
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x8, vsscratch, x9
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr:
-  csrr x15, vsscratch
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr_str)
-  LI(x13, -1)
-  LI(x15, 42)
+  csrr x8, vsscratch
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr_str)
+  LI(x14, -1)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1:
-  csrrw x15, vsepc, x13
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1_str)
-  LI(x15, 42)
+  csrrw x8, vsepc, x14
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0:
-  csrrw x15, vsepc, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0_str)
-  LI(x15, 42)
+  csrrw x8, vsepc, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all:
-  csrrs x15, vsepc, x13
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all_str)
-  LI(x15, 42)
+  csrrs x8, vsepc, x14
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all:
-  csrrc x15, vsepc, x13
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all_str)
-  LI(x15, 42)
+  csrrc x8, vsepc, x14
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr:
-  csrr x15, vsepc
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr_str)
-  LI(x13, -1)
-  LI(x9, 42)
+  csrr x8, vsepc
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr_str)
+  LI(x8, -1)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1:
-  csrrw x9, vsatp, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1_str)
-  LI(x9, 42)
+  csrrw x13, vsatp, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0:
-  csrrw x9, vsatp, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0_str)
-  LI(x9, 42)
+  csrrw x13, vsatp, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all:
-  csrrs x9, vsatp, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all_str)
-  LI(x9, 42)
+  csrrs x13, vsatp, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all:
-  csrrc x9, vsatp, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all_str)
-  LI(x9, 42)
+  csrrc x13, vsatp, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr:
-  csrr x9, vsatp
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr_str)
+  csrr x13, vsatp
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr_str)
 #if defined(SSTC_SUPPORTED)
 #if __riscv_xlen == 64
   RVTEST_TSBI_CSR_SET(CSR_MENVCFG, MENVCFG_STCE)
 #else
   RVTEST_TSBI_CSR_SET(CSR_MENVCFGH, MENVCFGH_STCE)
 #endif
-  LI(x15, -1)
-  LI(x6, 42)
+  LI(x8, -1)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1:
-  csrrw x6, vstimecmp, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1_str)
-  LI(x6, 42)
+  csrrw x13, vstimecmp, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0:
-  csrrw x6, vstimecmp, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0_str)
-  LI(x6, 42)
+  csrrw x13, vstimecmp, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all:
-  csrrs x6, vstimecmp, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all_str)
-  LI(x6, 42)
+  csrrs x13, vstimecmp, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all:
-  csrrc x6, vstimecmp, x15
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all_str)
-  LI(x6, 42)
+  csrrc x13, vstimecmp, x8
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr:
-  csrr x6, vstimecmp
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr_str)
+  csrr x13, vstimecmp
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr_str)
 #if __riscv_xlen == 64
   RVTEST_TSBI_CSR_CLEAR(CSR_MENVCFG, MENVCFG_STCE)
 #else
@@ -801,96 +801,96 @@ H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr:
   RVTEST_TSBI_CSR_SET(CSR_MENVCFGH, MENVCFGH_STCE)
 #endif
   LI(x14, -1)
-  LI(x13, 42)
+  LI(x9, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1:
-  csrrw x13, vstimecmph, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1_str)
-  LI(x13, 42)
+  csrrw x9, vstimecmph, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0:
-  csrrw x13, vstimecmph, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0_str)
-  LI(x13, 42)
+  csrrw x9, vstimecmph, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all:
-  csrrs x13, vstimecmph, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x9, vstimecmph, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all:
-  csrrc x13, vstimecmph, x14
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x9, vstimecmph, x14
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr:
-  csrr x13, vstimecmph
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr_str)
+  csrr x9, vstimecmph
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr_str)
 #if __riscv_xlen == 64
   RVTEST_TSBI_CSR_CLEAR(CSR_MENVCFG, MENVCFG_STCE)
 #else
   RVTEST_TSBI_CSR_CLEAR(CSR_MENVCFGH, MENVCFGH_STCE)
 #endif
 #endif // __riscv_xlen == 32 && defined(SSTC_SUPPORTED)
-  LI(x9, -1)
-  LI(x8, 42)
+  LI(x8, -1)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1:
-  csrrw x8, vscause, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1_str)
-  LI(x8, 42)
+  csrrw x6, vscause, x8
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0:
-  csrrw x8, vscause, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0_str)
-  LI(x8, 42)
+  csrrw x6, vscause, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all:
-  csrrs x8, vscause, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x6, vscause, x8
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all:
-  csrrc x8, vscause, x9
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x6, vscause, x8
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all_str)
+  LI(x6, 42)
 H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr:
-  csrr x8, vscause
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr_str)
+  csrr x6, vscause
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr, H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr_str)
 #if __riscv_xlen == 64
-  LI(x14, -1)
-  LI(x8, 42)
+  LI(x13, -1)
+  LI(x9, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1:
-  csrrw x8, CSR_HEDELEGH, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1_str)
-  LI(x8, 42)
+  csrrw x9, CSR_HEDELEGH, x13
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0:
-  csrrw x8, CSR_HEDELEGH, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0_str)
-  LI(x8, 42)
+  csrrw x9, CSR_HEDELEGH, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all:
-  csrrs x8, CSR_HEDELEGH, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x9, CSR_HEDELEGH, x13
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all:
-  csrrc x8, CSR_HEDELEGH, x14
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x9, CSR_HEDELEGH, x13
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr:
-  csrr x8, CSR_HEDELEGH
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr_str)
+  csrr x9, CSR_HEDELEGH
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr, H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x8, -1)
+  LI(x15, -1)
   LI(x13, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1:
-  csrrw x13, CSR_HTIMEDELTAH, x8
+  csrrw x13, CSR_HTIMEDELTAH, x15
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1_str)
   LI(x13, 42)
@@ -900,12 +900,12 @@ H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0_str)
   LI(x13, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all:
-  csrrs x13, CSR_HTIMEDELTAH, x8
+  csrrs x13, CSR_HTIMEDELTAH, x15
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all_str)
   LI(x13, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all:
-  csrrc x13, CSR_HTIMEDELTAH, x8
+  csrrc x13, CSR_HTIMEDELTAH, x15
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all_str)
   LI(x13, 42)
@@ -915,65 +915,65 @@ H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr:
   RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr, H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x8, -1)
-  LI(x13, 42)
+  LI(x9, -1)
+  LI(x15, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1:
-  csrrw x13, CSR_HENVCFGH, x8
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1_str)
-  LI(x13, 42)
+  csrrw x15, CSR_HENVCFGH, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1_str)
+  LI(x15, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0:
-  csrrw x13, CSR_HENVCFGH, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0_str)
-  LI(x13, 42)
+  csrrw x15, CSR_HENVCFGH, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0_str)
+  LI(x15, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all:
-  csrrs x13, CSR_HENVCFGH, x8
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x15, CSR_HENVCFGH, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all_str)
+  LI(x15, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all:
-  csrrc x13, CSR_HENVCFGH, x8
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x15, CSR_HENVCFGH, x9
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all_str)
+  LI(x15, 42)
 H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr:
-  csrr x13, CSR_HENVCFGH
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr_str)
+  csrr x15, CSR_HENVCFGH
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr, H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr_str)
 #endif // __riscv_xlen == 64
 #if __riscv_xlen == 64
-  LI(x14, -1)
-  LI(x9, 42)
+  LI(x6, -1)
+  LI(x14, 42)
 H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1:
-  csrrw x9, CSR_VSTIMECMPH, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1_str)
-  LI(x9, 42)
+  csrrw x14, CSR_VSTIMECMPH, x6
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0:
-  csrrw x9, CSR_VSTIMECMPH, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0_str)
-  LI(x9, 42)
+  csrrw x14, CSR_VSTIMECMPH, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all:
-  csrrs x9, CSR_VSTIMECMPH, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all_str)
-  LI(x9, 42)
+  csrrs x14, CSR_VSTIMECMPH, x6
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all:
-  csrrc x9, CSR_VSTIMECMPH, x14
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all_str)
-  LI(x9, 42)
+  csrrc x14, CSR_VSTIMECMPH, x6
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all_str)
+  LI(x14, 42)
 H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr:
-  csrr x9, CSR_VSTIMECMPH
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr_str)
+  csrr x14, CSR_VSTIMECMPH
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr, H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr_str)
 #endif // __riscv_xlen == 64
-  LI(x8, -1)
+  LI(x15, -1)
   LI(x6, 42)
 H_ucsr_cg_cp_scsr_sstatus_csrrw1:
-  csrrw x6, sstatus, x8
+  csrrw x6, sstatus, x15
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_sstatus_csrrw1, H_ucsr_cg_cp_scsr_sstatus_csrrw1_str)
   LI(x6, 42)
@@ -983,12 +983,12 @@ H_ucsr_cg_cp_scsr_sstatus_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_sstatus_csrrw0, H_ucsr_cg_cp_scsr_sstatus_csrrw0_str)
   LI(x6, 42)
 H_ucsr_cg_cp_scsr_sstatus_csrrs_all:
-  csrrs x6, sstatus, x8
+  csrrs x6, sstatus, x15
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_sstatus_csrrs_all, H_ucsr_cg_cp_scsr_sstatus_csrrs_all_str)
   LI(x6, 42)
 H_ucsr_cg_cp_scsr_sstatus_csrrc_all:
-  csrrc x6, sstatus, x8
+  csrrc x6, sstatus, x15
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_sstatus_csrrc_all, H_ucsr_cg_cp_scsr_sstatus_csrrc_all_str)
   LI(x6, 42)
@@ -996,62 +996,62 @@ H_ucsr_cg_cp_scsr_sstatus_csrr:
   csrr x6, sstatus
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_sstatus_csrr, H_ucsr_cg_cp_scsr_sstatus_csrr_str)
-  LI(x13, -1)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_sie_csrrw1:
-  csrrw x9, sie, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sie_csrrw1, H_ucsr_cg_cp_scsr_sie_csrrw1_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_sie_csrrw0:
-  csrrw x9, sie, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sie_csrrw0, H_ucsr_cg_cp_scsr_sie_csrrw0_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_sie_csrrs_all:
-  csrrs x9, sie, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sie_csrrs_all, H_ucsr_cg_cp_scsr_sie_csrrs_all_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_sie_csrrc_all:
-  csrrc x9, sie, x13
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sie_csrrc_all, H_ucsr_cg_cp_scsr_sie_csrrc_all_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_sie_csrr:
-  csrr x9, sie
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sie_csrr, H_ucsr_cg_cp_scsr_sie_csrr_str)
   LI(x15, -1)
   LI(x13, 42)
+H_ucsr_cg_cp_scsr_sie_csrrw1:
+  csrrw x13, sie, x15
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_sie_csrrw1, H_ucsr_cg_cp_scsr_sie_csrrw1_str)
+  LI(x13, 42)
+H_ucsr_cg_cp_scsr_sie_csrrw0:
+  csrrw x13, sie, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_sie_csrrw0, H_ucsr_cg_cp_scsr_sie_csrrw0_str)
+  LI(x13, 42)
+H_ucsr_cg_cp_scsr_sie_csrrs_all:
+  csrrs x13, sie, x15
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_sie_csrrs_all, H_ucsr_cg_cp_scsr_sie_csrrs_all_str)
+  LI(x13, 42)
+H_ucsr_cg_cp_scsr_sie_csrrc_all:
+  csrrc x13, sie, x15
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_sie_csrrc_all, H_ucsr_cg_cp_scsr_sie_csrrc_all_str)
+  LI(x13, 42)
+H_ucsr_cg_cp_scsr_sie_csrr:
+  csrr x13, sie
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_sie_csrr, H_ucsr_cg_cp_scsr_sie_csrr_str)
+  LI(x13, -1)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stvec_csrrw1:
-  csrrw x13, stvec, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stvec_csrrw1, H_ucsr_cg_cp_scsr_stvec_csrrw1_str)
-  LI(x13, 42)
+  csrrw x8, stvec, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stvec_csrrw1, H_ucsr_cg_cp_scsr_stvec_csrrw1_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stvec_csrrw0:
-  csrrw x13, stvec, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stvec_csrrw0, H_ucsr_cg_cp_scsr_stvec_csrrw0_str)
-  LI(x13, 42)
+  csrrw x8, stvec, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stvec_csrrw0, H_ucsr_cg_cp_scsr_stvec_csrrw0_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stvec_csrrs_all:
-  csrrs x13, stvec, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stvec_csrrs_all, H_ucsr_cg_cp_scsr_stvec_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x8, stvec, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stvec_csrrs_all, H_ucsr_cg_cp_scsr_stvec_csrrs_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stvec_csrrc_all:
-  csrrc x13, stvec, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stvec_csrrc_all, H_ucsr_cg_cp_scsr_stvec_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x8, stvec, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stvec_csrrc_all, H_ucsr_cg_cp_scsr_stvec_csrrc_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stvec_csrr:
-  csrr x13, stvec
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stvec_csrr, H_ucsr_cg_cp_scsr_stvec_csrr_str)
-  LI(x9, -1)
+  csrr x8, stvec
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stvec_csrr, H_ucsr_cg_cp_scsr_stvec_csrr_str)
+  LI(x8, -1)
   LI(x15, 42)
 H_ucsr_cg_cp_scsr_sscratch_csrrw1:
-  csrrw x15, sscratch, x9
+  csrrw x15, sscratch, x8
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sscratch_csrrw1, H_ucsr_cg_cp_scsr_sscratch_csrrw1_str)
   LI(x15, 42)
@@ -1061,12 +1061,12 @@ H_ucsr_cg_cp_scsr_sscratch_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sscratch_csrrw0, H_ucsr_cg_cp_scsr_sscratch_csrrw0_str)
   LI(x15, 42)
 H_ucsr_cg_cp_scsr_sscratch_csrrs_all:
-  csrrs x15, sscratch, x9
+  csrrs x15, sscratch, x8
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sscratch_csrrs_all, H_ucsr_cg_cp_scsr_sscratch_csrrs_all_str)
   LI(x15, 42)
 H_ucsr_cg_cp_scsr_sscratch_csrrc_all:
-  csrrc x15, sscratch, x9
+  csrrc x15, sscratch, x8
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sscratch_csrrc_all, H_ucsr_cg_cp_scsr_sscratch_csrrc_all_str)
   LI(x15, 42)
@@ -1074,36 +1074,36 @@ H_ucsr_cg_cp_scsr_sscratch_csrr:
   csrr x15, sscratch
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sscratch_csrr, H_ucsr_cg_cp_scsr_sscratch_csrr_str)
-  LI(x6, -1)
-  LI(x14, 42)
+  LI(x8, -1)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_sepc_csrrw1:
-  csrrw x14, sepc, x6
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_sepc_csrrw1, H_ucsr_cg_cp_scsr_sepc_csrrw1_str)
-  LI(x14, 42)
+  csrrw x9, sepc, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sepc_csrrw1, H_ucsr_cg_cp_scsr_sepc_csrrw1_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_sepc_csrrw0:
-  csrrw x14, sepc, x0
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_sepc_csrrw0, H_ucsr_cg_cp_scsr_sepc_csrrw0_str)
-  LI(x14, 42)
+  csrrw x9, sepc, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sepc_csrrw0, H_ucsr_cg_cp_scsr_sepc_csrrw0_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_sepc_csrrs_all:
-  csrrs x14, sepc, x6
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_sepc_csrrs_all, H_ucsr_cg_cp_scsr_sepc_csrrs_all_str)
-  LI(x14, 42)
+  csrrs x9, sepc, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sepc_csrrs_all, H_ucsr_cg_cp_scsr_sepc_csrrs_all_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_sepc_csrrc_all:
-  csrrc x14, sepc, x6
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_sepc_csrrc_all, H_ucsr_cg_cp_scsr_sepc_csrrc_all_str)
-  LI(x14, 42)
+  csrrc x9, sepc, x8
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sepc_csrrc_all, H_ucsr_cg_cp_scsr_sepc_csrrc_all_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_sepc_csrr:
-  csrr x14, sepc
-  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_sepc_csrr, H_ucsr_cg_cp_scsr_sepc_csrr_str)
-  LI(x15, -1)
+  csrr x9, sepc
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_sepc_csrr, H_ucsr_cg_cp_scsr_sepc_csrr_str)
+  LI(x13, -1)
   LI(x6, 42)
 H_ucsr_cg_cp_scsr_scause_csrrw1:
-  csrrw x6, scause, x15
+  csrrw x6, scause, x13
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_scause_csrrw1, H_ucsr_cg_cp_scsr_scause_csrrw1_str)
   LI(x6, 42)
@@ -1113,12 +1113,12 @@ H_ucsr_cg_cp_scsr_scause_csrrw0:
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_scause_csrrw0, H_ucsr_cg_cp_scsr_scause_csrrw0_str)
   LI(x6, 42)
 H_ucsr_cg_cp_scsr_scause_csrrs_all:
-  csrrs x6, scause, x15
+  csrrs x6, scause, x13
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_scause_csrrs_all, H_ucsr_cg_cp_scsr_scause_csrrs_all_str)
   LI(x6, 42)
 H_ucsr_cg_cp_scsr_scause_csrrc_all:
-  csrrc x6, scause, x15
+  csrrc x6, scause, x13
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_scause_csrrc_all, H_ucsr_cg_cp_scsr_scause_csrrc_all_str)
   LI(x6, 42)
@@ -1126,165 +1126,165 @@ H_ucsr_cg_cp_scsr_scause_csrr:
   csrr x6, scause
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_scause_csrr, H_ucsr_cg_cp_scsr_scause_csrr_str)
-  LI(x15, -1)
-  LI(x13, 42)
+  LI(x13, -1)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stval_csrrw1:
-  csrrw x13, stval, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stval_csrrw1, H_ucsr_cg_cp_scsr_stval_csrrw1_str)
-  LI(x13, 42)
+  csrrw x8, stval, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stval_csrrw1, H_ucsr_cg_cp_scsr_stval_csrrw1_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stval_csrrw0:
-  csrrw x13, stval, x0
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stval_csrrw0, H_ucsr_cg_cp_scsr_stval_csrrw0_str)
-  LI(x13, 42)
+  csrrw x8, stval, x0
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stval_csrrw0, H_ucsr_cg_cp_scsr_stval_csrrw0_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stval_csrrs_all:
-  csrrs x13, stval, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stval_csrrs_all, H_ucsr_cg_cp_scsr_stval_csrrs_all_str)
-  LI(x13, 42)
+  csrrs x8, stval, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stval_csrrs_all, H_ucsr_cg_cp_scsr_stval_csrrs_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stval_csrrc_all:
-  csrrc x13, stval, x15
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stval_csrrc_all, H_ucsr_cg_cp_scsr_stval_csrrc_all_str)
-  LI(x13, 42)
+  csrrc x8, stval, x13
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stval_csrrc_all, H_ucsr_cg_cp_scsr_stval_csrrc_all_str)
+  LI(x8, 42)
 H_ucsr_cg_cp_scsr_stval_csrr:
-  csrr x13, stval
-  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_stval_csrr, H_ucsr_cg_cp_scsr_stval_csrr_str)
-  LI(x13, -1)
-  LI(x8, 42)
+  csrr x8, stval
+  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_stval_csrr, H_ucsr_cg_cp_scsr_stval_csrr_str)
+  LI(x8, -1)
+  LI(x15, 42)
 H_ucsr_cg_cp_scsr_sip_csrrw1:
-  csrrw x8, sip, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_sip_csrrw1, H_ucsr_cg_cp_scsr_sip_csrrw1_str)
-  LI(x8, 42)
+  csrrw x15, sip, x8
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sip_csrrw1, H_ucsr_cg_cp_scsr_sip_csrrw1_str)
+  LI(x15, 42)
 H_ucsr_cg_cp_scsr_sip_csrrw0:
-  csrrw x8, sip, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_sip_csrrw0, H_ucsr_cg_cp_scsr_sip_csrrw0_str)
-  LI(x8, 42)
+  csrrw x15, sip, x0
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sip_csrrw0, H_ucsr_cg_cp_scsr_sip_csrrw0_str)
+  LI(x15, 42)
 H_ucsr_cg_cp_scsr_sip_csrrs_all:
-  csrrs x8, sip, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_sip_csrrs_all, H_ucsr_cg_cp_scsr_sip_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x15, sip, x8
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sip_csrrs_all, H_ucsr_cg_cp_scsr_sip_csrrs_all_str)
+  LI(x15, 42)
 H_ucsr_cg_cp_scsr_sip_csrrc_all:
-  csrrc x8, sip, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_sip_csrrc_all, H_ucsr_cg_cp_scsr_sip_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x15, sip, x8
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sip_csrrc_all, H_ucsr_cg_cp_scsr_sip_csrrc_all_str)
+  LI(x15, 42)
 H_ucsr_cg_cp_scsr_sip_csrr:
-  csrr x8, sip
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_sip_csrr, H_ucsr_cg_cp_scsr_sip_csrr_str)
-  LI(x8, -1)
-  LI(x15, 42)
-H_ucsr_cg_cp_scsr_satp_csrrw1:
-  csrrw x15, satp, x8
+  csrr x15, sip
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_satp_csrrw1, H_ucsr_cg_cp_scsr_satp_csrrw1_str)
-  LI(x15, 42)
-H_ucsr_cg_cp_scsr_satp_csrrw0:
-  csrrw x15, satp, x0
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_satp_csrrw0, H_ucsr_cg_cp_scsr_satp_csrrw0_str)
-  LI(x15, 42)
-H_ucsr_cg_cp_scsr_satp_csrrs_all:
-  csrrs x15, satp, x8
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_satp_csrrs_all, H_ucsr_cg_cp_scsr_satp_csrrs_all_str)
-  LI(x15, 42)
-H_ucsr_cg_cp_scsr_satp_csrrc_all:
-  csrrc x15, satp, x8
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_satp_csrrc_all, H_ucsr_cg_cp_scsr_satp_csrrc_all_str)
-  LI(x15, 42)
-H_ucsr_cg_cp_scsr_satp_csrr:
-  csrr x15, satp
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_satp_csrr, H_ucsr_cg_cp_scsr_satp_csrr_str)
-  LI(x8, -1)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_scounteren_csrrw1:
-  csrrw x9, scounteren, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scounteren_csrrw1, H_ucsr_cg_cp_scsr_scounteren_csrrw1_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_scounteren_csrrw0:
-  csrrw x9, scounteren, x0
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scounteren_csrrw0, H_ucsr_cg_cp_scsr_scounteren_csrrw0_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_scounteren_csrrs_all:
-  csrrs x9, scounteren, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scounteren_csrrs_all, H_ucsr_cg_cp_scsr_scounteren_csrrs_all_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_scounteren_csrrc_all:
-  csrrc x9, scounteren, x8
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scounteren_csrrc_all, H_ucsr_cg_cp_scsr_scounteren_csrrc_all_str)
-  LI(x9, 42)
-H_ucsr_cg_cp_scsr_scounteren_csrr:
-  csrr x9, scounteren
-  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scounteren_csrr, H_ucsr_cg_cp_scsr_scounteren_csrr_str)
-#if defined(S1P12P0_OR_LATER_SUPPORTED)
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_ucsr_cg_cp_scsr_sip_csrr, H_ucsr_cg_cp_scsr_sip_csrr_str)
   LI(x13, -1)
   LI(x6, 42)
+H_ucsr_cg_cp_scsr_satp_csrrw1:
+  csrrw x6, satp, x13
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_satp_csrrw1, H_ucsr_cg_cp_scsr_satp_csrrw1_str)
+  LI(x6, 42)
+H_ucsr_cg_cp_scsr_satp_csrrw0:
+  csrrw x6, satp, x0
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_satp_csrrw0, H_ucsr_cg_cp_scsr_satp_csrrw0_str)
+  LI(x6, 42)
+H_ucsr_cg_cp_scsr_satp_csrrs_all:
+  csrrs x6, satp, x13
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_satp_csrrs_all, H_ucsr_cg_cp_scsr_satp_csrrs_all_str)
+  LI(x6, 42)
+H_ucsr_cg_cp_scsr_satp_csrrc_all:
+  csrrc x6, satp, x13
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_satp_csrrc_all, H_ucsr_cg_cp_scsr_satp_csrrc_all_str)
+  LI(x6, 42)
+H_ucsr_cg_cp_scsr_satp_csrr:
+  csrr x6, satp
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_satp_csrr, H_ucsr_cg_cp_scsr_satp_csrr_str)
+  LI(x9, -1)
+  LI(x14, 42)
+H_ucsr_cg_cp_scsr_scounteren_csrrw1:
+  csrrw x14, scounteren, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_scounteren_csrrw1, H_ucsr_cg_cp_scsr_scounteren_csrrw1_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_scsr_scounteren_csrrw0:
+  csrrw x14, scounteren, x0
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_scounteren_csrrw0, H_ucsr_cg_cp_scsr_scounteren_csrrw0_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_scsr_scounteren_csrrs_all:
+  csrrs x14, scounteren, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_scounteren_csrrs_all, H_ucsr_cg_cp_scsr_scounteren_csrrs_all_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_scsr_scounteren_csrrc_all:
+  csrrc x14, scounteren, x9
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_scounteren_csrrc_all, H_ucsr_cg_cp_scsr_scounteren_csrrc_all_str)
+  LI(x14, 42)
+H_ucsr_cg_cp_scsr_scounteren_csrr:
+  csrr x14, scounteren
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, H_ucsr_cg_cp_scsr_scounteren_csrr, H_ucsr_cg_cp_scsr_scounteren_csrr_str)
+#if defined(S1P12P0_OR_LATER_SUPPORTED)
+  LI(x6, -1)
+  LI(x13, 42)
 H_ucsr_cg_cp_scsr_senvcfg_csrrw1:
-  csrrw x6, senvcfg, x13
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_senvcfg_csrrw1, H_ucsr_cg_cp_scsr_senvcfg_csrrw1_str)
-  LI(x6, 42)
+  csrrw x13, senvcfg, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_senvcfg_csrrw1, H_ucsr_cg_cp_scsr_senvcfg_csrrw1_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_scsr_senvcfg_csrrw0:
-  csrrw x6, senvcfg, x0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_senvcfg_csrrw0, H_ucsr_cg_cp_scsr_senvcfg_csrrw0_str)
-  LI(x6, 42)
+  csrrw x13, senvcfg, x0
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_senvcfg_csrrw0, H_ucsr_cg_cp_scsr_senvcfg_csrrw0_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_scsr_senvcfg_csrrs_all:
-  csrrs x6, senvcfg, x13
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_senvcfg_csrrs_all, H_ucsr_cg_cp_scsr_senvcfg_csrrs_all_str)
-  LI(x6, 42)
+  csrrs x13, senvcfg, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_senvcfg_csrrs_all, H_ucsr_cg_cp_scsr_senvcfg_csrrs_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_scsr_senvcfg_csrrc_all:
-  csrrc x6, senvcfg, x13
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_senvcfg_csrrc_all, H_ucsr_cg_cp_scsr_senvcfg_csrrc_all_str)
-  LI(x6, 42)
+  csrrc x13, senvcfg, x6
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_senvcfg_csrrc_all, H_ucsr_cg_cp_scsr_senvcfg_csrrc_all_str)
+  LI(x13, 42)
 H_ucsr_cg_cp_scsr_senvcfg_csrr:
-  csrr x6, senvcfg
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_ucsr_cg_cp_scsr_senvcfg_csrr, H_ucsr_cg_cp_scsr_senvcfg_csrr_str)
+  csrr x13, senvcfg
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, H_ucsr_cg_cp_scsr_senvcfg_csrr, H_ucsr_cg_cp_scsr_senvcfg_csrr_str)
 #endif // defined(S1P12P0_OR_LATER_SUPPORTED)
 #if defined(SSCCFG_SUPPORTED)
-  LI(x13, -1)
-  LI(x8, 42)
+  LI(x6, -1)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_scountinhibit_csrrw1:
-  csrrw x8, scountinhibit, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_scountinhibit_csrrw1, H_ucsr_cg_cp_scsr_scountinhibit_csrrw1_str)
-  LI(x8, 42)
+  csrrw x9, scountinhibit, x6
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scountinhibit_csrrw1, H_ucsr_cg_cp_scsr_scountinhibit_csrrw1_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_scountinhibit_csrrw0:
-  csrrw x8, scountinhibit, x0
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_scountinhibit_csrrw0, H_ucsr_cg_cp_scsr_scountinhibit_csrrw0_str)
-  LI(x8, 42)
+  csrrw x9, scountinhibit, x0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scountinhibit_csrrw0, H_ucsr_cg_cp_scsr_scountinhibit_csrrw0_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_scountinhibit_csrrs_all:
-  csrrs x8, scountinhibit, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_scountinhibit_csrrs_all, H_ucsr_cg_cp_scsr_scountinhibit_csrrs_all_str)
-  LI(x8, 42)
+  csrrs x9, scountinhibit, x6
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scountinhibit_csrrs_all, H_ucsr_cg_cp_scsr_scountinhibit_csrrs_all_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_scountinhibit_csrrc_all:
-  csrrc x8, scountinhibit, x13
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_scountinhibit_csrrc_all, H_ucsr_cg_cp_scsr_scountinhibit_csrrc_all_str)
-  LI(x8, 42)
+  csrrc x9, scountinhibit, x6
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scountinhibit_csrrc_all, H_ucsr_cg_cp_scsr_scountinhibit_csrrc_all_str)
+  LI(x9, 42)
 H_ucsr_cg_cp_scsr_scountinhibit_csrr:
-  csrr x8, scountinhibit
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, H_ucsr_cg_cp_scsr_scountinhibit_csrr, H_ucsr_cg_cp_scsr_scountinhibit_csrr_str)
+  csrr x9, scountinhibit
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_ucsr_cg_cp_scsr_scountinhibit_csrr, H_ucsr_cg_cp_scsr_scountinhibit_csrr_str)
 #endif // defined(SSCCFG_SUPPORTED)
   RVTEST_TSBI_GOTO_SMODE
 
@@ -1298,236 +1298,236 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1_str: .string "\"test: 3723; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrw1\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0_str: .string "\"test: 3724; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrw0\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all_str: .string "\"test: 3725; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrs_all\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all_str: .string "\"test: 3726; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrc_all\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrr_str: .string "\"test: 3727; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrr\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1_str: .string "\"test: 3728; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrw1\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0_str: .string "\"test: 3729; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrw0\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all_str: .string "\"test: 3730; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrs_all\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all_str: .string "\"test: 3731; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrc_all\""
-H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrr_str: .string "\"test: 3732; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1_str: .string "\"test: 3733; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0_str: .string "\"test: 3734; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all_str: .string "\"test: 3735; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all_str: .string "\"test: 3736; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr_str: .string "\"test: 3737; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1_str: .string "\"test: 3738; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0_str: .string "\"test: 3739; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all_str: .string "\"test: 3740; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all_str: .string "\"test: 3741; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr_str: .string "\"test: 3742; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1_str: .string "\"test: 3743; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0_str: .string "\"test: 3744; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all_str: .string "\"test: 3745; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all_str: .string "\"test: 3746; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr_str: .string "\"test: 3747; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1_str: .string "\"test: 3748; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0_str: .string "\"test: 3749; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all_str: .string "\"test: 3750; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all_str: .string "\"test: 3751; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr_str: .string "\"test: 3752; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1_str: .string "\"test: 3753; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0_str: .string "\"test: 3754; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all_str: .string "\"test: 3755; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all_str: .string "\"test: 3756; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr_str: .string "\"test: 3757; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1_str: .string "\"test: 3758; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0_str: .string "\"test: 3759; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all_str: .string "\"test: 3760; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all_str: .string "\"test: 3761; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr_str: .string "\"test: 3762; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1_str: .string "\"test: 3763; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0_str: .string "\"test: 3764; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all_str: .string "\"test: 3765; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all_str: .string "\"test: 3766; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr_str: .string "\"test: 3767; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1_str: .string "\"test: 3768; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0_str: .string "\"test: 3769; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all_str: .string "\"test: 3770; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all_str: .string "\"test: 3771; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr_str: .string "\"test: 3772; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1_str: .string "\"test: 3773; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0_str: .string "\"test: 3774; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all_str: .string "\"test: 3775; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all_str: .string "\"test: 3776; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr_str: .string "\"test: 3777; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1_str: .string "\"test: 3778; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0_str: .string "\"test: 3779; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all_str: .string "\"test: 3780; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all_str: .string "\"test: 3781; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr_str: .string "\"test: 3782; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1_str: .string "\"test: 3783; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0_str: .string "\"test: 3784; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all_str: .string "\"test: 3785; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all_str: .string "\"test: 3786; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr_str: .string "\"test: 3787; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1_str: .string "\"test: 3788; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0_str: .string "\"test: 3789; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all_str: .string "\"test: 3790; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all_str: .string "\"test: 3791; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr_str: .string "\"test: 3792; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1_str: .string "\"test: 3793; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0_str: .string "\"test: 3794; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all_str: .string "\"test: 3795; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all_str: .string "\"test: 3796; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr_str: .string "\"test: 3797; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1_str: .string "\"test: 3798; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0_str: .string "\"test: 3799; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all_str: .string "\"test: 3800; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all_str: .string "\"test: 3801; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr_str: .string "\"test: 3802; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1_str: .string "\"test: 3803; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0_str: .string "\"test: 3804; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all_str: .string "\"test: 3805; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all_str: .string "\"test: 3806; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr_str: .string "\"test: 3807; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1_str: .string "\"test: 3808; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0_str: .string "\"test: 3809; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all_str: .string "\"test: 3810; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all_str: .string "\"test: 3811; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr_str: .string "\"test: 3812; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1_str: .string "\"test: 3813; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0_str: .string "\"test: 3814; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all_str: .string "\"test: 3815; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all_str: .string "\"test: 3816; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr_str: .string "\"test: 3817; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1_str: .string "\"test: 3818; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0_str: .string "\"test: 3819; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all_str: .string "\"test: 3820; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all_str: .string "\"test: 3821; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr_str: .string "\"test: 3822; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1_str: .string "\"test: 3823; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0_str: .string "\"test: 3824; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all_str: .string "\"test: 3825; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all_str: .string "\"test: 3826; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr_str: .string "\"test: 3827; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1_str: .string "\"test: 3828; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0_str: .string "\"test: 3829; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all_str: .string "\"test: 3830; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all_str: .string "\"test: 3831; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr_str: .string "\"test: 3832; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1_str: .string "\"test: 3833; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0_str: .string "\"test: 3834; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all_str: .string "\"test: 3835; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all_str: .string "\"test: 3836; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr_str: .string "\"test: 3837; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1_str: .string "\"test: 3838; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0_str: .string "\"test: 3839; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all_str: .string "\"test: 3840; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all_str: .string "\"test: 3841; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr_str: .string "\"test: 3842; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1_str: .string "\"test: 3843; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0_str: .string "\"test: 3844; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all_str: .string "\"test: 3845; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all_str: .string "\"test: 3846; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr_str: .string "\"test: 3847; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1_str: .string "\"test: 3848; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0_str: .string "\"test: 3849; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all_str: .string "\"test: 3850; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all_str: .string "\"test: 3851; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr_str: .string "\"test: 3852; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1_str: .string "\"test: 3853; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0_str: .string "\"test: 3854; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all_str: .string "\"test: 3855; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all_str: .string "\"test: 3856; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr_str: .string "\"test: 3857; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1_str: .string "\"test: 3858; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0_str: .string "\"test: 3859; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all_str: .string "\"test: 3860; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all_str: .string "\"test: 3861; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr_str: .string "\"test: 3862; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1_str: .string "\"test: 3863; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0_str: .string "\"test: 3864; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all_str: .string "\"test: 3865; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all_str: .string "\"test: 3866; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr_str: .string "\"test: 3867; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrr\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1_str: .string "\"test: 3868; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrw1\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0_str: .string "\"test: 3869; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrw0\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all_str: .string "\"test: 3870; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrs_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all_str: .string "\"test: 3871; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrc_all\""
-H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr_str: .string "\"test: 3872; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrr\""
-H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1_str: .string "\"test: 3873; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrw1\""
-H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0_str: .string "\"test: 3874; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrw0\""
-H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all_str: .string "\"test: 3875; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrs_all\""
-H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all_str: .string "\"test: 3876; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrc_all\""
-H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr_str: .string "\"test: 3877; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrr\""
-H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1_str: .string "\"test: 3878; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrw1\""
-H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0_str: .string "\"test: 3879; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrw0\""
-H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all_str: .string "\"test: 3880; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrs_all\""
-H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all_str: .string "\"test: 3881; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrc_all\""
-H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr_str: .string "\"test: 3882; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrr\""
-H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1_str: .string "\"test: 3883; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrw1\""
-H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0_str: .string "\"test: 3884; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrw0\""
-H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all_str: .string "\"test: 3885; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrs_all\""
-H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all_str: .string "\"test: 3886; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrc_all\""
-H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr_str: .string "\"test: 3887; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrr\""
-H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1_str: .string "\"test: 3888; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrw1\""
-H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0_str: .string "\"test: 3889; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrw0\""
-H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all_str: .string "\"test: 3890; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrs_all\""
-H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all_str: .string "\"test: 3891; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrc_all\""
-H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr_str: .string "\"test: 3892; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrr\""
-H_ucsr_cg_cp_scsr_sstatus_csrrw1_str: .string "\"test: 3893; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrrw1\""
-H_ucsr_cg_cp_scsr_sstatus_csrrw0_str: .string "\"test: 3894; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrrw0\""
-H_ucsr_cg_cp_scsr_sstatus_csrrs_all_str: .string "\"test: 3895; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrrs_all\""
-H_ucsr_cg_cp_scsr_sstatus_csrrc_all_str: .string "\"test: 3896; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrrc_all\""
-H_ucsr_cg_cp_scsr_sstatus_csrr_str: .string "\"test: 3897; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrr\""
-H_ucsr_cg_cp_scsr_sie_csrrw1_str: .string "\"test: 3898; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrrw1\""
-H_ucsr_cg_cp_scsr_sie_csrrw0_str: .string "\"test: 3899; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrrw0\""
-H_ucsr_cg_cp_scsr_sie_csrrs_all_str: .string "\"test: 3900; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrrs_all\""
-H_ucsr_cg_cp_scsr_sie_csrrc_all_str: .string "\"test: 3901; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrrc_all\""
-H_ucsr_cg_cp_scsr_sie_csrr_str: .string "\"test: 3902; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrr\""
-H_ucsr_cg_cp_scsr_stvec_csrrw1_str: .string "\"test: 3903; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrrw1\""
-H_ucsr_cg_cp_scsr_stvec_csrrw0_str: .string "\"test: 3904; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrrw0\""
-H_ucsr_cg_cp_scsr_stvec_csrrs_all_str: .string "\"test: 3905; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrrs_all\""
-H_ucsr_cg_cp_scsr_stvec_csrrc_all_str: .string "\"test: 3906; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrrc_all\""
-H_ucsr_cg_cp_scsr_stvec_csrr_str: .string "\"test: 3907; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrr\""
-H_ucsr_cg_cp_scsr_sscratch_csrrw1_str: .string "\"test: 3908; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrrw1\""
-H_ucsr_cg_cp_scsr_sscratch_csrrw0_str: .string "\"test: 3909; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrrw0\""
-H_ucsr_cg_cp_scsr_sscratch_csrrs_all_str: .string "\"test: 3910; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrrs_all\""
-H_ucsr_cg_cp_scsr_sscratch_csrrc_all_str: .string "\"test: 3911; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrrc_all\""
-H_ucsr_cg_cp_scsr_sscratch_csrr_str: .string "\"test: 3912; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrr\""
-H_ucsr_cg_cp_scsr_sepc_csrrw1_str: .string "\"test: 3913; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrrw1\""
-H_ucsr_cg_cp_scsr_sepc_csrrw0_str: .string "\"test: 3914; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrrw0\""
-H_ucsr_cg_cp_scsr_sepc_csrrs_all_str: .string "\"test: 3915; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrrs_all\""
-H_ucsr_cg_cp_scsr_sepc_csrrc_all_str: .string "\"test: 3916; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrrc_all\""
-H_ucsr_cg_cp_scsr_sepc_csrr_str: .string "\"test: 3917; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrr\""
-H_ucsr_cg_cp_scsr_scause_csrrw1_str: .string "\"test: 3918; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrrw1\""
-H_ucsr_cg_cp_scsr_scause_csrrw0_str: .string "\"test: 3919; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrrw0\""
-H_ucsr_cg_cp_scsr_scause_csrrs_all_str: .string "\"test: 3920; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrrs_all\""
-H_ucsr_cg_cp_scsr_scause_csrrc_all_str: .string "\"test: 3921; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrrc_all\""
-H_ucsr_cg_cp_scsr_scause_csrr_str: .string "\"test: 3922; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrr\""
-H_ucsr_cg_cp_scsr_stval_csrrw1_str: .string "\"test: 3923; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrrw1\""
-H_ucsr_cg_cp_scsr_stval_csrrw0_str: .string "\"test: 3924; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrrw0\""
-H_ucsr_cg_cp_scsr_stval_csrrs_all_str: .string "\"test: 3925; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrrs_all\""
-H_ucsr_cg_cp_scsr_stval_csrrc_all_str: .string "\"test: 3926; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrrc_all\""
-H_ucsr_cg_cp_scsr_stval_csrr_str: .string "\"test: 3927; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrr\""
-H_ucsr_cg_cp_scsr_sip_csrrw1_str: .string "\"test: 3928; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrrw1\""
-H_ucsr_cg_cp_scsr_sip_csrrw0_str: .string "\"test: 3929; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrrw0\""
-H_ucsr_cg_cp_scsr_sip_csrrs_all_str: .string "\"test: 3930; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrrs_all\""
-H_ucsr_cg_cp_scsr_sip_csrrc_all_str: .string "\"test: 3931; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrrc_all\""
-H_ucsr_cg_cp_scsr_sip_csrr_str: .string "\"test: 3932; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrr\""
-H_ucsr_cg_cp_scsr_satp_csrrw1_str: .string "\"test: 3933; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrrw1\""
-H_ucsr_cg_cp_scsr_satp_csrrw0_str: .string "\"test: 3934; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrrw0\""
-H_ucsr_cg_cp_scsr_satp_csrrs_all_str: .string "\"test: 3935; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrrs_all\""
-H_ucsr_cg_cp_scsr_satp_csrrc_all_str: .string "\"test: 3936; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrrc_all\""
-H_ucsr_cg_cp_scsr_satp_csrr_str: .string "\"test: 3937; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrr\""
-H_ucsr_cg_cp_scsr_scounteren_csrrw1_str: .string "\"test: 3938; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrrw1\""
-H_ucsr_cg_cp_scsr_scounteren_csrrw0_str: .string "\"test: 3939; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrrw0\""
-H_ucsr_cg_cp_scsr_scounteren_csrrs_all_str: .string "\"test: 3940; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrrs_all\""
-H_ucsr_cg_cp_scsr_scounteren_csrrc_all_str: .string "\"test: 3941; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrrc_all\""
-H_ucsr_cg_cp_scsr_scounteren_csrr_str: .string "\"test: 3942; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrr\""
-H_ucsr_cg_cp_scsr_senvcfg_csrrw1_str: .string "\"test: 3943; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrrw1\""
-H_ucsr_cg_cp_scsr_senvcfg_csrrw0_str: .string "\"test: 3944; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrrw0\""
-H_ucsr_cg_cp_scsr_senvcfg_csrrs_all_str: .string "\"test: 3945; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrrs_all\""
-H_ucsr_cg_cp_scsr_senvcfg_csrrc_all_str: .string "\"test: 3946; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrrc_all\""
-H_ucsr_cg_cp_scsr_senvcfg_csrr_str: .string "\"test: 3947; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrr\""
-H_ucsr_cg_cp_scsr_scountinhibit_csrrw1_str: .string "\"test: 3948; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrrw1\""
-H_ucsr_cg_cp_scsr_scountinhibit_csrrw0_str: .string "\"test: 3949; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrrw0\""
-H_ucsr_cg_cp_scsr_scountinhibit_csrrs_all_str: .string "\"test: 3950; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrrs_all\""
-H_ucsr_cg_cp_scsr_scountinhibit_csrrc_all_str: .string "\"test: 3951; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrrc_all\""
-H_ucsr_cg_cp_scsr_scountinhibit_csrr_str: .string "\"test: 3952; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrr\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw1_str: .string "\"test: 3730; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrw1\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrw0_str: .string "\"test: 3731; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrw0\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrs_all_str: .string "\"test: 3732; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrs_all\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrrc_all_str: .string "\"test: 3733; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrrc_all\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtval2_csrr_str: .string "\"test: 3734; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtval2_csrr\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw1_str: .string "\"test: 3735; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrw1\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrw0_str: .string "\"test: 3736; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrw0\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrs_all_str: .string "\"test: 3737; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrs_all\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrrc_all_str: .string "\"test: 3738; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrrc_all\""
+H_ucsr_cg_cp_hcsr_inaccessible_mtinst_csrr_str: .string "\"test: 3739; cg: H_ucsr_cg; cp: cp_hcsr_inaccessible; bin: mtinst_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw1_str: .string "\"test: 3740; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrw0_str: .string "\"test: 3741; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrs_all_str: .string "\"test: 3742; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrrc_all_str: .string "\"test: 3743; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hstatus_csrr_str: .string "\"test: 3744; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hstatus_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw1_str: .string "\"test: 3745; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrw0_str: .string "\"test: 3746; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrs_all_str: .string "\"test: 3747; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrrc_all_str: .string "\"test: 3748; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedeleg_csrr_str: .string "\"test: 3749; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedeleg_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw1_str: .string "\"test: 3750; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrw0_str: .string "\"test: 3751; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrs_all_str: .string "\"test: 3752; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrrc_all_str: .string "\"test: 3753; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hideleg_csrr_str: .string "\"test: 3754; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hideleg_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw1_str: .string "\"test: 3755; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrw0_str: .string "\"test: 3756; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrs_all_str: .string "\"test: 3757; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrrc_all_str: .string "\"test: 3758; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hie_csrr_str: .string "\"test: 3759; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hie_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw1_str: .string "\"test: 3760; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrw0_str: .string "\"test: 3761; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrs_all_str: .string "\"test: 3762; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrrc_all_str: .string "\"test: 3763; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hcounteren_csrr_str: .string "\"test: 3764; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hcounteren_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw1_str: .string "\"test: 3765; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrw0_str: .string "\"test: 3766; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrs_all_str: .string "\"test: 3767; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrrc_all_str: .string "\"test: 3768; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeie_csrr_str: .string "\"test: 3769; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeie_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw1_str: .string "\"test: 3770; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrw0_str: .string "\"test: 3771; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrs_all_str: .string "\"test: 3772; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrrc_all_str: .string "\"test: 3773; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfg_csrr_str: .string "\"test: 3774; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfg_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw1_str: .string "\"test: 3775; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrw0_str: .string "\"test: 3776; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrs_all_str: .string "\"test: 3777; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrrc_all_str: .string "\"test: 3778; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htval_csrr_str: .string "\"test: 3779; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htval_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw1_str: .string "\"test: 3780; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrw0_str: .string "\"test: 3781; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrs_all_str: .string "\"test: 3782; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrrc_all_str: .string "\"test: 3783; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hip_csrr_str: .string "\"test: 3784; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hip_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw1_str: .string "\"test: 3785; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrw0_str: .string "\"test: 3786; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrs_all_str: .string "\"test: 3787; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrrc_all_str: .string "\"test: 3788; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hvip_csrr_str: .string "\"test: 3789; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hvip_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw1_str: .string "\"test: 3790; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrw0_str: .string "\"test: 3791; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrs_all_str: .string "\"test: 3792; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrrc_all_str: .string "\"test: 3793; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htinst_csrr_str: .string "\"test: 3794; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htinst_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw1_str: .string "\"test: 3795; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrw0_str: .string "\"test: 3796; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrs_all_str: .string "\"test: 3797; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrrc_all_str: .string "\"test: 3798; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgatp_csrr_str: .string "\"test: 3799; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgatp_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw1_str: .string "\"test: 3800; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrw0_str: .string "\"test: 3801; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrs_all_str: .string "\"test: 3802; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrrc_all_str: .string "\"test: 3803; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedelta_csrr_str: .string "\"test: 3804; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedelta_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw1_str: .string "\"test: 3805; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrw0_str: .string "\"test: 3806; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrs_all_str: .string "\"test: 3807; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrrc_all_str: .string "\"test: 3808; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hedelegh_csrr_str: .string "\"test: 3809; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hedelegh_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw1_str: .string "\"test: 3810; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrw0_str: .string "\"test: 3811; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrs_all_str: .string "\"test: 3812; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrrc_all_str: .string "\"test: 3813; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_htimedeltah_csrr_str: .string "\"test: 3814; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: htimedeltah_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw1_str: .string "\"test: 3815; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrw0_str: .string "\"test: 3816; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrs_all_str: .string "\"test: 3817; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrrc_all_str: .string "\"test: 3818; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_henvcfgh_csrr_str: .string "\"test: 3819; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: henvcfgh_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw1_str: .string "\"test: 3820; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrw0_str: .string "\"test: 3821; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrs_all_str: .string "\"test: 3822; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrrc_all_str: .string "\"test: 3823; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_hgeip_csrr_str: .string "\"test: 3824; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: hgeip_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw1_str: .string "\"test: 3825; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrw0_str: .string "\"test: 3826; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrs_all_str: .string "\"test: 3827; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrrc_all_str: .string "\"test: 3828; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsstatus_csrr_str: .string "\"test: 3829; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsstatus_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw1_str: .string "\"test: 3830; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrw0_str: .string "\"test: 3831; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrs_all_str: .string "\"test: 3832; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrrc_all_str: .string "\"test: 3833; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsie_csrr_str: .string "\"test: 3834; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsie_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw1_str: .string "\"test: 3835; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrw0_str: .string "\"test: 3836; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrs_all_str: .string "\"test: 3837; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrrc_all_str: .string "\"test: 3838; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstval_csrr_str: .string "\"test: 3839; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstval_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw1_str: .string "\"test: 3840; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrw0_str: .string "\"test: 3841; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrs_all_str: .string "\"test: 3842; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrrc_all_str: .string "\"test: 3843; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsip_csrr_str: .string "\"test: 3844; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsip_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw1_str: .string "\"test: 3845; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrw0_str: .string "\"test: 3846; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrs_all_str: .string "\"test: 3847; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrrc_all_str: .string "\"test: 3848; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstvec_csrr_str: .string "\"test: 3849; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstvec_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw1_str: .string "\"test: 3850; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrw0_str: .string "\"test: 3851; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrs_all_str: .string "\"test: 3852; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrrc_all_str: .string "\"test: 3853; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsscratch_csrr_str: .string "\"test: 3854; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsscratch_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw1_str: .string "\"test: 3855; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrw0_str: .string "\"test: 3856; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrs_all_str: .string "\"test: 3857; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrrc_all_str: .string "\"test: 3858; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsepc_csrr_str: .string "\"test: 3859; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsepc_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw1_str: .string "\"test: 3860; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrw0_str: .string "\"test: 3861; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrs_all_str: .string "\"test: 3862; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrrc_all_str: .string "\"test: 3863; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vsatp_csrr_str: .string "\"test: 3864; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vsatp_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw1_str: .string "\"test: 3865; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrw0_str: .string "\"test: 3866; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrs_all_str: .string "\"test: 3867; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrrc_all_str: .string "\"test: 3868; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmp_csrr_str: .string "\"test: 3869; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmp_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw1_str: .string "\"test: 3870; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrw0_str: .string "\"test: 3871; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrs_all_str: .string "\"test: 3872; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrrc_all_str: .string "\"test: 3873; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vstimecmph_csrr_str: .string "\"test: 3874; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vstimecmph_csrr\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw1_str: .string "\"test: 3875; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrw1\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrw0_str: .string "\"test: 3876; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrw0\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrs_all_str: .string "\"test: 3877; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrs_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrrc_all_str: .string "\"test: 3878; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrrc_all\""
+H_ucsr_cg_cp_hcsr_virtualinstructionfault_vscause_csrr_str: .string "\"test: 3879; cg: H_ucsr_cg; cp: cp_hcsr_virtualinstructionfault; bin: vscause_csrr\""
+H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw1_str: .string "\"test: 3880; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrw1\""
+H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrw0_str: .string "\"test: 3881; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrw0\""
+H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrs_all_str: .string "\"test: 3882; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrs_all\""
+H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrrc_all_str: .string "\"test: 3883; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrrc_all\""
+H_ucsr_cg_cp_illegalupper_CSR_HEDELEGH_csrr_str: .string "\"test: 3884; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HEDELEGH_csrr\""
+H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw1_str: .string "\"test: 3885; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrw1\""
+H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrw0_str: .string "\"test: 3886; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrw0\""
+H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrs_all_str: .string "\"test: 3887; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrs_all\""
+H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrrc_all_str: .string "\"test: 3888; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrrc_all\""
+H_ucsr_cg_cp_illegalupper_CSR_HTIMEDELTAH_csrr_str: .string "\"test: 3889; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HTIMEDELTAH_csrr\""
+H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw1_str: .string "\"test: 3890; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrw1\""
+H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrw0_str: .string "\"test: 3891; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrw0\""
+H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrs_all_str: .string "\"test: 3892; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrs_all\""
+H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrrc_all_str: .string "\"test: 3893; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrrc_all\""
+H_ucsr_cg_cp_illegalupper_CSR_HENVCFGH_csrr_str: .string "\"test: 3894; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_HENVCFGH_csrr\""
+H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw1_str: .string "\"test: 3895; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrw1\""
+H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrw0_str: .string "\"test: 3896; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrw0\""
+H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrs_all_str: .string "\"test: 3897; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrs_all\""
+H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrrc_all_str: .string "\"test: 3898; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrrc_all\""
+H_ucsr_cg_cp_illegalupper_CSR_VSTIMECMPH_csrr_str: .string "\"test: 3899; cg: H_ucsr_cg; cp: cp_illegalupper; bin: CSR_VSTIMECMPH_csrr\""
+H_ucsr_cg_cp_scsr_sstatus_csrrw1_str: .string "\"test: 3900; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrrw1\""
+H_ucsr_cg_cp_scsr_sstatus_csrrw0_str: .string "\"test: 3901; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrrw0\""
+H_ucsr_cg_cp_scsr_sstatus_csrrs_all_str: .string "\"test: 3902; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrrs_all\""
+H_ucsr_cg_cp_scsr_sstatus_csrrc_all_str: .string "\"test: 3903; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrrc_all\""
+H_ucsr_cg_cp_scsr_sstatus_csrr_str: .string "\"test: 3904; cg: H_ucsr_cg; cp: cp_scsr; bin: sstatus_csrr\""
+H_ucsr_cg_cp_scsr_sie_csrrw1_str: .string "\"test: 3905; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrrw1\""
+H_ucsr_cg_cp_scsr_sie_csrrw0_str: .string "\"test: 3906; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrrw0\""
+H_ucsr_cg_cp_scsr_sie_csrrs_all_str: .string "\"test: 3907; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrrs_all\""
+H_ucsr_cg_cp_scsr_sie_csrrc_all_str: .string "\"test: 3908; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrrc_all\""
+H_ucsr_cg_cp_scsr_sie_csrr_str: .string "\"test: 3909; cg: H_ucsr_cg; cp: cp_scsr; bin: sie_csrr\""
+H_ucsr_cg_cp_scsr_stvec_csrrw1_str: .string "\"test: 3910; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrrw1\""
+H_ucsr_cg_cp_scsr_stvec_csrrw0_str: .string "\"test: 3911; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrrw0\""
+H_ucsr_cg_cp_scsr_stvec_csrrs_all_str: .string "\"test: 3912; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrrs_all\""
+H_ucsr_cg_cp_scsr_stvec_csrrc_all_str: .string "\"test: 3913; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrrc_all\""
+H_ucsr_cg_cp_scsr_stvec_csrr_str: .string "\"test: 3914; cg: H_ucsr_cg; cp: cp_scsr; bin: stvec_csrr\""
+H_ucsr_cg_cp_scsr_sscratch_csrrw1_str: .string "\"test: 3915; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrrw1\""
+H_ucsr_cg_cp_scsr_sscratch_csrrw0_str: .string "\"test: 3916; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrrw0\""
+H_ucsr_cg_cp_scsr_sscratch_csrrs_all_str: .string "\"test: 3917; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrrs_all\""
+H_ucsr_cg_cp_scsr_sscratch_csrrc_all_str: .string "\"test: 3918; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrrc_all\""
+H_ucsr_cg_cp_scsr_sscratch_csrr_str: .string "\"test: 3919; cg: H_ucsr_cg; cp: cp_scsr; bin: sscratch_csrr\""
+H_ucsr_cg_cp_scsr_sepc_csrrw1_str: .string "\"test: 3920; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrrw1\""
+H_ucsr_cg_cp_scsr_sepc_csrrw0_str: .string "\"test: 3921; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrrw0\""
+H_ucsr_cg_cp_scsr_sepc_csrrs_all_str: .string "\"test: 3922; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrrs_all\""
+H_ucsr_cg_cp_scsr_sepc_csrrc_all_str: .string "\"test: 3923; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrrc_all\""
+H_ucsr_cg_cp_scsr_sepc_csrr_str: .string "\"test: 3924; cg: H_ucsr_cg; cp: cp_scsr; bin: sepc_csrr\""
+H_ucsr_cg_cp_scsr_scause_csrrw1_str: .string "\"test: 3925; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrrw1\""
+H_ucsr_cg_cp_scsr_scause_csrrw0_str: .string "\"test: 3926; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrrw0\""
+H_ucsr_cg_cp_scsr_scause_csrrs_all_str: .string "\"test: 3927; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrrs_all\""
+H_ucsr_cg_cp_scsr_scause_csrrc_all_str: .string "\"test: 3928; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrrc_all\""
+H_ucsr_cg_cp_scsr_scause_csrr_str: .string "\"test: 3929; cg: H_ucsr_cg; cp: cp_scsr; bin: scause_csrr\""
+H_ucsr_cg_cp_scsr_stval_csrrw1_str: .string "\"test: 3930; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrrw1\""
+H_ucsr_cg_cp_scsr_stval_csrrw0_str: .string "\"test: 3931; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrrw0\""
+H_ucsr_cg_cp_scsr_stval_csrrs_all_str: .string "\"test: 3932; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrrs_all\""
+H_ucsr_cg_cp_scsr_stval_csrrc_all_str: .string "\"test: 3933; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrrc_all\""
+H_ucsr_cg_cp_scsr_stval_csrr_str: .string "\"test: 3934; cg: H_ucsr_cg; cp: cp_scsr; bin: stval_csrr\""
+H_ucsr_cg_cp_scsr_sip_csrrw1_str: .string "\"test: 3935; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrrw1\""
+H_ucsr_cg_cp_scsr_sip_csrrw0_str: .string "\"test: 3936; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrrw0\""
+H_ucsr_cg_cp_scsr_sip_csrrs_all_str: .string "\"test: 3937; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrrs_all\""
+H_ucsr_cg_cp_scsr_sip_csrrc_all_str: .string "\"test: 3938; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrrc_all\""
+H_ucsr_cg_cp_scsr_sip_csrr_str: .string "\"test: 3939; cg: H_ucsr_cg; cp: cp_scsr; bin: sip_csrr\""
+H_ucsr_cg_cp_scsr_satp_csrrw1_str: .string "\"test: 3940; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrrw1\""
+H_ucsr_cg_cp_scsr_satp_csrrw0_str: .string "\"test: 3941; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrrw0\""
+H_ucsr_cg_cp_scsr_satp_csrrs_all_str: .string "\"test: 3942; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrrs_all\""
+H_ucsr_cg_cp_scsr_satp_csrrc_all_str: .string "\"test: 3943; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrrc_all\""
+H_ucsr_cg_cp_scsr_satp_csrr_str: .string "\"test: 3944; cg: H_ucsr_cg; cp: cp_scsr; bin: satp_csrr\""
+H_ucsr_cg_cp_scsr_scounteren_csrrw1_str: .string "\"test: 3945; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrrw1\""
+H_ucsr_cg_cp_scsr_scounteren_csrrw0_str: .string "\"test: 3946; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrrw0\""
+H_ucsr_cg_cp_scsr_scounteren_csrrs_all_str: .string "\"test: 3947; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrrs_all\""
+H_ucsr_cg_cp_scsr_scounteren_csrrc_all_str: .string "\"test: 3948; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrrc_all\""
+H_ucsr_cg_cp_scsr_scounteren_csrr_str: .string "\"test: 3949; cg: H_ucsr_cg; cp: cp_scsr; bin: scounteren_csrr\""
+H_ucsr_cg_cp_scsr_senvcfg_csrrw1_str: .string "\"test: 3950; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrrw1\""
+H_ucsr_cg_cp_scsr_senvcfg_csrrw0_str: .string "\"test: 3951; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrrw0\""
+H_ucsr_cg_cp_scsr_senvcfg_csrrs_all_str: .string "\"test: 3952; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrrs_all\""
+H_ucsr_cg_cp_scsr_senvcfg_csrrc_all_str: .string "\"test: 3953; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrrc_all\""
+H_ucsr_cg_cp_scsr_senvcfg_csrr_str: .string "\"test: 3954; cg: H_ucsr_cg; cp: cp_scsr; bin: senvcfg_csrr\""
+H_ucsr_cg_cp_scsr_scountinhibit_csrrw1_str: .string "\"test: 3955; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrrw1\""
+H_ucsr_cg_cp_scsr_scountinhibit_csrrw0_str: .string "\"test: 3956; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrrw0\""
+H_ucsr_cg_cp_scsr_scountinhibit_csrrs_all_str: .string "\"test: 3957; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrrs_all\""
+H_ucsr_cg_cp_scsr_scountinhibit_csrrc_all_str: .string "\"test: 3958; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrrc_all\""
+H_ucsr_cg_cp_scsr_scountinhibit_csrr_str: .string "\"test: 3959; cg: H_ucsr_cg; cp: cp_scsr; bin: scountinhibit_csrr\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

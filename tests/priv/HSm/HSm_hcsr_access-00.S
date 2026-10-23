@@ -15,7 +15,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 113
+#define SIGUPD_COUNT 114
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_MMODE
@@ -919,6 +919,20 @@ HSm_mcsr_cg_cp_hcsr_access_hedeleg_p113_writable:
   csrw hedeleg, x14
 #endif // defined(SM1P13P0_OR_LATER_SUPPORTED)
 
+#if !defined(ZCA_SUPPORTED)
+  csrr x14, hedeleg
+  LI(x8, -1)
+  LI(x13, 0x1)
+HSm_mcsr_cg_cp_hcsr_access_hedeleg_ialign32_writable:
+  csrw hedeleg, x8
+  # Read hedeleg into x9, keep only bits specified by mask, and check against expected.
+  csrr x9, hedeleg    # Read CSR
+  and x9, x9, x13    # keep only masked bits 0x1
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, HSm_mcsr_cg_cp_hcsr_access_hedeleg_ialign32_writable, HSm_mcsr_cg_cp_hcsr_access_hedeleg_ialign32_writable_str)
+  csrw hedeleg, x14
+#endif // !defined(ZCA_SUPPORTED)
+
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
 
@@ -1046,6 +1060,7 @@ HSm_mcsr_cg_cp_hcsr_access_ro_hgeip_csrrw0_str: .string "\"test: 114; cg: HSm_mc
 HSm_mcsr_cg_cp_hcsr_access_ro_hgeip_csrs_all_str: .string "\"test: 115; cg: HSm_mcsr_cg; cp: cp_hcsr_access_ro; bin: hgeip_csrs_all\""
 HSm_mcsr_cg_cp_hcsr_access_ro_hgeip_csrrc_all_str: .string "\"test: 116; cg: HSm_mcsr_cg; cp: cp_hcsr_access_ro; bin: hgeip_csrrc_all\""
 HSm_mcsr_cg_cp_hcsr_access_hedeleg_p113_writable_str: .string "\"test: 117; cg: HSm_mcsr_cg; cp: cp_hcsr_access; bin: hedeleg_p113_writable\""
+HSm_mcsr_cg_cp_hcsr_access_hedeleg_ialign32_writable_str: .string "\"test: 118; cg: HSm_mcsr_cg; cp: cp_hcsr_access; bin: hedeleg_ialign32_writable\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

@@ -15,7 +15,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 78
+#define SIGUPD_COUNT 84
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_SMODE
@@ -33,297 +33,363 @@ RVTEST_BEGIN
 // cp_hstatus_vgein
 //   Write hstatus.VGEIN = 0, 1, GEILEN-1 and GEILEN
 /////////////////////////////////
-  csrr x13, hstatus
-  LI(x14, 0x7003c0 | HSTATUS_VGEIN)
-  LI(x15, HSTATUS_VGEIN)
-  csrc hstatus, x15
-  csrr x15, hstatus
+  csrr x14, hstatus
+  LI(x8, 0x7003c0 | HSTATUS_VGEIN)
+  LI(x6, HSTATUS_VGEIN)
+  csrc hstatus, x6
+  csrr x6, hstatus
 H_hscsr_cg_cp_hstatus_vgein_zero:
-  csrw hstatus, x15
-  # Read hstatus into x6, keep only bits specified by mask, and check against expected.
-  csrr x6, hstatus    # Read CSR
-  and x6, x6, x14    # keep only masked bits 0x73f3c0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_hscsr_cg_cp_hstatus_vgein_zero, H_hscsr_cg_cp_hstatus_vgein_zero_str)
+  csrw hstatus, x6
+  # Read hstatus into x9, keep only bits specified by mask, and check against expected.
+  csrr x9, hstatus    # Read CSR
+  and x9, x9, x8    # keep only masked bits 0x73f3c0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_hscsr_cg_cp_hstatus_vgein_zero, H_hscsr_cg_cp_hstatus_vgein_zero_str)
 #if UDB_NUM_EXTERNAL_GUEST_INTERRUPTS >= 1
-  LI(x15, HSTATUS_VGEIN)
-  csrc hstatus, x15
-  csrr x15, hstatus
-  LI(x6, 1 << 12)
-  or x15, x15, x6
+  LI(x6, HSTATUS_VGEIN)
+  csrc hstatus, x6
+  csrr x6, hstatus
+  LI(x9, 1 << 12)
+  or x6, x6, x9
 H_hscsr_cg_cp_hstatus_vgein_one:
-  csrw hstatus, x15
-  # Read hstatus into x6, keep only bits specified by mask, and check against expected.
-  csrr x6, hstatus    # Read CSR
-  and x6, x6, x14    # keep only masked bits 0x73f3c0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_hscsr_cg_cp_hstatus_vgein_one, H_hscsr_cg_cp_hstatus_vgein_one_str)
+  csrw hstatus, x6
+  # Read hstatus into x9, keep only bits specified by mask, and check against expected.
+  csrr x9, hstatus    # Read CSR
+  and x9, x9, x8    # keep only masked bits 0x73f3c0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_hscsr_cg_cp_hstatus_vgein_one, H_hscsr_cg_cp_hstatus_vgein_one_str)
 #endif // UDB_NUM_EXTERNAL_GUEST_INTERRUPTS >= 1
 #if UDB_NUM_EXTERNAL_GUEST_INTERRUPTS >= 1
-  LI(x15, HSTATUS_VGEIN)
-  csrc hstatus, x15
-  csrr x15, hstatus
-  LI(x6, (UDB_NUM_EXTERNAL_GUEST_INTERRUPTS - 1) << 12)
-  or x15, x15, x6
+  LI(x6, HSTATUS_VGEIN)
+  csrc hstatus, x6
+  csrr x6, hstatus
+  LI(x9, (UDB_NUM_EXTERNAL_GUEST_INTERRUPTS - 1) << 12)
+  or x6, x6, x9
 H_hscsr_cg_cp_hstatus_vgein_geilen_m1:
-  csrw hstatus, x15
-  # Read hstatus into x6, keep only bits specified by mask, and check against expected.
-  csrr x6, hstatus    # Read CSR
-  and x6, x6, x14    # keep only masked bits 0x73f3c0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_hscsr_cg_cp_hstatus_vgein_geilen_m1, H_hscsr_cg_cp_hstatus_vgein_geilen_m1_str)
+  csrw hstatus, x6
+  # Read hstatus into x9, keep only bits specified by mask, and check against expected.
+  csrr x9, hstatus    # Read CSR
+  and x9, x9, x8    # keep only masked bits 0x73f3c0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_hscsr_cg_cp_hstatus_vgein_geilen_m1, H_hscsr_cg_cp_hstatus_vgein_geilen_m1_str)
 #endif // UDB_NUM_EXTERNAL_GUEST_INTERRUPTS >= 1
 #if UDB_NUM_EXTERNAL_GUEST_INTERRUPTS >= 1
-  LI(x15, HSTATUS_VGEIN)
-  csrc hstatus, x15
-  csrr x15, hstatus
-  LI(x6, UDB_NUM_EXTERNAL_GUEST_INTERRUPTS << 12)
-  or x15, x15, x6
+  LI(x6, HSTATUS_VGEIN)
+  csrc hstatus, x6
+  csrr x6, hstatus
+  LI(x9, UDB_NUM_EXTERNAL_GUEST_INTERRUPTS << 12)
+  or x6, x6, x9
 H_hscsr_cg_cp_hstatus_vgein_geilen:
-  csrw hstatus, x15
-  # Read hstatus into x6, keep only bits specified by mask, and check against expected.
-  csrr x6, hstatus    # Read CSR
-  and x6, x6, x14    # keep only masked bits 0x73f3c0
-  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x6, H_hscsr_cg_cp_hstatus_vgein_geilen, H_hscsr_cg_cp_hstatus_vgein_geilen_str)
+  csrw hstatus, x6
+  # Read hstatus into x9, keep only bits specified by mask, and check against expected.
+  csrr x9, hstatus    # Read CSR
+  and x9, x9, x8    # keep only masked bits 0x73f3c0
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, H_hscsr_cg_cp_hstatus_vgein_geilen, H_hscsr_cg_cp_hstatus_vgein_geilen_str)
 #endif // UDB_NUM_EXTERNAL_GUEST_INTERRUPTS >= 1
-  csrw hstatus, x13
+  csrw hstatus, x14
+
+
+/////////////////////////////////
+// cp_hstatus_vsxl, cp_vsstatus_uxl
+//   On RV64 with VSXLEN = 64 (VUXLEN = 64) only, write hstatus.VSXL (vsstatus.UXL) = 0, 1 and 3 with
+//   the other bits zero; the field reads 2
+/////////////////////////////////
+#if __riscv_xlen == 64
+  LI(x13, 3 << 32)
+#if !defined(UDB_VSXLEN_32)
+  csrr x8, hstatus
+  LI(x9, 0 << 32)
+H_hscsr_cg_cp_hstatus_vsxl_vsxl0:
+  csrw hstatus, x9
+  # Read hstatus into x15, keep only bits specified by mask, and check against expected.
+  csrr x15, hstatus    # Read CSR
+  and x15, x15, x13    # keep only masked bits 0x300000000
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hstatus_vsxl_vsxl0, H_hscsr_cg_cp_hstatus_vsxl_vsxl0_str)
+  LI(x9, 1 << 32)
+H_hscsr_cg_cp_hstatus_vsxl_vsxl1:
+  csrw hstatus, x9
+  # Read hstatus into x15, keep only bits specified by mask, and check against expected.
+  csrr x15, hstatus    # Read CSR
+  and x15, x15, x13    # keep only masked bits 0x300000000
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hstatus_vsxl_vsxl1, H_hscsr_cg_cp_hstatus_vsxl_vsxl1_str)
+  LI(x9, 3 << 32)
+H_hscsr_cg_cp_hstatus_vsxl_vsxl3:
+  csrw hstatus, x9
+  # Read hstatus into x15, keep only bits specified by mask, and check against expected.
+  csrr x15, hstatus    # Read CSR
+  and x15, x15, x13    # keep only masked bits 0x300000000
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_hstatus_vsxl_vsxl3, H_hscsr_cg_cp_hstatus_vsxl_vsxl3_str)
+  csrw hstatus, x8
+#endif // !defined(UDB_VSXLEN_32)
+#if !defined(UDB_VUXLEN_32)
+  csrr x8, vsstatus
+  LI(x9, 0 << 32)
+H_hscsr_cg_cp_vsstatus_uxl_uxl0:
+  csrw vsstatus, x9
+  # Read vsstatus into x15, keep only bits specified by mask, and check against expected.
+  csrr x15, vsstatus    # Read CSR
+  and x15, x15, x13    # keep only masked bits 0x300000000
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_vsstatus_uxl_uxl0, H_hscsr_cg_cp_vsstatus_uxl_uxl0_str)
+  LI(x9, 1 << 32)
+H_hscsr_cg_cp_vsstatus_uxl_uxl1:
+  csrw vsstatus, x9
+  # Read vsstatus into x15, keep only bits specified by mask, and check against expected.
+  csrr x15, vsstatus    # Read CSR
+  and x15, x15, x13    # keep only masked bits 0x300000000
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_vsstatus_uxl_uxl1, H_hscsr_cg_cp_vsstatus_uxl_uxl1_str)
+  LI(x9, 3 << 32)
+H_hscsr_cg_cp_vsstatus_uxl_uxl3:
+  csrw vsstatus, x9
+  # Read vsstatus into x15, keep only bits specified by mask, and check against expected.
+  csrr x15, vsstatus    # Read CSR
+  and x15, x15, x13    # keep only masked bits 0x300000000
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, H_hscsr_cg_cp_vsstatus_uxl_uxl3, H_hscsr_cg_cp_vsstatus_uxl_uxl3_str)
+  csrw vsstatus, x8
+#endif // !defined(UDB_VUXLEN_32)
+#endif
 
 
 /////////////////////////////////
 // cp_vscause_write_exception
 //   with interrupt = 0: test writing each exception cause
 /////////////////////////////////
-  csrr x14, vscause     # save CSR before testing it
+  csrr x9, vscause     # save CSR before testing it
 
 # Testcase: set vscause to exception cause 0
-  LI(x6, 0)
+  LI(x8, 0)
 H_hscsr_cg_cp_vscause_write_exception_b_0:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_0, H_hscsr_cg_cp_vscause_write_exception_b_0_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_0, H_hscsr_cg_cp_vscause_write_exception_b_0_str)
 
 # Testcase: set vscause to exception cause 1
-  LI(x6, 1)
+  LI(x8, 1)
 H_hscsr_cg_cp_vscause_write_exception_b_1:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_1, H_hscsr_cg_cp_vscause_write_exception_b_1_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_1, H_hscsr_cg_cp_vscause_write_exception_b_1_str)
 
 # Testcase: set vscause to exception cause 2
-  LI(x6, 2)
+  LI(x8, 2)
 H_hscsr_cg_cp_vscause_write_exception_b_2:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_2, H_hscsr_cg_cp_vscause_write_exception_b_2_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_2, H_hscsr_cg_cp_vscause_write_exception_b_2_str)
 
 # Testcase: set vscause to exception cause 3
-  LI(x6, 3)
+  LI(x8, 3)
 H_hscsr_cg_cp_vscause_write_exception_b_3:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_3, H_hscsr_cg_cp_vscause_write_exception_b_3_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_3, H_hscsr_cg_cp_vscause_write_exception_b_3_str)
 
 # Testcase: set vscause to exception cause 4
-  LI(x6, 4)
+  LI(x8, 4)
 H_hscsr_cg_cp_vscause_write_exception_b_4:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_4, H_hscsr_cg_cp_vscause_write_exception_b_4_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_4, H_hscsr_cg_cp_vscause_write_exception_b_4_str)
 
 # Testcase: set vscause to exception cause 5
-  LI(x6, 5)
+  LI(x8, 5)
 H_hscsr_cg_cp_vscause_write_exception_b_5:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_5, H_hscsr_cg_cp_vscause_write_exception_b_5_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_5, H_hscsr_cg_cp_vscause_write_exception_b_5_str)
 
 # Testcase: set vscause to exception cause 6
-  LI(x6, 6)
+  LI(x8, 6)
 H_hscsr_cg_cp_vscause_write_exception_b_6:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_6, H_hscsr_cg_cp_vscause_write_exception_b_6_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_6, H_hscsr_cg_cp_vscause_write_exception_b_6_str)
 
 # Testcase: set vscause to exception cause 7
-  LI(x6, 7)
+  LI(x8, 7)
 H_hscsr_cg_cp_vscause_write_exception_b_7:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_7, H_hscsr_cg_cp_vscause_write_exception_b_7_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_7, H_hscsr_cg_cp_vscause_write_exception_b_7_str)
 
 # Testcase: set vscause to exception cause 8
-  LI(x6, 8)
+  LI(x8, 8)
 H_hscsr_cg_cp_vscause_write_exception_b_8:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_8, H_hscsr_cg_cp_vscause_write_exception_b_8_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_8, H_hscsr_cg_cp_vscause_write_exception_b_8_str)
 
 # Testcase: set vscause to exception cause 9
-  LI(x6, 9)
+  LI(x8, 9)
 H_hscsr_cg_cp_vscause_write_exception_b_9:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_9, H_hscsr_cg_cp_vscause_write_exception_b_9_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_9, H_hscsr_cg_cp_vscause_write_exception_b_9_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 10
-  LI(x6, 10)
+  LI(x8, 10)
 H_hscsr_cg_cp_vscause_write_exception_b_10:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_10, H_hscsr_cg_cp_vscause_write_exception_b_10_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_10, H_hscsr_cg_cp_vscause_write_exception_b_10_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 11
-  LI(x6, 11)
+  LI(x8, 11)
 H_hscsr_cg_cp_vscause_write_exception_b_11:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_11, H_hscsr_cg_cp_vscause_write_exception_b_11_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_11, H_hscsr_cg_cp_vscause_write_exception_b_11_str)
 #endif
 
 # Testcase: set vscause to exception cause 12
-  LI(x6, 12)
+  LI(x8, 12)
 H_hscsr_cg_cp_vscause_write_exception_b_12:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_12, H_hscsr_cg_cp_vscause_write_exception_b_12_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_12, H_hscsr_cg_cp_vscause_write_exception_b_12_str)
 
 # Testcase: set vscause to exception cause 13
-  LI(x6, 13)
+  LI(x8, 13)
 H_hscsr_cg_cp_vscause_write_exception_b_13:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_13, H_hscsr_cg_cp_vscause_write_exception_b_13_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_13, H_hscsr_cg_cp_vscause_write_exception_b_13_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 14
-  LI(x6, 14)
+  LI(x8, 14)
 H_hscsr_cg_cp_vscause_write_exception_b_14:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_14, H_hscsr_cg_cp_vscause_write_exception_b_14_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_14, H_hscsr_cg_cp_vscause_write_exception_b_14_str)
 #endif
 
 # Testcase: set vscause to exception cause 15
-  LI(x6, 15)
+  LI(x8, 15)
 H_hscsr_cg_cp_vscause_write_exception_b_15:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_15, H_hscsr_cg_cp_vscause_write_exception_b_15_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_15, H_hscsr_cg_cp_vscause_write_exception_b_15_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 16
-  LI(x6, 16)
+  LI(x8, 16)
 H_hscsr_cg_cp_vscause_write_exception_b_16:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_16, H_hscsr_cg_cp_vscause_write_exception_b_16_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_16, H_hscsr_cg_cp_vscause_write_exception_b_16_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 17
-  LI(x6, 17)
+  LI(x8, 17)
 H_hscsr_cg_cp_vscause_write_exception_b_17:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_17, H_hscsr_cg_cp_vscause_write_exception_b_17_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_17, H_hscsr_cg_cp_vscause_write_exception_b_17_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 18
-  LI(x6, 18)
+  LI(x8, 18)
 H_hscsr_cg_cp_vscause_write_exception_b_18:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_18, H_hscsr_cg_cp_vscause_write_exception_b_18_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_18, H_hscsr_cg_cp_vscause_write_exception_b_18_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 19
-  LI(x6, 19)
+  LI(x8, 19)
 H_hscsr_cg_cp_vscause_write_exception_b_19:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_19, H_hscsr_cg_cp_vscause_write_exception_b_19_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_19, H_hscsr_cg_cp_vscause_write_exception_b_19_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 20
-  LI(x6, 20)
+  LI(x8, 20)
 H_hscsr_cg_cp_vscause_write_exception_b_20:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_20, H_hscsr_cg_cp_vscause_write_exception_b_20_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_20, H_hscsr_cg_cp_vscause_write_exception_b_20_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 21
-  LI(x6, 21)
+  LI(x8, 21)
 H_hscsr_cg_cp_vscause_write_exception_b_21:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_21, H_hscsr_cg_cp_vscause_write_exception_b_21_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_21, H_hscsr_cg_cp_vscause_write_exception_b_21_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 22
-  LI(x6, 22)
+  LI(x8, 22)
 H_hscsr_cg_cp_vscause_write_exception_b_22:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_22, H_hscsr_cg_cp_vscause_write_exception_b_22_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_22, H_hscsr_cg_cp_vscause_write_exception_b_22_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 23
-  LI(x6, 23)
+  LI(x8, 23)
 H_hscsr_cg_cp_vscause_write_exception_b_23:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_23, H_hscsr_cg_cp_vscause_write_exception_b_23_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_23, H_hscsr_cg_cp_vscause_write_exception_b_23_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 24
-  LI(x6, 24)
+  LI(x8, 24)
 H_hscsr_cg_cp_vscause_write_exception_b_24:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_24, H_hscsr_cg_cp_vscause_write_exception_b_24_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_24, H_hscsr_cg_cp_vscause_write_exception_b_24_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 25
-  LI(x6, 25)
+  LI(x8, 25)
 H_hscsr_cg_cp_vscause_write_exception_b_25:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_25, H_hscsr_cg_cp_vscause_write_exception_b_25_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_25, H_hscsr_cg_cp_vscause_write_exception_b_25_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 26
-  LI(x6, 26)
+  LI(x8, 26)
 H_hscsr_cg_cp_vscause_write_exception_b_26:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_26, H_hscsr_cg_cp_vscause_write_exception_b_26_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_26, H_hscsr_cg_cp_vscause_write_exception_b_26_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 27
-  LI(x6, 27)
+  LI(x8, 27)
 H_hscsr_cg_cp_vscause_write_exception_b_27:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_27, H_hscsr_cg_cp_vscause_write_exception_b_27_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_27, H_hscsr_cg_cp_vscause_write_exception_b_27_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 28
-  LI(x6, 28)
+  LI(x8, 28)
 H_hscsr_cg_cp_vscause_write_exception_b_28:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_28, H_hscsr_cg_cp_vscause_write_exception_b_28_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_28, H_hscsr_cg_cp_vscause_write_exception_b_28_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 29
-  LI(x6, 29)
+  LI(x8, 29)
 H_hscsr_cg_cp_vscause_write_exception_b_29:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_29, H_hscsr_cg_cp_vscause_write_exception_b_29_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_29, H_hscsr_cg_cp_vscause_write_exception_b_29_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 30
-  LI(x6, 30)
+  LI(x8, 30)
 H_hscsr_cg_cp_vscause_write_exception_b_30:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_30, H_hscsr_cg_cp_vscause_write_exception_b_30_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_30, H_hscsr_cg_cp_vscause_write_exception_b_30_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to exception cause 31
-  LI(x6, 31)
+  LI(x8, 31)
 H_hscsr_cg_cp_vscause_write_exception_b_31:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_exception_b_31, H_hscsr_cg_cp_vscause_write_exception_b_31_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_exception_b_31, H_hscsr_cg_cp_vscause_write_exception_b_31_str)
 #endif
 
 
@@ -331,285 +397,285 @@ H_hscsr_cg_cp_vscause_write_exception_b_31:
 // cp_vscause_write_interrupt
 //   with interrupt = 1: test writing each interrupt cause
 /////////////////////////////////
-  SET_MSB(x8)  # set x8 to have msb = 1 for interrupt tests
+  SET_MSB(x13)  # set x13 to have msb = 1 for interrupt tests
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 0
-  LI(x6, 0)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 0)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_0:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_0, H_hscsr_cg_cp_vscause_write_interrupt_b_0_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_0, H_hscsr_cg_cp_vscause_write_interrupt_b_0_str)
 #endif
 
 # Testcase: set vscause to interrupt cause 1
-  LI(x6, 1)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 1)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_1:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_1, H_hscsr_cg_cp_vscause_write_interrupt_b_1_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_1, H_hscsr_cg_cp_vscause_write_interrupt_b_1_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 2
-  LI(x6, 2)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 2)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_2:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_2, H_hscsr_cg_cp_vscause_write_interrupt_b_2_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_2, H_hscsr_cg_cp_vscause_write_interrupt_b_2_str)
 #endif
 
 # Testcase: set vscause to interrupt cause 3
-  LI(x6, 3)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 3)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_3:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_3, H_hscsr_cg_cp_vscause_write_interrupt_b_3_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_3, H_hscsr_cg_cp_vscause_write_interrupt_b_3_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 4
-  LI(x6, 4)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 4)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_4:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_4, H_hscsr_cg_cp_vscause_write_interrupt_b_4_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_4, H_hscsr_cg_cp_vscause_write_interrupt_b_4_str)
 #endif
 
 # Testcase: set vscause to interrupt cause 5
-  LI(x6, 5)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 5)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_5:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_5, H_hscsr_cg_cp_vscause_write_interrupt_b_5_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_5, H_hscsr_cg_cp_vscause_write_interrupt_b_5_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 6
-  LI(x6, 6)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 6)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_6:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_6, H_hscsr_cg_cp_vscause_write_interrupt_b_6_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_6, H_hscsr_cg_cp_vscause_write_interrupt_b_6_str)
 #endif
 
 # Testcase: set vscause to interrupt cause 7
-  LI(x6, 7)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 7)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_7:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_7, H_hscsr_cg_cp_vscause_write_interrupt_b_7_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_7, H_hscsr_cg_cp_vscause_write_interrupt_b_7_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 8
-  LI(x6, 8)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 8)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_8:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_8, H_hscsr_cg_cp_vscause_write_interrupt_b_8_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_8, H_hscsr_cg_cp_vscause_write_interrupt_b_8_str)
 #endif
 
 # Testcase: set vscause to interrupt cause 9
-  LI(x6, 9)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 9)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_9:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_9, H_hscsr_cg_cp_vscause_write_interrupt_b_9_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_9, H_hscsr_cg_cp_vscause_write_interrupt_b_9_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 10
-  LI(x6, 10)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 10)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_10:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_10, H_hscsr_cg_cp_vscause_write_interrupt_b_10_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_10, H_hscsr_cg_cp_vscause_write_interrupt_b_10_str)
 #endif
 
 # Testcase: set vscause to interrupt cause 11
-  LI(x6, 11)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 11)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_11:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_11, H_hscsr_cg_cp_vscause_write_interrupt_b_11_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_11, H_hscsr_cg_cp_vscause_write_interrupt_b_11_str)
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 12
-  LI(x6, 12)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 12)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_12:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_12, H_hscsr_cg_cp_vscause_write_interrupt_b_12_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_12, H_hscsr_cg_cp_vscause_write_interrupt_b_12_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 13
-  LI(x6, 13)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 13)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_13:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_13, H_hscsr_cg_cp_vscause_write_interrupt_b_13_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_13, H_hscsr_cg_cp_vscause_write_interrupt_b_13_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 14
-  LI(x6, 14)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 14)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_14:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_14, H_hscsr_cg_cp_vscause_write_interrupt_b_14_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_14, H_hscsr_cg_cp_vscause_write_interrupt_b_14_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 15
-  LI(x6, 15)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 15)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_15:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_15, H_hscsr_cg_cp_vscause_write_interrupt_b_15_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_15, H_hscsr_cg_cp_vscause_write_interrupt_b_15_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 16
-  LI(x6, 16)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 16)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_16:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_16, H_hscsr_cg_cp_vscause_write_interrupt_b_16_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_16, H_hscsr_cg_cp_vscause_write_interrupt_b_16_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 17
-  LI(x6, 17)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 17)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_17:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_17, H_hscsr_cg_cp_vscause_write_interrupt_b_17_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_17, H_hscsr_cg_cp_vscause_write_interrupt_b_17_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 18
-  LI(x6, 18)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 18)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_18:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_18, H_hscsr_cg_cp_vscause_write_interrupt_b_18_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_18, H_hscsr_cg_cp_vscause_write_interrupt_b_18_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 19
-  LI(x6, 19)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 19)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_19:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_19, H_hscsr_cg_cp_vscause_write_interrupt_b_19_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_19, H_hscsr_cg_cp_vscause_write_interrupt_b_19_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 20
-  LI(x6, 20)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 20)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_20:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_20, H_hscsr_cg_cp_vscause_write_interrupt_b_20_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_20, H_hscsr_cg_cp_vscause_write_interrupt_b_20_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 21
-  LI(x6, 21)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 21)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_21:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_21, H_hscsr_cg_cp_vscause_write_interrupt_b_21_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_21, H_hscsr_cg_cp_vscause_write_interrupt_b_21_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 22
-  LI(x6, 22)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 22)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_22:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_22, H_hscsr_cg_cp_vscause_write_interrupt_b_22_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_22, H_hscsr_cg_cp_vscause_write_interrupt_b_22_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 23
-  LI(x6, 23)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 23)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_23:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_23, H_hscsr_cg_cp_vscause_write_interrupt_b_23_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_23, H_hscsr_cg_cp_vscause_write_interrupt_b_23_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 24
-  LI(x6, 24)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 24)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_24:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_24, H_hscsr_cg_cp_vscause_write_interrupt_b_24_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_24, H_hscsr_cg_cp_vscause_write_interrupt_b_24_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 25
-  LI(x6, 25)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 25)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_25:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_25, H_hscsr_cg_cp_vscause_write_interrupt_b_25_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_25, H_hscsr_cg_cp_vscause_write_interrupt_b_25_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 26
-  LI(x6, 26)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 26)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_26:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_26, H_hscsr_cg_cp_vscause_write_interrupt_b_26_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_26, H_hscsr_cg_cp_vscause_write_interrupt_b_26_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 27
-  LI(x6, 27)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 27)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_27:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_27, H_hscsr_cg_cp_vscause_write_interrupt_b_27_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_27, H_hscsr_cg_cp_vscause_write_interrupt_b_27_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 28
-  LI(x6, 28)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 28)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_28:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_28, H_hscsr_cg_cp_vscause_write_interrupt_b_28_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_28, H_hscsr_cg_cp_vscause_write_interrupt_b_28_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 29
-  LI(x6, 29)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 29)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_29:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_29, H_hscsr_cg_cp_vscause_write_interrupt_b_29_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_29, H_hscsr_cg_cp_vscause_write_interrupt_b_29_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 30
-  LI(x6, 30)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 30)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_30:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_30, H_hscsr_cg_cp_vscause_write_interrupt_b_30_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_30, H_hscsr_cg_cp_vscause_write_interrupt_b_30_str)
 #endif
 #ifdef S1P12P0_OR_LATER_SUPPORTED
 
 # Testcase: set vscause to interrupt cause 31
-  LI(x6, 31)
-  or x6, x6, x8          # set interrupt bit
+  LI(x8, 31)
+  or x8, x8, x13          # set interrupt bit
 H_hscsr_cg_cp_vscause_write_interrupt_b_31:
-  # Write x6 to vscause, read back and check against expected.
-  RVTEST_SIGUPD_CSR_WRITE(vscause, x6, H_hscsr_cg_cp_vscause_write_interrupt_b_31, H_hscsr_cg_cp_vscause_write_interrupt_b_31_str)
+  # Write x8 to vscause, read back and check against expected.
+  RVTEST_SIGUPD_CSR_WRITE(vscause, x8, H_hscsr_cg_cp_vscause_write_interrupt_b_31, H_hscsr_cg_cp_vscause_write_interrupt_b_31_str)
 #endif
 
-  csrw vscause, x14       # restore CSR
+  csrw vscause, x9       # restore CSR
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
@@ -621,74 +687,80 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-H_hscsr_cg_cp_hstatus_vgein_zero_str: .string "\"test: 3024; cg: H_hscsr_cg; cp: cp_hstatus_vgein; bin: zero\""
-H_hscsr_cg_cp_hstatus_vgein_one_str: .string "\"test: 3025; cg: H_hscsr_cg; cp: cp_hstatus_vgein; bin: one\""
-H_hscsr_cg_cp_hstatus_vgein_geilen_m1_str: .string "\"test: 3026; cg: H_hscsr_cg; cp: cp_hstatus_vgein; bin: geilen_m1\""
-H_hscsr_cg_cp_hstatus_vgein_geilen_str: .string "\"test: 3027; cg: H_hscsr_cg; cp: cp_hstatus_vgein; bin: geilen\""
-H_hscsr_cg_cp_vscause_write_exception_b_0_str: .string "\"test: 3028; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_0\""
-H_hscsr_cg_cp_vscause_write_exception_b_1_str: .string "\"test: 3029; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_1\""
-H_hscsr_cg_cp_vscause_write_exception_b_2_str: .string "\"test: 3030; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_2\""
-H_hscsr_cg_cp_vscause_write_exception_b_3_str: .string "\"test: 3031; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_3\""
-H_hscsr_cg_cp_vscause_write_exception_b_4_str: .string "\"test: 3032; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_4\""
-H_hscsr_cg_cp_vscause_write_exception_b_5_str: .string "\"test: 3033; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_5\""
-H_hscsr_cg_cp_vscause_write_exception_b_6_str: .string "\"test: 3034; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_6\""
-H_hscsr_cg_cp_vscause_write_exception_b_7_str: .string "\"test: 3035; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_7\""
-H_hscsr_cg_cp_vscause_write_exception_b_8_str: .string "\"test: 3036; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_8\""
-H_hscsr_cg_cp_vscause_write_exception_b_9_str: .string "\"test: 3037; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_9\""
-H_hscsr_cg_cp_vscause_write_exception_b_10_str: .string "\"test: 3038; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_10\""
-H_hscsr_cg_cp_vscause_write_exception_b_11_str: .string "\"test: 3039; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_11\""
-H_hscsr_cg_cp_vscause_write_exception_b_12_str: .string "\"test: 3040; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_12\""
-H_hscsr_cg_cp_vscause_write_exception_b_13_str: .string "\"test: 3041; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_13\""
-H_hscsr_cg_cp_vscause_write_exception_b_14_str: .string "\"test: 3042; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_14\""
-H_hscsr_cg_cp_vscause_write_exception_b_15_str: .string "\"test: 3043; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_15\""
-H_hscsr_cg_cp_vscause_write_exception_b_16_str: .string "\"test: 3044; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_16\""
-H_hscsr_cg_cp_vscause_write_exception_b_17_str: .string "\"test: 3045; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_17\""
-H_hscsr_cg_cp_vscause_write_exception_b_18_str: .string "\"test: 3046; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_18\""
-H_hscsr_cg_cp_vscause_write_exception_b_19_str: .string "\"test: 3047; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_19\""
-H_hscsr_cg_cp_vscause_write_exception_b_20_str: .string "\"test: 3048; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_20\""
-H_hscsr_cg_cp_vscause_write_exception_b_21_str: .string "\"test: 3049; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_21\""
-H_hscsr_cg_cp_vscause_write_exception_b_22_str: .string "\"test: 3050; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_22\""
-H_hscsr_cg_cp_vscause_write_exception_b_23_str: .string "\"test: 3051; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_23\""
-H_hscsr_cg_cp_vscause_write_exception_b_24_str: .string "\"test: 3052; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_24\""
-H_hscsr_cg_cp_vscause_write_exception_b_25_str: .string "\"test: 3053; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_25\""
-H_hscsr_cg_cp_vscause_write_exception_b_26_str: .string "\"test: 3054; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_26\""
-H_hscsr_cg_cp_vscause_write_exception_b_27_str: .string "\"test: 3055; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_27\""
-H_hscsr_cg_cp_vscause_write_exception_b_28_str: .string "\"test: 3056; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_28\""
-H_hscsr_cg_cp_vscause_write_exception_b_29_str: .string "\"test: 3057; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_29\""
-H_hscsr_cg_cp_vscause_write_exception_b_30_str: .string "\"test: 3058; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_30\""
-H_hscsr_cg_cp_vscause_write_exception_b_31_str: .string "\"test: 3059; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_31\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_0_str: .string "\"test: 3060; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_0\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_1_str: .string "\"test: 3061; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_1\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_2_str: .string "\"test: 3062; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_2\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_3_str: .string "\"test: 3063; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_3\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_4_str: .string "\"test: 3064; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_4\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_5_str: .string "\"test: 3065; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_5\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_6_str: .string "\"test: 3066; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_6\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_7_str: .string "\"test: 3067; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_7\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_8_str: .string "\"test: 3068; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_8\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_9_str: .string "\"test: 3069; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_9\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_10_str: .string "\"test: 3070; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_10\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_11_str: .string "\"test: 3071; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_11\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_12_str: .string "\"test: 3072; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_12\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_13_str: .string "\"test: 3073; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_13\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_14_str: .string "\"test: 3074; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_14\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_15_str: .string "\"test: 3075; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_15\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_16_str: .string "\"test: 3076; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_16\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_17_str: .string "\"test: 3077; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_17\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_18_str: .string "\"test: 3078; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_18\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_19_str: .string "\"test: 3079; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_19\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_20_str: .string "\"test: 3080; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_20\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_21_str: .string "\"test: 3081; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_21\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_22_str: .string "\"test: 3082; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_22\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_23_str: .string "\"test: 3083; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_23\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_24_str: .string "\"test: 3084; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_24\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_25_str: .string "\"test: 3085; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_25\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_26_str: .string "\"test: 3086; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_26\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_27_str: .string "\"test: 3087; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_27\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_28_str: .string "\"test: 3088; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_28\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_29_str: .string "\"test: 3089; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_29\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_30_str: .string "\"test: 3090; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_30\""
-H_hscsr_cg_cp_vscause_write_interrupt_b_31_str: .string "\"test: 3091; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_31\""
+H_hscsr_cg_cp_hstatus_vgein_zero_str: .string "\"test: 3025; cg: H_hscsr_cg; cp: cp_hstatus_vgein; bin: zero\""
+H_hscsr_cg_cp_hstatus_vgein_one_str: .string "\"test: 3026; cg: H_hscsr_cg; cp: cp_hstatus_vgein; bin: one\""
+H_hscsr_cg_cp_hstatus_vgein_geilen_m1_str: .string "\"test: 3027; cg: H_hscsr_cg; cp: cp_hstatus_vgein; bin: geilen_m1\""
+H_hscsr_cg_cp_hstatus_vgein_geilen_str: .string "\"test: 3028; cg: H_hscsr_cg; cp: cp_hstatus_vgein; bin: geilen\""
+H_hscsr_cg_cp_hstatus_vsxl_vsxl0_str: .string "\"test: 3029; cg: H_hscsr_cg; cp: cp_hstatus_vsxl; bin: vsxl0\""
+H_hscsr_cg_cp_hstatus_vsxl_vsxl1_str: .string "\"test: 3030; cg: H_hscsr_cg; cp: cp_hstatus_vsxl; bin: vsxl1\""
+H_hscsr_cg_cp_hstatus_vsxl_vsxl3_str: .string "\"test: 3031; cg: H_hscsr_cg; cp: cp_hstatus_vsxl; bin: vsxl3\""
+H_hscsr_cg_cp_vsstatus_uxl_uxl0_str: .string "\"test: 3032; cg: H_hscsr_cg; cp: cp_vsstatus_uxl; bin: uxl0\""
+H_hscsr_cg_cp_vsstatus_uxl_uxl1_str: .string "\"test: 3033; cg: H_hscsr_cg; cp: cp_vsstatus_uxl; bin: uxl1\""
+H_hscsr_cg_cp_vsstatus_uxl_uxl3_str: .string "\"test: 3034; cg: H_hscsr_cg; cp: cp_vsstatus_uxl; bin: uxl3\""
+H_hscsr_cg_cp_vscause_write_exception_b_0_str: .string "\"test: 3035; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_0\""
+H_hscsr_cg_cp_vscause_write_exception_b_1_str: .string "\"test: 3036; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_1\""
+H_hscsr_cg_cp_vscause_write_exception_b_2_str: .string "\"test: 3037; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_2\""
+H_hscsr_cg_cp_vscause_write_exception_b_3_str: .string "\"test: 3038; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_3\""
+H_hscsr_cg_cp_vscause_write_exception_b_4_str: .string "\"test: 3039; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_4\""
+H_hscsr_cg_cp_vscause_write_exception_b_5_str: .string "\"test: 3040; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_5\""
+H_hscsr_cg_cp_vscause_write_exception_b_6_str: .string "\"test: 3041; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_6\""
+H_hscsr_cg_cp_vscause_write_exception_b_7_str: .string "\"test: 3042; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_7\""
+H_hscsr_cg_cp_vscause_write_exception_b_8_str: .string "\"test: 3043; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_8\""
+H_hscsr_cg_cp_vscause_write_exception_b_9_str: .string "\"test: 3044; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_9\""
+H_hscsr_cg_cp_vscause_write_exception_b_10_str: .string "\"test: 3045; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_10\""
+H_hscsr_cg_cp_vscause_write_exception_b_11_str: .string "\"test: 3046; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_11\""
+H_hscsr_cg_cp_vscause_write_exception_b_12_str: .string "\"test: 3047; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_12\""
+H_hscsr_cg_cp_vscause_write_exception_b_13_str: .string "\"test: 3048; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_13\""
+H_hscsr_cg_cp_vscause_write_exception_b_14_str: .string "\"test: 3049; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_14\""
+H_hscsr_cg_cp_vscause_write_exception_b_15_str: .string "\"test: 3050; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_15\""
+H_hscsr_cg_cp_vscause_write_exception_b_16_str: .string "\"test: 3051; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_16\""
+H_hscsr_cg_cp_vscause_write_exception_b_17_str: .string "\"test: 3052; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_17\""
+H_hscsr_cg_cp_vscause_write_exception_b_18_str: .string "\"test: 3053; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_18\""
+H_hscsr_cg_cp_vscause_write_exception_b_19_str: .string "\"test: 3054; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_19\""
+H_hscsr_cg_cp_vscause_write_exception_b_20_str: .string "\"test: 3055; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_20\""
+H_hscsr_cg_cp_vscause_write_exception_b_21_str: .string "\"test: 3056; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_21\""
+H_hscsr_cg_cp_vscause_write_exception_b_22_str: .string "\"test: 3057; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_22\""
+H_hscsr_cg_cp_vscause_write_exception_b_23_str: .string "\"test: 3058; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_23\""
+H_hscsr_cg_cp_vscause_write_exception_b_24_str: .string "\"test: 3059; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_24\""
+H_hscsr_cg_cp_vscause_write_exception_b_25_str: .string "\"test: 3060; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_25\""
+H_hscsr_cg_cp_vscause_write_exception_b_26_str: .string "\"test: 3061; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_26\""
+H_hscsr_cg_cp_vscause_write_exception_b_27_str: .string "\"test: 3062; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_27\""
+H_hscsr_cg_cp_vscause_write_exception_b_28_str: .string "\"test: 3063; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_28\""
+H_hscsr_cg_cp_vscause_write_exception_b_29_str: .string "\"test: 3064; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_29\""
+H_hscsr_cg_cp_vscause_write_exception_b_30_str: .string "\"test: 3065; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_30\""
+H_hscsr_cg_cp_vscause_write_exception_b_31_str: .string "\"test: 3066; cg: H_hscsr_cg; cp: cp_vscause_write_exception; bin: b_31\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_0_str: .string "\"test: 3067; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_0\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_1_str: .string "\"test: 3068; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_1\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_2_str: .string "\"test: 3069; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_2\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_3_str: .string "\"test: 3070; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_3\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_4_str: .string "\"test: 3071; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_4\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_5_str: .string "\"test: 3072; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_5\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_6_str: .string "\"test: 3073; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_6\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_7_str: .string "\"test: 3074; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_7\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_8_str: .string "\"test: 3075; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_8\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_9_str: .string "\"test: 3076; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_9\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_10_str: .string "\"test: 3077; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_10\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_11_str: .string "\"test: 3078; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_11\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_12_str: .string "\"test: 3079; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_12\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_13_str: .string "\"test: 3080; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_13\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_14_str: .string "\"test: 3081; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_14\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_15_str: .string "\"test: 3082; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_15\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_16_str: .string "\"test: 3083; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_16\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_17_str: .string "\"test: 3084; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_17\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_18_str: .string "\"test: 3085; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_18\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_19_str: .string "\"test: 3086; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_19\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_20_str: .string "\"test: 3087; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_20\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_21_str: .string "\"test: 3088; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_21\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_22_str: .string "\"test: 3089; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_22\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_23_str: .string "\"test: 3090; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_23\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_24_str: .string "\"test: 3091; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_24\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_25_str: .string "\"test: 3092; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_25\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_26_str: .string "\"test: 3093; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_26\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_27_str: .string "\"test: 3094; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_27\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_28_str: .string "\"test: 3095; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_28\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_29_str: .string "\"test: 3096; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_29\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_30_str: .string "\"test: 3097; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_30\""
+H_hscsr_cg_cp_vscause_write_interrupt_b_31_str: .string "\"test: 3098; cg: H_hscsr_cg; cp: cp_vscause_write_interrupt; bin: b_31\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
