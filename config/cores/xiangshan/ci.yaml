@@ -17,12 +17,12 @@ ci_enabled: false
 #                     stays writable, and writing 1 clears SIE, while menvcfg.DTE = 0, when the hart must
 #                     behave as though Ssdbltrp is not implemented (norm:menvcfg_dte_op); NewCSR/MachineLevel.scala
 #                     L584 gates only the sstatus view on DTE.
-#   Zicntr, SscofpmfSm
+#   Zicntr, Sscofpmf_Sm
 #                     Counter reads are not ordered after older instructions (norm:csr_access_order):
 #                     two instret reads 8 instructions apart differ by 0-21, and mhpmcounter11 read right
 #                     after the counted load is still 0 (and its overflow bit still clear). Counters are
 #                     missing from CSROoORead.waitForwardInOrderCsrReadList.
-#   SsstrictV, SsstrictS, SsstrictSm, SsstrictU
+#   SsstrictV, Ssstrict_S, Ssstrict_Sm, Ssstrict_U
 #                     Reserved vector encodings that read one register with two EEWs execute instead of
 #                     raising illegal-instruction (norm:vreg_source_eew_rsv): v0 as both mask and source
 #                     (vadd.vv v4,v0,v8,v0.t; vsseg5e32.v v0,(t1),v0.t) and a widening multiply-add whose
@@ -43,7 +43,7 @@ ci_enabled: false
 #                     allows. The tests access tdata3 unconditionally and Sail 0.16 cannot model its absence;
 #                     this needs TDATA3_IMPLEMENTED from riscv/riscv-unified-db#2069 (tracked in #2871). In
 #                     SdtrigS and SdtrigU the trapping T-SBI access never returns, so those tests time out.
-exclude_extensions: "S,Sm,Zicntr,SscofpmfSm,SsstrictV,SsstrictS,SsstrictSm,SsstrictU,Smstateen,PMPSm,SdtrigSm,SdtrigS,SdtrigU"
+exclude_extensions: "S,Sm,Zicntr,Sscofpmf_Sm,SsstrictV,Ssstrict_S,Ssstrict_Sm,Ssstrict_U,Smstateen,PMPSm,SdtrigSm,SdtrigS,SdtrigU"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache clang"
 install_script: ".github/scripts/install-xiangshan.sh"

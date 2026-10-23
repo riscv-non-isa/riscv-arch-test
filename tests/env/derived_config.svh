@@ -144,16 +144,6 @@
   `define UDB_VLEN 0
 `endif
 
-// UDB_SCONTEXT_AVAILABLE: mirrors derived_config.h; remove once UDB emits it
-// (https://github.com/riscv/riscv-unified-db/pull/2069).
-`ifdef SDTRIG_SUPPORTED
-  `ifdef S_SUPPORTED
-    `ifndef UDB_SCONTEXT_AVAILABLE
-      `define UDB_SCONTEXT_AVAILABLE
-    `endif
-  `endif
-`endif
-
 // UDB_SGEI_INTR_IMPL: mirrors derived_config.h (H with GEILEN > 0). Configs without H do not
 // emit UDB_NUM_EXTERNAL_GUEST_INTERRUPTS at all; GEILEN = 0 emits the _0 form.
 `ifdef H_SUPPORTED

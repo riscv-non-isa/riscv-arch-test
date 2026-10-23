@@ -20,6 +20,16 @@ triggernum: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tselect"
     type_option.weight = 0;
     bins all_triggers[] = {[0:`UDB_SDTRIG_NUM_TRIGGERS-1]};
 }
+// SdtrigS/U: the mode the instruction on this record runs in or, on an xRET, the mode it returns to. A trigger that
+// fires on the first instruction after the T-SBI return is logged on the xRET record.
+exec_mode_s: coverpoint sdtrig_trap_origin(ins) {
+    type_option.weight = 0;
+    bins S_mode = {2'd1};
+}
+exec_mode_u: coverpoint sdtrig_trap_origin(ins) {
+    type_option.weight = 0;
+    bins U_mode = {2'd0};
+}
 csrr: coverpoint ins.current.insn {
     type_option.weight = 0;
     wildcard bins csrr = {CSRR};
@@ -39,6 +49,14 @@ tdata1_type_mcontrol6: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER
     bins mcontrol6 = {4'd6};
 }
 tdata1_m_on: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "m")[0] {
+    type_option.weight = 0;
+    bins on = {1'b1};
+}
+tdata1_s_on: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "s")[0] {
+    type_option.weight = 0;
+    bins on = {1'b1};
+}
+tdata1_u_on: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "u")[0] {
     type_option.weight = 0;
     bins on = {1'b1};
 }
