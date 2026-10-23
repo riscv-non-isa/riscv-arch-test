@@ -20,7 +20,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, replace
 from functools import partial
 
-from testgen.asm.helpers import comment_banner, write_sigupd
+from testgen.asm.helpers import arch_block, comment_banner, write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.HCommon import HLV_INSTRS, HLVX_INSTRS, HSV_INSTRS, TWO_STAGE_GATE, gated
@@ -271,7 +271,8 @@ class _Scenario:
 
     regions are (address, entry, NAPOT low ones) as for _deny; an address "{gva0}" or "{gva1}" is the guest
     virtual address of mapping vs or g, and "{vlvl0_gpa}" is the guest physical address of vlvl0.  leaves, if
-    set, first rewrite both kilopage leaves.
+    set, first rewrite both kilopage leaves.  atomics, if set, names the coverpoints of an amoswap.w and an lr.w
+    at each mapping.
     """
 
     name: str
@@ -280,6 +281,7 @@ class _Scenario:
     regions: tuple[tuple[str, int, str], ...] = ()
     leaves: PteFlags | None = None
     rv64: bool = False
+    atomics: tuple[str, str] | None = None
 
 
 def _table(name: str, entry: int | None = None) -> tuple[str, int, str]:
@@ -296,6 +298,30 @@ def _table_scenario(name: str, coverpoint: str, stage: str) -> _Scenario:
         (_table(name),),
         rv64=_TABLES[name][2],
     )
+
+
+def _atomic_probes(
+    test_data: TestData, name: str, coverpoints: tuple[str, str], gva: int, regs: list[int]
+) -> tuple[list[str], list[str]]:
+    """amoswap.w and lr.w at ``gva``: the probe lines and the signature checks.  amoswap.w writes back the return
+    instruction that the region holds, so later fetches still return."""
+    src, rd = regs
+    probes, checks = [], []
+    for ext, coverpoint, setup, instr, result in (
+        (
+            "Zaamo",
+            coverpoints[0],
+            [f"LI(x{src}, RVTEST_PMP_RET_ENCODING)", f"LI(x{rd}, 42)"],
+            f"amoswap.w x{rd}, x{src}, (x{gva})",
+            rd,
+        ),
+        ("Zalrsc", coverpoints[1], [f"LI(x{src}, 42)"], f"lr.w x{src}, (x{gva})", src),
+    ):
+        label = test_data.add_testcase(f"{name}_{instr.split()[0]}", coverpoint, test_data.testsuite)
+        guard = f"{ext.upper()}_SUPPORTED"
+        probes.extend([f"#ifdef {guard}", *setup, *arch_block([label, instr], ext), "#endif"])
+        checks.extend([f"#ifdef {guard}", write_sigupd(result, test_data, label=label.removesuffix(":")), "#endif"])
+    return probes, checks
 
 
 def _guest_scenarios(test_data: TestData, mode: str, scenarios: list[_Scenario]) -> list[str]:
@@ -343,8 +369,17 @@ def _guest_scenarios(test_data: TestData, mode: str, scenarios: list[_Scenario])
                 checks.append(check)
             else:
                 body.append(check)
-        test_data.int_regs.return_registers(rds)
         body.extend(["RVTEST_TSBI_GOTO_MMODE", *checks])
+        if scenario.atomics is not None:
+            for mapping, gva in zip(_MAPPINGS, (gva_vs, gva_g), strict=True):
+                probes, checks = _atomic_probes(
+                    test_data, f"{mode}_{scenario.name}_{mapping}", scenario.atomics, gva, rds
+                )
+                body.extend([f"RVTEST_TSBI_GOTO_{mode.upper()}MODE", *probes])
+                if not user:
+                    body.extend(checks)
+                body.extend(["RVTEST_TSBI_GOTO_MMODE", *(checks if user else [])])
+        test_data.int_regs.return_registers(rds)
         lines.extend(gated(body, "__riscv_xlen == 64" if scenario.rv64 else None))
     test_data.int_regs.return_registers([gva_vs, gva_g, vlvl0_gpa])
     return [*lines, *zero_pmp_regs(), *guest_translation_teardown(test_data)]
@@ -387,6 +422,7 @@ def _hlv_scenarios(test_data: TestData, scenarios: list[_Scenario]) -> list[str]
 
 
 _INVALID = PteFlags(valid=False)
+_ATOMICS = ("cp_pmp_amo", "cp_pmp_lr")
 
 _GUEST_SCENARIOS = [
     _Scenario(
@@ -394,8 +430,11 @@ _GUEST_SCENARIOS = [
         "cp_pmp_after_translation",
         "PMP denies the guest virtual addresses, which does not affect the accesses",
         (("{gva0}", 7, "PMP_REGION_SIZE"), ("{gva1}", 8, "PMP_REGION_SIZE")),
+        atomics=_ATOMICS,
     ),
-    _Scenario("spa", "cp_pmp_after_translation", "PMP denies the supervisor physical address", (_SPA,)),
+    _Scenario(
+        "spa", "cp_pmp_after_translation", "PMP denies the supervisor physical address", (_SPA,), atomics=_ATOMICS
+    ),
     _table_scenario("vlvl1", "cp_pmp_pt", "VS-stage"),
     _table_scenario("vlvl0", "cp_pmp_pt", "VS-stage"),
     _Scenario(
@@ -407,9 +446,11 @@ _GUEST_SCENARIOS = [
     _Scenario(
         "spa_leaf_r",
         "cp_pmp_pf_priority",
-        "PMP denies the supervisor physical address; R-only leaves fault jalr and sw, and lw raises an access fault",
+        "PMP denies the supervisor physical address; R-only leaves fault jalr, sw and amoswap.w, and lw and lr.w raise "
+        "access faults",
         (_SPA,),
         PteFlags(write=False, execute=False),
+        atomics=("cp_pmp_amo_pf_priority", "cp_pmp_lr"),
     ),
     _Scenario(
         "spa_leaf_x",
@@ -472,9 +513,10 @@ def _make_two_stage_chunks(test_data: TestData) -> list[TestChunk]:
         _two_stage_chunk(
             test_data,
             "guest",
-            "cp_pmp_after_translation, cp_pmp_pt, cp_pmp_pt_gpa, cp_pmp_pf_priority, cp_pmp_pt_priority",
-            "jalr, sw and lw from VS-mode and VU-mode through a VS-stage and a G-stage kilopage mapping, under\n"
-            "PMP regions at the guest virtual, supervisor physical and page-table addresses",
+            "cp_pmp_after_translation, cp_pmp_pt, cp_pmp_pt_gpa, cp_pmp_pf_priority, cp_pmp_pt_priority, cp_pmp_amo, "
+            "cp_pmp_lr, cp_pmp_amo_pf_priority",
+            "jalr, sw, lw, amoswap.w and lr.w from VS-mode and VU-mode through a VS-stage and a G-stage kilopage\n"
+            "mapping, under PMP regions at the guest virtual, supervisor physical and page-table addresses",
             _GUEST_SCENARIOS,
             [],
         ),

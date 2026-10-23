@@ -24,7 +24,11 @@ normative_rule_definitions:
       ]
     # Representative coverpoints; also PMPH_hlv_cg/cp_pmp_hsv
     coverpoint:
-      ["PMPH_cg/{cp_cfg_X,cp_cfg_R,cp_cfg_W}", "PMPH_hlv_cg/cp_pmp_hlv"]
+      [
+        "PMPH_cg/{cp_cfg_X,cp_cfg_R,cp_cfg_W}",
+        "PMPH_hlv_cg/cp_pmp_hlv",
+        "PMPH_guest_cg/{cp_pmp_amo,cp_pmp_lr}",
+      ]
 
   # MPRV with MPV = 1 gives M-mode loads and stores VS or VU privilege
   - names: [mstatus_mprv_hypervisor]
@@ -53,4 +57,8 @@ normative_rule_definitions:
 
   # Page and guest-page faults take priority over an access fault on the final address
   - names: [H_exception_priority, pmp_violation_precise_trap]
-    coverpoint: ["PMPH_guest_cg/{cp_pmp_pf_priority,cp_pmp_pt_priority}"]
+    coverpoint:
+      [
+        "PMPH_guest_cg/{cp_pmp_pf_priority,cp_pmp_pt_priority}",
+        "PMPH_guest_cg/cp_pmp_amo_pf_priority",
+      ]

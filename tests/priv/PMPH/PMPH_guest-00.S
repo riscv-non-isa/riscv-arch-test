@@ -17,7 +17,7 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 54
+#define SIGUPD_COUNT 78
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
 #define BOOT_TO_MMODE
@@ -32,9 +32,9 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_pmp_after_translation, cp_pmp_pt, cp_pmp_pt_gpa, cp_pmp_pf_priority, cp_pmp_pt_priority
-//   jalr, sw and lw from VS-mode and VU-mode through a VS-stage and a G-stage kilopage mapping, under
-//   PMP regions at the guest virtual, supervisor physical and page-table addresses
+// cp_pmp_after_translation, cp_pmp_pt, cp_pmp_pt_gpa, cp_pmp_pf_priority, cp_pmp_pt_priority, cp_pmp_amo, cp_pmp_lr, cp_pmp_amo_pf_priority
+//   jalr, sw, lw, amoswap.w and lr.w from VS-mode and VU-mode through a VS-stage and a G-stage kilopage
+//   mapping, under PMP regions at the guest virtual, supervisor physical and page-table addresses
 /////////////////////////////////
 
 #define PMP_REGION_SIZE (((1 << (UDB_PMP_GRANULARITY - 2)) - 1) >> 1)
@@ -447,6 +447,60 @@ PMPH_cp_pmp_after_translation_vs_gva_g_lw:
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_after_translation_vs_gva_g_lw, PMPH_cp_pmp_after_translation_vs_gva_g_lw_str)
   RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_VSMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x15, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_vs_gva_vs_amoswap_w:
+  amoswap.w x13, x15, (x14)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x15, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vs_gva_vs_lr_w:
+  lr.w x15, (x14)
+  .option pop
+#endif
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_vs_gva_vs_amoswap_w, PMPH_cp_pmp_amo_vs_gva_vs_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_lr_vs_gva_vs_lr_w, PMPH_cp_pmp_lr_vs_gva_vs_lr_w_str)
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_VSMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x15, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_vs_gva_g_amoswap_w:
+  amoswap.w x13, x15, (x6)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x15, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vs_gva_g_lr_w:
+  lr.w x15, (x6)
+  .option pop
+#endif
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_vs_gva_g_amoswap_w, PMPH_cp_pmp_amo_vs_gva_g_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_lr_vs_gva_g_lr_w, PMPH_cp_pmp_lr_vs_gva_g_lr_w_str)
+#endif
+  RVTEST_TSBI_GOTO_MMODE
 // VS-mode: PMP denies the supervisor physical address
 // Clear every pmpcfg and pmpaddr CSR
   .set pmpcfgi, CSR_PMPCFG0
@@ -500,6 +554,60 @@ PMPH_cp_pmp_after_translation_vs_spa_g_lw:
   lw x13, 0(x6)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_after_translation_vs_spa_g_lw, PMPH_cp_pmp_after_translation_vs_spa_g_lw_str)
+  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_VSMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x15, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_vs_spa_vs_amoswap_w:
+  amoswap.w x13, x15, (x14)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x15, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vs_spa_vs_lr_w:
+  lr.w x15, (x14)
+  .option pop
+#endif
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_vs_spa_vs_amoswap_w, PMPH_cp_pmp_amo_vs_spa_vs_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_lr_vs_spa_vs_lr_w, PMPH_cp_pmp_lr_vs_spa_vs_lr_w_str)
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_VSMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x15, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_vs_spa_g_amoswap_w:
+  amoswap.w x13, x15, (x6)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x15, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vs_spa_g_lr_w:
+  lr.w x15, (x6)
+  .option pop
+#endif
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_vs_spa_g_amoswap_w, PMPH_cp_pmp_amo_vs_spa_g_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_lr_vs_spa_g_lr_w, PMPH_cp_pmp_lr_vs_spa_g_lr_w_str)
+#endif
   RVTEST_TSBI_GOTO_MMODE
 #if __riscv_xlen == 64
 // VS-mode: PMP denies the VS-stage table vlvl1; accesses whose walk reads it raise access faults
@@ -665,7 +773,7 @@ PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_lw:
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_lw, PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_lw_str)
   RVTEST_TSBI_GOTO_MMODE
-// VS-mode: PMP denies the supervisor physical address; R-only leaves fault jalr and sw, and lw raises an access fault
+// VS-mode: PMP denies the supervisor physical address; R-only leaves fault jalr, sw and amoswap.w, and lw and lr.w raise access faults
 #if __riscv_xlen == 64
   LA(x13, rvtest_vlvl0_pg_tbl + (((0x140802000) >> 12) & 0x1ff) * 8)
   LA(x9, TEST_FOR_EXECUTION)
@@ -753,6 +861,60 @@ PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_lw:
   lw x9, 0(x6)
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_lw, PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_lw_str)
+  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_VSMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x15, RVTEST_PMP_RET_ENCODING)
+  LI(x9, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_pf_priority_vs_spa_leaf_r_vs_amoswap_w:
+  amoswap.w x9, x15, (x14)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x15, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vs_spa_leaf_r_vs_lr_w:
+  lr.w x15, (x14)
+  .option pop
+#endif
+#ifdef ZAAMO_SUPPORTED
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, PMPH_cp_pmp_amo_pf_priority_vs_spa_leaf_r_vs_amoswap_w, PMPH_cp_pmp_amo_pf_priority_vs_spa_leaf_r_vs_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_lr_vs_spa_leaf_r_vs_lr_w, PMPH_cp_pmp_lr_vs_spa_leaf_r_vs_lr_w_str)
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+  RVTEST_TSBI_GOTO_VSMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x15, RVTEST_PMP_RET_ENCODING)
+  LI(x9, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_pf_priority_vs_spa_leaf_r_g_amoswap_w:
+  amoswap.w x9, x15, (x6)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x15, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vs_spa_leaf_r_g_lr_w:
+  lr.w x15, (x6)
+  .option pop
+#endif
+#ifdef ZAAMO_SUPPORTED
+  # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x9, PMPH_cp_pmp_amo_pf_priority_vs_spa_leaf_r_g_amoswap_w, PMPH_cp_pmp_amo_pf_priority_vs_spa_leaf_r_g_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_lr_vs_spa_leaf_r_g_lr_w, PMPH_cp_pmp_lr_vs_spa_leaf_r_g_lr_w_str)
+#endif
   RVTEST_TSBI_GOTO_MMODE
 // VS-mode: PMP denies the supervisor physical address; X-only leaves fault sw and lw, and jalr raises an access fault
 #if __riscv_xlen == 64
@@ -1555,6 +1717,60 @@ PMPH_cp_pmp_after_translation_vu_gva_g_lw:
   RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_after_translation_vu_gva_vs_lw, PMPH_cp_pmp_after_translation_vu_gva_vs_lw_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_after_translation_vu_gva_g_lw, PMPH_cp_pmp_after_translation_vu_gva_g_lw_str)
+  RVTEST_TSBI_GOTO_VUMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x15, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_vu_gva_vs_amoswap_w:
+  amoswap.w x13, x15, (x9)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x15, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vu_gva_vs_lr_w:
+  lr.w x15, (x9)
+  .option pop
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_vu_gva_vs_amoswap_w, PMPH_cp_pmp_amo_vu_gva_vs_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_lr_vu_gva_vs_lr_w, PMPH_cp_pmp_lr_vu_gva_vs_lr_w_str)
+#endif
+  RVTEST_TSBI_GOTO_VUMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x15, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_vu_gva_g_amoswap_w:
+  amoswap.w x13, x15, (x14)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x15, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vu_gva_g_lr_w:
+  lr.w x15, (x14)
+  .option pop
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_vu_gva_g_amoswap_w, PMPH_cp_pmp_amo_vu_gva_g_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_lr_vu_gva_g_lr_w, PMPH_cp_pmp_lr_vu_gva_g_lr_w_str)
+#endif
 // VU-mode: PMP denies the supervisor physical address
 // Clear every pmpcfg and pmpaddr CSR
   .set pmpcfgi, CSR_PMPCFG0
@@ -1609,6 +1825,60 @@ PMPH_cp_pmp_after_translation_vu_spa_g_lw:
   RVTEST_SIGUPD(x2, x5, x4, x6, PMPH_cp_pmp_after_translation_vu_spa_vs_lw, PMPH_cp_pmp_after_translation_vu_spa_vs_lw_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_after_translation_vu_spa_g_lw, PMPH_cp_pmp_after_translation_vu_spa_g_lw_str)
+  RVTEST_TSBI_GOTO_VUMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x6, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_vu_spa_vs_amoswap_w:
+  amoswap.w x13, x6, (x9)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x6, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vu_spa_vs_lr_w:
+  lr.w x6, (x9)
+  .option pop
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_vu_spa_vs_amoswap_w, PMPH_cp_pmp_amo_vu_spa_vs_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, PMPH_cp_pmp_lr_vu_spa_vs_lr_w, PMPH_cp_pmp_lr_vu_spa_vs_lr_w_str)
+#endif
+  RVTEST_TSBI_GOTO_VUMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x6, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_vu_spa_g_amoswap_w:
+  amoswap.w x13, x6, (x14)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x6, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vu_spa_g_lr_w:
+  lr.w x6, (x14)
+  .option pop
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_vu_spa_g_amoswap_w, PMPH_cp_pmp_amo_vu_spa_g_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, PMPH_cp_pmp_lr_vu_spa_g_lr_w, PMPH_cp_pmp_lr_vu_spa_g_lr_w_str)
+#endif
 #if __riscv_xlen == 64
 // VU-mode: PMP denies the VS-stage table vlvl1; accesses whose walk reads it raise access faults
 // Clear every pmpcfg and pmpaddr CSR
@@ -1773,7 +2043,7 @@ PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_lw:
   RVTEST_SIGUPD(x2, x5, x4, x6, PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_lw, PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_lw_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x15, PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_lw, PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_lw_str)
-// VU-mode: PMP denies the supervisor physical address; R-only leaves fault jalr and sw, and lw raises an access fault
+// VU-mode: PMP denies the supervisor physical address; R-only leaves fault jalr, sw and amoswap.w, and lw and lr.w raise access faults
 #if __riscv_xlen == 64
   LA(x13, rvtest_vlvl0_pg_tbl + (((0x140802000) >> 12) & 0x1ff) * 8)
   LA(x6, TEST_FOR_EXECUTION)
@@ -1862,6 +2132,60 @@ PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_lw:
   RVTEST_SIGUPD(x2, x5, x4, x6, PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_lw, PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_lw_str)
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_lw, PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_lw_str)
+  RVTEST_TSBI_GOTO_VUMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x6, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_pf_priority_vu_spa_leaf_r_vs_amoswap_w:
+  amoswap.w x13, x6, (x9)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x6, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vu_spa_leaf_r_vs_lr_w:
+  lr.w x6, (x9)
+  .option pop
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_pf_priority_vu_spa_leaf_r_vs_amoswap_w, PMPH_cp_pmp_amo_pf_priority_vu_spa_leaf_r_vs_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, PMPH_cp_pmp_lr_vu_spa_leaf_r_vs_lr_w, PMPH_cp_pmp_lr_vu_spa_leaf_r_vs_lr_w_str)
+#endif
+  RVTEST_TSBI_GOTO_VUMODE
+#ifdef ZAAMO_SUPPORTED
+  LI(x6, RVTEST_PMP_RET_ENCODING)
+  LI(x13, 42)
+  .option push
+  .option arch, +zaamo
+PMPH_cp_pmp_amo_pf_priority_vu_spa_leaf_r_g_amoswap_w:
+  amoswap.w x13, x6, (x14)
+  .option pop
+#endif
+#ifdef ZALRSC_SUPPORTED
+  LI(x6, 42)
+  .option push
+  .option arch, +zalrsc
+PMPH_cp_pmp_lr_vu_spa_leaf_r_g_lr_w:
+  lr.w x6, (x14)
+  .option pop
+#endif
+  RVTEST_TSBI_GOTO_MMODE
+#ifdef ZAAMO_SUPPORTED
+  # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x13, PMPH_cp_pmp_amo_pf_priority_vu_spa_leaf_r_g_amoswap_w, PMPH_cp_pmp_amo_pf_priority_vu_spa_leaf_r_g_amoswap_w_str)
+#endif
+#ifdef ZALRSC_SUPPORTED
+  # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x6, PMPH_cp_pmp_lr_vu_spa_leaf_r_g_lr_w, PMPH_cp_pmp_lr_vu_spa_leaf_r_g_lr_w_str)
+#endif
 // VU-mode: PMP denies the supervisor physical address; X-only leaves fault sw and lw, and jalr raises an access fault
 #if __riscv_xlen == 64
   LA(x15, rvtest_vlvl0_pg_tbl + (((0x140802000) >> 12) & 0x1ff) * 8)
@@ -2317,132 +2641,156 @@ PMPH_cp_pmp_after_translation_vs_gva_vs_lw_str: .string "\"test: 159; cg: PMPH; 
 PMPH_cp_pmp_after_translation_vs_gva_g_jalr_str: .string "\"test: 160; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_gva_g_jalr\""
 PMPH_cp_pmp_after_translation_vs_gva_g_sw_str: .string "\"test: 161; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_gva_g_sw\""
 PMPH_cp_pmp_after_translation_vs_gva_g_lw_str: .string "\"test: 162; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_gva_g_lw\""
-PMPH_cp_pmp_after_translation_vs_spa_vs_jalr_str: .string "\"test: 163; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_vs_jalr\""
-PMPH_cp_pmp_after_translation_vs_spa_vs_sw_str: .string "\"test: 164; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_vs_sw\""
-PMPH_cp_pmp_after_translation_vs_spa_vs_lw_str: .string "\"test: 165; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_vs_lw\""
-PMPH_cp_pmp_after_translation_vs_spa_g_jalr_str: .string "\"test: 166; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_g_jalr\""
-PMPH_cp_pmp_after_translation_vs_spa_g_sw_str: .string "\"test: 167; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_g_sw\""
-PMPH_cp_pmp_after_translation_vs_spa_g_lw_str: .string "\"test: 168; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_g_lw\""
-PMPH_cp_pmp_pt_vs_vlvl1_vs_jalr_str: .string "\"test: 169; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_vs_jalr\""
-PMPH_cp_pmp_pt_vs_vlvl1_vs_sw_str: .string "\"test: 170; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_vs_sw\""
-PMPH_cp_pmp_pt_vs_vlvl1_vs_lw_str: .string "\"test: 171; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_vs_lw\""
-PMPH_cp_pmp_pt_vs_vlvl1_g_jalr_str: .string "\"test: 172; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_g_jalr\""
-PMPH_cp_pmp_pt_vs_vlvl1_g_sw_str: .string "\"test: 173; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_g_sw\""
-PMPH_cp_pmp_pt_vs_vlvl1_g_lw_str: .string "\"test: 174; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_g_lw\""
-PMPH_cp_pmp_pt_vs_vlvl0_vs_jalr_str: .string "\"test: 175; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_vs_jalr\""
-PMPH_cp_pmp_pt_vs_vlvl0_vs_sw_str: .string "\"test: 176; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_vs_sw\""
-PMPH_cp_pmp_pt_vs_vlvl0_vs_lw_str: .string "\"test: 177; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_vs_lw\""
-PMPH_cp_pmp_pt_vs_vlvl0_g_jalr_str: .string "\"test: 178; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_g_jalr\""
-PMPH_cp_pmp_pt_vs_vlvl0_g_sw_str: .string "\"test: 179; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_g_sw\""
-PMPH_cp_pmp_pt_vs_vlvl0_g_lw_str: .string "\"test: 180; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_g_lw\""
-PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_vs_jalr_str: .string "\"test: 181; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_vs_jalr\""
-PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_vs_sw_str: .string "\"test: 182; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_vs_sw\""
-PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_vs_lw_str: .string "\"test: 183; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_vs_lw\""
-PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_jalr_str: .string "\"test: 184; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_g_jalr\""
-PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_sw_str: .string "\"test: 185; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_g_sw\""
-PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_lw_str: .string "\"test: 186; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_g_lw\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_vs_jalr_str: .string "\"test: 187; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_vs_jalr\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_vs_sw_str: .string "\"test: 188; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_vs_sw\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_vs_lw_str: .string "\"test: 189; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_vs_lw\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_jalr_str: .string "\"test: 190; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_g_jalr\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_sw_str: .string "\"test: 191; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_g_sw\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_lw_str: .string "\"test: 192; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_g_lw\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_vs_jalr_str: .string "\"test: 193; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_vs_jalr\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_vs_sw_str: .string "\"test: 194; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_vs_sw\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_vs_lw_str: .string "\"test: 195; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_vs_lw\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_g_jalr_str: .string "\"test: 196; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_g_jalr\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_g_sw_str: .string "\"test: 197; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_g_sw\""
-PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_g_lw_str: .string "\"test: 198; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_g_lw\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_vs_jalr_str: .string "\"test: 199; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_vs_jalr\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_vs_sw_str: .string "\"test: 200; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_vs_sw\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_vs_lw_str: .string "\"test: 201; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_vs_lw\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_g_jalr_str: .string "\"test: 202; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_g_jalr\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_g_sw_str: .string "\"test: 203; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_g_sw\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_g_lw_str: .string "\"test: 204; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_g_lw\""
-PMPH_cp_pmp_pt_vs_hlvl1_vs_jalr_str: .string "\"test: 205; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_vs_jalr\""
-PMPH_cp_pmp_pt_vs_hlvl1_vs_sw_str: .string "\"test: 206; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_vs_sw\""
-PMPH_cp_pmp_pt_vs_hlvl1_vs_lw_str: .string "\"test: 207; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_vs_lw\""
-PMPH_cp_pmp_pt_vs_hlvl1_g_jalr_str: .string "\"test: 208; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_g_jalr\""
-PMPH_cp_pmp_pt_vs_hlvl1_g_sw_str: .string "\"test: 209; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_g_sw\""
-PMPH_cp_pmp_pt_vs_hlvl1_g_lw_str: .string "\"test: 210; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_g_lw\""
-PMPH_cp_pmp_pt_vs_hlvl0_vs_jalr_str: .string "\"test: 211; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_vs_jalr\""
-PMPH_cp_pmp_pt_vs_hlvl0_vs_sw_str: .string "\"test: 212; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_vs_sw\""
-PMPH_cp_pmp_pt_vs_hlvl0_vs_lw_str: .string "\"test: 213; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_vs_lw\""
-PMPH_cp_pmp_pt_vs_hlvl0_g_jalr_str: .string "\"test: 214; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_g_jalr\""
-PMPH_cp_pmp_pt_vs_hlvl0_g_sw_str: .string "\"test: 215; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_g_sw\""
-PMPH_cp_pmp_pt_vs_hlvl0_g_lw_str: .string "\"test: 216; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_g_lw\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_vs_jalr_str: .string "\"test: 217; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_vs_jalr\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_vs_sw_str: .string "\"test: 218; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_vs_sw\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_vs_lw_str: .string "\"test: 219; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_vs_lw\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_g_jalr_str: .string "\"test: 220; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_g_jalr\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_g_sw_str: .string "\"test: 221; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_g_sw\""
-PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_g_lw_str: .string "\"test: 222; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_g_lw\""
-PMPH_cp_pmp_after_translation_vu_gva_vs_jalr_str: .string "\"test: 223; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_vs_jalr\""
-PMPH_cp_pmp_after_translation_vu_gva_vs_sw_str: .string "\"test: 224; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_vs_sw\""
-PMPH_cp_pmp_after_translation_vu_gva_vs_lw_str: .string "\"test: 225; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_vs_lw\""
-PMPH_cp_pmp_after_translation_vu_gva_g_jalr_str: .string "\"test: 226; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_g_jalr\""
-PMPH_cp_pmp_after_translation_vu_gva_g_sw_str: .string "\"test: 227; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_g_sw\""
-PMPH_cp_pmp_after_translation_vu_gva_g_lw_str: .string "\"test: 228; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_g_lw\""
-PMPH_cp_pmp_after_translation_vu_spa_vs_jalr_str: .string "\"test: 229; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_vs_jalr\""
-PMPH_cp_pmp_after_translation_vu_spa_vs_sw_str: .string "\"test: 230; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_vs_sw\""
-PMPH_cp_pmp_after_translation_vu_spa_vs_lw_str: .string "\"test: 231; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_vs_lw\""
-PMPH_cp_pmp_after_translation_vu_spa_g_jalr_str: .string "\"test: 232; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_g_jalr\""
-PMPH_cp_pmp_after_translation_vu_spa_g_sw_str: .string "\"test: 233; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_g_sw\""
-PMPH_cp_pmp_after_translation_vu_spa_g_lw_str: .string "\"test: 234; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_g_lw\""
-PMPH_cp_pmp_pt_vu_vlvl1_vs_jalr_str: .string "\"test: 235; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_vs_jalr\""
-PMPH_cp_pmp_pt_vu_vlvl1_vs_sw_str: .string "\"test: 236; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_vs_sw\""
-PMPH_cp_pmp_pt_vu_vlvl1_vs_lw_str: .string "\"test: 237; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_vs_lw\""
-PMPH_cp_pmp_pt_vu_vlvl1_g_jalr_str: .string "\"test: 238; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_g_jalr\""
-PMPH_cp_pmp_pt_vu_vlvl1_g_sw_str: .string "\"test: 239; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_g_sw\""
-PMPH_cp_pmp_pt_vu_vlvl1_g_lw_str: .string "\"test: 240; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_g_lw\""
-PMPH_cp_pmp_pt_vu_vlvl0_vs_jalr_str: .string "\"test: 241; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_vs_jalr\""
-PMPH_cp_pmp_pt_vu_vlvl0_vs_sw_str: .string "\"test: 242; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_vs_sw\""
-PMPH_cp_pmp_pt_vu_vlvl0_vs_lw_str: .string "\"test: 243; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_vs_lw\""
-PMPH_cp_pmp_pt_vu_vlvl0_g_jalr_str: .string "\"test: 244; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_g_jalr\""
-PMPH_cp_pmp_pt_vu_vlvl0_g_sw_str: .string "\"test: 245; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_g_sw\""
-PMPH_cp_pmp_pt_vu_vlvl0_g_lw_str: .string "\"test: 246; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_g_lw\""
-PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_jalr_str: .string "\"test: 247; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_vs_jalr\""
-PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_sw_str: .string "\"test: 248; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_vs_sw\""
-PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_lw_str: .string "\"test: 249; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_vs_lw\""
-PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_jalr_str: .string "\"test: 250; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_g_jalr\""
-PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_sw_str: .string "\"test: 251; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_g_sw\""
-PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_lw_str: .string "\"test: 252; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_g_lw\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_jalr_str: .string "\"test: 253; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_vs_jalr\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_sw_str: .string "\"test: 254; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_vs_sw\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_lw_str: .string "\"test: 255; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_vs_lw\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_jalr_str: .string "\"test: 256; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_g_jalr\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_sw_str: .string "\"test: 257; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_g_sw\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_lw_str: .string "\"test: 258; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_g_lw\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_vs_jalr_str: .string "\"test: 259; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_vs_jalr\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_vs_sw_str: .string "\"test: 260; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_vs_sw\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_vs_lw_str: .string "\"test: 261; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_vs_lw\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_g_jalr_str: .string "\"test: 262; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_g_jalr\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_g_sw_str: .string "\"test: 263; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_g_sw\""
-PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_g_lw_str: .string "\"test: 264; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_g_lw\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_vs_jalr_str: .string "\"test: 265; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_vs_jalr\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_vs_sw_str: .string "\"test: 266; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_vs_sw\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_vs_lw_str: .string "\"test: 267; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_vs_lw\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_g_jalr_str: .string "\"test: 268; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_g_jalr\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_g_sw_str: .string "\"test: 269; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_g_sw\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_g_lw_str: .string "\"test: 270; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_g_lw\""
-PMPH_cp_pmp_pt_vu_hlvl1_vs_jalr_str: .string "\"test: 271; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_vs_jalr\""
-PMPH_cp_pmp_pt_vu_hlvl1_vs_sw_str: .string "\"test: 272; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_vs_sw\""
-PMPH_cp_pmp_pt_vu_hlvl1_vs_lw_str: .string "\"test: 273; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_vs_lw\""
-PMPH_cp_pmp_pt_vu_hlvl1_g_jalr_str: .string "\"test: 274; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_g_jalr\""
-PMPH_cp_pmp_pt_vu_hlvl1_g_sw_str: .string "\"test: 275; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_g_sw\""
-PMPH_cp_pmp_pt_vu_hlvl1_g_lw_str: .string "\"test: 276; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_g_lw\""
-PMPH_cp_pmp_pt_vu_hlvl0_vs_jalr_str: .string "\"test: 277; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_vs_jalr\""
-PMPH_cp_pmp_pt_vu_hlvl0_vs_sw_str: .string "\"test: 278; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_vs_sw\""
-PMPH_cp_pmp_pt_vu_hlvl0_vs_lw_str: .string "\"test: 279; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_vs_lw\""
-PMPH_cp_pmp_pt_vu_hlvl0_g_jalr_str: .string "\"test: 280; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_g_jalr\""
-PMPH_cp_pmp_pt_vu_hlvl0_g_sw_str: .string "\"test: 281; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_g_sw\""
-PMPH_cp_pmp_pt_vu_hlvl0_g_lw_str: .string "\"test: 282; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_g_lw\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_vs_jalr_str: .string "\"test: 283; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_vs_jalr\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_vs_sw_str: .string "\"test: 284; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_vs_sw\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_vs_lw_str: .string "\"test: 285; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_vs_lw\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_g_jalr_str: .string "\"test: 286; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_g_jalr\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_g_sw_str: .string "\"test: 287; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_g_sw\""
-PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_g_lw_str: .string "\"test: 288; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_g_lw\""
+PMPH_cp_pmp_amo_vs_gva_vs_amoswap_w_str: .string "\"test: 163; cg: PMPH; cp: cp_pmp_amo; bin: vs_gva_vs_amoswap.w\""
+PMPH_cp_pmp_lr_vs_gva_vs_lr_w_str: .string "\"test: 164; cg: PMPH; cp: cp_pmp_lr; bin: vs_gva_vs_lr.w\""
+PMPH_cp_pmp_amo_vs_gva_g_amoswap_w_str: .string "\"test: 165; cg: PMPH; cp: cp_pmp_amo; bin: vs_gva_g_amoswap.w\""
+PMPH_cp_pmp_lr_vs_gva_g_lr_w_str: .string "\"test: 166; cg: PMPH; cp: cp_pmp_lr; bin: vs_gva_g_lr.w\""
+PMPH_cp_pmp_after_translation_vs_spa_vs_jalr_str: .string "\"test: 167; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_vs_jalr\""
+PMPH_cp_pmp_after_translation_vs_spa_vs_sw_str: .string "\"test: 168; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_vs_sw\""
+PMPH_cp_pmp_after_translation_vs_spa_vs_lw_str: .string "\"test: 169; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_vs_lw\""
+PMPH_cp_pmp_after_translation_vs_spa_g_jalr_str: .string "\"test: 170; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_g_jalr\""
+PMPH_cp_pmp_after_translation_vs_spa_g_sw_str: .string "\"test: 171; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_g_sw\""
+PMPH_cp_pmp_after_translation_vs_spa_g_lw_str: .string "\"test: 172; cg: PMPH; cp: cp_pmp_after_translation; bin: vs_spa_g_lw\""
+PMPH_cp_pmp_amo_vs_spa_vs_amoswap_w_str: .string "\"test: 173; cg: PMPH; cp: cp_pmp_amo; bin: vs_spa_vs_amoswap.w\""
+PMPH_cp_pmp_lr_vs_spa_vs_lr_w_str: .string "\"test: 174; cg: PMPH; cp: cp_pmp_lr; bin: vs_spa_vs_lr.w\""
+PMPH_cp_pmp_amo_vs_spa_g_amoswap_w_str: .string "\"test: 175; cg: PMPH; cp: cp_pmp_amo; bin: vs_spa_g_amoswap.w\""
+PMPH_cp_pmp_lr_vs_spa_g_lr_w_str: .string "\"test: 176; cg: PMPH; cp: cp_pmp_lr; bin: vs_spa_g_lr.w\""
+PMPH_cp_pmp_pt_vs_vlvl1_vs_jalr_str: .string "\"test: 177; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_vs_jalr\""
+PMPH_cp_pmp_pt_vs_vlvl1_vs_sw_str: .string "\"test: 178; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_vs_sw\""
+PMPH_cp_pmp_pt_vs_vlvl1_vs_lw_str: .string "\"test: 179; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_vs_lw\""
+PMPH_cp_pmp_pt_vs_vlvl1_g_jalr_str: .string "\"test: 180; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_g_jalr\""
+PMPH_cp_pmp_pt_vs_vlvl1_g_sw_str: .string "\"test: 181; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_g_sw\""
+PMPH_cp_pmp_pt_vs_vlvl1_g_lw_str: .string "\"test: 182; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl1_g_lw\""
+PMPH_cp_pmp_pt_vs_vlvl0_vs_jalr_str: .string "\"test: 183; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_vs_jalr\""
+PMPH_cp_pmp_pt_vs_vlvl0_vs_sw_str: .string "\"test: 184; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_vs_sw\""
+PMPH_cp_pmp_pt_vs_vlvl0_vs_lw_str: .string "\"test: 185; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_vs_lw\""
+PMPH_cp_pmp_pt_vs_vlvl0_g_jalr_str: .string "\"test: 186; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_g_jalr\""
+PMPH_cp_pmp_pt_vs_vlvl0_g_sw_str: .string "\"test: 187; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_g_sw\""
+PMPH_cp_pmp_pt_vs_vlvl0_g_lw_str: .string "\"test: 188; cg: PMPH; cp: cp_pmp_pt; bin: vs_vlvl0_g_lw\""
+PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_vs_jalr_str: .string "\"test: 189; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_vs_jalr\""
+PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_vs_sw_str: .string "\"test: 190; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_vs_sw\""
+PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_vs_lw_str: .string "\"test: 191; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_vs_lw\""
+PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_jalr_str: .string "\"test: 192; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_g_jalr\""
+PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_sw_str: .string "\"test: 193; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_g_sw\""
+PMPH_cp_pmp_pt_gpa_vs_vlvl0_gpa_g_lw_str: .string "\"test: 194; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vs_vlvl0_gpa_g_lw\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_vs_jalr_str: .string "\"test: 195; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_vs_jalr\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_vs_sw_str: .string "\"test: 196; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_vs_sw\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_vs_lw_str: .string "\"test: 197; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_vs_lw\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_jalr_str: .string "\"test: 198; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_g_jalr\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_sw_str: .string "\"test: 199; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_g_sw\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_r_g_lw_str: .string "\"test: 200; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_r_g_lw\""
+PMPH_cp_pmp_amo_pf_priority_vs_spa_leaf_r_vs_amoswap_w_str: .string "\"test: 201; cg: PMPH; cp: cp_pmp_amo_pf_priority; bin: vs_spa_leaf_r_vs_amoswap.w\""
+PMPH_cp_pmp_lr_vs_spa_leaf_r_vs_lr_w_str: .string "\"test: 202; cg: PMPH; cp: cp_pmp_lr; bin: vs_spa_leaf_r_vs_lr.w\""
+PMPH_cp_pmp_amo_pf_priority_vs_spa_leaf_r_g_amoswap_w_str: .string "\"test: 203; cg: PMPH; cp: cp_pmp_amo_pf_priority; bin: vs_spa_leaf_r_g_amoswap.w\""
+PMPH_cp_pmp_lr_vs_spa_leaf_r_g_lr_w_str: .string "\"test: 204; cg: PMPH; cp: cp_pmp_lr; bin: vs_spa_leaf_r_g_lr.w\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_vs_jalr_str: .string "\"test: 205; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_vs_jalr\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_vs_sw_str: .string "\"test: 206; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_vs_sw\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_vs_lw_str: .string "\"test: 207; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_vs_lw\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_g_jalr_str: .string "\"test: 208; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_g_jalr\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_g_sw_str: .string "\"test: 209; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_g_sw\""
+PMPH_cp_pmp_pf_priority_vs_spa_leaf_x_g_lw_str: .string "\"test: 210; cg: PMPH; cp: cp_pmp_pf_priority; bin: vs_spa_leaf_x_g_lw\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_vs_jalr_str: .string "\"test: 211; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_vs_jalr\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_vs_sw_str: .string "\"test: 212; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_vs_sw\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_vs_lw_str: .string "\"test: 213; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_vs_lw\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_g_jalr_str: .string "\"test: 214; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_g_jalr\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_g_sw_str: .string "\"test: 215; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_g_sw\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_vlvl0_g_lw_str: .string "\"test: 216; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_vlvl0_g_lw\""
+PMPH_cp_pmp_pt_vs_hlvl1_vs_jalr_str: .string "\"test: 217; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_vs_jalr\""
+PMPH_cp_pmp_pt_vs_hlvl1_vs_sw_str: .string "\"test: 218; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_vs_sw\""
+PMPH_cp_pmp_pt_vs_hlvl1_vs_lw_str: .string "\"test: 219; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_vs_lw\""
+PMPH_cp_pmp_pt_vs_hlvl1_g_jalr_str: .string "\"test: 220; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_g_jalr\""
+PMPH_cp_pmp_pt_vs_hlvl1_g_sw_str: .string "\"test: 221; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_g_sw\""
+PMPH_cp_pmp_pt_vs_hlvl1_g_lw_str: .string "\"test: 222; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl1_g_lw\""
+PMPH_cp_pmp_pt_vs_hlvl0_vs_jalr_str: .string "\"test: 223; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_vs_jalr\""
+PMPH_cp_pmp_pt_vs_hlvl0_vs_sw_str: .string "\"test: 224; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_vs_sw\""
+PMPH_cp_pmp_pt_vs_hlvl0_vs_lw_str: .string "\"test: 225; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_vs_lw\""
+PMPH_cp_pmp_pt_vs_hlvl0_g_jalr_str: .string "\"test: 226; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_g_jalr\""
+PMPH_cp_pmp_pt_vs_hlvl0_g_sw_str: .string "\"test: 227; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_g_sw\""
+PMPH_cp_pmp_pt_vs_hlvl0_g_lw_str: .string "\"test: 228; cg: PMPH; cp: cp_pmp_pt; bin: vs_hlvl0_g_lw\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_vs_jalr_str: .string "\"test: 229; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_vs_jalr\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_vs_sw_str: .string "\"test: 230; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_vs_sw\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_vs_lw_str: .string "\"test: 231; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_vs_lw\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_g_jalr_str: .string "\"test: 232; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_g_jalr\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_g_sw_str: .string "\"test: 233; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_g_sw\""
+PMPH_cp_pmp_pt_priority_vs_leaf_invalid_hlvl0_g_lw_str: .string "\"test: 234; cg: PMPH; cp: cp_pmp_pt_priority; bin: vs_leaf_invalid_hlvl0_g_lw\""
+PMPH_cp_pmp_after_translation_vu_gva_vs_jalr_str: .string "\"test: 235; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_vs_jalr\""
+PMPH_cp_pmp_after_translation_vu_gva_vs_sw_str: .string "\"test: 236; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_vs_sw\""
+PMPH_cp_pmp_after_translation_vu_gva_vs_lw_str: .string "\"test: 237; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_vs_lw\""
+PMPH_cp_pmp_after_translation_vu_gva_g_jalr_str: .string "\"test: 238; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_g_jalr\""
+PMPH_cp_pmp_after_translation_vu_gva_g_sw_str: .string "\"test: 239; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_g_sw\""
+PMPH_cp_pmp_after_translation_vu_gva_g_lw_str: .string "\"test: 240; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_gva_g_lw\""
+PMPH_cp_pmp_amo_vu_gva_vs_amoswap_w_str: .string "\"test: 241; cg: PMPH; cp: cp_pmp_amo; bin: vu_gva_vs_amoswap.w\""
+PMPH_cp_pmp_lr_vu_gva_vs_lr_w_str: .string "\"test: 242; cg: PMPH; cp: cp_pmp_lr; bin: vu_gva_vs_lr.w\""
+PMPH_cp_pmp_amo_vu_gva_g_amoswap_w_str: .string "\"test: 243; cg: PMPH; cp: cp_pmp_amo; bin: vu_gva_g_amoswap.w\""
+PMPH_cp_pmp_lr_vu_gva_g_lr_w_str: .string "\"test: 244; cg: PMPH; cp: cp_pmp_lr; bin: vu_gva_g_lr.w\""
+PMPH_cp_pmp_after_translation_vu_spa_vs_jalr_str: .string "\"test: 245; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_vs_jalr\""
+PMPH_cp_pmp_after_translation_vu_spa_vs_sw_str: .string "\"test: 246; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_vs_sw\""
+PMPH_cp_pmp_after_translation_vu_spa_vs_lw_str: .string "\"test: 247; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_vs_lw\""
+PMPH_cp_pmp_after_translation_vu_spa_g_jalr_str: .string "\"test: 248; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_g_jalr\""
+PMPH_cp_pmp_after_translation_vu_spa_g_sw_str: .string "\"test: 249; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_g_sw\""
+PMPH_cp_pmp_after_translation_vu_spa_g_lw_str: .string "\"test: 250; cg: PMPH; cp: cp_pmp_after_translation; bin: vu_spa_g_lw\""
+PMPH_cp_pmp_amo_vu_spa_vs_amoswap_w_str: .string "\"test: 251; cg: PMPH; cp: cp_pmp_amo; bin: vu_spa_vs_amoswap.w\""
+PMPH_cp_pmp_lr_vu_spa_vs_lr_w_str: .string "\"test: 252; cg: PMPH; cp: cp_pmp_lr; bin: vu_spa_vs_lr.w\""
+PMPH_cp_pmp_amo_vu_spa_g_amoswap_w_str: .string "\"test: 253; cg: PMPH; cp: cp_pmp_amo; bin: vu_spa_g_amoswap.w\""
+PMPH_cp_pmp_lr_vu_spa_g_lr_w_str: .string "\"test: 254; cg: PMPH; cp: cp_pmp_lr; bin: vu_spa_g_lr.w\""
+PMPH_cp_pmp_pt_vu_vlvl1_vs_jalr_str: .string "\"test: 255; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_vs_jalr\""
+PMPH_cp_pmp_pt_vu_vlvl1_vs_sw_str: .string "\"test: 256; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_vs_sw\""
+PMPH_cp_pmp_pt_vu_vlvl1_vs_lw_str: .string "\"test: 257; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_vs_lw\""
+PMPH_cp_pmp_pt_vu_vlvl1_g_jalr_str: .string "\"test: 258; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_g_jalr\""
+PMPH_cp_pmp_pt_vu_vlvl1_g_sw_str: .string "\"test: 259; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_g_sw\""
+PMPH_cp_pmp_pt_vu_vlvl1_g_lw_str: .string "\"test: 260; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl1_g_lw\""
+PMPH_cp_pmp_pt_vu_vlvl0_vs_jalr_str: .string "\"test: 261; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_vs_jalr\""
+PMPH_cp_pmp_pt_vu_vlvl0_vs_sw_str: .string "\"test: 262; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_vs_sw\""
+PMPH_cp_pmp_pt_vu_vlvl0_vs_lw_str: .string "\"test: 263; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_vs_lw\""
+PMPH_cp_pmp_pt_vu_vlvl0_g_jalr_str: .string "\"test: 264; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_g_jalr\""
+PMPH_cp_pmp_pt_vu_vlvl0_g_sw_str: .string "\"test: 265; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_g_sw\""
+PMPH_cp_pmp_pt_vu_vlvl0_g_lw_str: .string "\"test: 266; cg: PMPH; cp: cp_pmp_pt; bin: vu_vlvl0_g_lw\""
+PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_jalr_str: .string "\"test: 267; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_vs_jalr\""
+PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_sw_str: .string "\"test: 268; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_vs_sw\""
+PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_vs_lw_str: .string "\"test: 269; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_vs_lw\""
+PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_jalr_str: .string "\"test: 270; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_g_jalr\""
+PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_sw_str: .string "\"test: 271; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_g_sw\""
+PMPH_cp_pmp_pt_gpa_vu_vlvl0_gpa_g_lw_str: .string "\"test: 272; cg: PMPH; cp: cp_pmp_pt_gpa; bin: vu_vlvl0_gpa_g_lw\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_jalr_str: .string "\"test: 273; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_vs_jalr\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_sw_str: .string "\"test: 274; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_vs_sw\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_vs_lw_str: .string "\"test: 275; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_vs_lw\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_jalr_str: .string "\"test: 276; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_g_jalr\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_sw_str: .string "\"test: 277; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_g_sw\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_r_g_lw_str: .string "\"test: 278; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_r_g_lw\""
+PMPH_cp_pmp_amo_pf_priority_vu_spa_leaf_r_vs_amoswap_w_str: .string "\"test: 279; cg: PMPH; cp: cp_pmp_amo_pf_priority; bin: vu_spa_leaf_r_vs_amoswap.w\""
+PMPH_cp_pmp_lr_vu_spa_leaf_r_vs_lr_w_str: .string "\"test: 280; cg: PMPH; cp: cp_pmp_lr; bin: vu_spa_leaf_r_vs_lr.w\""
+PMPH_cp_pmp_amo_pf_priority_vu_spa_leaf_r_g_amoswap_w_str: .string "\"test: 281; cg: PMPH; cp: cp_pmp_amo_pf_priority; bin: vu_spa_leaf_r_g_amoswap.w\""
+PMPH_cp_pmp_lr_vu_spa_leaf_r_g_lr_w_str: .string "\"test: 282; cg: PMPH; cp: cp_pmp_lr; bin: vu_spa_leaf_r_g_lr.w\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_vs_jalr_str: .string "\"test: 283; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_vs_jalr\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_vs_sw_str: .string "\"test: 284; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_vs_sw\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_vs_lw_str: .string "\"test: 285; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_vs_lw\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_g_jalr_str: .string "\"test: 286; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_g_jalr\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_g_sw_str: .string "\"test: 287; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_g_sw\""
+PMPH_cp_pmp_pf_priority_vu_spa_leaf_x_g_lw_str: .string "\"test: 288; cg: PMPH; cp: cp_pmp_pf_priority; bin: vu_spa_leaf_x_g_lw\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_vs_jalr_str: .string "\"test: 289; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_vs_jalr\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_vs_sw_str: .string "\"test: 290; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_vs_sw\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_vs_lw_str: .string "\"test: 291; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_vs_lw\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_g_jalr_str: .string "\"test: 292; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_g_jalr\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_g_sw_str: .string "\"test: 293; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_g_sw\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_vlvl0_g_lw_str: .string "\"test: 294; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_vlvl0_g_lw\""
+PMPH_cp_pmp_pt_vu_hlvl1_vs_jalr_str: .string "\"test: 295; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_vs_jalr\""
+PMPH_cp_pmp_pt_vu_hlvl1_vs_sw_str: .string "\"test: 296; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_vs_sw\""
+PMPH_cp_pmp_pt_vu_hlvl1_vs_lw_str: .string "\"test: 297; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_vs_lw\""
+PMPH_cp_pmp_pt_vu_hlvl1_g_jalr_str: .string "\"test: 298; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_g_jalr\""
+PMPH_cp_pmp_pt_vu_hlvl1_g_sw_str: .string "\"test: 299; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_g_sw\""
+PMPH_cp_pmp_pt_vu_hlvl1_g_lw_str: .string "\"test: 300; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl1_g_lw\""
+PMPH_cp_pmp_pt_vu_hlvl0_vs_jalr_str: .string "\"test: 301; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_vs_jalr\""
+PMPH_cp_pmp_pt_vu_hlvl0_vs_sw_str: .string "\"test: 302; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_vs_sw\""
+PMPH_cp_pmp_pt_vu_hlvl0_vs_lw_str: .string "\"test: 303; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_vs_lw\""
+PMPH_cp_pmp_pt_vu_hlvl0_g_jalr_str: .string "\"test: 304; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_g_jalr\""
+PMPH_cp_pmp_pt_vu_hlvl0_g_sw_str: .string "\"test: 305; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_g_sw\""
+PMPH_cp_pmp_pt_vu_hlvl0_g_lw_str: .string "\"test: 306; cg: PMPH; cp: cp_pmp_pt; bin: vu_hlvl0_g_lw\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_vs_jalr_str: .string "\"test: 307; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_vs_jalr\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_vs_sw_str: .string "\"test: 308; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_vs_sw\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_vs_lw_str: .string "\"test: 309; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_vs_lw\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_g_jalr_str: .string "\"test: 310; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_g_jalr\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_g_sw_str: .string "\"test: 311; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_g_sw\""
+PMPH_cp_pmp_pt_priority_vu_leaf_invalid_hlvl0_g_lw_str: .string "\"test: 312; cg: PMPH; cp: cp_pmp_pt_priority; bin: vu_leaf_invalid_hlvl0_g_lw\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

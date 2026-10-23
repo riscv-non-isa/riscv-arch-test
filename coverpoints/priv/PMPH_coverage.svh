@@ -444,7 +444,7 @@ covergroup PMPH_hlv_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
   `endif
 endgroup
 
-// jalr, sw and lw from VS-mode and VU-mode through both mappings
+// jalr, sw, lw, amoswap.w and lr.w from VS-mode and VU-mode through both mappings
 covergroup PMPH_guest_cg with function sample(ins_t ins, int pmp_entry);
   option.per_instance = 0;
   `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -456,6 +456,16 @@ covergroup PMPH_guest_cg with function sample(ins_t ins, int pmp_entry);
     wildcard bins sw   = {SW};
     wildcard bins lw   = {LW};
   }
+  `ifdef ZAAMO_SUPPORTED
+  amoswap_w: coverpoint ins.current.insn {
+    wildcard bins amoswap_w = {AMOSWAP_W};
+  }
+  `endif
+  `ifdef ZALRSC_SUPPORTED
+  lr_w: coverpoint ins.current.insn {
+    wildcard bins lr_w = {LR_W};
+  }
+  `endif
   vsatp_paged: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vsatp", "mode") {
     bins paged = {[1:15]};
   }
@@ -510,6 +520,14 @@ covergroup PMPH_guest_cg with function sample(ins_t ins, int pmp_entry);
   cp_pmp_pf_priority:       cross priv_mode_vs_vu, access_instr, pmp_spa, translation_fault;
   // An access fault on reading the table that holds an invalid leaf precedes the page or guest-page fault
   cp_pmp_pt_priority:       cross priv_mode_vs_vu, access_instr, pmp_leaf_table, access_fault;
+  `ifdef ZAAMO_SUPPORTED
+  cp_pmp_amo:               cross priv_mode_vs_vu, amoswap_w, mapping, pmp_final, vsatp_paged, hgatp_paged;
+  // A store page or guest-page fault precedes an access fault on the final address
+  cp_pmp_amo_pf_priority:   cross priv_mode_vs_vu, amoswap_w, pmp_spa, translation_fault;
+  `endif
+  `ifdef ZALRSC_SUPPORTED
+  cp_pmp_lr:                cross priv_mode_vs_vu, lr_w, mapping, pmp_final, vsatp_paged, hgatp_paged;
+  `endif
   `endif
 endgroup
 
