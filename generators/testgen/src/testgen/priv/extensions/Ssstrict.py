@@ -823,7 +823,7 @@ _M_CSR_SKIP: frozenset[int] = frozenset(
     )
     | {
         0x340,  # mscratch: corrupts trap stack
-        0x305,  # mtvec: corrupts trap stack
+        0x305,  # mtvec: breaks trap handler
         0x747,  # mseccfg: confuses M-mode
     }
 )
@@ -850,7 +850,6 @@ def _group_chunks(group: str, chunks: list[TestChunk]) -> list[TestChunk]:
         "V",
     ],
     extra_defines=["#define RVTEST_USE_FAST_TRAP_HANDLER", SCRATCH_SIZE_DEFINE, "#define BOOT_TO_MMODE"],
-    seed_name="SsstrictSm",
 )
 def make_ssstrictsm(test_data: TestData) -> list[TestChunk]:
     """Ssstrict machine-mode group (formerly SsstrictSm)."""
@@ -865,7 +864,6 @@ def make_ssstrictsm(test_data: TestData) -> list[TestChunk]:
         "V",  # V included: sets vl/vtype for vector loads and stores in the encoding sweep
     ],
     extra_defines=["#define RVTEST_USE_FAST_TRAP_HANDLER", SCRATCH_SIZE_DEFINE, "#define BOOT_TO_SMODE"],
-    seed_name="SsstrictS",
 )
 def make_ssstrictss(test_data: TestData) -> list[TestChunk]:
     """Ssstrict supervisor-mode group (formerly SsstrictS)."""
@@ -880,7 +878,6 @@ def make_ssstrictss(test_data: TestData) -> list[TestChunk]:
         "V",
     ],
     extra_defines=["#define RVTEST_USE_FAST_TRAP_HANDLER", SCRATCH_SIZE_DEFINE],
-    seed_name="SsstrictU",
 )
 def make_ssstrictu(test_data: TestData) -> list[TestChunk]:
     """Ssstrict user-mode group (formerly SsstrictU)."""
