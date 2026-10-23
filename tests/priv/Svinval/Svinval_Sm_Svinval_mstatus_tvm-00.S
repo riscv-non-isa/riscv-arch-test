@@ -66,10 +66,10 @@ Svinval_Sm_cg_cp_svinval_test3_sfence_vma:
   sfence.vma x0, x0
 
   RVTEST_TSBI_GOTO_MMODE
-  LI(x9, MSTATUS_TVM)
-  csrs mstatus, x9
+  LI(x14, MSTATUS_TVM)
+  csrs mstatus, x14
 Svinval_Sm_cg_cp_tvm_tvm:
-  RVTEST_SIGUPD_CSR_READ(mstatus, x9, Svinval_Sm_cg_cp_tvm_tvm, Svinval_Sm_cg_cp_tvm_tvm_str)
+  RVTEST_SIGUPD_CSR_READ(mstatus, x14, Svinval_Sm_cg_cp_tvm_tvm, Svinval_Sm_cg_cp_tvm_tvm_str)
 Svinval_Sm_cg_cp_svinval_test4_sfence_w_inval:
   sfence.w.inval
 
