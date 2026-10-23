@@ -2,7 +2,7 @@
 suite: ExceptionsHSm
 notes: |
   The suite boots to M-mode and delegates nothing (medeleg = 0), so the M-mode handler takes every trap.  Its record holds mcause, mepc, mtval, mtval2, mtinst, mstatus.MPP/MPIE and mstatus.MPV/GVA.  With medeleg = 0, hedeleg has no effect, so it is set only to 0 and to all of its writable bits.
-  Each checked ecall is the T-SBI call RVTEST_TSBI_ECALL_RECORD, which the M-mode handler records like any other exception.  mtinst is checked on every trap as in ExceptionsH.
+  Each checked ecall is the T-SBI call RVTEST_TSBI_ECALL_TEST, which the M-mode handler records like any other exception.  mtinst is checked on every trap as in ExceptionsH.
 coverpoints:
   - name: cp_hedeleg
     goal: hedeleg has no effect with medeleg = 0

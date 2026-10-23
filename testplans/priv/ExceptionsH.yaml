@@ -4,7 +4,7 @@ source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR
 notes: |
   The suite boots to HS-mode.  medeleg delegates to HS-mode every exception but the ecalls from HS-mode and M-mode (bits 9 and 11 are 0, so T-SBI calls from HS-mode reach M-mode).  hedeleg is 0 except where a test delegates to VS-mode.  Traps that must be taken in M-mode are in ExceptionsHSm.
   The trap handlers record every trap.  An HS-mode record holds scause, sepc, stval, htval, htinst, sstatus.SPP/SPIE and hstatus.SPVP/SPV/GVA.  An M-mode record holds mcause, mepc, mtval, mtval2, mtinst, mstatus.MPP/MPIE and mstatus.MPV/GVA.  A VS-mode record holds vscause, vsepc, vstval and vsstatus.SPP/SPIE/SIE.
-  Each checked ecall is the T-SBI call RVTEST_TSBI_ECALL_RECORD, which the handler that takes it records like any other exception.
+  Each checked ecall is the T-SBI call RVTEST_TSBI_ECALL_TEST, which the handler that takes it records like any other exception.
   htinst and mtinst are checked on every trap: zero, or for a load, store, AMO, HLV, HLVX or HSV exception (causes 4-7, 13, 15, 21, 23) the transformed instruction with Addr. Offset equal to xtval minus the original address.  A required pseudoinstruction must match the reference model exactly.
 coverpoints:
   - name: |-
