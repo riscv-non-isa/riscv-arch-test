@@ -1853,8 +1853,8 @@ tsbi_\__MODE__\()handle_forwarded:
 
 .ifnc \__MODE__ , V
 tsbi_\__MODE__\()instr_dispatch:
-        andi    T3, a0, INSN_FIELD_OPCODE         // T3 = opcode
-        li      T4, MATCH_CSRRW & INSN_FIELD_OPCODE // T4 = SYSTEM opcode
+        andi    T3, a0, INSN_FIELD_OPCODE            // T3 = opcode
+        li      T4, MATCH_CSRRW & INSN_FIELD_OPCODE  // T4 = SYSTEM opcode
         bne     T3, T4, tsbi_\__MODE__\()instr_other // load/store -> tsbi_instr_table
         srli    T3, a0, 12
         andi    T3, T3, INSN_FIELD_FUNCT3 >> 12   // T3 = funct3
@@ -1976,17 +1976,22 @@ tsbi_instr_not_found:
 // tsbi_csr_table_end; other instructions go in tsbi_instr_table below.
 tsbi_csr_table:
         // S-mode CSRs. S-mode dispatch executes these locally for U-mode calls.
+#ifdef S_SUPPORTED
         TSBI_CSR_INSTR_TABLE(0x100) // sstatus
         TSBI_CSR_INSTR_TABLE(0x104) // sie
         //TSBI_CSR_INSTR_TABLE(0x105) // stvec
         TSBI_CSR_INSTR_TABLE(0x106) // scounteren
         TSBI_CSR_INSTR_TABLE(0x10A) // senvcfg
         TSBI_CSR_INSTR_TABLE(0x144) // sip
+        #ifdef SSTC_SUPPORTED
         TSBI_CSR_INSTR_TABLE(0x14D) // stimecmp
+        #endif
+        #ifdef SSAIA_SUPPORTED
         TSBI_CSR_INSTR_TABLE(0x150) // siselect: IMSIC S-file eip0 via csrind
         TSBI_CSR_INSTR_TABLE(0x151) // sireg
         TSBI_CSR_INSTR_TABLE(0x15C) // stopei
-        #if (UDB_MXLEN==32)
+        #endif
+        #if (UDB_MXLEN==32) && defined(SSTC_SUPPORTED)
         TSBI_CSR_INSTR_TABLE(0x15D) // stimecmph
         #endif
         TSBI_CSR_INSTR_TABLE(0x180) // satp
@@ -2000,17 +2005,20 @@ tsbi_csr_table:
         TSBI_CSR_INSTR_TABLE(0x242) // vscause
         TSBI_CSR_INSTR_TABLE(0x243) // vstval
         TSBI_CSR_INSTR_TABLE(0x244) // vsip
+        #ifdef SSTC_SUPPORTED
         TSBI_CSR_INSTR_TABLE(0x24D) // vstimecmp
+        #endif
         #ifdef SSAIA_SUPPORTED
         TSBI_CSR_INSTR_TABLE(0x250) // vsiselect: IMSIC VS-file eip0 via csrind
         TSBI_CSR_INSTR_TABLE(0x251) // vsireg
         TSBI_CSR_INSTR_TABLE(0x25C) // vstopei
         #endif
-        #if (UDB_MXLEN==32)
+        #if (UDB_MXLEN==32) && defined(SSTC_SUPPORTED)
         TSBI_CSR_INSTR_TABLE(0x25D) // vstimecmph
         #endif
         TSBI_CSR_INSTR_TABLE(0x280) // vsatp
 #endif // H_SUPPORTED
+#endif // S_SUPPORTED
         // M-mode CSRs
 tsbi_csr_mstatus:                                 // dispatcher fast path
         TSBI_CSR_INSTR_TABLE(0x300) // mstatus
@@ -2026,9 +2034,7 @@ tsbi_csr_mstatus:                                 // dispatcher fast path
         TSBI_CSR_INSTR_TABLE(0x30F) // mstateen3
         #if (UDB_MXLEN==32)
         TSBI_CSR_INSTR_TABLE(0x31A) // menvcfgh
-        #endif
         TSBI_CSR_INSTR_TABLE(0x31C) // mstateen0h
-        #if (UDB_MXLEN==32)
         TSBI_CSR_INSTR_TABLE(0x31D) // mstateen1h
         TSBI_CSR_INSTR_TABLE(0x31E) // mstateen2h
         TSBI_CSR_INSTR_TABLE(0x31F) // mstateen3h
@@ -2137,6 +2143,7 @@ tsbi_csr_mstatus:                                 // dispatcher fast path
         #endif
         TSBI_CSR_INSTR_TABLE(0x747) // mseccfg
         // Sdtrig CSRs
+        #ifdef SDTRIG_SUPPORTED
         TSBI_CSR_INSTR_TABLE(0x7A0) // tselect
         TSBI_CSR_INSTR_TABLE(0x7A1) // tdata1
         TSBI_CSR_INSTR_TABLE(0x7A2) // tdata2
@@ -2145,6 +2152,7 @@ tsbi_csr_mstatus:                                 // dispatcher fast path
         TSBI_CSR_INSTR_TABLE(0x7A5) // tcontrol
         TSBI_CSR_INSTR_TABLE(0x7A8) // mcontext
         TSBI_CSR_INSTR_TABLE(0x7AA) // mscontext
+        #endif
         //TSBI_CSR_INSTR_TABLE(0xB00) // mcycle - shouldn't be changed below M-mode
         //TSBI_CSR_INSTR_TABLE(0xB02) // minstret - shouldn't be changed below M-mode
         #ifdef SSCOFPMF_SUPPORTED
