@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: SstcSm
+suite: Sstc_Sm
 source: https://docs.google.com/spreadsheets/d/1gBymMadMSRy4SW_nYUmglFAe1-LtjaqOA6aXcrxCAsk/edit?gid=2013711018#gid=2013711018
 notes: |
   * for RV32, also access stimcmph

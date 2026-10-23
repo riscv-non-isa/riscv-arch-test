@@ -282,10 +282,6 @@
         `cover_info("//      Sstc - Enabled");
         `include "Sstc_coverage_init.svh"
     `endif
-    `ifdef COVER_SSTCSM
-        `cover_info("//      SstcSm - Enabled");
-        `include "SstcSm_coverage_init.svh"
-    `endif
     `ifdef COVER_SSTVALA
         `cover_info("//      Sstvala - Enabled");
         `include "Sstvala_coverage_init.svh"
