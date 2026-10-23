@@ -9,9 +9,6 @@
 # SsstrictS_CSR: Sail traps on siselect/stopi accesses that Whisper permits with mstateen0 enabled.
 ci_enabled: true
 exclude_extensions: "SsstrictSm_CSR,SsstrictS_CSR,Smstateen"
-exclude_configs:
-  - whisper-rv32-max-spike-ref
-  - whisper-rv64-max-spike-ref
 install_script: ".github/scripts/install-whisper.sh"
 apt_packages: "libboost-program-options-dev"
 shards: 2
