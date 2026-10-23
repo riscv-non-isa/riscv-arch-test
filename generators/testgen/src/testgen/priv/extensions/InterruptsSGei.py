@@ -9,8 +9,9 @@
 """InterruptsS guest external interrupt test generator (from the hypervisor branch's InterruptsHGei).
 
 hgeip is read-only, so only the platform can raise a guest external interrupt, through the RVMODEL_SET/CLR_GUEST_EXT_INT
-hooks that a DUT with H and GEILEN > 0 (UDB_SGEI_INTR_IMPL) must define.  Every test here uses those hooks, so they are
-kept in their own files and covergroups and produce no testcases when GEILEN = 0.
+hooks that a DUT with H and GEILEN > 0 (RVTEST_SGEI_INTR_IMPL) must define; the tests call them through
+RVTEST_SET/CLR_GUEST_EXT_INT_M/_S.  Every test here uses those hooks, so they are kept in their own files and
+covergroups and produce no testcases when GEILEN = 0.
 
 InterruptsS boots to HS-mode.  The gei_m file reads mip from M-mode with a guest external interrupt pending.  The gei_hs file
 covers hgeip and hgeie, hip.SGEIP, hstatus.VGEIN and the SGEI priority.  The hooks may reach IMSIC state below
@@ -39,30 +40,31 @@ IMSIC_STATEEN_ON = (
 )
 
 
-def _gei(op: str, gei: int, tmp_reg: int) -> list[str]:
-    """Raise (SET) or clear (CLR) guest external interrupt gei through the platform, and wait for hgeip."""
-    return [f"RVMODEL_{op}_GUEST_EXT_INT({gei}, a1, a2)", f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg})"]
+def _gei(op: str, gei: int, tmp_reg: int, mode: str = "S") -> list[str]:
+    """Raise (SET) or clear (CLR) guest external interrupt gei through the platform from mode M or S, and wait for
+    hgeip."""
+    return [f"RVTEST_{op}_GUEST_EXT_INT_{mode}({gei})", f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg})"]
 
 
 def _mip_tests(test_data: TestData) -> list[str]:
     """Read mip from M-mode with guest external interrupt 1 pending and enabled in hgeie."""
     tmp_reg, check_reg = test_data.int_regs.get_registers(2)
     lines = [
-        "#ifdef UDB_SGEI_INTR_IMPL",
+        "#ifdef RVTEST_SGEI_INTR_IMPL",
         "RVTEST_TSBI_GOTO_MMODE",
         comment_banner("cp_mip_gilen", "With guest external interrupt 1 pending and enabled in hgeie, read mip"),
         f"LI(x{tmp_reg}, 2)",
         f"csrw hgeie, x{tmp_reg}",
-        *_gei("SET", 1, tmp_reg),
+        *_gei("SET", 1, tmp_reg, "M"),
         f"LI(x{tmp_reg}, MIP_HS_MASK)",
         test_data.add_testcase("hgeip_1", "cp_mip_gilen", _CG_M),
         f"csrr x{check_reg}, mip",
         f"and x{check_reg}, x{check_reg}, x{tmp_reg}",
         write_sigupd(check_reg, test_data),
-        *_gei("CLR", 1, tmp_reg),
+        *_gei("CLR", 1, tmp_reg, "M"),
         "csrw hgeie, zero",
         "RVTEST_TSBI_GOTO_SMODE",
-        "#endif // UDB_SGEI_INTR_IMPL",
+        "#endif // RVTEST_SGEI_INTR_IMPL",
     ]
     test_data.int_regs.return_registers([tmp_reg, check_reg])
     return lines
@@ -97,7 +99,7 @@ def _sgei_tests(test_data: TestData) -> list[str]:
         ]
 
     lines = [
-        "#ifdef UDB_SGEI_INTR_IMPL",
+        "#ifdef RVTEST_SGEI_INTR_IMPL",
         comment_banner(
             "cp_trigger_sgei",
             "With guest external interrupt 1 pending and enabled in hgeie, set hie.SGEIE = 0/1 with\n"
@@ -217,7 +219,7 @@ def _sgei_tests(test_data: TestData) -> list[str]:
             *check("vgein_0", "cp_hgeip0", -1),
             *all_gei("CLR"),
             "csrw hgeie, zero",
-            "#endif // UDB_SGEI_INTR_IMPL",
+            "#endif // RVTEST_SGEI_INTR_IMPL",
         ]
     )
     test_data.int_regs.return_register(tmp_reg)

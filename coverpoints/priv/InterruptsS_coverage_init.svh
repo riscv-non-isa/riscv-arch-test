@@ -11,7 +11,7 @@
     InterruptsS_cg = new();         InterruptsS_cg.set_inst_name("obj_InterruptsS");
     `ifdef H_SUPPORTED
         InterruptsS_h_cg = new();       InterruptsS_h_cg.set_inst_name("obj_InterruptsS_h");
-        `ifdef UDB_SGEI_INTR_IMPL
+        `ifdef RVTEST_SGEI_INTR_IMPL
             InterruptsS_gei_m_cg = new();   InterruptsS_gei_m_cg.set_inst_name("obj_InterruptsS_gei_m");
             InterruptsS_gei_cg = new();     InterruptsS_gei_cg.set_inst_name("obj_InterruptsS_gei");
         `endif
