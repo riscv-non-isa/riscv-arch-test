@@ -30,11 +30,9 @@ RVTEST_BEGIN
 
 
 /////////////////////////////////
-// cp_zicbop
+// cp_zicbop_no_fault_u
 /////////////////////////////////
 
-
-main:
 
 // Virtual addresses for code and test regions
 
@@ -52,35 +50,36 @@ main:
 // accessible, so the code is mapped again at va_rvtest_code_begin. Registering
 // that alias lets RVTEST_TSBI_GOTO_* resume in the mapping the mode it switches
 // to can fetch from.
+// SAVE_AREA_SETUP takes the M-mode save area in a0 and clobbers t0 and t1.
   LA(a0, Mtramptbl_sv)
   SAVE_AREA_SETUP(va_rvtest_code_begin, rvtest_code_begin, code, LEVEL1)
 
   SATP_SETUP_SV32 // Enable address translation.
   sfence.vma
 
-  LI(t0, MENVCFG_CBZE)
-  # T-SBI call to execute instruction: csrs menvcfg, t0
-  mv a1, x5
+  LI(x6, MENVCFG_CBZE)
+  # T-SBI call to execute instruction: csrs menvcfg, x6
+  mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MENVCFG)
-  csrs senvcfg, t0
+  csrs senvcfg, x6
 
   SUPERPAGE_PTE_SETUP_SV32(rvtest_data_1, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
   sfence.vma
 
-  LI(a5, (va_data >> 22) << 22)
-  LA(a0, rvtest_data_1)
-  slli a0, a0, 10
-  srli a0, a0, 10
-  add a5, a5, a0
+  LI(x14, (va_data >> 22) << 22)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 10
+  srli x6, x6, 10
+  add x14, x14, x6
   RVTEST_TSBI_GOTO_UMODE
-SvZicbo_cg_cp_prefetch_test1_prefetch_i:
-  prefetch.i 0(a5)
+SvZicbo_cg_cp_zicbop_no_fault_u_test1_prefetch_i:
+  prefetch.i 0(x14)
   nop
-SvZicbo_cg_cp_prefetch_test1_prefetch_r:
-  prefetch.r 0(a5)
+SvZicbo_cg_cp_zicbop_no_fault_u_test1_prefetch_r:
+  prefetch.r 0(x14)
   nop
-SvZicbo_cg_cp_prefetch_test1_prefetch_w:
-  prefetch.w 0(a5)
+SvZicbo_cg_cp_zicbop_no_fault_u_test1_prefetch_w:
+  prefetch.w 0(x14)
   nop
   RVTEST_TSBI_GOTO_SMODE
 
@@ -88,16 +87,16 @@ SvZicbo_cg_cp_prefetch_test1_prefetch_w:
   PTE_SETUP_SV32(rvtest_data_1, (PTE_D | PTE_A | PTE_U | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(a5, va_data)
+  LI(x14, va_data)
   RVTEST_TSBI_GOTO_UMODE
-SvZicbo_cg_cp_prefetch_test2_prefetch_i:
-  prefetch.i 0(a5)
+SvZicbo_cg_cp_zicbop_no_fault_u_test2_prefetch_i:
+  prefetch.i 0(x14)
   nop
-SvZicbo_cg_cp_prefetch_test2_prefetch_r:
-  prefetch.r 0(a5)
+SvZicbo_cg_cp_zicbop_no_fault_u_test2_prefetch_r:
+  prefetch.r 0(x14)
   nop
-SvZicbo_cg_cp_prefetch_test2_prefetch_w:
-  prefetch.w 0(a5)
+SvZicbo_cg_cp_zicbop_no_fault_u_test2_prefetch_w:
+  prefetch.w 0(x14)
   nop
   RVTEST_TSBI_GOTO_SMODE
 
@@ -115,7 +114,7 @@ RVTEST_DATA_BEGIN
   .p2align 12
 rvtest_data_1:
   nop
-  addi a4, a2, 4
+  addi x9, x8, 4
   jr ra
   nop
   .word 0xbeefcaf1
@@ -129,12 +128,12 @@ rvtest_slvl0_pg_tbl:
   .skip(4096)
 
 // Testcase strings
-SvZicbo_cg_cp_prefetch_test1_prefetch_i_str: .string "\"test: 7; cg: SvZicbo_cg; cp: cp_prefetch; bin: test1_prefetch_i\""
-SvZicbo_cg_cp_prefetch_test1_prefetch_r_str: .string "\"test: 8; cg: SvZicbo_cg; cp: cp_prefetch; bin: test1_prefetch_r\""
-SvZicbo_cg_cp_prefetch_test1_prefetch_w_str: .string "\"test: 9; cg: SvZicbo_cg; cp: cp_prefetch; bin: test1_prefetch_w\""
-SvZicbo_cg_cp_prefetch_test2_prefetch_i_str: .string "\"test: 10; cg: SvZicbo_cg; cp: cp_prefetch; bin: test2_prefetch_i\""
-SvZicbo_cg_cp_prefetch_test2_prefetch_r_str: .string "\"test: 11; cg: SvZicbo_cg; cp: cp_prefetch; bin: test2_prefetch_r\""
-SvZicbo_cg_cp_prefetch_test2_prefetch_w_str: .string "\"test: 12; cg: SvZicbo_cg; cp: cp_prefetch; bin: test2_prefetch_w\""
+SvZicbo_cg_cp_zicbop_no_fault_u_test1_prefetch_i_str: .string "\"test: 7; cg: SvZicbo_cg; cp: cp_zicbop_no_fault_u; bin: test1_prefetch_i\""
+SvZicbo_cg_cp_zicbop_no_fault_u_test1_prefetch_r_str: .string "\"test: 8; cg: SvZicbo_cg; cp: cp_zicbop_no_fault_u; bin: test1_prefetch_r\""
+SvZicbo_cg_cp_zicbop_no_fault_u_test1_prefetch_w_str: .string "\"test: 9; cg: SvZicbo_cg; cp: cp_zicbop_no_fault_u; bin: test1_prefetch_w\""
+SvZicbo_cg_cp_zicbop_no_fault_u_test2_prefetch_i_str: .string "\"test: 10; cg: SvZicbo_cg; cp: cp_zicbop_no_fault_u; bin: test2_prefetch_i\""
+SvZicbo_cg_cp_zicbop_no_fault_u_test2_prefetch_r_str: .string "\"test: 11; cg: SvZicbo_cg; cp: cp_zicbop_no_fault_u; bin: test2_prefetch_r\""
+SvZicbo_cg_cp_zicbop_no_fault_u_test2_prefetch_w_str: .string "\"test: 12; cg: SvZicbo_cg; cp: cp_zicbop_no_fault_u; bin: test2_prefetch_w\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END
