@@ -3404,6 +3404,345 @@ def _generate_mcontrol6_tests(test_data: TestData, mode: str) -> list[TestChunk]
     return chunks
 
 
+######################################
+# cp_mcontrol6_match_size_{store,load,execute}: every legal match crossed with every legal size on select = 1
+######################################
+# A case is (label, value, width): the access of `width` bits whose compare value is `value` (the data stored or
+# loaded, or the instruction encoding). A group is one tdata2 with the cases run against it: (tdata2, fire, nofire).
+# Each group has cases that fire and narrow cases that don't, each chosen to fire if size or match were misread:
+#   - a stored register or the loaded word has bits set above N (and tdata2 too, see _MS_TDATA2_ABOVE), so a hart
+#     that compares more than the low N bits misses the cases that should fire (norm:Sdtrig_mcontrol6_comparisons);
+#   - the data values have bit N-1 set and loads sign-extend, so an XLEN-wide or signed compare goes wrong;
+#   - equal/not-equal miss by one bit (the lowest and the top compared bits), ge/lt miss by one step and by a
+#     value that a signed compare would order the other way, NAPOT misses by the lowest compared bit and the top
+#     bit, and the mask matches miss by one masked bit while an unmasked difference still fires;
+#   - accesses of another width, with a tdata2 their own value would match, never fire (only accesses of size N
+#     can), as they would on a hart that ignored size or matched the access's own width.
+# The mask matches (4, 5, 12, 13) and NAPOT (1, 9) follow the XLEN-half reading of riscv-isa-manual#3461 that
+# Sail 0.16, Whisper and ImperasDV implement; the other matches compare the low N bits of the value and tdata2.
+
+_MS_MATCHES = (0, 1, 2, 3, 4, 5, 8, 9, 12, 13)
+_MS_SIZE_CODE = {8: 1, 16: 2, 32: 3, 64: 5}
+_MS_DATA = {8: 0xB6, 16: 0xB65A, 32: 0xB65A3C96, 64: 0xB65A3C960F1E2D4B}  # bit N-1 set
+# TODO: set to 0xA5A5A5A5A5A5A5A5 once ACT moves to a Sail release that compares only the low N bits of tdata2
+# (sail-riscv#2038). Sail 0.16 compares all of tdata2, so its expected signatures would fail a correct DUT
+_MS_TDATA2_ABOVE = 0  # tdata2 bits above N
+_MS_DATA_ABOVE = 0x5A5A5A5A5A5A5A5A  # stored register / loaded word bits above N
+_MS_STORE = {8: "sb", 16: "sh", 32: "sw", 64: "sd"}
+_MS_LOAD = {8: "lb", 16: "lh", 32: "lw", 64: "ld"}  # sign-extending, so the register differs from the compare value
+# Execute targets. A select = 1 execute trigger in M-mode also sees the csrw tdata1, x0 that disarms it, which the
+# trap handler would skip if it fired, so every 32-bit group keeps that instruction from matching
+_MS_DISARM = 0x7A101073  # csrrw x0, tdata1, x0
+_MS_ADDI = 0xB5A00013  # addi x0, x0, -0x4a6: rs1 and imm vary freely (bits 31:15), rd = x0 keeps it a hint
+_MS_ADDI_LT = 0x7A000013  # addi x0, x0, 0x7a0: below the disarm, for less-than
+_MS_ADDI_SMALL = 0x00008013  # addi x0, x1, 0
+_MS_ADDI_STEP = 1 << 15  # rs1 field LSB
+_MS_CNOP = 0x1059  # c.nop 0x36 (a hint): nzimm[5] (bit 12) and nzimm[4:0] (bits 6:2) vary freely
+_MS_CNOP_STEP = 1 << 2
+
+
+def _ms_mask(bits: int) -> int:
+    return (1 << bits) - 1
+
+
+def _ms_fires(match: int, n: int, xlen: int, tdata2: int, value: int) -> bool:
+    """Whether a select = 1, size = N trigger fires on an N-bit access with compare value ``value``."""
+    if match in (4, 5, 12, 13):  # XLEN halves of tdata2 and of the zero-extended value
+        half = xlen // 2
+        part = value if match in (4, 12) else value >> half
+        hit = (part & _ms_mask(half) & (tdata2 >> half)) == tdata2 & _ms_mask(half)
+    else:  # the low N bits of each
+        t, v = tdata2 & _ms_mask(n), value & _ms_mask(n)
+        if match in (1, 9):
+            zero = next(i for i in range(n) if not t >> i & 1)
+            hit = v >> (zero + 1) == t >> (zero + 1)
+        else:
+            hit = {0: v == t, 8: v == t, 2: v >= t, 3: v < t}[match]
+    return hit != (match in (8, 9, 12, 13))
+
+
+def _ms_swap(groups: list[tuple[int, list, list]], match: int) -> list[tuple[int, list, list]]:
+    """The not-equal / not-NAPOT / not-mask match fires exactly where its positive match does not."""
+    return [(t, nofire, fire) for t, fire, nofire in groups] if match in (8, 9, 12, 13) else groups
+
+
+def _ms_data_groups(match: int, n: int, xlen: int) -> list[tuple[int, list, list]]:
+    """Groups for an N-bit load or store."""
+    d, top, half = _MS_DATA[n], 1 << (n - 1), xlen // 2
+    above = _MS_TDATA2_ABOVE & _ms_mask(xlen) & ~_ms_mask(n)
+    base = match & 7 if match in (8, 9, 12, 13) else match
+    if base == 0:  # equal
+        groups = [(above | d, [("value", d)], [("bit0", d ^ 1), ("topbit", d ^ top)])]
+    elif base == 2:  # ge: d - 1 misses by one, and 1 would be greater than d in a signed compare
+        groups = [(above | d, [("value", d)], [("below", d - 1), ("one", 1)])]
+    elif base == 3:  # lt
+        groups = [(above | d, [("below", d - 1), ("one", 1)], [("value", d)])]
+    elif base == 1:  # NAPOT over bits 3:0
+        lo = d & ~0xF
+        groups = [
+            (above | lo | 0x7, [("range_lo", lo), ("range_hi", lo | 0xF)], [("bit4", lo ^ 0x10), ("topbit", lo ^ top)])
+        ]
+    elif base == 4:  # mask low: bit 0 compared, bit 1 masked off
+        mask = _ms_mask(half) & ~0b10
+        groups = [((mask << half) | (d & mask), [("value", d), ("unmasked_bit1", d ^ 2)], [("masked_bit0", d ^ 1)])]
+    elif n > half:  # mask high: bit XLEN/2 compared, bit XLEN/2+1 masked off
+        mask = _ms_mask(half) & ~0b10
+        groups = [
+            (
+                (mask << half) | (d >> half & mask),
+                [("value", d), ("unmasked", d ^ (2 << half))],
+                [("masked", d ^ (1 << half))],
+            )
+        ]
+    else:  # mask high on a value no wider than XLEN/2: its high half is 0. The second group would fire if the
+        # value were compared as the high half
+        groups = [
+            (_ms_mask(half) << half, [("value_zero_high", d)], []),
+            ((_ms_mask(half) << half) | (d & _ms_mask(half)), [], [("value_as_high", d)]),
+        ]
+    return _ms_swap(groups, match)
+
+
+def _ms_exec_groups(match: int, n: int, xlen: int, rd: int) -> list[tuple[int, list, list]]:
+    """Groups for an N-bit instruction (16 or 32). The 32-bit groups never match the disarming csrw; those that must
+    fire on almost every instruction (not-equal, not-NAPOT, not-mask) are built around it, with targets that are
+    other harmless writes of tdata1 (csrrw x{rd}, tdata1, x0 and csrrwi x0, tdata1, 0)."""
+    half = xlen // 2
+    # tdata2 bits above 32 stay clear for 32-bit instructions: a hart (or Sail 0.16, sail-riscv#2038) that compared
+    # them would see the disarming csrw match ge/lt/not-equal and skip it. The load and store groups test those bits
+    above = _MS_TDATA2_ABOVE & _ms_mask(xlen) & ~_ms_mask(n) if n == 16 else 0
+    if n == 16:
+        d, step = _MS_CNOP, _MS_CNOP_STEP
+        groups = {
+            0: [(above | d, [("value", d)], [("imm0", d ^ step), ("bit12", d ^ (1 << 12))])],
+            2: [(above | d, [("value", d)], [("below", d - step), ("c_nop", 0x0001)])],
+            3: [(above | d, [("below", d - step), ("c_nop", 0x0001)], [("value", d)])],
+            1: [(above | d | 0x3, [("bit2_0", d), ("bit2_1", d | 0x4)], [("bit3", d ^ 0x8), ("bit12", d ^ (1 << 12))])],
+            4: [
+                (
+                    ((_ms_mask(half) & ~0x8) << half) | (d & ~0x8),
+                    [("value", d), ("unmasked_bit3", d ^ 0x8)],
+                    [("masked_bit2", d ^ 0x4)],
+                )
+            ],
+            5: [
+                (_ms_mask(half) << half, [("value_zero_high", d)], []),
+                ((_ms_mask(half) << half) | d, [], [("value_as_high", d)]),
+            ],
+        }
+    else:
+        d, step, disarm = _MS_ADDI, _MS_ADDI_STEP, _MS_DISARM
+        rd_write, imm_write = disarm | rd << 7, disarm | 1 << 14  # csrrw x{rd}, tdata1, x0 / csrrwi x0, tdata1, 0
+        groups = {
+            0: [(above | d, [("value", d)], [("rs1_bit0", d ^ step), ("bit31", d ^ (1 << 31))])],
+            2: [(above | d, [("value", d)], [("below", d - step), ("addi_x1", _MS_ADDI_SMALL)])],
+            3: [
+                (
+                    above | _MS_ADDI_LT,
+                    [("below", _MS_ADDI_LT - step), ("addi_x1", _MS_ADDI_SMALL)],
+                    [("value", _MS_ADDI_LT), ("signed_below", d)],
+                )
+            ],
+            1: [
+                (
+                    above | d | 0xFFFF,
+                    [("rs1_0", d), ("rs1_3", d | 0x18000)],
+                    [("bit17", d ^ (1 << 17)), ("bit31", d ^ (1 << 31))],
+                )
+            ],
+            # not-equal: everything but the disarming csrw fires
+            8: [(above | disarm, [("rd", rd_write), ("bit14", imm_write)], [("value", disarm)])],
+            # not-NAPOT over bits 13:0, which holds the disarming csrw and the rd variant
+            9: [(above | (disarm & ~0x3FFF) | 0x1FFF, [("bit14", imm_write)], [("value", disarm), ("rd", rd_write)])],
+            # mask low, addi: bit 15 compared, bit 13 (funct3: addi -> slti) masked off
+            4: [
+                (
+                    ((_ms_mask(half) & ~(1 << 13)) << half) | (d & _ms_mask(half) & ~(1 << 13)),
+                    [("value", d), ("unmasked_bit13", d ^ (1 << 13))],
+                    [("masked_bit15", d ^ (1 << 15))],
+                )
+            ],
+            # not-mask-low, csrw: bit 14 compared, rd (bits 11:7) masked off
+            12: [
+                (
+                    ((_ms_mask(half) & ~(0x1F << 7)) << half) | (disarm & _ms_mask(half) & ~(0x1F << 7)),
+                    [("bit14", imm_write)],
+                    [("value", disarm), ("unmasked_rd", rd_write)],
+                )
+            ],
+        }
+        if n > half:  # RV32: compare bit 16 (rs1 bit 1) of the high half; mask high masks off bit 17
+            mask = _ms_mask(half) & ~0b10
+            groups[5] = [
+                (
+                    (mask << half) | (d >> half & mask),
+                    [("value", d), ("unmasked_bit17", d ^ (1 << 17))],
+                    [("masked_bit16", d ^ (1 << 16))],
+                )
+            ]
+            # not-mask-high compares only bit 16, where the disarming csrw and addi x0, x0 hold 0
+            groups[13] = [((1 << half), [("bit16", d ^ (1 << 16))], [("value", d), ("disarm", disarm)])]
+        else:  # RV64: the high half of a 32-bit instruction is 0; only the groups that never fire are safe
+            groups[5] = [((_ms_mask(half) << half) | d, [], [("value_as_high", d)])]
+            groups[13] = [(_ms_mask(half) << half, [], [("value_zero_high", d)])]
+        return groups[match]
+    return _ms_swap(groups[match & 7 if match in (8, 9, 12, 13) else match], match)
+
+
+def _ms_check(match: int, n: int, xlen: int, groups: list[tuple[int, list, list]], disarm: bool) -> None:
+    """Fail generation if a case would not behave as its group says, or the disarming csrw would fire."""
+    for tdata2, fire, nofire in groups:
+        for label, value in fire:
+            assert _ms_fires(match, n, xlen, tdata2, value), (match, n, xlen, label)
+        for label, value in nofire:
+            assert not _ms_fires(match, n, xlen, tdata2, value), (match, n, xlen, label)
+        # the disarming csrw must not match whether the low N or all XLEN bits of tdata2 are compared
+        assert not (disarm and any(_ms_fires(match, w, xlen, tdata2, _MS_DISARM) for w in (n, xlen))), (match, n, xlen)
+
+
+def _ms_sizes(xlen: int, kind: str) -> list[int]:
+    if kind == "execute":
+        return [16, 32]
+    return [n for n in (8, 16, 32, 64) if n <= xlen]
+
+
+def _ms_groups(kind: str, match: int, n: int, xlen: int, rd: int) -> list[tuple[int, list, list]]:
+    if kind == "execute":
+        groups = _ms_exec_groups(match, n, xlen, rd)
+        _ms_check(match, n, xlen, groups, disarm=(n == 32))
+    else:
+        groups = _ms_data_groups(match, n, xlen)
+        _ms_check(match, n, xlen, groups, disarm=False)
+    return groups
+
+
+def _generate_match_size_tests(test_data: TestData, mode: str) -> list[TestChunk]:
+    """Generate the mcontrol6 match x size tests (select = 1) for stores, loads and, in M-mode, execution."""
+    covergroup = f"Sdtrig{mode}_mcontrol6_cg"
+    seed(reproducible_hash(covergroup + "_match_size"))
+    chunks: list[TestChunk] = []
+    addr_reg, data_reg, temp_reg = test_data.int_regs.get_registers(3, reg_range=[8, 9, 12, 13, 14, 15])
+
+    def config(trig_num: int, tdata2: int, xsl: int, match: int, n: int) -> tuple[list[str], list[str]]:
+        """(write tselect and tdata2 with the trigger disabled, write tdata1 to arm it)"""
+        lines = _config_mcontrol6(
+            temp_reg, trig_num, tdata2, mode, xsl=xsl, select=1, size=_MS_SIZE_CODE[n], match=match
+        )
+        split = next(i for i, line in enumerate(lines) if line.startswith("# tdata1:"))
+        return lines[:split], lines[split:]
+
+    def data_case(kind: str, arm: list[str], xlen: int, value: int, width: int, note: str) -> list[str]:
+        word = (_MS_DATA_ABOVE & _ms_mask(xlen) & ~_ms_mask(width)) | value
+        insn = _MS_STORE[width] if kind == "store" else _MS_LOAD[width]
+        setup = [f"LI(x{data_reg}, 0x{word:x}) # low {width} bits 0x{value:x}, other bits set"]
+        if kind == "load":
+            setup.append(f"SREG x{data_reg}, 0(x{addr_reg}) # the loaded word, written before the trigger is armed")
+        return [
+            *setup,
+            *arm,
+            f"{insn} x{data_reg}, 0(x{addr_reg}) # {note}",
+            "nop # spacer (data match fires after)",
+            _csr_access("csrw tdata1, x0 # disarm before the signature is written", mode),
+            *_sign_trap_count(data_reg, test_data),
+        ]
+
+    def exec_case(arm: list[str], value: int, width: int, note: str) -> list[str]:
+        target = f".4byte 0x{value:08x}" if width == 32 else f".2byte 0x{value:04x}"
+        return [
+            *arm,
+            f"{target} # {note}",
+            "csrw tdata1, x0 # disarm: never matches this group's tdata2",
+            *_sign_trap_count(data_reg, test_data),
+        ]
+
+    kinds = ["store", "load", *(["execute"] if mode == "Sm" else [])]
+    for kind in kinds:
+        coverpoint = f"cp_mcontrol6_match_size_{kind}"
+        lines = test_data.new_test_chunk(chunks, coverpoint.removeprefix("cp_")).code
+        lines.extend(_global_ie(mode, True))
+        lines.append(
+            comment_banner(
+                coverpoint,
+                f"Each legal match crossed with each legal size on a select = 1 {kind} trigger: accesses of size N\n"
+                "that fire, narrowly different ones that don't, and accesses of another width that don't.\n"
+                "rvtest_trap_count is signed after each case",
+            )
+        )
+        xsl = {"store": 0b010, "load": 0b001, "execute": 0b100}[kind]
+        for trig_num in TRIGGERS:
+            gates = [*_mcontrol6_gates(trig_num, mode, select=1), *_xsl_ifdefs(xsl)]
+            lines.extend(gates)
+            if kind != "execute":
+                lines.append(f"LA(x{addr_reg}, scratch)")
+            for xlen in (32, 64):
+                lines.append(f"#if __riscv_xlen == {xlen}")
+                for match in _MS_MATCHES:
+                    if match:
+                        lines.append(f"#ifdef {_match_legal(match)}")
+                    for n in _ms_sizes(xlen, kind):
+                        size = _MS_SIZE_CODE[n]
+                        lines.append(f"\n# match = {match}, size = {size} ({n} bits)")
+                        lines.extend(_size_open(size))
+                        cases: list[tuple[int, str, int, int, str]] = []  # (tdata2, label, value, width, note)
+                        groups = _ms_groups(kind, match, n, xlen, temp_reg)
+                        for tdata2, fire, nofire in groups:
+                            cases += [(tdata2, label, v, n, "fires") for label, v in fire]
+                            cases += [(tdata2, label, v, n, "must not fire") for label, v in nofire]
+                        # accesses of another width W, with the tdata2 their own W-bit groups fire on
+                        others = [w for w in (n // 2, n * 2) if w in _ms_sizes(xlen, kind) and w != n]
+                        if kind == "execute":
+                            others = [16 if n == 32 else 32]
+                        for w in others:
+                            for tdata2, fire, _ in _ms_groups(kind, match, w, xlen, temp_reg):
+                                if (
+                                    kind == "execute"
+                                    and n == 32
+                                    and any(_ms_fires(match, b, xlen, tdata2, _MS_DISARM) for b in (n, xlen))
+                                ):
+                                    continue  # the disarming csrw would match this tdata2 at size 32
+                                cases += [
+                                    (tdata2, f"other{w}_{label}", v, w, f"{w}-bit: must not fire (size {n})")
+                                    for label, v in fire
+                                ]
+                        if kind != "execute" and n < xlen:  # an XLEN-wide access that equals tdata2 above N too
+                            tdata2, fire, _ = groups[0]
+                            for label, v in fire[:1]:
+                                full = (tdata2 & ~_ms_mask(n)) | v
+                                cases.append(
+                                    (tdata2, f"xlen_{label}", full, xlen, f"XLEN-wide: must not fire (size {n})")
+                                )
+                        last_tdata2 = None
+                        for i, (tdata2, label, value, width, note) in enumerate(cases):
+                            setup, arm = config(trig_num, tdata2, xsl, match, n)
+                            if tdata2 != last_tdata2:  # tselect and tdata2 once per group
+                                lines.extend(setup)
+                                last_tdata2 = tdata2
+                            binname = f"RV{xlen}_trig_{trig_num}_match_{match}_size_{size}_{label}_{i}"
+                            zca = kind == "execute" and 16 in (n, width)
+                            if zca:
+                                lines.append("#ifdef ZCA_SUPPORTED")
+                            # a 32-bit instruction on a size = 2 trigger has a cross of its own
+                            cp = f"{coverpoint}_other" if kind == "execute" and (n, width) == (16, 32) else coverpoint
+                            lines.append(_add_tc(test_data, binname, cp, covergroup))
+                            if kind == "execute":
+                                lines.extend(exec_case(arm, value, width, note))
+                            else:
+                                lines.extend(data_case(kind, arm, xlen, value, width, note))
+                            if zca:
+                                lines.append("#endif")
+                        lines.extend(_size_close(size))
+                    if match:
+                        lines.append(f"#endif // {_match_legal(match)}")
+                lines.append(f"#endif // __riscv_xlen == {xlen}")
+            lines.extend(_close_gates(gates))
+
+    test_data.int_regs.return_registers([addr_reg, data_reg, temp_reg])
+    chunks.append(test_data.end_test_chunk())
+    for chunk in chunks:  # each section is its own file and enables MIE/SIE at its start
+        chunk.code.extend(_global_ie(mode, False))
+    return chunks
+
+
 def _icount_gates(trig_num: int, mode: str) -> list[str]:
     """``#ifdef``s for an icount arm on ``trig_num`` from ``mode``: the trigger supports icount and the mode's bit is
     writable (a case that leaves the bit clear still writes it as 1 in the matching case)."""
@@ -4442,6 +4781,13 @@ def register_sdtrig_suite(mode: str, required_extensions: list[str | list[str]],
     def make_sdtrig_mcontrol6(test_data: TestData) -> list[TestChunk]:
         """mcontrol6 tests."""
         return _with_trap_counts(_generate_mcontrol6_tests(test_data, mode))
+
+    @add_priv_test_generator(
+        suite, required_extensions=required_extensions, march_extensions=[], extra_defines=extra_defines
+    )
+    def make_sdtrig_match_size(test_data: TestData) -> list[TestChunk]:
+        """mcontrol6 match x size tests (select = 1)."""
+        return _with_trap_counts(_generate_match_size_tests(test_data, mode))
 
     @add_priv_test_generator(
         suite, required_extensions=[*required_extensions, "Zvl32b"], march_extensions=[], extra_defines=extra_defines

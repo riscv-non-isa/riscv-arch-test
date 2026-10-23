@@ -438,6 +438,18 @@ covergroup SdtrigSm_mcontrol6_cg with function sample(ins_t ins);
     `ifdef SDTRIG_SIZE_DATA
         cp_mcontrol6_size_data: cross priv_mode_m, triggernum_mcontrol6, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_select_data, tdata1_xsl_store, tdata1_size_data, size_data_case, size_data_outcome; // NTRIG * sizes * 3
     `endif
+    `ifdef SDTRIG_MATCH_SIZE_STORE
+        cp_mcontrol6_match_size_store:   cross priv_mode_m, triggernum_mcontrol6, ms_match, ms_size_data, ms_store_case;  // NTRIG * legal matches * legal sizes * 3
+    `endif
+    `ifdef SDTRIG_MATCH_SIZE_LOAD
+        cp_mcontrol6_match_size_load:    cross priv_mode_m, triggernum_mcontrol6, ms_match, ms_size_data, ms_load_case;   // NTRIG * legal matches * legal sizes * 3
+    `endif
+    `ifdef SDTRIG_MATCH_SIZE_EXEC
+        cp_mcontrol6_match_size_execute: cross priv_mode_m, triggernum_mcontrol6, ms_match_exec, ms_size_exec, ms_exec_case; // NTRIG * legal matches * sizes 2/3 * 2
+        `ifdef SDTRIG_MATCH_SIZE_EXEC16
+            cp_mcontrol6_match_size_execute_other: cross priv_mode_m, triggernum_mcontrol6, ms_match_exec, ms_size_exec16, ms_exec_other; // NTRIG * legal matches (RV64: but 5, 13)
+        `endif
+    `endif
     `ifdef SDTRIG_CHAIN_3
         cp_mcontrol6_chain_long: cross priv_mode_m, triggernum_chain_end, tdata1_type_mcontrol6, tdata1_m_on, tdata1_chain_disabled, tdata1_select_adr, tdata1_size_any, tdata1_xsl_store, store_xlen, chain_store_x0, chain_store_adr, chain_fired; // chain lengths * 2
     `endif

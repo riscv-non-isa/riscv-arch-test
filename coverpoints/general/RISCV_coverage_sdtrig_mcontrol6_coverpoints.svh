@@ -335,6 +335,87 @@ size_data_outcome: coverpoint sdtrig_bp_taken(ins) == (sdtrig_size_data_case(ins
     type_option.weight = 0;
     bins as_expected = {1'b1};
 }
+// cp_mcontrol6_match_size_*: the match, size and case of a select = 1 trigger (sdtrig_ms_case)
+`ifdef SDTRIG_SIZE_DATA
+    ms_match: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "match")[3:0] {
+        type_option.weight = 0;
+        bins equal = {4'd0};
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_1  bins napot         = {4'd1};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_2  bins ge            = {4'd2};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_3  bins lt            = {4'd3};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_4  bins mask_low      = {4'd4};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_5  bins mask_high     = {4'd5};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_8  bins not_equal     = {4'd8};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_9  bins not_napot     = {4'd9};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_12 bins not_mask_low  = {4'd12}; `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_13 bins not_mask_high = {4'd13}; `endif
+    }
+    ms_size_data: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "size")[2:0] {
+        type_option.weight = 0;
+        `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_1 bins b8  = {3'd1}; `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_2 bins b16 = {3'd2}; `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3 bins b32 = {3'd3}; `endif
+        `ifdef UDB_MXLEN_64
+            `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_5 bins b64 = {3'd5}; `endif
+        `endif
+    }
+    ms_store_case: coverpoint sdtrig_ms_case(ins, 3'b010) {
+        type_option.weight = 0;
+        bins size_fired     = {2'd1};
+        bins size_not_fired = {2'd2};
+        bins other_width    = {2'd3};
+    }
+    ms_load_case: coverpoint sdtrig_ms_case(ins, 3'b001) {
+        type_option.weight = 0;
+        bins size_fired     = {2'd1};
+        bins size_not_fired = {2'd2};
+        bins other_width    = {2'd3};
+    }
+`endif
+`ifdef SDTRIG_MATCH_SIZE_EXEC
+    // On RV64 the high half of an instruction is 0, so mask high (5) and not mask high (13) on a 32-bit
+    // instruction either fire on every instruction, including the csrw that disarms the trigger, or on none:
+    // only the never-firing groups are tested, and the crosses leave those matches out
+    ms_match_exec: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "match")[3:0] {
+        type_option.weight = 0;
+        bins equal = {4'd0};
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_1  bins napot         = {4'd1};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_2  bins ge            = {4'd2};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_3  bins lt            = {4'd3};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_4  bins mask_low      = {4'd4};  `endif
+        `ifndef UDB_MXLEN_64
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_5  bins mask_high     = {4'd5};  `endif
+        `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_8  bins not_equal     = {4'd8};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_9  bins not_napot     = {4'd9};  `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_12 bins not_mask_low  = {4'd12}; `endif
+        `ifndef UDB_MXLEN_64
+            `ifdef UDB_SDTRIG_MCONTROL6_MATCH_LEGAL_VALUES_13 bins not_mask_high = {4'd13}; `endif
+        `endif
+    }
+    ms_size_exec: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "size")[2:0] {
+        type_option.weight = 0;
+        `ifdef SDTRIG_MATCH_SIZE_EXEC16 bins b16 = {3'd2}; `endif
+        `ifdef UDB_SDTRIG_MCONTROL6_SIZE_LEGAL_VALUES_3 bins b32 = {3'd3}; `endif
+    }
+    ms_exec_case: coverpoint sdtrig_ms_case(ins, 3'b100) {
+        type_option.weight = 0;
+        bins size_fired     = {2'd1};
+        bins size_not_fired = {2'd2};
+    }
+    `ifdef SDTRIG_MATCH_SIZE_EXEC16
+        // a 32-bit instruction against a size = 2 trigger: a 32-bit trigger's own disarming csrw rules out
+        // some tdata2 values for 16-bit instructions on size = 3, so only this direction is required
+        ms_size_exec16: coverpoint get_csr_val(ins.hart, ins.issue, sdtrig_ms_when(ins), "tdata1", "size")[2:0] {
+            type_option.weight = 0;
+            bins b16 = {3'd2};
+        }
+        ms_exec_other: coverpoint sdtrig_ms_case(ins, 3'b100) {
+            type_option.weight = 0;
+            bins other_width = {2'd3};
+        }
+    `endif
+`endif
 // cp_mcontrol6_chain_long: the XLEN-wide store of x0 to the address the chain's last trigger watches, and
 // whether the breakpoint was taken on it
 chain_store_x0: coverpoint ins.current.insn[24:20] {

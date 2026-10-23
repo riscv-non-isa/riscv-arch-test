@@ -577,6 +577,26 @@ coverpoints:
       - Sdtrig_mcontrol6_match_mask_high
       - Sdtrig_mcontrol6_match_not_mask_low
       - Sdtrig_mcontrol6_match_not_mask_high
+  - name: cp_mcontrol6_match_size_store
+    goal: Every legal match crossed with every legal size on a select = 1 store trigger in S-mode
+    description: |-
+      As SdtrigSm cp_mcontrol6_match_size_store, with tdata1.s = 1 and the stores executed in S-mode.
+      tdata1 is written through T-SBI.
+    expectation: As SdtrigSm cp_mcontrol6_match_size_store
+    bins: NTRIG * legal matches * legal sizes * {fired, not fired, other width}
+    rules:
+      - Sdtrig_mcontrol6_comparisons
+      - Sdtrig_mcontrol6_select_data
+  - name: cp_mcontrol6_match_size_load
+    goal: Every legal match crossed with every legal size on a select = 1 load trigger in S-mode
+    description: |-
+      As SdtrigSm cp_mcontrol6_match_size_load, with tdata1.s = 1 and the loads executed in S-mode.
+      tdata1 is written through T-SBI.
+    expectation: As SdtrigSm cp_mcontrol6_match_size_load
+    bins: NTRIG * legal matches * legal sizes * {fired, not fired, other width}
+    rules:
+      - Sdtrig_mcontrol6_comparisons
+      - Sdtrig_mcontrol6_select_data
   - name: MControl6 Chain
     description: |-
       Repeat for each of UDB_SDTRIG_NUM_TRIGGERS if UDB_SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS[i] and UDB_SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS[i+1]:
