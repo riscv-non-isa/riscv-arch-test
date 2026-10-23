@@ -10,7 +10,7 @@
 
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.ExceptionsZicboCommon import emit_suite
+from testgen.priv.extensions.exceptions.ExceptionsZicboCommon import emit_suite
 from testgen.priv.registry import add_priv_test_generator
 
 _CG = "Exceptions_ZicboSm_cg"

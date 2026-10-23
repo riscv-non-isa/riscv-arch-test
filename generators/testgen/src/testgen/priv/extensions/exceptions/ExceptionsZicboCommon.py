@@ -1,5 +1,5 @@
 ##################################
-# priv/extensions/ExceptionsZicboCommon.py
+# priv/extensions/exceptions/ExceptionsZicboCommon.py
 #
 # Shared Zicbo extension exception test generation.
 # aman.murad@10xengineers.ai August 2026

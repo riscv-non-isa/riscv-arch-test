@@ -1,5 +1,5 @@
 ##################################
-# priv/extensions/ExceptionsS.py
+# priv/extensions/exceptions/ExceptionsS.py
 #
 # ExceptionsS test generator
 # jgong@hmc.edu Apr 2026
@@ -12,7 +12,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.asm.tsbi import tsbi_call, tsbi_call_or_direct
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.ExceptionsCommon import (
+from testgen.priv.extensions.exceptions.ExceptionsCommon import (
     generate_breakpoint_tests,
     generate_ecall_tests,
     generate_illegal_instruction_seed_tests,

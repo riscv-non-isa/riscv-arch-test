@@ -1,5 +1,5 @@
 ##################################
-# priv/extensions/ExceptionsF.py
+# priv/extensions/exceptions/ExceptionsF.py
 #
 # ExceptionsF extension exception test generator.
 # huahuang@hmc.edu Apr 2026

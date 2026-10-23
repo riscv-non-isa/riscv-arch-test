@@ -1,5 +1,5 @@
 ##################################
-# priv/extensions/ExceptionsSm.py
+# priv/extensions/exceptions/ExceptionsSm.py
 #
 # ExceptionsSm test generator
 # jgong@hmc.edu Apr 2026
@@ -11,7 +11,7 @@
 from testgen.asm.helpers import comment_banner
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.ExceptionsCommon import (
+from testgen.priv.extensions.exceptions.ExceptionsCommon import (
     generate_breakpoint_tests,
     generate_ecall_tests,
     generate_illegal_instruction_seed_tests,

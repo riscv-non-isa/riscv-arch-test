@@ -1,5 +1,5 @@
 ##################################
-# priv/extensions/ExceptionsCommon.py
+# priv/extensions/exceptions/ExceptionsCommon.py
 #
 # Shared exception tests generation
 # jgong@hmc.edu Apr 2026

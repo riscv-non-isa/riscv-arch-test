@@ -1,5 +1,5 @@
 ##################################
-# priv/extensions/ExceptionsZaamo.py
+# priv/extensions/exceptions/ExceptionsZaamo.py
 #
 # ExceptionsZaamo extension exception test generator.
 # huahuang@hmc.edu Feb 2026
