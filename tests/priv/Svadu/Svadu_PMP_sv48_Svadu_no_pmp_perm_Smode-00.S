@@ -37,7 +37,7 @@ RVTEST_BEGIN
 #define PMP_REGION_SIZE (((1 << (UDB_PMP_GRANULARITY - 2)) - 1) >> 1)
 #define PMP_MASK        ~PMP_REGION_SIZE
 
-  RVTEST_PMP_SET_BACKGROUND x9
+  RVTEST_PMP_SET_BACKGROUND x6
 
 // Virtual addresses for code and test regions
 
@@ -62,8 +62,8 @@ RVTEST_BEGIN
   SATP_SETUP_RV64(sv48) // Enable address translation.
   sfence.vma
 
-  LI(x9, MENVCFG_ADUE)
-  csrs menvcfg, x9
+  LI(x6, MENVCFG_ADUE)
+  csrs menvcfg, x6
 
   LI(x13, 0x800) // Test signature initialization
 
@@ -85,124 +85,124 @@ Svadu_PMP_cg_PMP_pagetable_write_pmpcfg0:
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_D | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL3)
   sfence.vma
 
-  LI(x14, (va_data >> 39) << 39)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 25
-  srli x9, x9, 25
-  add x14, x14, x9
+  LI(x9, (va_data >> 39) << 39)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 25
+  srli x6, x6, 25
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test1_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test1_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test1_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test1_store, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test1_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test1_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test1_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test1_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test1_exec_str)
-  LA(x9, rvtest_Sroot_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test1_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test1_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test1_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test1_exec_str)
+  LA(x6, rvtest_Sroot_pg_tbl)
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test1_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test1_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test1_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test1_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test1_read_pte_str)
 
 // Test case 2: PTE.D unset; PMP blocks the A/D update
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL3)
   sfence.vma
 
-  LI(x14, (va_data >> 39) << 39)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 25
-  srli x9, x9, 25
-  add x14, x14, x9
+  LI(x9, (va_data >> 39) << 39)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 25
+  srli x6, x6, 25
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test2_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test2_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test2_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test2_store, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test2_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test2_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test2_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test2_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test2_exec_str)
-  LA(x9, rvtest_Sroot_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test2_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test2_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test2_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test2_exec_str)
+  LA(x6, rvtest_Sroot_pg_tbl)
 Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test2_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test2_read_pte, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test2_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test2_read_pte, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test2_read_pte_str)
 
 // Test case 3: PTE.A and PTE.D unset; PMP blocks the A/D update
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL3)
   sfence.vma
 
-  LI(x14, (va_data >> 39) << 39)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 25
-  srli x9, x9, 25
-  add x14, x14, x9
+  LI(x9, (va_data >> 39) << 39)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 25
+  srli x6, x6, 25
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test3_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test3_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_store, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test3_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test3_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test3_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test3_exec_str)
-  LA(x9, rvtest_Sroot_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test3_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test3_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test3_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test3_exec_str)
+  LA(x6, rvtest_Sroot_pg_tbl)
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_read_pte_str)
 
   LA(x5, rvtest_slvl2_pg_tbl)
   srl x5, x5, PMP_SHIFT
@@ -219,126 +219,126 @@ Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test3_read_pte:
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_D | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL2)
   sfence.vma
 
-  LI(x14, (va_data >> 30) << 30)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 34
-  srli x9, x9, 34
-  add x14, x14, x9
+  LI(x9, (va_data >> 30) << 30)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 34
+  srli x6, x6, 34
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test4_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test4_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test4_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test4_store, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test4_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test4_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test4_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test4_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test4_exec_str)
-  LA(x9, rvtest_slvl2_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test4_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test4_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test4_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test4_exec_str)
+  LA(x6, rvtest_slvl2_pg_tbl)
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test4_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test4_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test4_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test4_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test4_read_pte_str)
 
 // Test case 5: PTE.D unset; PMP blocks the A/D update
   PTE_SETUP_SV48(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL2)
   sfence.vma
 
-  LI(x14, (va_data >> 30) << 30)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 34
-  srli x9, x9, 34
-  add x14, x14, x9
+  LI(x9, (va_data >> 30) << 30)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 34
+  srli x6, x6, 34
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test5_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test5_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test5_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test5_store, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test5_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test5_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test5_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test5_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test5_exec_str)
-  LA(x9, rvtest_slvl2_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test5_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test5_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test5_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test5_exec_str)
+  LA(x6, rvtest_slvl2_pg_tbl)
 Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test5_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test5_read_pte, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test5_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test5_read_pte, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test5_read_pte_str)
 
 // Test case 6: PTE.A and PTE.D unset; PMP blocks the A/D update
   PTE_SETUP_SV48(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL2)
   sfence.vma
 
-  LI(x14, (va_data >> 30) << 30)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 34
-  srli x9, x9, 34
-  add x14, x14, x9
+  LI(x9, (va_data >> 30) << 30)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 34
+  srli x6, x6, 34
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test6_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test6_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_store, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test6_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test6_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test6_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test6_exec_str)
-  LA(x9, rvtest_slvl2_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test6_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test6_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test6_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test6_exec_str)
+  LA(x6, rvtest_slvl2_pg_tbl)
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_read_pte_str)
 
   LA(x5, rvtest_slvl1_pg_tbl)
   srl x5, x5, PMP_SHIFT
@@ -356,42 +356,42 @@ Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test6_read_pte:
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_D | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
   sfence.vma
 
-  LI(x14, (va_data >> 21) << 21)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 43
-  srli x9, x9, 43
-  add x14, x14, x9
+  LI(x9, (va_data >> 21) << 21)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 43
+  srli x6, x6, 43
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test7_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test7_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_store, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test7_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test7_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test7_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test7_exec_str)
-  LA(x9, rvtest_slvl1_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test7_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test7_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test7_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test7_exec_str)
+  LA(x6, rvtest_slvl1_pg_tbl)
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_read_pte_str)
 
 // Test case 8: PTE.D unset; PMP blocks the A/D update
   PTE_SETUP_SV48(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
@@ -399,42 +399,42 @@ Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test7_read_pte:
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
   sfence.vma
 
-  LI(x14, (va_data >> 21) << 21)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 43
-  srli x9, x9, 43
-  add x14, x14, x9
+  LI(x9, (va_data >> 21) << 21)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 43
+  srli x6, x6, 43
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test8_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test8_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_store, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test8_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test8_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test8_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test8_exec_str)
-  LA(x9, rvtest_slvl1_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test8_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test8_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test8_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test8_exec_str)
+  LA(x6, rvtest_slvl1_pg_tbl)
 Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_read_pte, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_read_pte, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_read_pte_str)
 
 // Test case 9: PTE.A and PTE.D unset; PMP blocks the A/D update
   PTE_SETUP_SV48(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
@@ -442,42 +442,42 @@ Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test8_read_pte:
   SUPERPAGE_PTE_SETUP_SV48(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL1)
   sfence.vma
 
-  LI(x14, (va_data >> 21) << 21)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 43
-  srli x9, x9, 43
-  add x14, x14, x9
+  LI(x9, (va_data >> 21) << 21)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 43
+  srli x6, x6, 43
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test9_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test9_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_store, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test9_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test9_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test9_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test9_exec_str)
-  LA(x9, rvtest_slvl1_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test9_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test9_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test9_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test9_exec_str)
+  LA(x6, rvtest_slvl1_pg_tbl)
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_read_pte_str)
 
   LA(x5, rvtest_slvl0_pg_tbl)
   srl x5, x5, PMP_SHIFT
@@ -496,42 +496,42 @@ Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test9_read_pte:
   PTE_SETUP_SV48(rvtest_data_1, (PTE_D | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(x14, (va_data >> 12) << 12)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 52
-  srli x9, x9, 52
-  add x14, x14, x9
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test10_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test10_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_store, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test10_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test10_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test10_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test10_exec_str)
-  LA(x9, rvtest_slvl0_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test10_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test10_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test10_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test10_exec_str)
+  LA(x6, rvtest_slvl0_pg_tbl)
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_read_pte_str)
 
 // Test case 11: PTE.D unset; PMP blocks the A/D update
   PTE_SETUP_SV48(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
@@ -540,42 +540,42 @@ Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test10_read_pte:
   PTE_SETUP_SV48(rvtest_data_1, (PTE_A | PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(x14, (va_data >> 12) << 12)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 52
-  srli x9, x9, 52
-  add x14, x14, x9
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test11_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test11_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_store, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test11_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test11_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test11_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test11_exec_str)
-  LA(x9, rvtest_slvl0_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test11_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test11_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test11_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test11_exec_str)
+  LA(x6, rvtest_slvl0_pg_tbl)
 Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_read_pte, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_read_pte, Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_read_pte_str)
 
 // Test case 12: PTE.A and PTE.D unset; PMP blocks the A/D update
   PTE_SETUP_SV48(rvtest_slvl2_pg_tbl, (PTE_V), va_data, LEVEL3)
@@ -584,42 +584,42 @@ Svadu_PMP_cg_Dbit_unset_pmpW_unset_write_s_test11_read_pte:
   PTE_SETUP_SV48(rvtest_data_1, (PTE_X | PTE_W | PTE_R | PTE_V), va_data, LEVEL0)
   sfence.vma
 
-  LI(x14, (va_data >> 12) << 12)
-  LA(x9, rvtest_data_1)
-  slli x9, x9, 52
-  srli x9, x9, 52
-  add x14, x14, x9
+  LI(x9, (va_data >> 12) << 12)
+  LA(x6, rvtest_data_1)
+  slli x6, x6, 52
+  srli x6, x6, 52
+  add x9, x9, x6
   RVTEST_TSBI_GOTO_SMODE
   addi x13, x13, 16
 
 // Store
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test12_store:
-  sw x13, 20(x14)
+  sw x13, 20(x9)
   nop
 
 // Load
 Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test12_load:
-  lw x8, 20(x14)
+  lw x15, 20(x9)
   nop
 
 // Execute
 Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test12_exec:
-  jalr ra, x14, 0
+  jalr ra, x9, 0
   nop
 
   RVTEST_TSBI_GOTO_MMODE
 
   # Check if x13 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x13, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test12_store, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test12_store_str)
-  # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x8, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test12_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test12_load_str)
   # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test12_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test12_exec_str)
-  LA(x9, rvtest_slvl0_pg_tbl)
+  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test12_load, Svadu_PMP_cg_Abit_unset_pmpW_unset_read_s_test12_load_str)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test12_exec, Svadu_PMP_cg_Abit_unset_pmpW_unset_exec_s_test12_exec_str)
+  LA(x6, rvtest_slvl0_pg_tbl)
 Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test12_read_pte:
-  ld x15, 0(x9)
-  # Check if x15 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
-  RVTEST_SIGUPD(x2, x5, x4, x15, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test12_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test12_read_pte_str)
+  ld x14, 0(x6)
+  # Check if x14 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x14, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test12_read_pte, Svadu_PMP_cg_Abit_unset_pmpW_unset_write_s_test12_read_pte_str)
 
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
@@ -635,7 +635,7 @@ RVTEST_DATA_BEGIN
   .p2align 12
 rvtest_data_1:
   nop
-  addi x15, x13, 4
+  addi x14, x13, 4
   jr ra
   nop
   .word 0xbeefcaf1
