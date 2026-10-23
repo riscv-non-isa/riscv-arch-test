@@ -38,11 +38,15 @@
         }
 `endif
 
-// menvcfg.STCE, henvcfg.STCE, mcounteren.TM and hcounteren.TM before the instruction, and the CSR accessed
+// menvcfg.STCE and henvcfg.STCE (read-only zero while menvcfg.STCE = 0), mcounteren.TM and hcounteren.TM before
+// the instruction, and the CSR accessed
 `define SSTCH_ENABLES \
     `SSTCH_TIMECMPS \
-    menvcfg_stce  : coverpoint `SSTCH_MSTCE; \
-    henvcfg_stce  : coverpoint `SSTCH_HSTCE; \
+    stce          : coverpoint {`SSTCH_MSTCE, `SSTCH_HSTCE} { \
+        bins m0_h0 = {2'b00}; \
+        bins m1_h0 = {2'b10}; \
+        bins m1_h1 = {2'b11}; \
+    } \
     mcounteren_tm : coverpoint ins.prev.csr[CSR_MCOUNTEREN][1]; \
     hcounteren_tm : coverpoint ins.prev.csr[CSR_HCOUNTEREN][1]; \
     csrr : coverpoint ins.current.insn { \
@@ -65,10 +69,6 @@
         bins one = {1}; \
     }
 
-// henvcfg.STCE is read-only zero while menvcfg.STCE = 0
-`define SSTCH_REACHABLE \
-    ignore_bins stce = binsof(menvcfg_stce) intersect {0} && binsof(henvcfg_stce) intersect {1};
-
 covergroup SstcH_hs_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -76,10 +76,7 @@ covergroup SstcH_hs_cg with function sample(ins_t ins);
     `SSTCH_ACCESSES
 
     // HS-mode reaches vstimecmp only with menvcfg.STCE = mcounteren.TM = 1
-    cp_hs_vstimecmp_accessible: cross priv_mode_hs, csrr, vstimecmp, menvcfg_stce, henvcfg_stce, mcounteren_tm,
-                                      hcounteren_tm {
-        `SSTCH_REACHABLE
-    }
+    cp_hs_vstimecmp_accessible: cross priv_mode_hs, csrr, vstimecmp, stce, mcounteren_tm, hcounteren_tm;
     // menvcfg.STCE = mcounteren.TM = 1 with henvcfg.STCE = hcounteren.TM = 0
     henvcfg_stce_zero : coverpoint `SSTCH_HSTCE {
         bins zero = {0};
@@ -120,15 +117,9 @@ covergroup SstcH_vs_cg with function sample(ins_t ins);
     `SSTCH_ACCESSES
 
     // stimecmp is vstimecmp in VS-mode, gated by both STCE and both TM bits
-    cp_vs_stimecmp_accessible: cross priv_mode_vs, csrr, stimecmp, menvcfg_stce, henvcfg_stce, mcounteren_tm,
-                                     hcounteren_tm {
-        `SSTCH_REACHABLE
-    }
+    cp_vs_stimecmp_accessible: cross priv_mode_vs, csrr, stimecmp, stce, mcounteren_tm, hcounteren_tm;
     // vstimecmp by its own address is never accessible in VS-mode
-    cp_vs_vstimecmp_inaccessible: cross priv_mode_vs, csrr, vstimecmp, menvcfg_stce, henvcfg_stce, mcounteren_tm,
-                                        hcounteren_tm {
-        `SSTCH_REACHABLE
-    }
+    cp_vs_vstimecmp_inaccessible: cross priv_mode_vs, csrr, vstimecmp, stce, mcounteren_tm, hcounteren_tm;
     henvcfg_stce_one : coverpoint `SSTCH_HSTCE {
         bins one = {1};
     }
@@ -153,10 +144,7 @@ covergroup SstcH_vu_cg with function sample(ins_t ins);
         `endif
     }
     // Illegal instruction when HS-mode could not access them, else virtual instruction
-    cp_vu_timecmp_inaccessible: cross priv_mode_vu, csrr, timecmp, menvcfg_stce, henvcfg_stce, mcounteren_tm,
-                                      hcounteren_tm {
-        `SSTCH_REACHABLE
-    }
+    cp_vu_timecmp_inaccessible: cross priv_mode_vu, csrr, timecmp, stce, mcounteren_tm, hcounteren_tm;
 endgroup
 
 covergroup SstcH_u_cg with function sample(ins_t ins);
@@ -173,10 +161,7 @@ covergroup SstcH_u_cg with function sample(ins_t ins);
         `endif
     }
     // Always illegal instruction
-    cp_u_timecmp_inaccessible: cross priv_mode_u, csrr, timecmp, menvcfg_stce, henvcfg_stce, mcounteren_tm,
-                                     hcounteren_tm {
-        `SSTCH_REACHABLE
-    }
+    cp_u_timecmp_inaccessible: cross priv_mode_u, csrr, timecmp, stce, mcounteren_tm, hcounteren_tm;
 endgroup
 
 function void sstch_sample(int hart, int issue, ins_t ins);

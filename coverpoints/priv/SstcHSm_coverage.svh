@@ -102,8 +102,12 @@ covergroup SstcHSm_m_cg with function sample(ins_t ins);
             bins zero = {64'h0};
         }
     `endif
-    menvcfg_stce : coverpoint `SSTCHSM_MSTCE;
-    henvcfg_stce : coverpoint `SSTCHSM_HSTCE;
+    // henvcfg.STCE is read-only zero while menvcfg.STCE = 0
+    stce : coverpoint {`SSTCHSM_MSTCE, `SSTCHSM_HSTCE} {
+        bins m0_h0 = {2'b00};
+        bins m1_h0 = {2'b10};
+        bins m1_h1 = {2'b11};
+    }
     menvcfg_stce_one : coverpoint `SSTCHSM_MSTCE {
         bins one = {1};
     }
@@ -128,17 +132,11 @@ covergroup SstcHSm_m_cg with function sample(ins_t ins);
     }
 
     // hip.VSTIP is hvip.VSTIP | (menvcfg.STCE & henvcfg.STCE & time + htimedelta >= vstimecmp)
-    cp_vstip: cross priv_mode_m, csrr, hip, menvcfg_stce, henvcfg_stce, hvip_vstip, vstimecmp_val, htimedelta_zero {
-        // henvcfg.STCE is read-only zero while menvcfg.STCE = 0
-        ignore_bins stce = binsof(menvcfg_stce) intersect {0} && binsof(henvcfg_stce) intersect {1};
-    }
+    cp_vstip: cross priv_mode_m, csrr, hip, stce, hvip_vstip, vstimecmp_val, htimedelta_zero;
     cp_htimedelta: cross priv_mode_m, csrr, hip, menvcfg_stce_one, henvcfg_stce_one, htimedelta_val, vstimecmp_delta;
 
     // M-mode reaches vstimecmp whatever the enables hold
-    cp_m_vstimecmp_accessible: cross priv_mode_m, csrr, vstimecmp, menvcfg_stce, henvcfg_stce, mcounteren_tm,
-                                     hcounteren_tm {
-        ignore_bins stce = binsof(menvcfg_stce) intersect {0} && binsof(henvcfg_stce) intersect {1};
-    }
+    cp_m_vstimecmp_accessible: cross priv_mode_m, csrr, vstimecmp, stce, mcounteren_tm, hcounteren_tm;
     // menvcfg.STCE = 1 with henvcfg.STCE = mcounteren.TM = hcounteren.TM = 0
     cp_m_vstimecmp_accesses: cross priv_mode_m, csraccesses, vstimecmp, menvcfg_stce_one, henvcfg_stce_zero,
                                    mcounteren_tm_zero, hcounteren_tm_zero;
