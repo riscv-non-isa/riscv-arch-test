@@ -105,7 +105,8 @@
 //      All five GOTO ops relocate the resume address when a test runs with
 //      translation on and has registered a code alias for its code region
 //      (see TSBI_RELOCATE_EPC).
-//    TSBI_ECALL_TEST  (a0=0x73)       — Test ecall path; returns xEPC in a0
+//    TSBI_ECALL_TEST  (a0=0x73)       — Record the ecall in the trap signature and return
+//                                       past it with xEPC in a0
 //    CSR_ACCESS       (a0=CSR opcode) — Execute CSR instruction; rd must be a0
 //    TSBI_LW/LWP4/LD  (a0=load opcode) — Load from physical address a1 into a0
 //    TSBI_SW/SWP4/SD  (a0=store opcode)— Store a2 to physical address a1
@@ -700,7 +701,7 @@
 // Usage in tests:
 //   RVTEST_TSBI_GOTO_MMODE              // switch to M-mode, clobbers a0
 //   RVTEST_TSBI_GOTO_UMODE              // switch to U-mode, clobbers a0
-//   RVTEST_TSBI_ECALL_TEST              // test ecall path, result in a0
+//   RVTEST_TSBI_ECALL_TEST              // ecall recorded in the trap signature, xEPC in a0
 //   RVTEST_TSBI_CSR_ACCESS 0x30002573   // read mstatus into a0
 //
 // CLOBBERS: a0 (operation code / return value), a1 (CSR_ACCESS argument only)
@@ -744,14 +745,14 @@
   .option pop
 .endm
 
-// Test the ecall trap path via T-SBI.
-// After this macro, a0 contains the address of the ecall instruction itself.
-// This verifies that the trap handler correctly entered and returned.
+// Test the ecall trap path via T-SBI. The handler records the ecall in the trap
+// signature and returns past it. After this macro, a0 contains the address of the
+// ecall instruction itself.
 .macro RVTEST_TSBI_ECALL_TEST
   .option push
   .option norvc                                  // ensure consistent code size
   li   a0, TSBI_ECALL_TEST                      // a0 = 0x73 (ECALL_TEST operation code)
-  ecall                                          // trap to handler; handler reads xEPC into a0
+  ecall                                          // trap to handler; handler records it and reads xEPC into a0
   // a0 now contains the address of the ecall instruction above
   .option pop
 .endm
@@ -1346,7 +1347,7 @@ common_\__MODE__\()entry:                       // common entry for all traps in
 //   1. Check if cause is an ecall (causes 8..11) -> if not, go to normal trap sig
 //   2. Dispatch on the caller's a0 (still live — the handler never touches a0/a1):
 //      a. a0 in [1..5] -> GOTO_xMODE (set MPP/MPV, bump mepc, mret)
-//      b. a0 == 0x73   -> ECALL_TEST (return xEPC in a0, bump mepc)
+//      b. a0 == 0x73   -> ECALL_TEST (record trap, return xEPC in a0, bump mepc)
 //      c. a0[6:0]==0x73 && a0[14:12]!=0 -> CSR_ACCESS (execute dynamic CSR instr)
 //      d. Otherwise    -> RESERVED (return -1 in a0)
 //   3. If not an SBI call: fall through to normal trap signature recording
@@ -1386,17 +1387,11 @@ tsbi_\__MODE__\()dispatch:
         //--------------------------------------------------------------
         // T-SBI ECALL_TEST handler (M-mode)
         //
-        // Purpose: Verify that the ecall trap path is functional.
-        // Returns the xEPC value (address of the ecall instruction) in a0.
-        // This lets the test confirm that the handler was entered correctly.
-        //
-        // On return: a0 = address of the ecall instruction that triggered this trap
+        // Records the ecall in the trap signature and returns past it with a0 = mepc.
         //--------------------------------------------------------------
 tsbi_\__MODE__\()ecall_test:
-        csrr    a0, CSR_XEPC                       // a0 = mepc = address of the ecall instruction
-        addi    T3, a0, 4                            // T3 = mepc + 4 (skip past ecall)
-        csrw    CSR_XEPC, T3                         // mepc = mepc + 4
-        j       resto_\__MODE__\()rtn               // restore regs and mret (a0 carries the return value)
+        csrr    a0, CSR_XEPC                       // a0 = mepc = ecall address (the record path keeps a0)
+        j       \__MODE__\()trapsig_ptr_upd       // record the trap and return past the ecall
 
         //--------------------------------------------------------------
         // T-SBI GOTO_xMODE handler (M-mode)
@@ -1538,7 +1533,7 @@ tsbi_\__MODE__\()goto_vu:
 // forwards the rest to the next more privileged handler by making another ecall.
 //
 // LOCAL HANDLING (S-mode can service these directly):
-//   - ECALL_TEST:  return sepc in a0 (sepc = U-mode ecall address)
+//   - ECALL_TEST:  record the trap, return sepc in a0 (sepc = U-mode ecall address)
 //   - GOTO_SMODE:  set sstatus.SPP=1 (return to S-mode via sret)
 //   - GOTO_UMODE:  set sstatus.SPP=0 (return to U-mode via sret)
 //   - CSR_ACCESS for S/U-mode CSRs: execute locally (CSR addr[9:8] != 11)
@@ -1659,12 +1654,10 @@ tsbi_\__MODE__\()reserved:                        // Unrecognized SBI operation
         j       resto_\__MODE__\()rtn              // sret to caller with a0 = -1
   .endif
 
-        //--- ECALL_TEST ---
+        //--- ECALL_TEST: record it like any other exception ---
 tsbi_\__MODE__\()ecall_test:
-        csrr    a0, CSR_XEPC                       // a0 = sepc = U-mode ecall address
-        addi    T3, a0, 4                            // skip ecall
-        csrw    CSR_XEPC, T3                         // sepc += 4
-        j       resto_\__MODE__\()rtn              // sret to caller with a0 = ecall address
+        csrr    a0, CSR_XEPC                       // a0 = sepc = ecall address (the record path keeps a0)
+        j       \__MODE__\()trapsig_ptr_upd       // record the trap and return past the ecall
 
         //--- S-mode GOTO_xMODE dispatch ---
         // sret target:  SPV=0 SPP=1 -> HS    SPV=1 SPP=1 -> VS
@@ -1913,9 +1906,15 @@ tsbi_instr_table:
         TSBI_CSR_INSTR_TABLE(0x306) // mcounteren
         TSBI_CSR_INSTR_TABLE(0x30A) // menvcfg
         TSBI_CSR_INSTR_TABLE(0x30C) // mstateen0
+        TSBI_CSR_INSTR_TABLE(0x30D) // mstateen1
+        TSBI_CSR_INSTR_TABLE(0x30E) // mstateen2
+        TSBI_CSR_INSTR_TABLE(0x30F) // mstateen3
         TSBI_CSR_INSTR_TABLE(0x31C) // mstateen0h
         #if (UDB_MXLEN==32)
         TSBI_CSR_INSTR_TABLE(0x31A) // menvcfgh
+        TSBI_CSR_INSTR_TABLE(0x31D) // mstateen1h
+        TSBI_CSR_INSTR_TABLE(0x31E) // mstateen2h
+        TSBI_CSR_INSTR_TABLE(0x31F) // mstateen3h
         #endif
         TSBI_CSR_INSTR_TABLE(0x344) // mip
         TSBI_CSR_INSTR_TABLE(0x350) // miselect

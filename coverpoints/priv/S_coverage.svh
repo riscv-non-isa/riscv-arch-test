@@ -358,6 +358,14 @@ covergroup S_F_cg with function sample(ins_t ins);
     `include "general/RISCV_coverage_priv_f_coverpoints.svh"
 
     sstatus_FS: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs")[1:0] {
+        bins off     = {2'b00};
+        `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_1
+            bins initial_state = {2'b01};
+        `endif
+        `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_2
+            bins clean   = {2'b10};
+        `endif
+        bins dirty   = {2'b11};
     }
     sstatus_FS_off_dirty: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs")[1:0] {
         bins off     = {2'b00};
@@ -467,18 +475,25 @@ covergroup S_V_cg with function sample(ins_t ins);
     // tests sstatus ability to set clean and initial to dirty only when supposed to
     //////////////////////////////////////////////////////////////////////////////////
 
-    sstatus_vs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
-        bins first = {1};
-        bins clean  = {2};
+    // Initial and Clean only when MSTATUS_VS_LEGAL_VALUES includes them (otherwise a write
+    // of either reads back as Dirty)
+    sstatus_vs_on : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
+        `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_1
+            bins first = {1};
+        `endif
+        `ifdef UDB_MSTATUS_VS_LEGAL_VALUES_2
+            bins clean  = {2};
+        `endif
+        bins dirty  = {3};
     }
 
     sstatus_vs_inactive    : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "vs") {
         bins inactive = {0};
     }
 
-    cp_sstatus_vs_set_dirty_arithmetic  : cross priv_mode_s, std_vec,        vector_vector_arithmetic_instruction,   sstatus_vs_initial_clean;
-    cp_sstatus_vs_set_dirty_csr         : cross priv_mode_s, std_vec,        vsetvli_instruction,                    sstatus_vs_initial_clean;
-    cp_sstatus_vs_set_dirty_vcsr        : cross priv_mode_s, vcsrs_writable, csrops,                                 sstatus_vs_initial_clean;
+    cp_sstatus_vs_set_dirty_arithmetic  : cross priv_mode_s, std_vec,        vector_vector_arithmetic_instruction,   sstatus_vs_on;
+    cp_sstatus_vs_set_dirty_csr         : cross priv_mode_s, std_vec,        vsetvli_instruction,                    sstatus_vs_on;
+    cp_sstatus_vs_set_dirty_vcsr        : cross priv_mode_s, vcsrs_writable, csrops,                                 sstatus_vs_on;
 
     cp_sstatus_vs_off_arithmetic        : cross priv_mode_s, sstatus_vs_inactive,     vector_vector_arithmetic_instruction iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vtype", "vill") == 0 &
                                                                                                                                   get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstart", "vstart") == 0 &
@@ -506,18 +521,25 @@ covergroup S_VF_cg with function sample(ins_t ins);
         bins true = {1'b1};
     }
 
-    sstatus_fs_initial_clean : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs") {
-        bins first_state = {1};
-        bins clean  = {2};
+    // Initial and Clean only when MSTATUS_FS_LEGAL_VALUES includes them (otherwise a write
+    // of either reads back as Dirty)
+    sstatus_fs_on : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs") {
+        `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_1
+            bins first_state = {1};
+        `endif
+        `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_2
+            bins clean  = {2};
+        `endif
+        bins dirty  = {3};
     }
 
     sstatus_fs_off : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "sstatus", "fs") {
         bins off = {0};
     }
 
-    cp_vectorfp_sstatus_fs_state_affecting_register : cross priv_mode_s, std_vec, vfmv_f_s, sstatus_fs_initial_clean;
-    cp_vectorfp_sstatus_fs_state_affecting_csr      : cross priv_mode_s, std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_initial_clean, fflags_modified_after_clear;
-    cp_vectorfp_sstatus_fs_state_nonaffecting       : cross priv_mode_s, std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_initial_clean, vs1_zero, vs2_zero;
+    cp_vectorfp_sstatus_fs_state_affecting_register : cross priv_mode_s, std_vec, vfmv_f_s, sstatus_fs_on;
+    cp_vectorfp_sstatus_fs_state_affecting_csr      : cross priv_mode_s, std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_on, fflags_modified_after_clear;
+    cp_vectorfp_sstatus_fs_state_nonaffecting       : cross priv_mode_s, std_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_on, vs1_zero, vs2_zero;
     cp_vectorfp_sstatus_fs_off                      : cross priv_mode_s, std_trap_vec, vector_vector_arithmetic_fp_instruction, sstatus_fs_off, vs1_zero, vs2_zero;
 
 endgroup
