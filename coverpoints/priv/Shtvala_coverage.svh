@@ -50,18 +50,31 @@ covergroup Shtvala_cg with function sample(ins_t ins);
             bins implicit_gpa = {2'b10};
         }
 
+        hlv_w : coverpoint ins.current.insn {
+            wildcard bins hlv_w = {HLV_W};
+        }
+        hsv_w : coverpoint ins.current.insn {
+            wildcard bins hsv_w = {HSV_W};
+        }
+        // As htval_gpa, for HLV and HSV, whose address is rs1
+        htval_gpa_hlsv : coverpoint {
+            ins.current.csr[CSR_HTINST] == (`UDB_MXLEN == 64 ? 'h3000 : 'h2000),
+            ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "htval", "htval") << 2) & 'hFFF) ==
+                (ins.current.rs1_val & 'hFFF)
+        } {
+            bins final_gpa    = {2'b01};
+            bins implicit_gpa = {2'b10};
+        }
+
         cp_load_guest_page_fault:  cross priv_mode_vs_vu, lw,   load_guest_page_fault,  htval_gpa;
         cp_store_guest_page_fault: cross priv_mode_vs_vu, sw,   store_guest_page_fault, htval_gpa;
         cp_instr_guest_page_fault: cross priv_mode_vs_vu, jalr, instr_guest_page_fault, htval_gpa;
+        // HLV and HSV from HS-mode and U-mode (hstatus.HU = 1)
+        cp_hlv_guest_page_fault:   cross priv_mode_s_u, hlv_w, load_guest_page_fault,  htval_gpa_hlsv;
+        cp_hsv_guest_page_fault:   cross priv_mode_s_u, hsv_w, store_guest_page_fault, htval_gpa_hlsv;
 
         `ifdef UDB_MISALIGNED_LDST
         `ifdef UDB_MISALIGNED_SPLIT_STRATEGY_SEQUENTIAL_BYTES
-            hlv_w : coverpoint ins.current.insn {
-                wildcard bins hlv_w = {HLV_W};
-            }
-            hsv_w : coverpoint ins.current.insn {
-                wildcard bins hsv_w = {HSV_W};
-            }
             // A word two bytes below the end of a page, which continues into the next page
             straddle : coverpoint ((ins.current.rs1_val + ins.current.imm) & 'hFFF) {
                 bins page_end = {'hFFE};
