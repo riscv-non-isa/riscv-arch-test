@@ -809,8 +809,42 @@ covergroup Sm_V_cg with function sample(ins_t ins);
     // crosses of the shared vector coverpoints
     cp_vcsrrswc                 : cross priv_mode_m, vcsrs, csrops;
     cp_vcsrs_walking1s          : cross priv_mode_m, writable_vcsrs, csrw, walking_ones_rs1;
-    cp_sew_lmul_vsetvl          : cross priv_mode_m, vsetvl_instruction, rs2_vtype_legal, rs2_lmul, rs2_sew;
-    cp_sew_lmul_vset_i_vli      : cross priv_mode_m, vset_i_vli_instructions, vset_sew, vset_lmul;
+    cp_sew_lmul_vsetvl          : cross priv_mode_m, vsetvl_instruction, rs2_vtype_legal, rs2_lmul, rs2_sew {
+        `ifndef UDB_SUPPORT_FRACTIONAL_LMUL_BEYOND_REQUIRED_NO_UNREQUIRED_SUPPORTED
+            ignore_bins illegal_sew_lmul =
+                (binsof(rs2_sew) intersect { 3'b011 } && binsof(rs2_lmul) intersect { 3'b111 }) ||  // SEW = 64, LMUL = f2
+                (binsof(rs2_sew) intersect { 3'b011 } && binsof(rs2_lmul) intersect { 3'b110 }) ||  // SEW = 64, LMUL = f4
+                (binsof(rs2_sew) intersect { 3'b011 } && binsof(rs2_lmul) intersect { 3'b101 }) ||  // SEW = 64, LMUL = f8
+                (binsof(rs2_sew) intersect { 3'b010 } && binsof(rs2_lmul) intersect { 3'b110 }) ||  // SEW = 32, LMUL = f4
+                (binsof(rs2_sew) intersect { 3'b010 } && binsof(rs2_lmul) intersect { 3'b101 }) ||  // SEW = 32, LMUL = f8
+                (binsof(rs2_sew) intersect { 3'b001 } && binsof(rs2_lmul) intersect { 3'b101 });    // SEW = 16, LMUL = f8
+
+            `ifndef UDB_ELEN_64
+                ignore_bins illegal_sew_lmul_elen32 =
+                    (binsof(rs2_sew) intersect { 3'b010 } && binsof(rs2_lmul) intersect { 3'b111 }) ||  // SEW = 32, LMUL = f2
+                    (binsof(rs2_sew) intersect { 3'b001 } && binsof(rs2_lmul) intersect { 3'b110 }) ||  // SEW = 16, LMUL = f4
+                    (binsof(rs2_sew) intersect { 3'b000 } && binsof(rs2_lmul) intersect { 3'b101 });    // SEW = 8, LMUL = f8
+            `endif
+        `endif
+    }
+    cp_sew_lmul_vset_i_vli      : cross priv_mode_m, vset_i_vli_instructions, vset_sew, vset_lmul {
+        `ifndef UDB_SUPPORT_FRACTIONAL_LMUL_BEYOND_REQUIRED_NO_UNREQUIRED_SUPPORTED
+            ignore_bins illegal_sew_lmul =
+                (binsof(vset_sew) intersect { 3'b011 } && binsof(vset_lmul) intersect { 3'b111 }) ||  // SEW = 64, LMUL = f2
+                (binsof(vset_sew) intersect { 3'b011 } && binsof(vset_lmul) intersect { 3'b110 }) ||  // SEW = 64, LMUL = f4
+                (binsof(vset_sew) intersect { 3'b011 } && binsof(vset_lmul) intersect { 3'b101 }) ||  // SEW = 64, LMUL = f8
+                (binsof(vset_sew) intersect { 3'b010 } && binsof(vset_lmul) intersect { 3'b110 }) ||  // SEW = 32, LMUL = f4
+                (binsof(vset_sew) intersect { 3'b010 } && binsof(vset_lmul) intersect { 3'b101 }) ||  // SEW = 32, LMUL = f8
+                (binsof(vset_sew) intersect { 3'b001 } && binsof(vset_lmul) intersect { 3'b101 });    // SEW = 16, LMUL = f8
+
+            `ifndef UDB_ELEN_64
+                ignore_bins illegal_sew_lmul_elen32 =
+                    (binsof(vset_sew) intersect { 3'b010 } && binsof(vset_lmul) intersect { 3'b111 }) ||  // SEW = 32, LMUL = f2
+                    (binsof(vset_sew) intersect { 3'b001 } && binsof(vset_lmul) intersect { 3'b110 }) ||  // SEW = 16, LMUL = f4
+                    (binsof(vset_sew) intersect { 3'b000 } && binsof(vset_lmul) intersect { 3'b101 });    // SEW = 8, LMUL = f8
+            `endif
+        `endif
+    }
     cp_vill_vsetvl              : cross priv_mode_m, vsetvl_instruction, vtype_prev_vill_set, rs2_vtype_legal, rs2_sew_all_supported, rs2_lmul_8;
     cp_vill_vset_i_vli          : cross priv_mode_m, vset_i_vli_instructions, vtype_prev_vill_set, current_vset_sew_all_supported, current_vset_lmul_8;
     cp_vill_vsetvl_rs2_vill     : cross priv_mode_m, vsetvl_instruction, vtype_prev_vill_set, rs2_vtype_legal_no_msb, rs2_sew_all_supported, rs2_lmul_8, rs2_vill_set;
@@ -835,7 +869,27 @@ covergroup Sm_V_cg with function sample(ins_t ins);
     cp_vsetvl_i_avl_gt_2x_vlmax : cross priv_mode_m, vsetvl_i_instructions, rs1_gt_2x_vlmax;
     cp_vsetivli_avl_edges       : cross priv_mode_m, vsetivli_instruction, vtype_all_sew_supported, imm5_edges, vtype_lmul_1;
     cp_vstart_out_of_bounds     : cross priv_mode_m, vstart_csr, csr_write, rs1_2_to_16;
-    cp_vl_walking1s_sew_lmul    : cross priv_mode_m, vsetivli_prev_instruction, vsetivli_prev_sew_lmul, csrrw, csr_vl, walking_ones_rs1;
+    cp_vl_walking1s_sew_lmul    : cross priv_mode_m, vsetivli_prev_instruction, vsetivli_prev_sew_lmul, csrrw, csr_vl, walking_ones_rs1 {
+        `ifndef UDB_SUPPORT_FRACTIONAL_LMUL_BEYOND_REQUIRED_NO_UNREQUIRED_SUPPORTED
+            // SEW > LMUL*ELEN sets vill; the tests skip these unless the DUT supports the extra fractional LMULs.
+            // Encodings are {vsew, vlmul}. ELEN is at most 64, so ELEN>=128 pairs are never legal.
+            ignore_bins illegal_sew_lmul = binsof(vsetivli_prev_sew_lmul) intersect {
+                5'b01_101,  // e16, mf8
+                5'b10_110,  // e32, mf4
+                5'b10_101,  // e32, mf8
+                5'b11_111,  // e64, mf2
+                5'b11_110,  // e64, mf4
+                5'b11_101   // e64, mf8
+            };
+            `ifndef UDB_ELEN_64
+                ignore_bins illegal_sew_lmul_elen32 = binsof(vsetivli_prev_sew_lmul) intersect {
+                    5'b00_101,  // e8, mf8
+                    5'b01_110,  // e16, mf4
+                    5'b10_111   // e32, mf2
+                };
+            `endif
+        `endif
+    }
 
     //////////////////////////////////////////////////////////////////////////////////
     // cp_mstatus_vs_*

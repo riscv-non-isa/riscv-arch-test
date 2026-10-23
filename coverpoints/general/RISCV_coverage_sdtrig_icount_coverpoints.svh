@@ -73,7 +73,7 @@ icount_eq0_result: coverpoint sdtrig_icount_outcome(ins, `SDTRIG_ICOUNT_MODE_BIT
     bins pending_clear_no_fire = {3'd3};
     bins pending_set_fired     = {3'd4};
 }
-`ifdef UDB_ICOUNT_HARDWIRED_1
+`ifdef UDB_SDTRIG_ICOUNT_COUNT_HARDWIRED_1
     // count hard-wired to 1, armed with m/s/u/vs/vu all set: firing clears all five and pending
     armed_hardwired: coverpoint {sdtrig_icount_count(get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")),
                                  get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "tdata1")[26:25],

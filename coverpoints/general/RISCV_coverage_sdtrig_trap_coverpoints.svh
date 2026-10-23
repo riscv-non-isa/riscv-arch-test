@@ -86,16 +86,16 @@ itrigger_interrupt: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, 
 itrigger_code_s: coverpoint sdtrig_trap_cause(ins)[7:0] {
     type_option.weight = 0;
     `ifdef UDB_SSI_INTR_IMPL
-        bins ssi = {8'd1};
+        `ifdef UDB_SDTRIG_ITRIGGER_SUPPORTED_INTERRUPTS_1 bins ssi = {8'd1}; `endif
     `endif
     `ifdef UDB_STI_INTR_IMPL
-        bins sti = {8'd5};
+        `ifdef UDB_SDTRIG_ITRIGGER_SUPPORTED_INTERRUPTS_5 bins sti = {8'd5}; `endif
     `endif
     `ifdef UDB_SEI_INTR_IMPL
-        bins sei = {8'd9};
+        `ifdef UDB_SDTRIG_ITRIGGER_SUPPORTED_INTERRUPTS_9 bins sei = {8'd9}; `endif
     `endif
     `ifdef SSCOFPMF_SUPPORTED
-        bins lcofi = {8'd13};
+        `ifdef UDB_SDTRIG_ITRIGGER_SUPPORTED_INTERRUPTS_13 bins lcofi = {8'd13}; `endif
     `endif
 }
 // the selected trigger is an etrigger and an exception was taken on this record
