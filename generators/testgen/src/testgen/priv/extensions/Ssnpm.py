@@ -217,7 +217,6 @@ def _ssnpm_chunk(
     required_extensions=["Ssnpm"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="SsnpmSm",
 )
 def make_ssnpmsm(test_data: TestData) -> list[TestChunk]:
     tc = test_data.begin_test_chunk(split_name="Sm")
