@@ -56,7 +56,7 @@ def _smnpms_sweep(test_data: TestData, pmm: int) -> list[TestChunk]:
         # a tagged pointer: the first with tags that leave bit 63 clear, the second with tags that set it.
         # edgecases holds the remaining checks, such as misaligned accesses, JALR, access faults and MXR.
         for split, uppers in SPLITS:
-            tc = test_data.begin_test_chunk(split_name=f"S_{mode}_{label}_{split}")
+            tc = test_data.begin_test_chunk(f"S_{mode}_{label}_{split}")
             guard = MODE_GUARDS[mode]
             if guard:
                 tc.raw_data.append(f"#ifdef {guard}")
@@ -162,14 +162,14 @@ def _smnpms_chunk(
     extra_defines=["#define BOOT_TO_MMODE"],
 )
 def make_smnpmssm(test_data: TestData) -> list[TestChunk]:
-    """M-mode half of SmnpmS: MPRV=1 with MPP=S.
+    """M-mode half of Smnpm_S: MPRV=1 with MPP=S.
 
     The probes run in M-mode but take S-mode's effective privilege, so menvcfg.PMM --
     the CSR Smnpm adds -- decides whether the pointer is masked, and mseccfg.PMM does
     not apply. That pairing is why these cases cannot live in the Smmpm suite: a hart
     with Smmpm alone has no menvcfg.PMM to program.
     """
-    tc = test_data.begin_test_chunk(split_name="Sm")
+    tc = test_data.begin_test_chunk("SSm")
     tc.raw_data.extend(mprv_data_section())
     tc.code = [
         *generate_mprv_lower_mode_tests(
@@ -196,7 +196,7 @@ def _smnpmu_sweep(test_data: TestData, pmm: int) -> list[TestChunk]:
     # a tagged pointer: the first with tags that leave bit 63 clear, the second with tags that set it.
     # edgecases holds the remaining checks, such as misaligned accesses, JALR, access faults and MXR.
     for split, uppers in SPLITS:
-        tc = test_data.begin_test_chunk(split_name=f"U_{label}_{split}")
+        tc = test_data.begin_test_chunk(f"U_{label}_{split}")
         tc.raw_data.extend(data_page("pm_lo_page"))
         prefix = f"{label}_bare"
         lines = [
@@ -215,7 +215,7 @@ def _smnpmu_sweep(test_data: TestData, pmm: int) -> list[TestChunk]:
 # One generator per PMLEN. The header params select the file only when the config supports that PMLEN.
 @add_priv_test_generator(
     "Smnpm",
-    required_extensions=["Smnpm"],
+    required_extensions=["Smnpm", "U"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
 )
@@ -225,7 +225,7 @@ def make_smnpmu_pmm00(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "Smnpm",
-    required_extensions=["Smnpm"],
+    required_extensions=["Smnpm", "U"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     params=["SUPPORTED_PMLEN_SMNPM: 7"],
@@ -236,7 +236,7 @@ def make_smnpmu_pmm10(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "Smnpm",
-    required_extensions=["Smnpm"],
+    required_extensions=["Smnpm", "U"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     params=["SUPPORTED_PMLEN_SMNPM: 16"],
@@ -250,7 +250,7 @@ def make_smnpmu_pmm11(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "Smnpm",
-    required_extensions=["Smnpm", "Sm"],
+    required_extensions=["Smnpm", "U", "Sm"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
@@ -261,7 +261,7 @@ def make_smnpmusm(test_data: TestData) -> list[TestChunk]:
     Without S-mode, menvcfg.PMM (Smnpm), governs U-mode, so it decides
     whether the pointer is masked, and mseccfg.PMM does not apply.
     """
-    tc = test_data.begin_test_chunk(split_name="USm")
+    tc = test_data.begin_test_chunk("USm")
     tc.raw_data.extend(mprv_data_section())
     tc.code = [
         *generate_mprv_lower_mode_tests(
