@@ -615,23 +615,11 @@ normative_rule_definitions:
         "Not tested: ordering of I/O and memory accesses is not observable in single-hart signature tests",
       ]
 
-  # henvcfg.LPE enables Zicfilp in VS-mode
-  - names: [henvcfg_lpe_op]
-    coverpoint:
-      ["TODO: landing-pad checks in VS-mode with henvcfg.LPE = 0 and 1"]
-
-  # Zicfilp adds vsstatus.SPELP, which holds the previous ELP on traps into VS-mode
-  - names: [vsstatus_spelp_op]
-    coverpoint:
-      [
-        "TODO: check vsstatus.SPELP after traps into VS-mode and after sret in VS-mode with Zicfilp enabled",
-      ]
-
   # henvcfg.SSE activates Zicfiss in VS-mode
   - names: [henvcfg_sse_op]
     coverpoint:
       [
-        "TODO: shadow-stack instructions in VS-mode and VU-mode with henvcfg.SSE = 0 and 1",
+        "Not tested: shadow-stack instructions in VS-mode and VU-mode with henvcfg.SSE = 0 and 1 belong to ZicfissH, which has no tests yet",
       ]
 
   # With Ssnpm, henvcfg.PMM enables pointer masking for VS-mode; PMM is read-only zero without Ssnpm and on RV32
@@ -642,19 +630,19 @@ normative_rule_definitions:
   - names: [henvcfg_dte_op]
     coverpoint:
       [
-        "TODO: write vsstatus.SDT and take a trap into VS-mode with henvcfg.DTE = 0 and 1",
+        "Not tested: writing vsstatus.SDT and trapping into VS-mode with henvcfg.DTE = 0 and 1 belong to SsdbltrpH, which has no tests yet",
       ]
 
   # Ssdbltrp adds vsstatus.SDT for double traps in VS-mode
   - names: [vsstatus_sdt_op]
     coverpoint:
       [
-        "TODO: take traps into VS-mode with vsstatus.SDT = 0 and 1 and check the double trap",
+        "Not tested: traps into VS-mode with vsstatus.SDT = 0 and 1 belong to SsdbltrpH, which has no tests yet",
       ]
 
   # With Ssdbltrp, sret from HS-mode into VU-mode and sret in VS-mode clear vsstatus.SDT
   - names: [sret_dt]
     coverpoint:
       [
-        "TODO: check vsstatus.SDT after sret from HS-mode into VU-mode and after sret in VS-mode",
+        "Not tested: vsstatus.SDT after sret belongs to SsdbltrpH, which has no tests yet",
       ]

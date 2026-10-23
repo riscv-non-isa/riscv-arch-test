@@ -154,13 +154,16 @@ normative_rule_definitions:
 
   # The Ssdbltrp extension requires mtval2
   - names: [mtval2_Ssdbltrp]
-    coverpoint: ["TODO: an Ssdbltrp double trap into M-mode that reads mtval2"]
+    coverpoint:
+      [
+        "Not tested: an implementation requirement; with H, the HSm CSR access tests access mtval2",
+      ]
 
   # The hypervisor extension is enabled by setting misa bit 7
   - name: misa_H_op
     coverpoint:
       [
-        "TODO: read misa.H, and with MUTABLE_MISA_H clear it and check that hypervisor CSRs and instructions raise illegal instruction",
+        "Not tested: clearing misa.H needs a reference model with writable misa.H; Sail's writable_misa makes every misa bit writable and no config with MUTABLE_MISA_H enables it",
       ]
 
   # hfence.gvma is valid in HS-mode with mstatus.TVM=0 and in M-mode, and orders prior stores before G-stage
