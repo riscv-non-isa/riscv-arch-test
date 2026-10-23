@@ -18,7 +18,7 @@ from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.PrivCommon import write64
-from testgen.priv.extensions.SstcCommon import access_cross, rv32_only, stce_tm, vstimecmp_int_tests
+from testgen.priv.extensions.Sstc import access_cross, rv32_only, stce_tm, vstimecmp_int_tests
 from testgen.priv.registry import add_priv_test_generator
 
 _HS_CG = "SstcH_hs_cg"

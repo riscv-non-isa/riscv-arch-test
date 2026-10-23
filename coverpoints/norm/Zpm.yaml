@@ -85,7 +85,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "Smmpm_cg/cp_pm_mprv_mpp_m",
-        "SsnpmSm_cg/cp_pm_mprv_mpp_u",
+        "Ssnpm_Sm_cg/cp_pm_mprv_mpp_u",
         "SmnpmSSm_cg/cp_pm_mprv_mpp_s",
         "SmnpmUSm_cg/cp_pm_mprv_mpp_u",
         "SsnpmH_cg/{cp_hlv_hs_pmm,cp_hlv_u_pmm} (SPVP)",

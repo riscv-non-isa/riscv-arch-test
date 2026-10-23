@@ -41,8 +41,11 @@ IMSIC_STATEEN_ON = (
 
 
 def _gei(op: str, gei: int, tmp_reg: int) -> list[str]:
-    """Raise (SET) or clear (CLR) guest external interrupt gei through the platform, and wait for hgeip."""
-    return [f"RVMODEL_{op}_GUEST_EXT_INT({gei}, a1, a2)", f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg})"]
+    """Raise (SET) or clear (CLR) guest external interrupt gei through the platform, and wait for hgeip.
+
+    The hooks take the interrupt number in a register and may trash it, so it goes in a0 with a1 and a2 as temporaries.
+    """
+    return [f"li a0, {gei}", f"RVMODEL_{op}_GUEST_EXT_INT(a0, a1, a2)", f"RVTEST_IDLE_FOR_INTERRUPT(x{tmp_reg})"]
 
 
 def _mip_tests(test_data: TestData) -> list[str]:

@@ -37,7 +37,8 @@ RVTEST_BEGIN
 /////////////////////////////////
   LI(x8, 2)
   csrw hgeie, x8
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x8)
   LI(x8, MIP_HS_MASK)
 InterruptsHGei_m_cg_cp_mip_gilen_hgeip_1:
@@ -45,7 +46,8 @@ InterruptsHGei_m_cg_cp_mip_gilen_hgeip_1:
   and x6, x6, x8
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, InterruptsHGei_m_cg_cp_mip_gilen_hgeip_1, InterruptsHGei_m_cg_cp_mip_gilen_hgeip_1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x8)
   csrw hgeie, zero
   RVTEST_TSBI_GOTO_SMODE

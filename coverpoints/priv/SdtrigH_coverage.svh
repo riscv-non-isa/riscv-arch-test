@@ -298,7 +298,7 @@ covergroup SdtrigH_textra_cg with function sample(ins_t ins);
     }
 
     // main coverpoints
-    `ifdef UDB_MCONTEXT_AVAILABLE
+    `ifdef UDB_MCONTEXT_IMPLEMENTED
         cp_textra_mctx_sel:   cross guest_mode, triggernum, icount_point, mhselect_mctx, mctx_outcome;  // 2 modes * NTRIG * 2 selects * 2
     `endif
     cp_textra_vmid_sel:   cross guest_mode, triggernum, icount_point, mhselect_vmid, vmid_outcome;      // 2 modes * NTRIG * 2 selects * 2
@@ -343,7 +343,7 @@ covergroup SdtrigH_context_cg with function sample(ins_t ins);
     }
 
     // main coverpoints
-    `ifdef UDB_HCONTEXT_AVAILABLE
+    `ifdef UDB_HCONTEXT_IMPLEMENTED
         cp_hcontext_hs: cross priv_mode_hs, csr_read_write, csr_hcontext;  // 2
         cp_hcontext_m:  cross priv_mode_m, csr_read_write, csr_hcontext;   // 2
     `endif

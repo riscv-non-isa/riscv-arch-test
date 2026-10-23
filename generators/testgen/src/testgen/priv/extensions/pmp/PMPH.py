@@ -34,6 +34,7 @@ from testgen.priv.extensions.pmp.helpers import (
     napot_mask_defines,
     zero_pmp_regs,
 )
+from testgen.priv.extensions.pmp.probes import Cross
 from testgen.priv.extensions.sv.access import virtual_address
 from testgen.priv.extensions.sv.generate import guest_translation_setup, guest_translation_teardown, per_xlen
 from testgen.priv.extensions.sv.page_tables import (
@@ -92,8 +93,13 @@ def _deny(regions: list[tuple[str, int, str]]) -> list[str]:
 #####################################################################
 
 
-def _hlv_probes(test_data: TestData, case: str, coverpoint: str, region: str) -> list[str]:
-    """Every hsv, hlv and hlvx at ``region``.  A faulting load keeps rd's previous value."""
+def _hlv_probes(test_data: TestData, case: str, coverpoint: Cross, region: str) -> list[str]:
+    """Every hsv, hlv and hlvx at ``region``.  A faulting load keeps rd's previous value.
+
+    ``coverpoint`` is the prefix of the per-instruction coverpoints, so it must be a name.
+    """
+    if not isinstance(coverpoint, str):
+        raise TypeError("_hlv_probes needs a coverpoint name prefix")
     addr, rd = test_data.int_regs.get_registers(2)
     lines = ["", f"LA(x{addr}, {region})", f"LI(x{rd}, RVTEST_PMP_RET_ENCODING)"]
     for instr, rv64 in (*HSV_INSTRS, *HLV_INSTRS, *HLVX_INSTRS):
@@ -222,10 +228,10 @@ def _guest_mappings(test_data: TestData, g: SvMode, vs: SvMode, user: bool, gvas
                 mode,
                 mode.data_va,
                 0,
-                destination=f"x{gva}",
+                destination=gva,
                 physical_address="TEST_FOR_EXECUTION",
                 merge_sv32_base_page=True,
-                scratch=f"x{pte}",
+                scratch=pte,
             )
         )
     test_data.int_regs.return_registers([pte, addr, tmp])

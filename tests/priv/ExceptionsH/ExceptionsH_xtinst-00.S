@@ -132,7 +132,7 @@ ExceptionsH_cg_cp_xtinst_store_access_vs:
   csrw htinst, x15
   RVTEST_TSBI_GOTO_VSMODE
 ExceptionsH_cg_cp_xtinst_ecall_vs:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test

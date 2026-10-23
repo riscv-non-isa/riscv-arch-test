@@ -527,16 +527,16 @@ H_hscsr_cg_cp_hcsr_access_masked_henvcfgh_csrrc_all:
 # CSR Access Tests for vsstatus
   csrr x6, vsstatus    # Save CSR
 #if __riscv_xlen == 64
-  LI(x9, 0x80000000808de722)    # Load 64-bit mask
+  LI(x9, 0x80000000818de722)    # Load 64-bit mask
 #else
-  LI(x9, 0x808de722)   # Load 32-bit mask (upper bits of 0x80000000808de722 are ignored)
+  LI(x9, 0x818de722)   # Load 32-bit mask (upper bits of 0x80000000818de722 are ignored)
 #endif
   LI(x15, -1)             # write all 1s
 H_hscsr_cg_cp_hcsr_access_vsstatus_csrrw1:
   csrw vsstatus, x15    # Write all 1s to CSR
   # Read vsstatus into x8, keep only bits specified by mask, and check against expected.
   csrr x8, vsstatus    # Read CSR
-  and x8, x8, x9    # keep only masked bits 0x80000000808de722
+  and x8, x8, x9    # keep only masked bits 0x80000000818de722
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_hscsr_cg_cp_hcsr_access_vsstatus_csrrw1, H_hscsr_cg_cp_hcsr_access_vsstatus_csrrw1_str)
 
@@ -544,7 +544,7 @@ H_hscsr_cg_cp_hcsr_access_vsstatus_csrrw0:
   csrw vsstatus, zero   # Write all 0s to CSR
   # Read vsstatus into x8, keep only bits specified by mask, and check against expected.
   csrr x8, vsstatus    # Read CSR
-  and x8, x8, x9    # keep only masked bits 0x80000000808de722
+  and x8, x8, x9    # keep only masked bits 0x80000000818de722
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_hscsr_cg_cp_hcsr_access_vsstatus_csrrw0, H_hscsr_cg_cp_hcsr_access_vsstatus_csrrw0_str)
 
@@ -552,7 +552,7 @@ H_hscsr_cg_cp_hcsr_access_vsstatus_csrs_all:
   csrs vsstatus, x15    # Set all 1s
   # Read vsstatus into x8, keep only bits specified by mask, and check against expected.
   csrr x8, vsstatus    # Read CSR
-  and x8, x8, x9    # keep only masked bits 0x80000000808de722
+  and x8, x8, x9    # keep only masked bits 0x80000000818de722
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_hscsr_cg_cp_hcsr_access_vsstatus_csrs_all, H_hscsr_cg_cp_hcsr_access_vsstatus_csrs_all_str)
 
@@ -560,7 +560,7 @@ H_hscsr_cg_cp_hcsr_access_vsstatus_csrrc_all:
   csrc vsstatus, x15    # Clear all 1s
   # Read vsstatus into x8, keep only bits specified by mask, and check against expected.
   csrr x8, vsstatus    # Read CSR
-  and x8, x8, x9    # keep only masked bits 0x80000000808de722
+  and x8, x8, x9    # keep only masked bits 0x80000000818de722
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, H_hscsr_cg_cp_hcsr_access_vsstatus_csrrc_all, H_hscsr_cg_cp_hcsr_access_vsstatus_csrrc_all_str)
   csrw vsstatus, x6       # Restore CSR

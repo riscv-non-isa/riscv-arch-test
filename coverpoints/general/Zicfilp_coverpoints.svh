@@ -62,9 +62,12 @@
     // Previous instruction was an Indirect_CT through a register other than x1/x5/x7:
     // with xLPE=1 the current instruction executes with ELP=LP_EXPECTED
     lp_branch_prev: coverpoint (
-        `ZICFILP_LP_JALR(ins.prev)                                ? 2'd1 :
-        (`ZICFILP_LP_CJUMP(ins.prev) && (ins.prev.insn ==? C_JR)) ? 2'd2 :
-        `ZICFILP_LP_CJUMP(ins.prev)                               ? 2'd3 : 2'd0) {
+        `ZICFILP_LP_JALR(ins.prev) ? 2'd1 :
+        `ifdef ZCA_SUPPORTED
+            (`ZICFILP_LP_CJUMP(ins.prev) && (ins.prev.insn ==? C_JR)) ? 2'd2 :
+            `ZICFILP_LP_CJUMP(ins.prev)                               ? 2'd3 :
+        `endif
+        2'd0) {
         bins jalr = {2'd1};
         `ifdef ZCA_SUPPORTED
             bins c_jr   = {2'd2};

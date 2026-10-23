@@ -213,7 +213,7 @@ def xtinst_exception_tests(test_data: TestData, covergroup: str, home: str) -> l
             [f"sw x{data_reg}, 0(x{addr_reg})"],
             None,
         ),
-        ("ecall", None, [], ["RVTEST_TSBI_ECALL_RECORD"], None),
+        ("ecall", None, [], ["RVTEST_TSBI_ECALL_TEST"], None),
     ]
     lines = [
         comment_banner(

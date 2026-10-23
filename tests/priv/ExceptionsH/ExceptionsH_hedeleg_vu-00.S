@@ -206,7 +206,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00000_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00000_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x1)
   csrw hedeleg, x9
@@ -380,7 +380,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00001_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00001_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x2)
   csrw hedeleg, x9
@@ -554,7 +554,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00002_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00002_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x4)
   csrw hedeleg, x9
@@ -728,7 +728,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00004_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00004_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x8)
   csrw hedeleg, x9
@@ -902,7 +902,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00008_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00008_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x10)
   csrw hedeleg, x9
@@ -1076,7 +1076,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00010_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00010_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x20)
   csrw hedeleg, x9
@@ -1250,7 +1250,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00020_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00020_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x40)
   csrw hedeleg, x9
@@ -1424,7 +1424,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00040_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00040_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x80)
   csrw hedeleg, x9
@@ -1598,7 +1598,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00080_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00080_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0x100)
   csrw hedeleg, x9
@@ -1772,7 +1772,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0x00100_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0x00100_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, 0xcb1ff)
   csrw hedeleg, x9
@@ -1946,7 +1946,7 @@ ExceptionsH_cg_cp_hedeleg_store_access_fault_hdlg_0xcb1ff_vu:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_ecall_hdlg_0xcb1ff_vu:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   csrw hedeleg, x13
 

@@ -39,37 +39,37 @@ RVTEST_BEGIN
   csrc hstatus, x9
   RVTEST_TSBI_GOTO_UMODE
 ExceptionsH_cg_cp_ecall_to_hs_u_spvp0:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, HSTATUS_SPVP)
   csrs hstatus, x9
   RVTEST_TSBI_GOTO_UMODE
 ExceptionsH_cg_cp_ecall_to_hs_u_spvp1:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, HSTATUS_SPVP)
   csrc hstatus, x9
   RVTEST_TSBI_GOTO_VSMODE
 ExceptionsH_cg_cp_ecall_to_hs_vs_spvp0:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, HSTATUS_SPVP)
   csrs hstatus, x9
   RVTEST_TSBI_GOTO_VSMODE
 ExceptionsH_cg_cp_ecall_to_hs_vs_spvp1:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, HSTATUS_SPVP)
   csrc hstatus, x9
   RVTEST_TSBI_GOTO_VUMODE
 ExceptionsH_cg_cp_ecall_to_hs_vu_spvp0:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
   LI(x9, HSTATUS_SPVP)
   csrs hstatus, x9
   RVTEST_TSBI_GOTO_VUMODE
 ExceptionsH_cg_cp_ecall_to_hs_vu_spvp1:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
 
 
@@ -83,12 +83,12 @@ ExceptionsH_cg_cp_ecall_to_hs_vu_spvp1:
   csrci vsstatus, SSTATUS_SIE
   RVTEST_TSBI_GOTO_VUMODE
 ExceptionsH_cg_cp_ecall_to_vs_vu_sie0:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
   csrsi vsstatus, SSTATUS_SIE
   RVTEST_TSBI_GOTO_VUMODE
 ExceptionsH_cg_cp_ecall_to_vs_vu_sie1:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
   csrci vsstatus, SSTATUS_SIE
 
@@ -107,7 +107,7 @@ ExceptionsH_cg_cp_vstvec_vs_ebreak:
 ExceptionsH_cg_cp_vstvec_vu_ebreak:
   ebreak
 ExceptionsH_cg_cp_vstvec_vu_ecall:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
   RVTEST_TSBI_GOTO_SMODE
   csrw hedeleg, zero
 

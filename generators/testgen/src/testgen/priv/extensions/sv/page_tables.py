@@ -14,6 +14,11 @@ from dataclasses import dataclass, replace
 # Root and lower-level page-table labels of each translation stage
 _TABLES = {"s": ("Sroot", "slvl"), "vs": ("Vroot", "vlvl"), "g": ("Hroot", "hlvl")}
 
+# The PTE_SETUP_* macros (rvtest_macros.h) build each PTE in a0 and its address in t1, clobbering a0, a1, t0
+# and t1. They leave the last PTE and its address there, which change_pte_to_be reads.
+PTE_SETUP_VALUE_REG = 10
+PTE_SETUP_ADDR_REG = 6
+
 
 @dataclass(frozen=True)
 class SvMode:

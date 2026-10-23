@@ -71,7 +71,10 @@ ZicfilpH_cg_cp_vs_lpe_jalr_henvcfg0_menvcfg0_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg0_not_lpad_target)
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg0_not_lpad:
-  .hword 0x8482 # c.jr x9
+  .option push
+  .option arch, +zca
+  c.jr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg0_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -84,7 +87,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg0_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg0_lpad_mismatch_target)
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg0_lpad_mismatch:
-  .hword 0x8482 # c.jr x9
+  .option push
+  .option arch, +zca
+  c.jr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg0_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -99,7 +105,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg0_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg0_not_lpad_target)
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg0_not_lpad:
-  .hword 0x9482 # c.jalr x9
+  .option push
+  .option arch, +zca
+  c.jalr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg0_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -112,7 +121,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg0_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg0_lpad_mismatch_target)
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg0_lpad_mismatch:
-  .hword 0x9482 # c.jalr x9
+  .option push
+  .option arch, +zca
+  c.jalr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg0_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -159,7 +171,10 @@ ZicfilpH_cg_cp_vs_lpe_jalr_henvcfg0_menvcfg1_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg1_not_lpad_target)
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg1_not_lpad:
-  .hword 0x8482 # c.jr x9
+  .option push
+  .option arch, +zca
+  c.jr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg1_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -172,7 +187,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg1_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg1_lpad_mismatch_target)
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg1_lpad_mismatch:
-  .hword 0x8482 # c.jr x9
+  .option push
+  .option arch, +zca
+  c.jr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg1_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -187,7 +205,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg0_menvcfg1_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg1_not_lpad_target)
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg1_not_lpad:
-  .hword 0x9482 # c.jalr x9
+  .option push
+  .option arch, +zca
+  c.jalr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg1_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -200,7 +221,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg1_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg1_lpad_mismatch_target)
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg1_lpad_mismatch:
-  .hword 0x9482 # c.jalr x9
+  .option push
+  .option arch, +zca
+  c.jalr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg0_menvcfg1_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -247,7 +271,10 @@ ZicfilpH_cg_cp_vs_lpe_jalr_henvcfg1_menvcfg0_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg0_not_lpad_target)
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg0_not_lpad:
-  .hword 0x8482 # c.jr x9
+  .option push
+  .option arch, +zca
+  c.jr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg0_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -260,7 +287,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg0_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg0_lpad_mismatch_target)
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg0_lpad_mismatch:
-  .hword 0x8482 # c.jr x9
+  .option push
+  .option arch, +zca
+  c.jr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg0_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -275,7 +305,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg0_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg0_not_lpad_target)
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg0_not_lpad:
-  .hword 0x9482 # c.jalr x9
+  .option push
+  .option arch, +zca
+  c.jalr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg0_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -288,7 +321,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg0_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg0_lpad_mismatch_target)
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg0_lpad_mismatch:
-  .hword 0x9482 # c.jalr x9
+  .option push
+  .option arch, +zca
+  c.jalr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg0_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -335,7 +371,10 @@ ZicfilpH_cg_cp_vs_lpe_jalr_henvcfg1_menvcfg1_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg1_not_lpad_target)
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg1_not_lpad:
-  .hword 0x8482 # c.jr x9
+  .option push
+  .option arch, +zca
+  c.jr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg1_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -348,7 +387,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg1_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg1_lpad_mismatch_target)
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg1_lpad_mismatch:
-  .hword 0x8482 # c.jr x9
+  .option push
+  .option arch, +zca
+  c.jr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg1_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -363,7 +405,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jr_henvcfg1_menvcfg1_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg1_not_lpad_target)
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg1_not_lpad:
-  .hword 0x9482 # c.jalr x9
+  .option push
+  .option arch, +zca
+  c.jalr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg1_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -376,7 +421,10 @@ ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg1_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x9, ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg1_lpad_mismatch_target)
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg1_lpad_mismatch:
-  .hword 0x9482 # c.jalr x9
+  .option push
+  .option arch, +zca
+  c.jalr x9
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vs_lpe_c_jalr_henvcfg1_menvcfg1_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -437,7 +485,10 @@ ZicfilpH_cg_cp_vu_lpe_jalr_senvcfg0_henvcfg0_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg0_not_lpad_target)
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg0_not_lpad:
-  .hword 0x8402 # c.jr x8
+  .option push
+  .option arch, +zca
+  c.jr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg0_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -450,7 +501,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg0_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg0_lpad_mismatch_target)
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg0_lpad_mismatch:
-  .hword 0x8402 # c.jr x8
+  .option push
+  .option arch, +zca
+  c.jr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg0_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -465,7 +519,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg0_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg0_not_lpad_target)
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg0_not_lpad:
-  .hword 0x9402 # c.jalr x8
+  .option push
+  .option arch, +zca
+  c.jalr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg0_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -478,7 +535,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg0_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg0_lpad_mismatch_target)
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg0_lpad_mismatch:
-  .hword 0x9402 # c.jalr x8
+  .option push
+  .option arch, +zca
+  c.jalr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg0_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -526,7 +586,10 @@ ZicfilpH_cg_cp_vu_lpe_jalr_senvcfg0_henvcfg1_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg1_not_lpad_target)
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg1_not_lpad:
-  .hword 0x8402 # c.jr x8
+  .option push
+  .option arch, +zca
+  c.jr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg1_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -539,7 +602,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg1_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg1_lpad_mismatch_target)
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg1_lpad_mismatch:
-  .hword 0x8402 # c.jr x8
+  .option push
+  .option arch, +zca
+  c.jr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg1_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -554,7 +620,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg0_henvcfg1_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg1_not_lpad_target)
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg1_not_lpad:
-  .hword 0x9402 # c.jalr x8
+  .option push
+  .option arch, +zca
+  c.jalr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg1_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -567,7 +636,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg1_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg1_lpad_mismatch_target)
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg1_lpad_mismatch:
-  .hword 0x9402 # c.jalr x8
+  .option push
+  .option arch, +zca
+  c.jalr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg0_henvcfg1_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -615,7 +687,10 @@ ZicfilpH_cg_cp_vu_lpe_jalr_senvcfg1_henvcfg0_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg0_not_lpad_target)
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg0_not_lpad:
-  .hword 0x8402 # c.jr x8
+  .option push
+  .option arch, +zca
+  c.jr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg0_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -628,7 +703,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg0_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg0_lpad_mismatch_target)
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg0_lpad_mismatch:
-  .hword 0x8402 # c.jr x8
+  .option push
+  .option arch, +zca
+  c.jr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg0_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -643,7 +721,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg0_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg0_not_lpad_target)
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg0_not_lpad:
-  .hword 0x9402 # c.jalr x8
+  .option push
+  .option arch, +zca
+  c.jalr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg0_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -656,7 +737,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg0_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg0_lpad_mismatch_target)
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg0_lpad_mismatch:
-  .hword 0x9402 # c.jalr x8
+  .option push
+  .option arch, +zca
+  c.jalr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg0_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -704,7 +788,10 @@ ZicfilpH_cg_cp_vu_lpe_jalr_senvcfg1_henvcfg1_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg1_not_lpad_target)
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg1_not_lpad:
-  .hword 0x8402 # c.jr x8
+  .option push
+  .option arch, +zca
+  c.jr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg1_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -717,7 +804,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg1_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg1_lpad_mismatch_target)
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg1_lpad_mismatch:
-  .hword 0x8402 # c.jr x8
+  .option push
+  .option arch, +zca
+  c.jr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg1_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]
@@ -732,7 +822,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jr_senvcfg1_henvcfg1_lpad_mismatch_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg1_not_lpad_target)
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg1_not_lpad:
-  .hword 0x9402 # c.jalr x8
+  .option push
+  .option arch, +zca
+  c.jalr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg1_not_lpad_target:
   addi x0, x0, 0 # non-LPAD target
@@ -745,7 +838,10 @@ ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg1_not_lpad_target:
   LI(x7, 0x12345abc) # expected landing pad label in x7[31:12]
   LA(x8, ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg1_lpad_mismatch_target)
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg1_lpad_mismatch:
-  .hword 0x9402 # c.jalr x8
+  .option push
+  .option arch, +zca
+  c.jalr x8
+  .option pop
   .p2align 2
 ZicfilpH_cg_cp_vu_lpe_c_jalr_senvcfg1_henvcfg1_lpad_mismatch_target:
   lpad 0x54321 # label does not match x7[31:12]

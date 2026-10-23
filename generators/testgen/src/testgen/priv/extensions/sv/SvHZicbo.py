@@ -142,11 +142,11 @@ def case(
             stage,
             va or stage.data_va,
             level,
-            destination=f"x{c.gva}",
+            destination=c.gva,
             physical_address=offset,
             physical_address_is_label=offset == DATA,
             merge_sv32_base_page=True,
-            scratch=f"x{addr}",
+            scratch=addr,
         ),
     ]
     if check:

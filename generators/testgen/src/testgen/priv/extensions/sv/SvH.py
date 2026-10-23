@@ -232,9 +232,7 @@ def guest_access(
     """
     va_reg, data = test_data.int_regs.get_registers(2)
     if sv is not None:
-        address = virtual_address(
-            sv, va, level, destination=f"x{va_reg}", physical_address="svh_page", scratch=f"x{data}"
-        )
+        address = virtual_address(sv, va, level, destination=va_reg, physical_address="svh_page", scratch=data)
     else:
         address = [f"{'LA' if va_is_label else 'LI'}(x{va_reg}, {va})"]
     lines = [*setup, *address, f"LI(x{data}, {0x100 + test_data.test_count:#x})"]
@@ -815,9 +813,7 @@ def _t_page_sizes(test_data: TestData, test_chunks: list[TestChunk], g: SvMode, 
             gpa, pte, addr, tmp = test_data.int_regs.get_registers(4)
             regs = (pte, addr, tmp)
             setup = [
-                *virtual_address(
-                    g, hex(g_base), g_level, destination=f"x{gpa}", physical_address="svh_page", scratch=f"x{tmp}"
-                ),
+                *virtual_address(g, hex(g_base), g_level, destination=gpa, physical_address="svh_page", scratch=tmp),
                 *create_page_walk(vs, leaf_level=vs_level, virtual_address=hex(vs_base), regs=regs),
                 *write_pte(
                     vs,

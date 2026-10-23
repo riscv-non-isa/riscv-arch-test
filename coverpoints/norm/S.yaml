@@ -396,7 +396,7 @@ normative_rule_definitions:
     coverpoint:
       [
         "ExceptionsZc_cg/cp_illegal_instruction",
-        "SsstrictS_comp_instr_cg/cp_compressed00",
+        "Ssstrict_S_comp_instr_cg/cp_compressed00",
       ]
 
   # For other traps, stval is set to zero, but a future standard may redefine

@@ -37,26 +37,26 @@ RVTEST_BEGIN
 
   RVTEST_PMP_SET_BACKGROUND x4
 
-PMPH_cp_pmpaddr_access_vs_write_all:
+PMPH_cg_cp_pmpaddr_access_vs_write_all:
 // Write all ones to every pmpaddr CSR from VS mode
   LI(x4, -1)
   .set pmpaddri, CSR_PMPADDR0
   .rept 64
   RVTEST_TSBI_GOTO_VSMODE
 99:
-  RVTEST_SIGUPD_CSR_WRITE(pmpaddri, x4, 99b, PMPH_cp_pmpaddr_access_vs_write_all_str)
+  RVTEST_SIGUPD_CSR_WRITE(pmpaddri, x4, 99b, PMPH_cg_cp_pmpaddr_access_vs_write_all_str)
   nop
   RVTEST_TSBI_GOTO_MMODE
   .set pmpaddri, pmpaddri+1
   .endr
 
-PMPH_cp_pmpcfg_access_vs_write_all:
+PMPH_cg_cp_pmpcfg_access_vs_write_all:
 // Write all ones to every pmpcfg CSR from VS mode
   .set pmpcfgi, CSR_PMPCFG0
   .rept 16
   RVTEST_TSBI_GOTO_VSMODE
 99:
-  RVTEST_SIGUPD_CSR_WRITE(pmpcfgi, x4, 99b, PMPH_cp_pmpcfg_access_vs_write_all_str)
+  RVTEST_SIGUPD_CSR_WRITE(pmpcfgi, x4, 99b, PMPH_cg_cp_pmpcfg_access_vs_write_all_str)
   nop
   RVTEST_TSBI_GOTO_MMODE
   .set pmpcfgi, pmpcfgi+1
@@ -72,8 +72,8 @@ RVTEST_DATA_BEGIN
 
 
 // Testcase strings
-PMPH_cp_pmpaddr_access_vs_write_all_str: .string "\"test: 148; cg: PMPH; cp: cp_pmpaddr_access_vs; bin: write_all\""
-PMPH_cp_pmpcfg_access_vs_write_all_str: .string "\"test: 149; cg: PMPH; cp: cp_pmpcfg_access_vs; bin: write_all\""
+PMPH_cg_cp_pmpaddr_access_vs_write_all_str: .string "\"test: 148; cg: PMPH_cg; cp: cp_pmpaddr_access_vs; bin: write_all\""
+PMPH_cg_cp_pmpcfg_access_vs_write_all_str: .string "\"test: 149; cg: PMPH_cg; cp: cp_pmpcfg_access_vs; bin: write_all\""
 
 // End of test data section and model specific data
 RVTEST_DATA_END

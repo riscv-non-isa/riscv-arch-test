@@ -35,8 +35,8 @@ from testgen.priv.extensions.InterruptsCommon import guard_symbol
 from testgen.priv.extensions.SdtrigCommon import (
     _TEXTRA_ASID_CASES,
     MODE_PRIVBIT,
-    UDB_DEFINES,
-    UDB_NUM_TRIGGERS,
+    SDTRIG_DEFINES,
+    TRIGGERS,
     _add_tc,
     _cause_interrupt,
     _clear_interrupt,
@@ -122,8 +122,8 @@ def _mode_bit_tests(test_data: TestData, mode: str) -> list[str]:
         ),
         *_enter_guest(mode, temp_reg),
     ]
-    for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
+    for trig_num in TRIGGERS:
+        lines.append(f"\n#ifdef UDB_SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS_{trig_num}")
         for name, priv in cases:
             lines.extend(
                 [
@@ -137,9 +137,9 @@ def _mode_bit_tests(test_data: TestData, mode: str) -> list[str]:
                     *_sign_trap_count(temp_reg, test_data),
                 ]
             )
-        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED{trig_num}")
-    for trig_num in range(UDB_NUM_TRIGGERS):
-        lines.append(f"\n#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
+        lines.append(f"#endif // UDB_SDTRIG_MCONTROL6_SUPPORTED_TRIGGERS_{trig_num}")
+    for trig_num in TRIGGERS:
+        lines.append(f"\n#ifdef UDB_SDTRIG_ICOUNT_SUPPORTED_TRIGGERS_{trig_num}")
         for name, priv in cases:
             lines.extend(
                 [
@@ -151,7 +151,7 @@ def _mode_bit_tests(test_data: TestData, mode: str) -> list[str]:
                     *_sign_trap_count(temp_reg, test_data),
                 ]
             )
-        lines.append(f"#endif // UDB_ICOUNT_TRIG{trig_num}_AVAILABLE")
+        lines.append(f"#endif // UDB_SDTRIG_ICOUNT_SUPPORTED_TRIGGERS_{trig_num}")
     lines.extend(_leave_guest(temp_reg))
     test_data.int_regs.return_registers([cfg_reg, addr_reg, data_reg, temp_reg])
     return lines
@@ -177,8 +177,8 @@ def _trap_trigger_tests(test_data: TestData) -> list[str]:
         m = mode.lower()
         own = MODE_PRIVBIT[mode]
         cases = (("own", own), ("others", _ALL_PRIV ^ own))
-        for trig_num in range(UDB_NUM_TRIGGERS):
-            lines.extend([f"\n#ifdef UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE", f"#ifdef {ssi_guard}"])
+        for trig_num in TRIGGERS:
+            lines.extend([f"\n#ifdef UDB_SDTRIG_ITRIGGER_SUPPORTED_TRIGGERS_{trig_num}", f"#ifdef {ssi_guard}"])
             for name, priv in cases:
                 lines.extend(
                     [
@@ -195,9 +195,9 @@ def _trap_trigger_tests(test_data: TestData) -> list[str]:
                         *_sign_trap_count(temp_reg, test_data),
                     ]
                 )
-            lines.extend([f"#endif // {ssi_guard}", f"#endif // UDB_ITRIGGER_TRIG{trig_num}_AVAILABLE"])
-        for trig_num in range(UDB_NUM_TRIGGERS):
-            lines.append(f"\n#ifdef UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
+            lines.extend([f"#endif // {ssi_guard}", f"#endif // UDB_SDTRIG_ITRIGGER_SUPPORTED_TRIGGERS_{trig_num}"])
+        for trig_num in TRIGGERS:
+            lines.append(f"\n#ifdef UDB_SDTRIG_ETRIGGER_SUPPORTED_TRIGGERS_{trig_num}")
             for name, priv in cases:
                 lines.extend(
                     [
@@ -210,7 +210,7 @@ def _trap_trigger_tests(test_data: TestData) -> list[str]:
                         *_sign_trap_count(temp_reg, test_data),
                     ]
                 )
-            lines.append(f"#endif // UDB_SDTRIG_ETRIGGER_SUPPORTED{trig_num}")
+            lines.append(f"#endif // UDB_SDTRIG_ETRIGGER_SUPPORTED_TRIGGERS_{trig_num}")
     lines.extend([*_set_medeleg(temp_reg, 3, True), "RVTEST_TSBI_GOTO_SMODE"])
     test_data.int_regs.return_registers([cfg_reg, data_reg, temp_reg])
     return lines
@@ -222,17 +222,17 @@ def _icount_textra_case(
     """Arm an icount trigger (count = 1) for mode with tdata3 on each trigger, run to the marker, and disarm it."""
     cfg_reg, temp_reg = regs
     lines: list[str] = []
-    for trig_num in range(UDB_NUM_TRIGGERS):
+    for trig_num in TRIGGERS:
         lines.extend(
             [
-                f"#ifdef UDB_ICOUNT_TRIG{trig_num}_AVAILABLE",
+                f"#ifdef UDB_SDTRIG_ICOUNT_SUPPORTED_TRIGGERS_{trig_num}",
                 _add_tc(test_data, f"trig_num_{trig_num}_{binname}", coverpoint, "SdtrigH_textra_cg"),
                 *_config_icount(cfg_reg, trig_num, 1, mode, tdata3=tdata3),
                 "nop # counted",
                 *_MARKER,
                 *_disable_trigger(cfg_reg, trig_num, mode),
                 *(_sign_trap_count(temp_reg, test_data) if sign else []),
-                f"#endif // UDB_ICOUNT_TRIG{trig_num}_AVAILABLE",
+                f"#endif // UDB_SDTRIG_ICOUNT_SUPPORTED_TRIGGERS_{trig_num}",
             ]
         )
     return lines
@@ -259,7 +259,7 @@ def _textra_mctx_tests(test_data: TestData) -> list[str]:
             "textra mhselect = 1 and 5: icount fires in VS-mode and VU-mode only when {mhvalue, mhselect[2]}\n"
             "equals the low bits of mcontext, for an even and an odd mcontext",
         ),
-        "#ifdef UDB_MCONTEXT_AVAILABLE",
+        "#ifdef UDB_MCONTEXT_IMPLEMENTED",
     ]
     for mode in GUESTS:
         lines.extend(_enter_guest(mode, temp_reg))
@@ -288,7 +288,7 @@ def _textra_mctx_tests(test_data: TestData) -> list[str]:
                     )
                 )
         lines.extend([_csr_access("csrw mcontext, x0 # clear the test context", mode), *_leave_guest(temp_reg)])
-    lines.append("#endif // UDB_MCONTEXT_AVAILABLE")
+    lines.append("#endif // UDB_MCONTEXT_IMPLEMENTED")
     test_data.int_regs.return_registers([cfg_reg, temp_reg])
     return lines
 
@@ -397,6 +397,8 @@ def _textra_asid_tests(test_data: TestData) -> list[str]:
             )
         lines.extend(_leave_guest(temp_reg))
         if mode == "Vu":
+            # Its own label: the last case's label is inside the guard of the highest trigger
+            lines.append(_add_tc(test_data, "vu_trap_count", coverpoint, "SdtrigH_textra_cg"))
             lines.extend(_sign_trap_count(temp_reg, test_data))
         lines.extend(guest_translation_teardown(test_data))
     lines.append("#endif // vsatp Sv39/Sv32, ASID")
@@ -419,7 +421,7 @@ def _hcontext_alias_tests(test_data: TestData) -> list[str]:
             "mcontext and read hcontext in HS-mode; write hcontext in M-mode and read mcontext.  Reads are\n"
             "checked in the low UDB_DBG_HCONTEXT_WIDTH bits, because an implementation may tie upper bits to 0",
         ),
-        "#ifdef UDB_HCONTEXT_AVAILABLE",
+        "#ifdef UDB_HCONTEXT_IMPLEMENTED",
         f"LI(x{mask}, ((1 << UDB_DBG_HCONTEXT_WIDTH) - 1))",
     ]
     for name, value in (("ones", -1), ("random", random_int(14, signed=False))):
@@ -452,7 +454,7 @@ def _hcontext_alias_tests(test_data: TestData) -> list[str]:
             *check(),
             "csrw mcontext, x0",
             "RVTEST_TSBI_GOTO_SMODE",
-            "#endif // UDB_HCONTEXT_AVAILABLE",
+            "#endif // UDB_HCONTEXT_IMPLEMENTED",
         ]
     )
     test_data.int_regs.return_registers([rs, rd, mask])
@@ -506,7 +508,7 @@ def _context_access_tests(test_data: TestData) -> list[str]:
     "SdtrigH",
     required_extensions=["H", "Sdtrig"],
     march_extensions=["H"],
-    extra_defines=[*UDB_DEFINES, "#define BOOT_TO_SMODE"],
+    extra_defines=[*SDTRIG_DEFINES, "#define BOOT_TO_SMODE"],
 )
 def make_sdtrigh(test_data: TestData) -> list[TestChunk]:
     """Generate tests for the SdtrigH suite."""

@@ -50,7 +50,7 @@ def _ecall_tests(test_data: TestData) -> list[str]:
                     f"{'csrs' if spvp else 'csrc'} hstatus, x{temp_reg}",
                     f"RVTEST_TSBI_GOTO_{mode.upper()}MODE",
                     test_data.add_testcase(f"{mode}_spvp{spvp}", "cp_ecall_to_hs", CG),
-                    "RVTEST_TSBI_ECALL_RECORD",
+                    "RVTEST_TSBI_ECALL_TEST",
                     "RVTEST_TSBI_GOTO_SMODE",
                 ]
             )
@@ -71,7 +71,7 @@ def _ecall_tests(test_data: TestData) -> list[str]:
                 f"{'csrsi' if sie else 'csrci'} vsstatus, SSTATUS_SIE",
                 "RVTEST_TSBI_GOTO_VUMODE",
                 test_data.add_testcase(f"vu_sie{sie}", "cp_ecall_to_vs", CG),
-                "RVTEST_TSBI_ECALL_RECORD",
+                "RVTEST_TSBI_ECALL_TEST",
                 "RVTEST_TSBI_GOTO_SMODE",
             ]
         )
@@ -92,7 +92,7 @@ def _ecall_tests(test_data: TestData) -> list[str]:
             test_data.add_testcase("vu_ebreak", "cp_vstvec", CG),
             "ebreak",
             test_data.add_testcase("vu_ecall", "cp_vstvec", CG),
-            "RVTEST_TSBI_ECALL_RECORD",
+            "RVTEST_TSBI_ECALL_TEST",
             "RVTEST_TSBI_GOTO_SMODE",
             "csrw hedeleg, zero",
         ]

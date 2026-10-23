@@ -8,7 +8,7 @@
 
 """Exceptions Sm test generator (refactored, calls ExceptionsCommon)."""
 
-from testgen.asm.helpers import comment_banner, write_sigupd
+from testgen.asm.helpers import comment_banner
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
 from testgen.priv.extensions.ExceptionsCommon import (
@@ -92,16 +92,12 @@ def _generate_mstatus_ie_tests(test_data: TestData) -> list[str]:
         "# Test ecall with mstatus.MIE = 0",
         f"csrrc x0, mstatus, x{mask_reg}",
         test_data.add_testcase("ecall_mie_0", coverpoint, covergroup),
-        "RVTEST_TSBI_ECALL_TEST  # test ecall to execution environment that just returns",
-        "# ecall returns mepc in a0 (x10).  Store a0 in signature as proof ecall took place.",
-        write_sigupd(10, test_data),
+        "RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature",
         "",
         "# Test ecall with mstatus.MIE = 1",
         f"csrrs x0, mstatus, x{mask_reg}",
         test_data.add_testcase("ecall_mie_1", coverpoint, covergroup),
-        "RVTEST_TSBI_ECALL_TEST  # test ecall to execution environment that just returns",
-        "# ecall returns mepc in a0 (x10).  Store a0 in signature as proof ecall took place.",
-        write_sigupd(10, test_data),
+        "RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature",
         f"csrw mstatus, x{save_reg}",
     ]
 
@@ -141,9 +137,7 @@ def _generate_xstatus_ie_tests(test_data: TestData, mode_tag: str, priv_mode: in
                         f"{'csrs' if sie else 'csrc'} mstatus, x{mask_sie}",
                         goto_mode,
                         test_data.add_testcase(tag, coverpoint, covergroup),
-                        "RVTEST_TSBI_ECALL_TEST  # test ecall to execution environment that just returns",
-                        "# ecall returns xepc in a0 (x10).  Store a0 in signature as proof ecall took place.",
-                        write_sigupd(10, test_data),
+                        "RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature",
                         "RVTEST_TSBI_GOTO_MMODE",
                     ]
                 )

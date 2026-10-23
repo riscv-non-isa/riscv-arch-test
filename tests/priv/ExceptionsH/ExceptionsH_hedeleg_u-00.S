@@ -206,7 +206,7 @@ ExceptionsH_cg_cp_hedeleg_hs_u_store_access_fault_hdlg_0xcb1ff_u:
 #endif
 #endif
 ExceptionsH_cg_cp_hedeleg_hs_u_ecall_hdlg_0xcb1ff_u:
-  RVTEST_TSBI_ECALL_RECORD  # the trap record shows which mode took the ecall and its cause
+  RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature
   RVTEST_TSBI_GOTO_SMODE
   csrw hedeleg, x8
 

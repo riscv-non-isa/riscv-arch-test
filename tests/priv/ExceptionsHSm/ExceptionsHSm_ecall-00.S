@@ -34,30 +34,30 @@ RVTEST_BEGIN
 //   With medeleg = 0, ecall and ebreak from M, HS, VS, U and VU modes trap to M-mode
 /////////////////////////////////
 ExceptionsHSm_cg_cp_ecall_to_m_m:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
 ExceptionsHSm_cg_cp_ebreak_to_m_m:
   ebreak
   RVTEST_TSBI_GOTO_SMODE
 ExceptionsHSm_cg_cp_ecall_to_m_s:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
 ExceptionsHSm_cg_cp_ebreak_to_m_s:
   ebreak
   RVTEST_TSBI_GOTO_MMODE
   RVTEST_TSBI_GOTO_VSMODE
 ExceptionsHSm_cg_cp_ecall_to_m_vs:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
 ExceptionsHSm_cg_cp_ebreak_to_m_vs:
   ebreak
   RVTEST_TSBI_GOTO_MMODE
   RVTEST_TSBI_GOTO_UMODE
 ExceptionsHSm_cg_cp_ecall_to_m_u:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
 ExceptionsHSm_cg_cp_ebreak_to_m_u:
   ebreak
   RVTEST_TSBI_GOTO_MMODE
   RVTEST_TSBI_GOTO_VUMODE
 ExceptionsHSm_cg_cp_ecall_to_m_vu:
-  RVTEST_TSBI_ECALL_RECORD
+  RVTEST_TSBI_ECALL_TEST
 ExceptionsHSm_cg_cp_ebreak_to_m_vu:
   ebreak
   RVTEST_TSBI_GOTO_MMODE

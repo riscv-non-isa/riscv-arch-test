@@ -223,9 +223,7 @@ def _generate_priv_inst_tests(test_data: TestData) -> list[str]:
         "",
         # ecall test
         test_data.add_testcase("ecall", coverpoint, covergroup),
-        "RVTEST_TSBI_ECALL_TEST  # test ecall to execution environment that just returns",
-        "# ecall returns xepc in a0 (x10).  Store a0 in signature as proof ecall took place.",
-        write_sigupd(10, test_data),
+        "RVTEST_TSBI_ECALL_TEST  # ecall to the execution environment, recorded in the trap signature",
         "",
         # ebreak test
         test_data.add_testcase("ebreak", coverpoint, covergroup),

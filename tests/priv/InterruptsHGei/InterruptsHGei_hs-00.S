@@ -47,7 +47,8 @@ RVTEST_BEGIN
   LI(x9, 2)
   csrw hgeie, x9
   csrci sstatus, SSTATUS_SIE
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 0)
 InterruptsHGei_hs_cg_cp_trigger_sgei_sie0_sgeie0:
@@ -57,11 +58,13 @@ InterruptsHGei_hs_cg_cp_trigger_sgei_sie0_sgeie0:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_sgei_sie0_sgeie0, InterruptsHGei_hs_cg_cp_trigger_sgei_sie0_sgeie0_str)
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrw hie, zero
   csrci sstatus, SSTATUS_SIE
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, MIP_SGEIP)
 InterruptsHGei_hs_cg_cp_trigger_sgei_sie0_sgeie1:
@@ -71,11 +74,13 @@ InterruptsHGei_hs_cg_cp_trigger_sgei_sie0_sgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_sgei_sie0_sgeie1, InterruptsHGei_hs_cg_cp_trigger_sgei_sie0_sgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrw hie, zero
   csrsi sstatus, SSTATUS_SIE
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 0)
 InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie0:
@@ -85,11 +90,13 @@ InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie0:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie0, InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie0_str)
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrw hie, zero
   csrsi sstatus, SSTATUS_SIE
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, MIP_SGEIP)
 InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie1:
@@ -99,7 +106,8 @@ InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie1, InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrw hie, zero
 
@@ -116,7 +124,8 @@ InterruptsHGei_hs_cg_cp_trigger_sgei_sie1_sgeie1:
   csrw hie, x9
   LI(x9, -1)
   csrw sie, x9
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 InterruptsHGei_hs_cg_cp_priority_sgei_sgei:
   csrr x9, sip
@@ -125,7 +134,8 @@ InterruptsHGei_hs_cg_cp_priority_sgei_sgei:
   csrsi sstatus, SSTATUS_SIE
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrci sstatus, SSTATUS_SIE
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrw sie, zero
   csrw hie, zero
@@ -137,7 +147,8 @@ InterruptsHGei_hs_cg_cp_priority_sgei_sgei:
   LI(x9, -1)
   csrw sie, x9
   RVTEST_SET_SEXT_INT_S
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 InterruptsHGei_hs_cg_cp_priority_sgei_s_sei:
   csrr x9, sip
@@ -147,7 +158,8 @@ InterruptsHGei_hs_cg_cp_priority_sgei_s_sei:
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrci sstatus, SSTATUS_SIE
   RVTEST_CLR_SEXT_INT_S
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrw sie, zero
   csrw hie, zero
@@ -159,7 +171,8 @@ InterruptsHGei_hs_cg_cp_priority_sgei_s_sei:
   LI(x9, -1)
   csrw sie, x9
   RVTEST_SET_STIME_INT_S
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 InterruptsHGei_hs_cg_cp_priority_sgei_s_sti:
   csrr x9, sip
@@ -169,7 +182,8 @@ InterruptsHGei_hs_cg_cp_priority_sgei_s_sti:
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrci sstatus, SSTATUS_SIE
   RVTEST_CLR_STIME_INT_S
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrw sie, zero
   csrw hie, zero
@@ -181,7 +195,8 @@ InterruptsHGei_hs_cg_cp_priority_sgei_s_sti:
   LI(x9, -1)
   csrw sie, x9
   RVTEST_SET_SSW_INT_S
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 InterruptsHGei_hs_cg_cp_priority_sgei_s_ssi:
   csrr x9, sip
@@ -191,7 +206,8 @@ InterruptsHGei_hs_cg_cp_priority_sgei_s_ssi:
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrci sstatus, SSTATUS_SIE
   RVTEST_CLR_SSW_INT_S
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   csrw sie, zero
   csrw hie, zero
@@ -897,7 +913,8 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_none:
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_none, InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_none_str)
 #endif
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 2)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_1_hgeip_i:
@@ -908,11 +925,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_1_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_1_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_1_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 4)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_2_hgeip_i:
@@ -923,11 +942,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_2_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_2_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_2_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 8)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_3_hgeip_i:
@@ -938,11 +959,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_3_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_3_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_3_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 16)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_4_hgeip_i:
@@ -953,11 +976,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_4_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_4_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_4_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 32)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_5_hgeip_i:
@@ -968,11 +993,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_5_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_5_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_5_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 64)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_6_hgeip_i:
@@ -983,11 +1010,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_6_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_6_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_6_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 128)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_7_hgeip_i:
@@ -998,11 +1027,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_7_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_7_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_7_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 256)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_8_hgeip_i:
@@ -1013,11 +1044,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_8_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_8_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_8_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 512)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_9_hgeip_i:
@@ -1028,11 +1061,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_9_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_9_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_9_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 1024)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_10_hgeip_i:
@@ -1043,11 +1078,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_10_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_10_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_10_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 2048)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_11_hgeip_i:
@@ -1058,11 +1095,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_11_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_11_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_11_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 4096)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_12_hgeip_i:
@@ -1073,11 +1112,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_12_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_12_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_12_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 8192)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_13_hgeip_i:
@@ -1088,11 +1129,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_13_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_13_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_13_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 16384)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_14_hgeip_i:
@@ -1103,11 +1146,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_14_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_14_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_14_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 32768)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_15_hgeip_i:
@@ -1118,11 +1163,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_15_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_15_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_15_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 65536)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_16_hgeip_i:
@@ -1133,11 +1180,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_16_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_16_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_16_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 131072)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_17_hgeip_i:
@@ -1148,11 +1197,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_17_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_17_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_17_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 262144)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_18_hgeip_i:
@@ -1163,11 +1214,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_18_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_18_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_18_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 524288)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_19_hgeip_i:
@@ -1178,11 +1231,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_19_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_19_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_19_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 1048576)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_20_hgeip_i:
@@ -1193,11 +1248,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_20_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_20_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_20_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 2097152)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_21_hgeip_i:
@@ -1208,11 +1265,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_21_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_21_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_21_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 4194304)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_22_hgeip_i:
@@ -1223,11 +1282,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_22_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_22_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_22_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 8388608)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_23_hgeip_i:
@@ -1238,11 +1299,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_23_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_23_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_23_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 16777216)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_24_hgeip_i:
@@ -1253,11 +1316,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_24_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_24_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_24_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 33554432)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_25_hgeip_i:
@@ -1268,11 +1333,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_25_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_25_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_25_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 67108864)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_26_hgeip_i:
@@ -1283,11 +1350,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_26_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_26_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_26_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 134217728)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_27_hgeip_i:
@@ -1298,11 +1367,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_27_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_27_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_27_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 268435456)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_28_hgeip_i:
@@ -1313,11 +1384,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_28_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_28_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_28_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 536870912)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_29_hgeip_i:
@@ -1328,11 +1401,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_29_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_29_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_29_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 1073741824)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_30_hgeip_i:
@@ -1343,11 +1418,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_30_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_30_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_30_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 2147483648)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_31_hgeip_i:
@@ -1358,11 +1435,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_31_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_31_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_31_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 4294967296)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_32_hgeip_i:
@@ -1373,11 +1452,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_32_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_32_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_32_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 8589934592)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_33_hgeip_i:
@@ -1388,11 +1469,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_33_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_33_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_33_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 17179869184)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_34_hgeip_i:
@@ -1403,11 +1486,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_34_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_34_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_34_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 34359738368)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_35_hgeip_i:
@@ -1418,11 +1503,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_35_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_35_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_35_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 68719476736)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_36_hgeip_i:
@@ -1433,11 +1520,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_36_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_36_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_36_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 137438953472)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_37_hgeip_i:
@@ -1448,11 +1537,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_37_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_37_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_37_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 274877906944)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_38_hgeip_i:
@@ -1463,11 +1554,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_38_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_38_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_38_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 549755813888)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_39_hgeip_i:
@@ -1478,11 +1571,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_39_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_39_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_39_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 1099511627776)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_40_hgeip_i:
@@ -1493,11 +1588,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_40_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_40_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_40_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 2199023255552)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_41_hgeip_i:
@@ -1508,11 +1605,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_41_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_41_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_41_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 4398046511104)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_42_hgeip_i:
@@ -1523,11 +1622,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_42_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_42_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_42_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 8796093022208)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_43_hgeip_i:
@@ -1538,11 +1639,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_43_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_43_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_43_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 17592186044416)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_44_hgeip_i:
@@ -1553,11 +1656,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_44_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_44_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_44_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 35184372088832)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_45_hgeip_i:
@@ -1568,11 +1673,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_45_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_45_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_45_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 70368744177664)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_46_hgeip_i:
@@ -1583,11 +1690,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_46_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_46_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_46_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 140737488355328)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_47_hgeip_i:
@@ -1598,11 +1707,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_47_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_47_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_47_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 281474976710656)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_48_hgeip_i:
@@ -1613,11 +1724,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_48_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_48_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_48_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 562949953421312)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_49_hgeip_i:
@@ -1628,11 +1741,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_49_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_49_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_49_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 1125899906842624)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_50_hgeip_i:
@@ -1643,11 +1758,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_50_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_50_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_50_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 2251799813685248)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_51_hgeip_i:
@@ -1658,11 +1775,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_51_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_51_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_51_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 4503599627370496)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_52_hgeip_i:
@@ -1673,11 +1792,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_52_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_52_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_52_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 9007199254740992)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_53_hgeip_i:
@@ -1688,11 +1809,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_53_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_53_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_53_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 18014398509481984)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_54_hgeip_i:
@@ -1703,11 +1826,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_54_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_54_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_54_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 36028797018963968)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_55_hgeip_i:
@@ -1718,11 +1843,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_55_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_55_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_55_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 72057594037927936)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_56_hgeip_i:
@@ -1733,11 +1860,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_56_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_56_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_56_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 144115188075855872)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_57_hgeip_i:
@@ -1748,11 +1877,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_57_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_57_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_57_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 288230376151711744)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_58_hgeip_i:
@@ -1763,11 +1894,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_58_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_58_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_58_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 576460752303423488)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_59_hgeip_i:
@@ -1778,11 +1911,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_59_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_59_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_59_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 1152921504606846976)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_60_hgeip_i:
@@ -1793,11 +1928,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_60_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_60_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_60_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 2305843009213693952)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_61_hgeip_i:
@@ -1808,11 +1945,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_61_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_61_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_61_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 4611686018427387904)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_62_hgeip_i:
@@ -1823,11 +1962,13 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_62_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_62_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_62_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, 9223372036854775808)
 InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_i:
@@ -1838,260 +1979,324 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_i:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_i, InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_i_str)
-  RVMODEL_CLR_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if UDB_NUM_EXTERNAL_GUEST_INTERRUPTS >= 2
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
@@ -2788,255 +2993,318 @@ InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_all:
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_all, InterruptsHGei_hs_cg_cp_hgeie_hgeie_63_hgeip_all_str)
 #endif
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #endif
@@ -4560,7 +4828,8 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_none_hgeie1:
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_none_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_none_hgeie1_str)
 #endif
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4584,11 +4853,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_1_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_1_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_1_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4612,11 +4883,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_2_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_2_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_2_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4640,11 +4913,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_3_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_3_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_3_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4668,11 +4943,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_4_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_4_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_4_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4696,11 +4973,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_5_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_5_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_5_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4724,11 +5003,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_6_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_6_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_6_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4752,11 +5033,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_7_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_7_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_7_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4780,11 +5063,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_8_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_8_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_8_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4808,11 +5093,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_9_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_9_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_9_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4836,11 +5123,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_10_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_10_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_10_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4864,11 +5153,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_11_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_11_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_11_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4892,11 +5183,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_12_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_12_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_12_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4920,11 +5213,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_13_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_13_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_13_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4948,11 +5243,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_14_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_14_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_14_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -4976,11 +5273,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_15_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_15_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_15_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5004,11 +5303,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_16_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_16_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_16_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5032,11 +5333,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_17_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_17_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_17_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5060,11 +5363,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_18_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_18_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_18_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5088,11 +5393,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_19_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_19_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_19_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5116,11 +5423,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_20_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_20_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_20_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5144,11 +5453,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_21_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_21_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_21_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5172,11 +5483,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_22_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_22_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_22_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5200,11 +5513,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_23_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_23_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_23_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5228,11 +5543,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_24_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_24_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_24_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5256,11 +5573,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_25_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_25_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_25_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5284,11 +5603,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_26_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_26_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_26_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5312,11 +5633,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_27_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_27_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_27_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5340,11 +5663,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_28_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_28_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_28_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5368,11 +5693,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_29_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_29_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_29_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5396,11 +5723,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_30_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_30_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_30_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5424,11 +5753,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_31_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_31_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_31_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5452,11 +5783,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_32_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_32_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_32_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5480,11 +5813,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_33_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_33_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_33_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5508,11 +5843,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_34_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_34_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_34_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5536,11 +5873,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_35_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_35_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_35_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5564,11 +5903,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_36_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_36_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_36_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5592,11 +5933,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_37_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_37_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_37_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5620,11 +5963,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_38_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_38_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_38_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5648,11 +5993,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_39_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_39_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_39_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5676,11 +6023,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_40_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_40_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_40_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5704,11 +6053,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_41_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_41_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_41_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5732,11 +6083,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_42_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_42_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_42_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5760,11 +6113,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_43_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_43_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_43_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5788,11 +6143,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_44_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_44_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_44_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5816,11 +6173,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_45_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_45_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_45_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5844,11 +6203,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_46_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_46_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_46_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5872,11 +6233,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_47_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_47_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_47_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5900,11 +6263,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_48_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_48_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_48_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5928,11 +6293,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_49_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_49_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_49_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5956,11 +6323,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_50_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_50_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_50_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -5984,11 +6353,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_51_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_51_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_51_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6012,11 +6383,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_52_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_52_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_52_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6040,11 +6413,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_53_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_53_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_53_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6068,11 +6443,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_54_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_54_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_54_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6096,11 +6473,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_55_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_55_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_55_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6124,11 +6503,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_56_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_56_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_56_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6152,11 +6533,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_57_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_57_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_57_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6180,11 +6563,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_58_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_58_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_58_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6208,11 +6593,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_59_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_59_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_59_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6236,11 +6623,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_60_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_60_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_60_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6264,11 +6653,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_61_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_61_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_61_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6292,11 +6683,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_62_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_62_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_62_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6320,264 +6713,329 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_i_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_i_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_i_hgeie1_str)
-  RVMODEL_CLR_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if UDB_NUM_EXTERNAL_GUEST_INTERRUPTS >= 2
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6601,11 +7059,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_1_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_1_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_1_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6629,11 +7089,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_2_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_2_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_2_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6657,11 +7119,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_3_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_3_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_3_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6685,11 +7149,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_4_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_4_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_4_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6713,11 +7179,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_5_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_5_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_5_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6741,11 +7209,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_6_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_6_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_6_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6769,11 +7239,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_7_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_7_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_7_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6797,11 +7269,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_8_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_8_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_8_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6825,11 +7299,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_9_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_9_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_9_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6853,11 +7329,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_10_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_10_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_10_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6881,11 +7359,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_11_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_11_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_11_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6909,11 +7389,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_12_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_12_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_12_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6937,11 +7419,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_13_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_13_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_13_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6965,11 +7449,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_14_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_14_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_14_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -6993,11 +7479,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_15_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_15_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_15_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7021,11 +7509,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_16_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_16_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_16_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7049,11 +7539,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_17_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_17_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_17_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7077,11 +7569,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_18_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_18_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_18_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7105,11 +7599,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_19_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_19_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_19_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7133,11 +7629,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_20_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_20_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_20_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7161,11 +7659,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_21_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_21_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_21_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7189,11 +7689,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_22_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_22_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_22_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7217,11 +7719,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_23_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_23_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_23_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7245,11 +7749,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_24_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_24_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_24_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7273,11 +7779,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_25_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_25_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_25_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7301,11 +7809,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_26_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_26_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_26_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7329,11 +7839,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_27_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_27_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_27_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7357,11 +7869,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_28_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_28_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_28_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7385,11 +7899,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_29_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_29_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_29_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7413,11 +7929,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_30_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_30_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_30_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7441,11 +7959,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_31_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_31_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_31_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7469,11 +7989,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_32_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_32_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_32_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7497,11 +8019,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_33_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_33_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_33_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7525,11 +8049,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_34_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_34_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_34_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7553,11 +8079,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_35_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_35_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_35_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7581,11 +8109,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_36_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_36_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_36_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7609,11 +8139,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_37_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_37_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_37_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7637,11 +8169,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_38_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_38_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_38_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7665,11 +8199,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_39_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_39_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_39_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7693,11 +8229,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_40_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_40_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_40_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7721,11 +8259,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_41_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_41_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_41_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7749,11 +8289,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_42_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_42_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_42_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7777,11 +8319,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_43_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_43_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_43_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7805,11 +8349,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_44_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_44_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_44_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7833,11 +8379,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_45_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_45_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_45_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7861,11 +8409,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_46_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_46_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_46_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7889,11 +8439,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_47_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_47_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_47_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7917,11 +8469,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_48_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_48_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_48_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7945,11 +8499,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_49_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_49_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_49_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -7973,11 +8529,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_50_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_50_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_50_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8001,11 +8559,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_51_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_51_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_51_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8029,11 +8589,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_52_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_52_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_52_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8057,11 +8619,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_53_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_53_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_53_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8085,11 +8649,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_54_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_54_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_54_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8113,11 +8679,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_55_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_55_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_55_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8141,11 +8709,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_56_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_56_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_56_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8169,11 +8739,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_57_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_57_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_57_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8197,11 +8769,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_58_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_58_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_58_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8225,11 +8799,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_59_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_59_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_59_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8253,11 +8829,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_60_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_60_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_60_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8281,11 +8859,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_61_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_61_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_61_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8309,11 +8889,13 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_62_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_62_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_62_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
@@ -8337,259 +8919,323 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_others_hgeie1:
   csrr x9, hip
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_others_hgeie1, InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_others_hgeie1_str)
-  RVMODEL_SET_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #endif
@@ -8602,255 +9248,318 @@ InterruptsHGei_hs_cg_cp_trigger_vsei_hgeip_vgein_63_hgeip_others_hgeie1:
   LI(x9, HSTATUS_VGEIN)
   csrc hstatus, x9
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_SET_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
   LI(x9, -1)
@@ -8863,255 +9572,318 @@ InterruptsHGei_hs_cg_cp_hgeip0_vgein_0:
   # Check if x9 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x9, InterruptsHGei_hs_cg_cp_hgeip0_vgein_0, InterruptsHGei_hs_cg_cp_hgeip0_vgein_0_str)
 #if 1 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(1, a1, a2)
+  li a0, 1
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 2 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(2, a1, a2)
+  li a0, 2
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 3 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(3, a1, a2)
+  li a0, 3
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 4 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(4, a1, a2)
+  li a0, 4
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 5 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(5, a1, a2)
+  li a0, 5
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 6 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(6, a1, a2)
+  li a0, 6
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 7 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(7, a1, a2)
+  li a0, 7
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 8 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(8, a1, a2)
+  li a0, 8
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 9 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(9, a1, a2)
+  li a0, 9
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 10 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(10, a1, a2)
+  li a0, 10
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 11 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(11, a1, a2)
+  li a0, 11
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 12 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(12, a1, a2)
+  li a0, 12
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 13 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(13, a1, a2)
+  li a0, 13
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 14 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(14, a1, a2)
+  li a0, 14
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 15 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(15, a1, a2)
+  li a0, 15
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 16 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(16, a1, a2)
+  li a0, 16
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 17 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(17, a1, a2)
+  li a0, 17
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 18 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(18, a1, a2)
+  li a0, 18
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 19 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(19, a1, a2)
+  li a0, 19
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 20 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(20, a1, a2)
+  li a0, 20
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 21 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(21, a1, a2)
+  li a0, 21
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 22 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(22, a1, a2)
+  li a0, 22
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 23 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(23, a1, a2)
+  li a0, 23
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 24 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(24, a1, a2)
+  li a0, 24
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 25 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(25, a1, a2)
+  li a0, 25
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 26 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(26, a1, a2)
+  li a0, 26
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 27 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(27, a1, a2)
+  li a0, 27
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 28 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(28, a1, a2)
+  li a0, 28
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 29 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(29, a1, a2)
+  li a0, 29
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 30 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(30, a1, a2)
+  li a0, 30
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 31 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(31, a1, a2)
+  li a0, 31
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 32 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(32, a1, a2)
+  li a0, 32
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 33 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(33, a1, a2)
+  li a0, 33
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 34 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(34, a1, a2)
+  li a0, 34
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 35 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(35, a1, a2)
+  li a0, 35
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 36 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(36, a1, a2)
+  li a0, 36
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 37 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(37, a1, a2)
+  li a0, 37
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 38 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(38, a1, a2)
+  li a0, 38
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 39 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(39, a1, a2)
+  li a0, 39
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 40 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(40, a1, a2)
+  li a0, 40
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 41 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(41, a1, a2)
+  li a0, 41
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 42 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(42, a1, a2)
+  li a0, 42
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 43 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(43, a1, a2)
+  li a0, 43
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 44 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(44, a1, a2)
+  li a0, 44
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 45 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(45, a1, a2)
+  li a0, 45
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 46 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(46, a1, a2)
+  li a0, 46
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 47 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(47, a1, a2)
+  li a0, 47
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 48 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(48, a1, a2)
+  li a0, 48
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 49 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(49, a1, a2)
+  li a0, 49
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 50 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(50, a1, a2)
+  li a0, 50
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 51 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(51, a1, a2)
+  li a0, 51
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 52 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(52, a1, a2)
+  li a0, 52
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 53 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(53, a1, a2)
+  li a0, 53
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 54 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(54, a1, a2)
+  li a0, 54
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 55 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(55, a1, a2)
+  li a0, 55
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 56 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(56, a1, a2)
+  li a0, 56
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 57 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(57, a1, a2)
+  li a0, 57
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 58 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(58, a1, a2)
+  li a0, 58
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 59 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(59, a1, a2)
+  li a0, 59
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 60 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(60, a1, a2)
+  li a0, 60
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 61 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(61, a1, a2)
+  li a0, 61
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 62 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(62, a1, a2)
+  li a0, 62
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
 #if 63 <= UDB_NUM_EXTERNAL_GUEST_INTERRUPTS
-  RVMODEL_CLR_GUEST_EXT_INT(63, a1, a2)
+  li a0, 63
+  RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
   RVTEST_IDLE_FOR_INTERRUPT(x9)
 #endif
   csrw hgeie, zero

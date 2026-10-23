@@ -24,13 +24,12 @@ from itertools import product
 from testgen.asm.helpers import comment_banner, write_sigupd
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
-from testgen.priv.extensions.ZicfilpCommon import (
+from testgen.priv.extensions.Zicfilp import (
     JUMP_KINDS,
     LABEL,
     LOW_BITS,
     OTHER_LABEL,
     RESUME,
-    check_trap_count,
     jump_to_target,
 )
 from testgen.priv.registry import add_priv_test_generator
@@ -42,6 +41,15 @@ _TARGETS = {
     "lpad_mismatch": f"lpad 0x{OTHER_LABEL:x} # label does not match x7[31:12]",
 }
 _X7_LABEL = f"LI(x7, 0x{(LABEL << 12) | LOW_BITS:x}) # expected landing pad label in x7[31:12]"
+
+
+def check_trap_count(test_data: TestData, reg: int) -> list[str]:
+    """Record the running trap count, so a missing or extra trap is attributed to the current testcase."""
+    return [
+        f"LA(x{reg}, rvtest_trap_count)",
+        f"LREG x{reg}, 0(x{reg})",
+        write_sigupd(reg, test_data),
+    ]
 
 
 def _set_lpe(csr: str, enable: int, reg: int) -> list[str]:

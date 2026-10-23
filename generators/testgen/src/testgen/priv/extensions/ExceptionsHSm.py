@@ -40,7 +40,7 @@ def _ecall_ebreak_tests(test_data: TestData) -> list[str]:
             [
                 *([f"RVTEST_TSBI_GOTO_{mode.upper()}MODE"] if mode != "m" else []),
                 test_data.add_testcase(mode, "cp_ecall_to_m", CG),
-                "RVTEST_TSBI_ECALL_RECORD",
+                "RVTEST_TSBI_ECALL_TEST",
                 test_data.add_testcase(mode, "cp_ebreak_to_m", CG),
                 "ebreak",
                 *(["RVTEST_TSBI_GOTO_MMODE"] if mode != "m" else []),
