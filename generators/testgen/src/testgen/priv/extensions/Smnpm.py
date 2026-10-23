@@ -157,7 +157,7 @@ def _smnpms_chunk(
 
 @add_priv_test_generator(
     "Smnpm",
-    required_extensions=["Smnpm", "S"],
+    required_extensions=["Smnpm", "S", "Sm"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
 )
@@ -250,7 +250,7 @@ def make_smnpmu_pmm11(test_data: TestData) -> list[TestChunk]:
 
 @add_priv_test_generator(
     "Smnpm",
-    required_extensions=["Smnpm"],
+    required_extensions=["Smnpm", "Sm"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
