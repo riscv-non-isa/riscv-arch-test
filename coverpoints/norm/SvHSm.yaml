@@ -33,8 +33,6 @@ normative_rule_definitions:
 
   # For a misaligned access or a variable-length instruction fetch that takes a guest-page fault, a nonzero mtval2
   # corresponds to the faulting portion of the access that mtval indicates
-  - names: [mtval2_trapval_other]
+  - names: [mtval2_trapval_other, H_straddle]
     coverpoint:
-      [
-        "Not tested: TODO misaligned loads and stores, and fetches that straddle a page, whose second page has an invalid G-stage leaf, taken into M-mode",
-      ]
+      ["SvHSm_trap_cg/cp_straddle_m", "SvHSm_trap_cg/cp_ldst_straddle_m"]

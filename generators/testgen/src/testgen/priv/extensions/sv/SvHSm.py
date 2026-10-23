@@ -28,12 +28,14 @@ from testgen.priv.extensions.sv.page_tables import (
 from testgen.priv.extensions.sv.SvH import (
     G_LEAF,
     LOADS,
+    MISALIGNED_PARAMS,
     OPS,
     begin_chunk,
     guest_access,
     guest_chunk_setup,
     guest_chunk_teardown,
     map_leaf_table,
+    map_straddle_pages,
     map_test_page,
     perm_flags,
     set_csr_bits,
@@ -257,6 +259,46 @@ def _t_guest_faults(test_data: TestData, test_chunks: list[TestChunk], g: SvMode
     test_chunks.append(test_data.end_test_chunk())
 
 
+def _t_straddle_m(test_data: TestData, test_chunks: list[TestChunk], g: SvMode, vs: SvMode, fetch: bool) -> None:
+    """A fetch, or a misaligned store or load, that straddles into a page with an invalid G-stage leaf takes a
+    guest-page fault in M-mode with mtval and mtval2 at the faulting portion."""
+    coverpoint, name, what = (
+        ("cp_straddle_m", "straddle", "fetch a 4-byte instruction in the last halfword")
+        if fetch
+        else ("cp_ldst_straddle_m", "ldst_straddle", "store and load the word two bytes below the end")
+    )
+    chunk = begin_chunk(
+        test_data,
+        f"{g.name}_{name}",
+        coverpoint,
+        f"In VS-mode and VU-mode, {what} of a guest page whose next page has an invalid G-stage leaf.  The\n"
+        "guest-page fault is taken in M-mode with mtval = the page-boundary address and mtval2 = its guest physical\n"
+        "address >> 2",
+        stages=(g, vs),
+    )
+    code = []
+    for mode in ("VS", "VU"):
+        code.extend(
+            [
+                *guest_chunk_setup(test_data, g, vs, mode),
+                *guest_access(
+                    test_data,
+                    TRAP_CG,
+                    coverpoint,
+                    f"{mode.lower()}_g_invalid",
+                    mode,
+                    f"{vs.data_va} + {0xFFE if fetch else 0xFF6:#x}",
+                    setup=map_straddle_pages(test_data, g, vs, user=mode == "VU", g_valid=False),
+                    ops=("exec",) if fetch else ("store", "load"),
+                    driver="M",
+                ),
+                *guest_chunk_teardown(test_data, g.xlen),
+            ]
+        )
+    chunk.code.extend(code)
+    test_chunks.append(test_data.end_test_chunk())
+
+
 def _make_svhsm(test_data: TestData, g: SvMode, vs: SvMode) -> list[TestChunk]:
     test_chunks: list[TestChunk] = []
     _t_mprv_vsatp(test_data, test_chunks, vs)
@@ -285,3 +327,53 @@ def make_svhsm_sv32(test_data: TestData) -> list[TestChunk]:
 )
 def make_svhsm_sv39(test_data: TestData) -> list[TestChunk]:
     return _make_svhsm(test_data, SV39X4, VS_SV39)
+
+
+# A 4-byte instruction in the last halfword of a page needs IALIGN = 16
+@add_priv_test_generator(
+    "SvHSm",
+    required_extensions=["Sm", "H", "Zca"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    params=["SV32X4_TRANSLATION: true", "SV32_VSMODE_TRANSLATION: true"],
+)
+def make_svhsm_straddle_sv32(test_data: TestData) -> list[TestChunk]:
+    test_chunks: list[TestChunk] = []
+    _t_straddle_m(test_data, test_chunks, SV32X4, VS_SV32, fetch=True)
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "SvHSm",
+    required_extensions=["Sm", "H", "Zca"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    params=["SV39X4_TRANSLATION: true", "SV39_VSMODE_TRANSLATION: true"],
+)
+def make_svhsm_straddle_sv39(test_data: TestData) -> list[TestChunk]:
+    test_chunks: list[TestChunk] = []
+    _t_straddle_m(test_data, test_chunks, SV39X4, VS_SV39, fetch=True)
+    return test_chunks
+
+
+# The hart performs misaligned accesses byte by byte, so it faults only on the second page
+@add_priv_test_generator(
+    "SvHSm",
+    required_extensions=["Sm", "H"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    params=["SV32X4_TRANSLATION: true", "SV32_VSMODE_TRANSLATION: true", *MISALIGNED_PARAMS],
+)
+def make_svhsm_ldst_straddle_sv32(test_data: TestData) -> list[TestChunk]:
+    test_chunks: list[TestChunk] = []
+    _t_straddle_m(test_data, test_chunks, SV32X4, VS_SV32, fetch=False)
+    return test_chunks
+
+
+@add_priv_test_generator(
+    "SvHSm",
+    required_extensions=["Sm", "H"],
+    extra_defines=["#define BOOT_TO_MMODE"],
+    params=["SV39X4_TRANSLATION: true", "SV39_VSMODE_TRANSLATION: true", *MISALIGNED_PARAMS],
+)
+def make_svhsm_ldst_straddle_sv39(test_data: TestData) -> list[TestChunk]:
+    test_chunks: list[TestChunk] = []
+    _t_straddle_m(test_data, test_chunks, SV39X4, VS_SV39, fetch=False)
+    return test_chunks

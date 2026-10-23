@@ -146,9 +146,38 @@ covergroup SvHSm_trap_cg with function sample(ins_t ins);
         `endif
     }
 
+    jalr : coverpoint ins.current.insn {
+        wildcard bins jalr = {JALR};
+    }
+    ldst : coverpoint ins.current.insn {
+        wildcard bins lw = {LW};
+        wildcard bins sw = {SW};
+    }
+    // A fetch at the last halfword of a page, or a word two bytes below the end of a page
+    page_end : coverpoint ((ins.current.rs1_val + ins.current.imm) & 'hFFF) {
+        bins page_end = {'hFFE};
+    }
+    guest_page_fault : coverpoint {ins.current.csr_wb[CSR_MCAUSE], ins.current.csr[CSR_MCAUSE][4:0]} {
+        bins guest_page_fault = {6'b110100, 6'b110101, 6'b110111};
+    }
+    // A nonzero mtval2 holding the guest physical address of a page boundary >> 2: the faulting second portion
+    mtval2_page_boundary : coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mtval2", "mtval2") << 2) & 'hFFF)
+                           iff (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mtval2", "mtval2") != 0) {
+        bins page_boundary = {0};
+    }
+
     // Guest page faults and guest-page faults taken in M-mode (mtval2 and mtinst are in the trap signature)
     cp_guest_page_fault_m : cross priv_mode_vs_vu, access, vsatp_paged, hgatp_paged, trap, gva_mpv;
     cp_implicit_gpf_m     : cross priv_mode_vs_vu, access, vsatp_paged, hgatp_paged, mtinst_pseudo;
+    // A fetch, or a misaligned store or load performed byte by byte, whose second page has an invalid G-stage leaf
+    `ifdef ZCA_SUPPORTED
+        cp_straddle_m      : cross priv_mode_vs_vu, jalr, vsatp_paged, hgatp_paged, page_end, guest_page_fault, mtval2_page_boundary;
+    `endif
+    `ifdef UDB_MISALIGNED_LDST
+    `ifdef UDB_MISALIGNED_SPLIT_STRATEGY_SEQUENTIAL_BYTES
+        cp_ldst_straddle_m : cross priv_mode_vs_vu, ldst, vsatp_paged, hgatp_paged, page_end, guest_page_fault, mtval2_page_boundary;
+    `endif
+    `endif
 endgroup
 
 function void svhsm_sample(int hart, int issue, ins_t ins);
