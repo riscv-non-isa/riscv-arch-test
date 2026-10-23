@@ -10,6 +10,8 @@ mstatus.TVM tests of HS-mode and VS-mode, whose traps must be taken in M-mode be
 handler accesses satp and hgatp.  H boots to HS-mode and tests hypervisor CSRs and instructions in
 HS, VS, U and VU modes.
 
+include::{testplansdir}/priv/HSm.adoc[]
+
 include::{testplansdir}/priv/H.adoc[]
 
 include::norm/HSm_norm_rules.adoc[]
@@ -19,9 +21,13 @@ include::norm/H_norm_rules.adoc[]
 ==== ExceptionsHSm and ExceptionsH Hypervisor Exceptions
 
 ExceptionsHSm boots to M-mode with nothing delegated and checks that exceptions from VS and VU reach M-mode whatever
-hedeleg holds, ecall and ebreak records, HLV/HSV faults taken in M-mode, and mtinst.  ExceptionsH boots to HS-mode,
-walks hedeleg for exceptions from VS and VU, checks that exceptions from HS and U ignore hedeleg, and checks
-hstatus.GVA, htval and htinst.  The misaligned cp_xtinst cases run only on harts that trap misaligned accesses.
+hedeleg holds, ecall and ebreak from every mode, sret in VS-mode with mstatus.TSR = 1, HLV/HSV misaligned and access
+faults taken in M-mode, and mtval2/mtinst.  ExceptionsH boots to HS-mode, walks hedeleg for exceptions from VS and VU,
+checks that exceptions from HS and U ignore hedeleg, ecalls into HS-mode and VS-mode, vstvec, the virtual-instruction
+exceptions, HLV/HSV privilege and priority, and hstatus.GVA, htval and htinst.  The trap handlers check htinst and
+mtinst on every recorded trap.  The misaligned cp_xtinst cases run only on harts that trap misaligned accesses.
+
+include::{testplansdir}/priv/ExceptionsHSm.adoc[]
 
 include::{testplansdir}/priv/ExceptionsH.adoc[]
 
@@ -35,11 +41,7 @@ ExceptionsHF and ExceptionsHV boot to HS-mode.  In HS, VS, U and VU modes, with 
 vsstatus.FS/VS, they access fcsr or vl and execute a floating-point or vector instruction that changes state, which raises an
 illegal instruction when either field in effect is Off and otherwise sets both to Dirty.
 
-[[t-ExceptionsHF-coverpoints]]
-.ExceptionsHF Coverpoints
-,===
-https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=1859267821#gid=1859267821[Google Sheet Testplan]
-,===
+include::{testplansdir}/priv/ExceptionsHF.adoc[]
 
 include::norm/ExceptionsHF_norm_rules.adoc[]
 
@@ -52,7 +54,9 @@ include::norm/ExceptionsHV_norm_rules.adoc[]
 InterruptsHSm boots to M-mode and checks mideleg, mie and mip with the hypervisor interrupts, mtinst on interrupts,
 and that M-level, HS-level and VS-level interrupts pending together in VS-mode or VU-mode are taken in that order.
 InterruptsH boots to HS-mode and raises VS-level interrupts through hvip, checking hideleg, hie, hip, vsie, vsip,
-priorities and delivery to HS-mode and VS-mode.  It also executes WFI in VS-mode and VU-mode with each mstatus.TW
+priorities and delivery to HS-mode and VS-mode.  It also checks that hideleg bit 13 is read-only zero without
+Shlcofideleg and that vsip and vsie show no LCOFI while it is zero, and that VS-level interrupts through a vectored
+vstvec enter at BASE + 4 x the S-level cause.  It also executes WFI in VS-mode and VU-mode with each mstatus.TW
 and hstatus.VTW.  Where the specification lets WFI either complete or raise an exception, nothing is pending, and
 the Sail options wfi_is_nop and max_time_to_wait select the implementation's outcome.  InterruptsHGei covers guest external interrupts: hgeip, hgeie,
 hip.SGEIP, hstatus.VGEIN, the SGEI priority and mip.SGEIP from M-mode.  hgeip is read-only, so only the platform
@@ -61,7 +65,11 @@ hooks, which a DUT with GEILEN > 0 must define.  With GEILEN = 0, InterruptsHGei
 configurations raise them through the simple interrupt generator, and the Spike, QEMU and Whisper configurations
 through IMSIC guest interrupt files.
 
+include::{testplansdir}/priv/InterruptsHSm.adoc[]
+
 include::{testplansdir}/priv/InterruptsH.adoc[]
+
+include::{testplansdir}/priv/InterruptsHGei.adoc[]
 
 include::norm/InterruptsHSm_norm_rules.adoc[]
 
@@ -71,9 +79,12 @@ include::norm/InterruptsHGei_norm_rules.adoc[]
 
 ==== ZicntrHSm and ZicntrH Hypervisor Counters
 
-ZicntrHSm walks hcounteren from M-mode.  ZicntrH checks counter access from HS, VS, U and VU modes against
+ZicntrHSm reads every counter from M-mode while walking mcounteren, hcounteren and scounteren together, and reads
+time with each htimedelta.  ZicntrH checks counter access from HS, VS, U and VU modes against
 mcounteren, hcounteren and scounteren, and time with htimedelta in each mode.  ZicntrH exercises hcounteren for all
 32 counters, so no separate ZihpmH suite is needed.
+
+include::{testplansdir}/priv/ZicntrHSm.adoc[]
 
 include::{testplansdir}/priv/ZicntrH.adoc[]
 
@@ -93,8 +104,10 @@ include::norm/SmcntrpmfH_norm_rules.adoc[]
 
 ==== PMPH Hypervisor Physical Memory Protection
 
-PMPH boots to M-mode and checks PMP on accesses from VS and VU modes, on HLV, HLVX and HSV, and on G-stage and
-VS-stage page-table reads.
+PMPH boots to M-mode and checks PMP on accesses from VS and VU modes (including M-mode accesses with MPRV = 1 and
+MPV = 1), on HLV, HLVX and HSV, and under two-stage translation on the final supervisor physical address, on the
+VS-stage and G-stage page-table reads and Svadu A/D updates, on AMOs and LR, and on the priority of page and
+guest-page faults over PMP access faults.
 
 include::{testplansdir}/priv/PMPH.adoc[]
 
@@ -102,12 +115,16 @@ include::norm/PMPH_norm_rules.adoc[]
 
 ==== SvHSm and SvH Hypervisor Two-Stage Virtual Memory
 
-SvH boots to HS-mode and runs guest code under two-stage translation: VS-stage and G-stage permissions, page sizes,
-NAPOT and Svadu cases, guest-page faults and their htval and htinst, HLV/HLVX/HSV, and GPA widths.  SvHSm boots to
-M-mode for mstatus.MPRV with MPV = 1 and guest-page faults taken in M-mode.  SvH also covers the SvnapotH and SvaduH
-tabs.
+SvH boots to HS-mode and runs guest code under two-stage translation: VS-stage and G-stage permissions, PTE formats
+and page sizes, SUM and MXR, Svade/Svadu, Svpbmt and Svnapot in each stage, guest-page faults with their htval and
+htinst (including implicit VS-stage page-table accesses and accesses that straddle a page), hedeleg, HLV/HLVX/HSV,
+GPA widths, the vsatp, satp and hgatp MODE fields, and the guest fences.  SvHSm boots to M-mode for mstatus.MPRV
+with MPV = 1 and guest traps taken in M-mode, including mtval2 for straddling accesses.  SvH also covers the
+SvnapotH and SvaduH tabs.
 
 include::{testplansdir}/priv/SvH.adoc[]
+
+include::{testplansdir}/priv/SvHSm.adoc[]
 
 include::norm/SvHSm_norm_rules.adoc[]
 
@@ -173,8 +190,11 @@ include::{testplansdir}/priv/ZkrH.adoc[]
 
 ==== SstcHSm and SstcH Hypervisor Timer Compare
 
-SstcHSm checks vstimecmp access and hip.VSTIP from M-mode.  SstcH checks vstimecmp access from HS, VS and VU modes
-and VS timer interrupts with htimedelta.
+SstcHSm checks from M-mode vstimecmp access, hip.VSTIP as hvip.VSTIP OR the vstimecmp comparison with each
+menvcfg.STCE and henvcfg.STCE, htimedelta (including 64-bit wrap), and VS timer interrupts armed from M-mode.  SstcH
+checks vstimecmp and stimecmp access from HS, VS, VU and U modes and VS timer interrupts armed from HS-mode.
+
+include::{testplansdir}/priv/SstcHSm.adoc[]
 
 include::{testplansdir}/priv/SstcH.adoc[]
 
@@ -185,10 +205,10 @@ include::norm/SstcH_norm_rules.adoc[]
 ==== SsstateenH and SmstateenH Hypervisor State Enable
 
 SsstateenH walks hstateen0 from HS-mode and checks that hstateen0.SE0 and ENVCFG control sstateen0 and senvcfg
-accesses from VS and VU modes but not from HS-mode.  It leaves mstateen at its boot value, so it also runs without
-Smstateen.  SmstateenH checks that mstateen0.SE0, ENVCFG and P1P13 control accesses to hstateen0, sstateen0, henvcfg,
+accesses from VS and VU modes but not from HS-mode.  With Smstateen it first enables only the mstateen0 bits it
+controls and sets and clears bit 63 of mstateen1-3; without Smstateen it runs with hstateen alone.  SmstateenH checks that mstateen0.SE0, ENVCFG and P1P13 control accesses to hstateen0, sstateen0, henvcfg,
 senvcfg and hedelegh from HS, VS and VU modes, and that hstateen0 bits whose mstateen0 bit is 0 are read-only zero.
-The CSRIND, AIA, IMSIC, CONTEXT and CTR bits of hstateen0 are not tested because Sail does not model the state they
+The CSRIND, AIA, IMSIC and CTR bits of hstateen0 are not tested because Sail does not model the state they
 control.
 
 include::{testplansdir}/priv/SsstateenH.adoc[]
@@ -215,8 +235,11 @@ include::{testplansdir}/priv/SmctrH.adoc[]
 
 ==== SvinvalHSm and SvinvalH Hypervisor Memory Management Table Invalidation
 
-SvinvalH executes the Svinval instructions in HS, VS, U and VU modes.  SvinvalHSm covers mstatus.TVM and
-hstatus.VTVM, whose traps are taken in M-mode.
+SvinvalH executes the Svinval instructions in HS, VS, U and VU modes with hstatus.VTVM clear and set, and checks that
+the Svinval sequences remove changed VS-stage and G-stage leaves.  SvinvalHSm executes them in M-mode, and in the
+lower modes with mstatus.TVM = 1, whose traps are taken in M-mode.
+
+include::{testplansdir}/priv/SvinvalHSm.adoc[]
 
 include::{testplansdir}/priv/SvinvalH.adoc[]
 
@@ -235,9 +258,20 @@ include::{testplansdir}/priv/SvaduH.adoc[]
 ZicfilpH boots to HS-mode.  It checks that henvcfg.LPE, not menvcfg.LPE, enables landing pads in VS-mode and
 that senvcfg.LPE, not henvcfg.LPE, enables them in VU-mode.  It checks that traps into VS-mode save ELP in
 vsstatus.SPELP and traps into HS-mode in sstatus.SPELP, and that SRET restores ELP from vsstatus.SPELP when
-executed in VS-mode and from sstatus.SPELP when executed in HS-mode.  Its normative rules are listed with Zicfilp.
+executed in VS-mode and from sstatus.SPELP when executed in HS-mode.
 
 include::{testplansdir}/priv/ZicfilpH.adoc[]
+
+include::norm/ZicfilpH_norm_rules.adoc[]
+
+==== SdtrigH Hypervisor Debug Triggers
+
+SdtrigH boots to HS-mode and checks that mcontrol6, icount, itrigger and etrigger triggers fire in VS-mode and VU-mode
+only when their vs or vu bit is set, the H-only textra selects (mhselect against mcontext and hgatp.VMID, sselect = 2
+against vsatp.ASID), hcontext as an alias of mcontext, and the control of scontext and hcontext by
+mstateen0.CONTEXT and hstateen0.CONTEXT.  Its normative rules are listed with SdtrigSm.
+
+include::{testplansdir}/priv/SdtrigH.adoc[]
 
 ==== ZicfissH Hypervisor Shadow Stack
 
@@ -256,6 +290,8 @@ senvcfg.PMM from HS-mode or hstatus.HUPMM from U-mode with SPVP = 0; and that HL
 vsstatus.MXR = 1, are not masked.
 
 include::{testplansdir}/priv/SsnpmH.adoc[]
+
+include::norm/SsnpmH_norm_rules.adoc[]
 
 ==== SmnpmH Hypervisor Pointer Masking
 
