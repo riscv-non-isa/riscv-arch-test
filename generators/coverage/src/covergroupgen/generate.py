@@ -504,27 +504,68 @@ def _indexed_ls_eew(instr: str) -> int | None:
     return int(m.group(3)) if m else None
 
 
-def _should_gate_maxindexeew(arch: str, instr: str) -> tuple[int, str] | None:
-    """Return (eew, macro_prefix) to gate on, or None if no gate should be emitted.
+def _should_gate_maxindexeew(arch: str, instr: str) -> str | None:
+    """Return the macro that gates an indexed LS covergroup, or None if no gate should be emitted.
 
     Unpriv per-SEW Vls{N} arches gate indexed LS covergroups behind
-    MAXINDEXEEW_GE{eew}. Priv MisalignV / ExceptionsVls covergroups gate
-    behind XLEN{eew} so EEW=64 indexed-LS coverage is suppressed on RV32
-    (see sail-riscv issue 1719: Sail RV32 takes illegal-instruction on
-    EEW=64 indexed LS while other sims take a load access fault, producing
-    mismatched mcause in the signature). Vx (vrgather) never gates.
+    MAXINDEXEEW_GE{eew}. MisalignV gates EEW=64 indexed LS behind
+    UDB_MXLEN_64 because its test emits those cases only on RV64.
+    ExceptionsVls emits EEW=64 indexed LS on both XLENs and checks the
+    illegal-instruction case itself, so it never gates. Vx (vrgather)
+    never gates.
     """
     eew = _indexed_ls_eew(instr)
     if not eew or eew <= 8:
         return None
     if arch in _VLS_PER_SEW_ARCHES:
-        return (eew, "MAXINDEXEEW_GE")
-    if arch in ("MisalignV", "ExceptionsVls"):
-        # XLEN16 macro does not exist; XLEN is always >= 32, so only gate eew=64.
-        if eew >= 64:
-            return (eew, "XLEN")
-        return None
+        return f"MAXINDEXEEW_GE{eew}"
+    if arch == "MisalignV" and eew >= 64:
+        return "UDB_MXLEN_64"
     return None
+
+
+# Vf16 conversions between 16-bit integers and binary32, which Zve32f provides without Zvfh.
+_VF16_ZVE32F_CONVERSIONS = {
+    "vfwcvt.f.x.v",
+    "vfwcvt.f.xu.v",
+    "vfncvt.x.f.w",
+    "vfncvt.xu.f.w",
+    "vfncvt.rtz.x.f.w",
+    "vfncvt.rtz.xu.f.w",
+}
+
+# Suites whose base vector extension is Zve32x or Zve32f.
+_ZVE32X_ARCHES = {"Vx8", "Vx16", "Vx32", "Vls8", "Vls16", "Vls32"}
+_ZVE32F_ARCHES = {"Vf32", "Zvfbfmin", "Zvfbfwma", "Zvfhmin"}
+
+
+def _vector_extension_gate(arch: str, instr: str) -> str | None:
+    """Return the extension macro an unpriv vector covergroup needs beyond its suite's base extension.
+
+    Mirrors the per-instruction REQUIRED_EXTENSIONS that testgen assigns in
+    io/templates.py get_vector_base_extension, so a covergroup is compiled only
+    on configs that select its test.
+    """
+    if not _is_vector(arch):
+        return None
+    sew = int(_get_effew(arch))
+    if arch == "Vf16" and instr not in _VF16_ZVE32F_CONVERSIONS:
+        return "ZVFH_SUPPORTED"
+    if sew == 64 and instr.startswith(("vmulh", "vsmul")):
+        return "V_SUPPORTED"
+    zve32x = arch in _ZVE32X_ARCHES or (arch.startswith("Zv") and arch not in _ZVE32F_ARCHES and sew <= 32)
+    if zve32x and ((instr.startswith(("vw", "vn")) and sew == 32) or "64" in instr):
+        return "ZVE64X_SUPPORTED"
+    if arch in _ZVE32F_ARCHES and instr.startswith(("vfw", "vfncvt")) and sew == 32:
+        return (
+            "ZVE64F_SUPPORTED" if instr.startswith(("vfwcvt.x", "vfwcvt.rtz.x", "vfncvt.f.x")) else "ZVE64D_SUPPORTED"
+        )
+    return None
+
+
+def _covergroup_gates(arch: str, instr: str) -> list[str]:
+    """Return the macros that must all be defined for this instruction's covergroup to exist."""
+    return [gate for gate in (_vector_extension_gate(arch, instr), _should_gate_maxindexeew(arch, instr)) if gate]
 
 
 def _ffLS_feasible(instr: str, sew: int) -> bool:
@@ -628,17 +669,10 @@ def _gen_instrs(
 
         vectorwiden = _is_vector_widen(arch, instr)
 
-        # Gate indexed LS covergroups by MAXINDEXEEW for unpriv per-SEW
-        # Vls{N} arches, and by XLEN for priv MisalignV / ExceptionsVls.
-        # Priv ei64 covergroups are suppressed on RV32 because Sail RV32
-        # takes illegal-instruction on EEW=64 indexed LS while other sims
-        # take a load access fault (see sail-riscv issue 1719). Vx (vrgather)
-        # never gates.
-        gate = _should_gate_maxindexeew(arch, instr)
-        if gate:
-            idx_eew, macro_prefix = gate
-            covergroup_lines.append(f"`ifdef {macro_prefix}{idx_eew}\n")
-            init_lines.append(f"`ifdef {macro_prefix}{idx_eew}\n")
+        gates = _covergroup_gates(arch, instr)
+        for gate in gates:
+            covergroup_lines.append(f"`ifdef {gate}\n")
+            init_lines.append(f"`ifdef {gate}\n")
 
         # Instruction header
         if vectorwiden:
@@ -683,7 +717,7 @@ def _gen_instrs(
         else:
             covergroup_lines.append(customize_template(templates, "endgroup", name, instr))
 
-        if gate:
+        for _ in gates:
             covergroup_lines.append("`endif\n")
             init_lines.append("`endif\n")
 
@@ -744,10 +778,8 @@ def _gen_covergroup_samples(
                 lines.append(_gen_sample_arm(templates, instr, base_calls + guarded_calls))
             continue
 
-        gate = _should_gate_maxindexeew(arch, instr)
-        if gate:
-            idx_eew, macro_prefix = gate
-            lines.append(f"`ifdef {macro_prefix}{idx_eew}\n")
+        gates = _covergroup_gates(arch, instr)
+        lines.extend(f"`ifdef {gate}\n" for gate in gates)
 
         if arch.startswith(VECTOR_WIDEN_PREFIXES):
             if _is_vector_widen(arch, instr):
@@ -761,8 +793,7 @@ def _gen_covergroup_samples(
             call = customize_template(templates, "covergroup_case_sample", arch, instr)
             lines.append(_gen_sample_arm(templates, instr, [call]))
 
-        if gate:
-            lines.append("`endif\n")
+        lines.extend("`endif\n" for _ in gates)
 
     return "".join(lines)
 
