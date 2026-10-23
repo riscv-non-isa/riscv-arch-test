@@ -11,9 +11,10 @@ store instructions, and on the addresses that two-stage translation produces.
 
 The suite boots to M-mode and delegates nothing, so the M-mode handler takes every trap.  PMP checks the
 supervisor physical address that G-stage translation produces and the implicit page-table reads of both
-stages (machine.adoc pmp_with_paging, hypervisor.adoc H_pmp).  A page or guest-page fault of the
-translation takes priority over an access fault on the final address, while an access fault on a
-page-table read is the first fault the walk encounters (hypervisor.adoc HSyncExcPrio).
+stages (machine.adoc pmp_with_paging, hypervisor.adoc H_pmp), including the hardware A/D updates that
+Svadu makes.  A page or guest-page fault of the translation takes priority over an access fault on the
+final address, while an access fault on a page-table access is the first fault the walk encounters
+(hypervisor.adoc HSyncExcPrio).
 """
 
 from collections.abc import Callable
@@ -67,8 +68,8 @@ _TABLE_GATE = "UDB_PMP_GRANULARITY <= 10 && UDB_NUM_USABLE_PMP_ENTRIES >= 12"
 _MAPPINGS = ("vs", "g")
 
 
-def _deny(regions: list[tuple[str, int, str]]) -> list[str]:
-    """Clear the unlocked PMP entries, then make each (address, entry, NAPOT ones) a NAPOT region without permissions.
+def _deny(regions: list[tuple[str, int, str]], lxwr: str = "0000") -> list[str]:
+    """Clear the unlocked PMP entries, then make each (address, entry, NAPOT ones) a NAPOT region with ``lxwr``.
 
     An address is a label or a register.  Uses x4 and x5 only, so allocator registers survive.  HFENCE.VVMA
     flushes cached VS-stage translations, which HFENCE.GVMA need not flush (hypervisor.adoc hfence.vma NOTE).
@@ -80,7 +81,7 @@ def _deny(regions: list[tuple[str, int, str]]) -> list[str]:
     for xlen, per_csr in ((32, 4), (64, 8)):
         csrs: dict[int, list[str]] = {}
         for _, entry, _ in regions:
-            csrs.setdefault((entry // per_csr) * (xlen // 32), []).append(cfg_byte("0000", "napot", cfg_shift(entry)))
+            csrs.setdefault((entry // per_csr) * (xlen // 32), []).append(cfg_byte(lxwr, "napot", cfg_shift(entry)))
         lines.append(f"#if __riscv_xlen == {xlen}")
         for csr, values in csrs.items():
             lines.extend([f"LI(x4, {' | '.join(values)})", f"csrw pmpcfg{csr}, x4"])
@@ -269,10 +270,10 @@ def _guest_leaves(test_data: TestData, g: SvMode, vs: SvMode, user: bool, flags:
 class _Scenario:
     """One PMP and leaf configuration that the probes run under.
 
-    regions are (address, entry, NAPOT low ones) as for _deny; an address "{gva0}" or "{gva1}" is the guest
-    virtual address of mapping vs or g, and "{vlvl0_gpa}" is the guest physical address of vlvl0.  leaves, if
-    set, first rewrite both kilopage leaves.  atomics, if set, names the coverpoints of an amoswap.w and an lr.w
-    at each mapping.
+    regions are (address, entry, NAPOT low ones) as for _deny, with permissions lxwr; an address "{gva0}" or
+    "{gva1}" is the guest virtual address of mapping vs or g, and "{vlvl0_gpa}" is the guest physical address of
+    vlvl0.  leaves, if set, first rewrite both kilopage leaves.  atomics, if set, names the coverpoints of an
+    amoswap.w and an lr.w at each mapping.  adue sets menvcfg.ADUE and henvcfg.ADUE.
     """
 
     name: str
@@ -281,7 +282,14 @@ class _Scenario:
     regions: tuple[tuple[str, int, str], ...] = ()
     leaves: PteFlags | None = None
     rv64: bool = False
+    lxwr: str = "0000"
     atomics: tuple[str, str] | None = None
+    adue: bool = False
+
+    @property
+    def gate(self) -> str | None:
+        gates = [g for g, on in (("__riscv_xlen == 64", self.rv64), ("defined(SVADU_SUPPORTED)", self.adue)) if on]
+        return " && ".join(gates) or None
 
 
 def _table(name: str, entry: int | None = None) -> tuple[str, int, str]:
@@ -298,6 +306,20 @@ def _table_scenario(name: str, coverpoint: str, stage: str) -> _Scenario:
         (_table(name),),
         rv64=_TABLES[name][2],
     )
+
+
+def _adue(on: bool) -> list[str]:
+    """Set or clear menvcfg.ADUE and henvcfg.ADUE (menvcfgh and henvcfgh on RV32), menvcfg first when setting, since
+    henvcfg.ADUE is read-only zero while menvcfg.ADUE = 0."""
+    op = "csrs" if on else "csrc"
+    lines = []
+    for xlen, h in ((64, ""), (32, "H")):
+        csrs = [("menvcfg", "MENVCFG"), ("henvcfg", "HENVCFG")]
+        lines.append(f"#if __riscv_xlen == {xlen}")
+        for csr, mask in csrs if on else reversed(csrs):
+            lines.extend([f"LI(x4, {mask}{h}_ADUE)", f"{op} {csr}{h.lower()}, x4"])
+        lines.append("#endif")
+    return lines
 
 
 def _atomic_probes(
@@ -339,13 +361,15 @@ def _guest_scenarios(test_data: TestData, mode: str, scenarios: list[_Scenario])
     ]
     for scenario in scenarios:
         body = [f"// {mode.upper()}-mode: {scenario.description}"]
+        if scenario.adue:
+            body.extend(_adue(True))
         if scenario.leaves is not None:
             body.extend(per_xlen(partial(_guest_leaves, test_data, user=user, flags=scenario.leaves)))
         regions = [
             (address.format(gva0=f"x{gva_vs}", gva1=f"x{gva_g}", vlvl0_gpa=f"x{vlvl0_gpa}"), entry, ones)
             for address, entry, ones in scenario.regions
         ]
-        body.extend([*_deny(regions), "RVTEST_FENCEI", f"RVTEST_TSBI_GOTO_{mode.upper()}MODE"])
+        body.extend([*_deny(regions, scenario.lxwr), "RVTEST_FENCEI", f"RVTEST_TSBI_GOTO_{mode.upper()}MODE"])
         checks = []
         rds = test_data.int_regs.get_registers(2)
         for mapping, gva, rd in zip(_MAPPINGS, (gva_vs, gva_g), rds, strict=True):
@@ -380,7 +404,9 @@ def _guest_scenarios(test_data: TestData, mode: str, scenarios: list[_Scenario])
                     body.extend(checks)
                 body.extend(["RVTEST_TSBI_GOTO_MMODE", *(checks if user else [])])
         test_data.int_regs.return_registers(rds)
-        lines.extend(gated(body, "__riscv_xlen == 64" if scenario.rv64 else None))
+        if scenario.adue:
+            body.extend(_adue(False))
+        lines.extend(gated(body, scenario.gate))
     test_data.int_regs.return_registers([gva_vs, gva_g, vlvl0_gpa])
     return [*lines, *zero_pmp_regs(), *guest_translation_teardown(test_data)]
 
@@ -415,7 +441,7 @@ def _hlv_scenarios(test_data: TestData, scenarios: list[_Scenario]) -> list[str]
                     ]
                 )
         body.append("RVTEST_TSBI_GOTO_MMODE")
-        lines.extend(gated(body, "__riscv_xlen == 64" if scenario.rv64 else None))
+        lines.extend(gated(body, scenario.gate))
     lines.extend([f"LI(x{rd}, HSTATUS_SPVP)", f"csrc hstatus, x{rd}", *zero_pmp_regs()])
     test_data.int_regs.return_registers([gva_vs, gva_g, rd])
     return [*lines, *guest_translation_teardown(test_data)]
@@ -477,6 +503,20 @@ _GUEST_SCENARIOS = [
     ),
 ]
 
+# With ADUE = 1, a read-only table lets the walk read a leaf with A = D = 0 but not update it
+_PT_UPDATE_SCENARIOS = [
+    _Scenario(
+        f"adue_{name}",
+        "cp_pmp_pt_update",
+        f"PMP makes {name} read-only; accesses whose {stage} leaf needs an A/D update raise access faults",
+        (_table(name),),
+        PteFlags(accessed=False, dirty=False),
+        lxwr="0001",
+        adue=True,
+    )
+    for name, stage in (("vlvl0", "VS-stage"), ("hlvl0", "G-stage"))
+]
+
 _HLV_SCENARIOS = [
     _Scenario("none", "cp_pmp_hlv_pt", "PMP denies nothing"),
     *(_table_scenario(name, "cp_pmp_hlv_pt", "VS-stage") for name in ("Vroot", "vlvl1", "vlvl0")),
@@ -518,6 +558,15 @@ def _make_two_stage_chunks(test_data: TestData) -> list[TestChunk]:
             "jalr, sw, lw, amoswap.w and lr.w from VS-mode and VU-mode through a VS-stage and a G-stage kilopage\n"
             "mapping, under PMP regions at the guest virtual, supervisor physical and page-table addresses",
             _GUEST_SCENARIOS,
+            [],
+        ),
+        _two_stage_chunk(
+            test_data,
+            "pt_update",
+            "cp_pmp_pt_update",
+            "jalr, sw and lw from VS-mode and VU-mode through both mappings, whose leaves have A = D = 0, with\n"
+            "menvcfg.ADUE = henvcfg.ADUE = 1 and PMP making vlvl0 or hlvl0 read-only",
+            _PT_UPDATE_SCENARIOS,
             [],
         ),
         _two_stage_chunk(

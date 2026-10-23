@@ -445,7 +445,7 @@ covergroup PMPH_hlv_cg with function sample(ins_t ins, logic [7:0] pmpcfg [63:0]
 endgroup
 
 // jalr, sw, lw, amoswap.w and lr.w from VS-mode and VU-mode through both mappings
-covergroup PMPH_guest_cg with function sample(ins_t ins, int pmp_entry);
+covergroup PMPH_guest_cg with function sample(ins_t ins, int pmp_entry, logic [2:0] pmp_xwr);
   option.per_instance = 0;
   `include "general/RISCV_coverage_standard_coverpoints.svh"
 
@@ -476,6 +476,28 @@ covergroup PMPH_guest_cg with function sample(ins_t ins, int pmp_entry);
     bins vs = {`PMPH_VS_SUPERPAGE};
     bins g  = {`PMPH_G_SUPERPAGE};
   }
+  `ifdef SVADU_SUPPORTED
+  `ifdef UDB_MXLEN_64
+  menvcfg_adue: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "adue") {
+    bins on = {1};
+  }
+  henvcfg_adue: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "henvcfg", "adue") {
+    bins on = {1};
+  }
+  `else
+  menvcfg_adue: coverpoint ins.current.csr[CSR_MENVCFGH][29] {
+    bins on = {1};
+  }
+  henvcfg_adue: coverpoint ins.current.csr[CSR_HENVCFGH][29] {
+    bins on = {1};
+  }
+  `endif
+  // PMP makes the table that holds the leaf read-only
+  pmp_table_read_only: coverpoint pmp_entry iff (pmp_xwr == 3'b001) {
+    bins vlvl0 = {0};
+    bins hlvl0 = {1};
+  }
+  `endif
   // PMP denies the supervisor physical address, or the guest virtual addresses of both mappings
   pmp_final: coverpoint pmp_entry {
     bins spa = {6};
@@ -490,7 +512,7 @@ covergroup PMPH_guest_cg with function sample(ins_t ins, int pmp_entry);
     bins hlvl0 = {10};
   }
   // PMP denies a page table below the root
-  pmp_table: coverpoint pmp_entry {
+  pmp_table: coverpoint pmp_entry iff (pmp_xwr == 3'b000) {
     bins vlvl0 = {0};
     bins hlvl0 = {1};
     `ifdef UDB_MXLEN_64
@@ -528,6 +550,10 @@ covergroup PMPH_guest_cg with function sample(ins_t ins, int pmp_entry);
   `ifdef ZALRSC_SUPPORTED
   cp_pmp_lr:                cross priv_mode_vs_vu, lr_w, mapping, pmp_final, vsatp_paged, hgatp_paged;
   `endif
+  `ifdef SVADU_SUPPORTED
+  // PMP checks the hardware A/D update of a leaf, which writes its table
+  cp_pmp_pt_update:         cross priv_mode_vs_vu, access_instr, mapping, pmp_table_read_only, menvcfg_adue, henvcfg_adue, vsatp_paged, hgatp_paged;
+  `endif
   `endif
 endgroup
 
@@ -539,6 +565,7 @@ function void pmph_sample(int hart, int issue, ins_t ins);
   logic [`UDB_MXLEN-1:0] pmpaddr [62:0];
   logic [14:0] pmp_hit;
   int pmp_entry;
+  logic [2:0] pmp_xwr;
 
   `ifdef UDB_MXLEN_32
     // Each pmpcfg CSR holds 4 region configs in 32-bit (4x 8-bit)
@@ -635,8 +662,9 @@ function void pmph_sample(int hart, int issue, ins_t ins);
   for (int i = 10; i >= 0; i--) begin
     if (pmpcfg[i][4:3] != 2'b00) pmp_entry = i;
   end
+  pmp_xwr = (pmp_entry >= 0) ? pmpcfg[pmp_entry][2:0] : 3'b000;
 
   PMPH_cg.sample(ins, pack_pmpaddr, pmpcfg_a, pmpcfg, pmp_hit);
   PMPH_hlv_cg.sample(ins, pmpcfg, pmp_hit, pmp_entry);
-  PMPH_guest_cg.sample(ins, pmp_entry);
+  PMPH_guest_cg.sample(ins, pmp_entry, pmp_xwr);
 endfunction

@@ -50,10 +50,17 @@ normative_rule_definitions:
   - names: [hlsv_u_op]
     coverpoint: ["PMPH_hlv_cg/cp_pmp_hlvx"]
 
-  # PMP checks the implicit page-table reads of both stages
+  # PMP checks the implicit page-table accesses of both stages
   - names: [pmp_with_paging, pmp_check_pagetable_access, H_vm_gstagetrans]
     coverpoint:
-      ["PMPH_guest_cg/{cp_pmp_pt,cp_pmp_pt_gpa}", "PMPH_hlv_cg/cp_pmp_hlv_pt"]
+      [
+        "PMPH_guest_cg/{cp_pmp_pt,cp_pmp_pt_gpa,cp_pmp_pt_update}",
+        "PMPH_hlv_cg/cp_pmp_hlv_pt",
+      ]
+
+  # With Svadu, PMP checks the A/D update of a VS-stage or G-stage leaf, which writes its page table
+  - names: [henvcfg_adue_op, menvcfg_adue_op]
+    coverpoint: ["PMPH_guest_cg/cp_pmp_pt_update"]
 
   # Page and guest-page faults take priority over an access fault on the final address
   - names: [H_exception_priority, pmp_violation_precise_trap]
