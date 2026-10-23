@@ -79,7 +79,7 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |Zicboz|Cache Block Zero|<<t-Zicboz-coverpoints>>|||x|x|x
 |Zicbop|Cache Block Prefetch|<<t-Zicbop-coverpoints>>|||x|x|x
 |Za64rs|Max 64B Reservation Sets|<<t-Za64rs-coverpoints>>|||x|x|x
-|Zic64bZicboz|64B Cache Blocks|<<t-Zic64bZicboz-coverpoints>>|||x|x|x
+|Zic64b|64B Cache Blocks|<<t-Zic64b-coverpoints>>|||x|x|x
 8+^|Privileged
 |Sm|Machine CSRs|<<t-Sm-coverpoints>>||x|x|x|x
 |S|Supervisor CSRs|<<t-S-coverpoints>>|||x|x|x

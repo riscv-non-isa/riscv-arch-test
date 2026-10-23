@@ -334,8 +334,8 @@
     `ifdef COVER_ZIBI
         zibi_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_ZIC64BZICBOZ
-        zic64bzicboz_sample(hart, issue, ins);
+    `ifdef COVER_ZIC64B
+        zic64b_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZICBOM
         zicbom_sample(hart, issue, ins);
