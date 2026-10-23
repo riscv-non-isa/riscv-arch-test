@@ -283,7 +283,7 @@ The SBI is invoked with the `ecall` instruction.  The operation is passed in `a0
 [%AUTOWIDTH]
 |===
 |Function Name|Operation(`a0`)|Description
-|TSBI_ECALL_TEST|0x00000073|Test `ecall` to the execution environment.  Returns xEPC in `a0` to indicate that the trap handler was entered.
+|TSBI_ECALL_TEST|0x00000073|Test `ecall` to the execution environment.  The trap handler records the `ecall` in the trap signature and returns past it with xEPC in `a0`.
 |TSBI_CSR_SET|0x<CSR>5a073|Performs the functionality of a CSRS instruction specified by the opcode. `a1` contains the value to write. <CSR> is the 12-bit CSR encoding.
 |TSBI_CSR_CLEAR|0x<CSR>5b073|Performs CSRC instruction specified by the opcode.  `a1` contains the value to write.
 |TSBI_CSR_WRITE|0x<CSR>59073|Performs CSRW instruction specified by the opcode.  `a1` contains the value to write.
@@ -322,7 +322,7 @@ NOTE: The ACT S/HS and VS-mode trap handlers implement the same calls.  Each tra
 
 The following macros are defined for developer convenience to access the T-SBI and ACT system calls.  They are not required.
 
-* RVTEST_TSBI_ECALL_TEST(): returns xEPC in `a0`
+* RVTEST_TSBI_ECALL_TEST(): records the `ecall` in the trap signature and returns xEPC in `a0`
 * RVTEST_TSBI_CSR_SET(csr, imm)
 * RVTEST_TSBI_CSR_CLEAR(csr, imm)
 * RVTEST_TSBI_CSR_WRITE(csr, imm)
