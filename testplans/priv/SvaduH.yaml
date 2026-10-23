@@ -1,12 +1,6 @@
 # yaml-language-server: $schema=testplan.schema.json
 suite: SvaduH
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=530717859#gid=530717859
-coverpoints:
-  - heading: Develop as part of virtual memory
-  - name: vsatp_svadu
-    goal: Verify SVADU
-    description: |-
-      Environment: If unsupported, menvcfg.ADUE must=0.
-      Test Case: Read ADUE.
-    expectation: Always 0 if not implemented.
-    bins: —
+notes: |-
+  SvaduH has no tests of its own; SvH covers hardware A/D updates under two-stage translation.  cp_vsatp_adue checks that henvcfg.ADUE selects Svade or Svadu for the VS-stage, cp_hgatp_adue that menvcfg.ADUE does so for the G-stage, and cp_twostage_adue both stages together, including the A/D bits of the G-stage leaf of a VS-stage page table.  cp_implicit_gpf checks the guest-page fault of an implicit VS-stage A/D update, and cp_henvcfg_menvcfg that henvcfg.ADUE is read-only zero while menvcfg.ADUE = 0.  Without Svadu, menvcfg.ADUE and henvcfg.ADUE read as zero and the same tests expect Svade faults.
+coverpoints: []
