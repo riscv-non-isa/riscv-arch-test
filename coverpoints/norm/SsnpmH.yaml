@@ -1,0 +1,20 @@
+# Normative rule to coverpoint mappings
+# Generated from riscv-isa-manual normative rule definitions
+#
+# SsnpmH covers pointer masking in VS-mode and VU-mode and for HLV/HSV.  The rules of the ignore transformation,
+# SPVP and MXR are listed with Zpm.
+
+normative_rule_definitions:
+  # If the Ssnpm extension is implemented, the PMM field enables or disables pointer masking for VS-mode.
+  - name: henvcfg_pmm_op
+    coverpoint:
+      [
+        "SsnpmH_cg/cp_vs_pmm",
+        "SsnpmH_cg/{cp_hlv_hs_pmm, cp_hlv_u_pmm} (hstatus.SPVP = 1)",
+      ]
+
+  # If the Ssnpm extension is implemented, the PMM field enables or disables pointer masking for the next-lower
+  # privilege mode (U/VU).
+  - name: senvcfg_pmm_ssnpm
+    coverpoint:
+      ["SsnpmH_cg/cp_vu_pmm", "SsnpmH_cg/cp_hlv_hs_pmm (hstatus.SPVP = 0)"]

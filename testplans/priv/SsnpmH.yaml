@@ -45,6 +45,9 @@ coverpoints:
     expectation: Load guest-page fault in every case.
     bins: |-
       priv_mode {HS, U} x hlvx.wu x hstatus.SPVP {0, 1} x applicable PMM enabled x tag {PMLEN 7, PMLEN 16 only} x vsatp Bare x hgatp {Sv48x4, Sv57x4}
+    notes: |-
+      hypervisor.adoc defines henvcfg.PMM, senvcfg.PMM and hstatus.HUPMM masking only for HLV.* and HSV.*, which Sail and Spike read as excluding HLVX.
+      The HUPMM paragraph has no normative tag, so the row maps no rule.
   - name: cp_mxr_pmm
     goal: vsstatus.MXR = 1 turns pointer masking off in VS-mode and VU-mode
     description: With vsstatus.MXR = 1 and the PMM field that applies enabled (henvcfg.PMM in VS-mode, senvcfg.PMM in VU-mode), ld in VS-mode and VU-mode at the test data with each tag bit set.
