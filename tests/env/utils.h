@@ -44,9 +44,8 @@
 #endif
 
 // RVTEST_FENCEI: instruction that synchronizes the instruction stream after code
-// has been written to memory (relocating the trampoline, writing a dynamic
-// instruction to scratch, or storing into an executable PMP region before jumping
-// into it). It is fence.i when the DUT supports Zifencei, otherwise nop (coherent
+// has been written to memory (relocating the trampoline, or storing into an
+// executable PMP region before jumping into it). It is fence.i when the DUT supports Zifencei, otherwise nop (coherent
 // I-cache assumed). A DUT that needs a custom mechanism may predefine RVMODEL_FENCEI
 // (e.g. a JAL to a sync routine) and it is used as-is. Must stay a single instruction
 // (or a JAL) so code size is constant.
@@ -739,6 +738,16 @@
 #define RVTEST_SET_VSEXT_INT_U  RVTEST_TSBI_CSR_SET(CSR_HVIP, MIP_VSEIP)
 #define RVTEST_CLR_VSEXT_INT_U  RVTEST_TSBI_CSR_CLEAR(CSR_HVIP, MIP_VSEIP)
 
+// Guest external interrupt _GEI (an immediate, 1 to GEILEN): sets or clears hgeip bit _GEI through
+// RVMODEL_SET/CLR_GUEST_EXT_INT, which run in .text.rvmodel so their size does not move the test.
+// The _M flavor runs in M-mode; the _S and _U flavors run in any other mode.
+#define RVTEST_SET_GUEST_EXT_INT_M(_GEI) li a0, _GEI; jal rvtest_set_guest_ext_int_m   /* Trigger guest external interrupt */
+#define RVTEST_CLR_GUEST_EXT_INT_M(_GEI) li a0, _GEI; jal rvtest_clr_guest_ext_int_m   /* Clear guest external interrupt */
+#define RVTEST_SET_GUEST_EXT_INT_S(_GEI) li a0, _GEI; jal rvtest_set_guest_ext_int_su  /* Trigger guest external interrupt */
+#define RVTEST_CLR_GUEST_EXT_INT_S(_GEI) li a0, _GEI; jal rvtest_clr_guest_ext_int_su  /* Clear guest external interrupt */
+#define RVTEST_SET_GUEST_EXT_INT_U(_GEI) RVTEST_SET_GUEST_EXT_INT_S(_GEI)
+#define RVTEST_CLR_GUEST_EXT_INT_U(_GEI) RVTEST_CLR_GUEST_EXT_INT_S(_GEI)
+
 // Supervisor timer interrupt through stimecmp with menvcfg.STCE = 0 or 1; clearing also
 // restores STCE = 0. menvcfg is M-only, so S and U reach STCE through T-SBI. stimecmp is
 // S-accessible only when STCE = 1, so S writes it directly then and through T-SBI otherwise.
@@ -781,7 +790,3 @@
   RVTEST_TSBI_CSR_SET(RVTEST_CSR_STCE, RVTEST_STCE); RVTEST_SET_SSTC_INT_U
 
 #define RVTEST_CLR_SSTC_STCE1_INT_U RVTEST_CLR_SSTC_STCE0_INT_S
-
-
-// Timer interrupts (no parameters)
-#define RVTEST_CLR_STIMER_INT

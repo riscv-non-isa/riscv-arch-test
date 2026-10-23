@@ -838,7 +838,7 @@
   .option push
   .option norvc                                  // ensure consistent code size
   li a0, \encoding                               // a0 = CSR instruction encoding (32-bit value)
-  ecall                                          // trap to handler; handler executes CSR instr dynamically
+  ecall                                          // trap to handler; handler executes the matching CSR instr from its table
   // a0 now contains the CSR read result (if rd==a0 in the encoding)
   .option pop
 .endm
@@ -904,7 +904,7 @@
 // RVMODEL_CLR_SEXT_INT has no default: when undefined, rvtest_clr_sext_int_* clear mip.SEIP instead
 
 // VS-level interrupts have no RVMODEL macros (utils.h raises them through hvip). Guest external
-// interrupts use RVMODEL_SET/CLR_GUEST_EXT_INT, which check_defines.h requires when GEILEN > 0.
+// interrupts use RVMODEL_SET/CLR_GUEST_EXT_INT(_M), which check_defines.h requires when GEILEN > 0.
 
 
 //==============================================================================
@@ -2755,10 +2755,9 @@ excpt_\__MODE__\()hndlr_tbl:
 #endif
 
 #ifdef S_SUPPORTED
-\__MODE__\()clr_Stmr_int:                            // S-mode timer interrupt
-        RVTEST_CLR_STIMER_INT
-        la      T2, resto_\__MODE__\()rtn
-        jr      T2
+\__MODE__\()clr_Stmr_int:                            // S-mode timer interrupt: STIP comes from stimecmp or
+        la      T2, resto_\__MODE__\()rtn            //   an M-mode mip write, which the test clears;
+        jr      T2                                   //   the handler has masked STIE
 
 \__MODE__\()clr_Sext_int:                            // S-mode external interrupt
         CLR_INT_ENTER
@@ -2800,18 +2799,16 @@ excpt_\__MODE__\()hndlr_tbl:
 \__MODE__\()clr_Sext_int:
         RVTEST_DFLT_INT_HNDLR
 
-\__MODE__\()clr_Stmr_int:                            // S-mode timer interrupt
-        RVTEST_CLR_STIMER_INT
-        la      T2, resto_\__MODE__\()rtn
-        jr      T2
+\__MODE__\()clr_Stmr_int:                            // S-mode timer interrupt: STIP comes from stimecmp or
+        la      T2, resto_\__MODE__\()rtn            //   an M-mode mip write, which the test clears;
+        jr      T2                                   //   the handler has masked STIE
 
 #endif
 
 #ifdef H_SUPPORTED
 // VS-level interrupts are raised through hvip, which M-mode and HS-mode clear
 // directly and the VS handler clears through T-SBI. A VS-level timer interrupt
-// from vstimecmp or a guest external interrupt from hgeip stays pending; the
-// handler has already masked it in hie (vsie).
+// from vstimecmp stays pending; the handler has already masked it in hie (vsie).
 \__MODE__\()clr_Vsw_int:                             // VS-level software interrupt: hvip.VSSIP
         CLR_INT_ENTER
   .ifc \__MODE__ , V
@@ -2839,9 +2836,36 @@ excpt_\__MODE__\()hndlr_tbl:
   .endif
         CLR_INT_RETURN \__MODE__
 
-\__MODE__\()clr_Sgei_int:                            // guest external interrupt: hgeip stays set until
-        la      T2, resto_\__MODE__\()rtn            //   RVMODEL_CLR_GUEST_EXT_INT; hie.SGEIE is masked
-        jr      T2
+// A guest external interrupt is pending while any bit of hgeip & hgeie is set. hgeip is
+// read-only, so each pending guest interrupt is cleared through the platform. SGEI is
+// never delegated to VS-mode.
+#ifdef RVTEST_SGEI_INTR_IMPL
+\__MODE__\()clr_Sgei_int:                            // supervisor guest external interrupt
+  .ifc \__MODE__ , V
+        RVTEST_DFLT_INT_HNDLR
+  .else
+        CLR_INT_ENTER
+        csrr    T3, CSR_HGEIP                        // T3 = pending guest external interrupts
+        li      T4, 0                                // T4 = guest external interrupt number
+1:      srli    T3, T3, 1                            // bit 0 is read-only zero
+        addi    T4, T4, 1
+        beqz    T3, 3f                               // no more pending
+        andi    T2, T3, 1
+        beqz    T2, 1b
+        mv      a0, T4                               // clear guest external interrupt T4
+    .ifc \__MODE__ , M
+        jal     rvtest_clr_guest_ext_int_m
+    .else
+        jal     rvtest_clr_guest_ext_int_su
+    .endif
+        j       1b
+3:
+        CLR_INT_RETURN \__MODE__
+  .endif
+#else
+\__MODE__\()clr_Sgei_int:                            // no guest interrupt files: hgeip is always 0
+        RVTEST_DFLT_INT_HNDLR
+#endif
 #endif
 
 \__MODE__\()clr_Lcof_int:                            // local counter overflow interrupt

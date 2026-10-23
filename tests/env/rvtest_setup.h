@@ -694,6 +694,17 @@
         csrc mip, a1 // clear mip.SEIP
         ret
     #endif // S_SUPPORTED
+
+    #ifdef RVTEST_SGEI_INTR_IMPL
+      // Guest external interrupt a0 (1 to GEILEN) through the platform, which alone can write hgeip
+      rvtest_set_guest_ext_int_m:
+        RVMODEL_SET_GUEST_EXT_INT_M(a0, a1, a2)
+        ret
+
+      rvtest_clr_guest_ext_int_m:
+        RVMODEL_CLR_GUEST_EXT_INT_M(a0, a1, a2)
+        ret
+    #endif // RVTEST_SGEI_INTR_IMPL
   #endif
 
   // Flavors to run from supervisor mode
@@ -864,6 +875,17 @@
       RVTEST_TSBI_CSR_CLEAR(CSR_MIP, 1<<9) // clear mip.SEIP
       ret
 
+    #ifdef RVTEST_SGEI_INTR_IMPL
+      // Guest external interrupt a0 (1 to GEILEN) through the platform, from any mode below M
+      rvtest_set_guest_ext_int_su:
+        RVMODEL_SET_GUEST_EXT_INT(a0, a1, a2)
+        ret
+
+      rvtest_clr_guest_ext_int_su:
+        RVMODEL_CLR_GUEST_EXT_INT(a0, a1, a2)
+        ret
+    #endif // RVTEST_SGEI_INTR_IMPL
+
     // Flavors to run from user mode
 
     #ifdef SSTC_SUPPORTED
@@ -1017,19 +1039,6 @@
       .p2align 12
       rvtest_Vroot_pg_tbl:
         .zero(4096)              // 4KB page table
-      // Lower-level G-stage and VS-stage tables for a kilopage under the smallest modes H requires at
-      // this XLEN: Sv32x4/Sv32 on RV32 walk one level below the root (8KB in all), and Sv39x4/Sv39 on
-      // RV64 walk two (16KB). Sv48x4/Sv48 and Sv57x4/Sv57 tests define rvtest_[hv]lvl2/3_pg_tbl.
-      rvtest_hlvl0_pg_tbl:
-        .zero(4096)
-      rvtest_vlvl0_pg_tbl:
-        .zero(4096)
-      #if __riscv_xlen == 64
-        rvtest_hlvl1_pg_tbl:
-          .zero(4096)
-        rvtest_vlvl1_pg_tbl:
-          .zero(4096)
-      #endif
     #endif
   #endif
 
