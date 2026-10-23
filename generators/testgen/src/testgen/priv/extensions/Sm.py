@@ -1710,10 +1710,7 @@ _ZICNTR_CG = "Sm_Zicntr_cg"
 
 @add_priv_test_generator(
     "Sm",
-    required_extensions=[
-        "Sm",
-        "Zicntr",
-    ],
+    required_extensions=["Sm", "Zicntr"],
     march_extensions=["Zicntr", "Zihpm", "Zawrs"],
     extra_defines=["#define BOOT_TO_MMODE"],
 )
