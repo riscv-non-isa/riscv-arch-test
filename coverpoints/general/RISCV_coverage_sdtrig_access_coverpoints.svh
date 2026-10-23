@@ -15,28 +15,40 @@
 // 0 means no trigger at this tselect, which no implemented trigger (triggernum) can read back.
 tdata1_type: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "tdata1", "type")[3:0] {
     type_option.weight = 0;
-    bins icount    = {4'd3};
-    bins itrigger  = {4'd4};
-    bins etrigger  = {4'd5};
-    bins mcontrol6 = {4'd6};
+    `ifdef SDTRIG_ICOUNT_ANY
+        bins icount    = {4'd3};
+    `endif
+    `ifdef SDTRIG_ITRIGGER_ANY
+        bins itrigger  = {4'd4};
+    `endif
+    `ifdef SDTRIG_ETRIGGER_ANY
+        bins etrigger  = {4'd5};
+    `endif
+    `ifdef SDTRIG_MCONTROL6_ANY
+        bins mcontrol6 = {4'd6};
+    `endif
     bins disabled  = {4'd15};
 }
 csr_common_reg: coverpoint ins.current.insn[31:20] {
     type_option.weight = 0;
     bins tdata1 = {CSR_TDATA1};
-    bins tdata2 = {CSR_TDATA2};
-    bins tdata3 = {CSR_TDATA3};
+    `ifdef UDB_TDATA2_IMPLEMENTED
+        bins tdata2 = {CSR_TDATA2};
+    `endif
+    `ifdef UDB_TDATA3_IMPLEMENTED
+        bins tdata3 = {CSR_TDATA3};
+    `endif
     bins tinfo  = {CSR_TINFO};
-    `ifdef UDB_TCONTROL_AVAILABLE
+    `ifdef UDB_TCONTROL_IMPLEMENTED
         bins tcontrol = {CSR_TCONTROL};
     `endif
-    `ifdef UDB_MCONTEXT_AVAILABLE
+    `ifdef UDB_MCONTEXT_IMPLEMENTED
         bins mcontext = {CSR_MCONTEXT};
     `endif
-    `ifdef UDB_SCONTEXT_AVAILABLE
+    `ifdef UDB_SCONTEXT_IMPLEMENTED
         bins scontext = {CSR_SCONTEXT};
     `endif
-    `ifdef UDB_HCONTEXT_AVAILABLE
+    `ifdef UDB_HCONTEXT_IMPLEMENTED
         bins hcontext = {CSR_HCONTEXT};
     `endif
 }

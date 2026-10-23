@@ -13,10 +13,6 @@
 `ifndef RISCV_COVERAGE_SDTRIG_FUNCTIONS_SVH
 `define RISCV_COVERAGE_SDTRIG_FUNCTIONS_SVH
 
-`ifndef UDB_SDTRIG_MASKMAX6
-    `define UDB_SDTRIG_MASKMAX6 63
-`endif
-
 // 1 when a trigger breakpoint was taken into the mode whose xcause is cause on this record: the trace logs the
 // trap's xcause = 3 on the record of the instruction it follows or replaces. A CSR instruction that names xcause,
 // and ebreak, are not one.
@@ -57,7 +53,7 @@ function automatic logic [2:0] sdtrig_icount_outcome(ins_t ins, int mode_bit);
         if (armed[8] && sdtrig_icount_count(now) == 0 && !now[8])  return 3'd4;
     end else begin
         if (!armed[mode_bit] && sdtrig_icount_count(now) == sdtrig_icount_count(armed)) return 3'd1;
-        `ifdef UDB_ICOUNT_HARDWIRED_1
+        `ifdef UDB_SDTRIG_ICOUNT_COUNT_HARDWIRED_1
             if (armed[mode_bit] && sdtrig_icount_count(now) == 1 && !now[mode_bit] && !now[8]) return 3'd2;  // firing clears the mode bits instead
         `else
             if (armed[mode_bit] && sdtrig_icount_count(now) == 0 && !now[8])                   return 3'd2;
@@ -202,6 +198,36 @@ function automatic logic [1:0] sdtrig_exec_size_target(ins_t ins);
     if (ins.current.insn == 32'h00008013) return 2'd1;
     if (ins.current.insn[1:0] != 2'b11 && ins.current.insn[15:0] == 16'h0001) return 2'd2;
     return 2'd0;
+endfunction
+// cp_mcontrol6_execute_adr_size, for a select = 0 execute trigger: {size, 0} for addi x0, x1, 0 and {size, 1} for c.nop
+// at tdata2, seen retiring or as the breakpoint that replaced it; 0 for anything else. The test puts a c.nop target at
+// an address that is 2 mod 4 and an addi target at 0 mod 4, so tdata2[1] names a target that did not retire.
+function automatic logic [3:0] sdtrig_exec_adr_size_case(ins_t ins);
+    logic [2:0] size = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "size")[2:0];
+    if (sdtrig_exec_fired(ins) && ins.current.csr[CSR_MEPC] == ins.current.csr[CSR_TDATA2])
+        return {size, ins.current.csr[CSR_TDATA2][1]};
+    if (ins.current.pc_rdata != ins.current.csr[CSR_TDATA2]) return 4'd0;
+    if (ins.current.insn == 32'h00008013) return {size, 1'b0};
+    if (ins.current.insn[1:0] != 2'b11 && ins.current.insn[15:0] == 16'h0001) return {size, 1'b1};
+    return 4'd0;
+endfunction
+// cp_mcontrol6_size_data, for an sb/sh/sw/sd: 1 = the store has the trigger's size N and its low N bits (the data it
+// writes) equal tdata2, 2 = it has that size and they differ, 3 = it has another width; 0 = anything else
+function automatic logic [1:0] sdtrig_size_data_case(ins_t ins);
+    logic [XLEN-1:0] mask;
+    int bytes, size_bytes;
+    if (ins.current.insn[6:0] != 7'b0100011 || ins.current.insn[14]) return 2'd0;
+    bytes = 1 << ins.current.insn[13:12];
+    case (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "size")[2:0])
+        3'd1:    size_bytes = 1;
+        3'd2:    size_bytes = 2;
+        3'd3:    size_bytes = 4;
+        3'd5:    size_bytes = 8;
+        default: return 2'd0;
+    endcase
+    if (bytes != size_bytes) return 2'd3;
+    mask = (8 * bytes >= XLEN) ? '1 : ((XLEN'(1) << (8 * bytes)) - 1);
+    return ((ins.current.rs2_val & mask) == ins.current.csr[CSR_TDATA2]) ? 2'd1 : 2'd2;
 endfunction
 
 // textra32/textra64 (tdata3) context matching, sampled when tdata1 arms an icount or mcontrol6 trigger, and on the
