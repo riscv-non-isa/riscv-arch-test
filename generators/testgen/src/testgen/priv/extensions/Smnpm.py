@@ -76,7 +76,6 @@ def _smnpms_sweep(test_data: TestData, pmm: int) -> list[TestChunk]:
     required_extensions=["Smnpm", "S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz", "Zicfiss"],
     extra_defines=["#define BOOT_TO_SMODE"],
-    seed_name="SmnpmS",
 )
 def make_smnpms_pmm00(test_data: TestData) -> list[TestChunk]:
     return _smnpms_sweep(test_data, 0b00)
@@ -88,7 +87,6 @@ def make_smnpms_pmm00(test_data: TestData) -> list[TestChunk]:
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz", "Zicfiss"],
     extra_defines=["#define BOOT_TO_SMODE"],
     params=["SUPPORTED_PMLEN_SMNPM: 7"],
-    seed_name="SmnpmS",
 )
 def make_smnpms_pmm10(test_data: TestData) -> list[TestChunk]:
     return _smnpms_sweep(test_data, 0b10)
@@ -100,7 +98,6 @@ def make_smnpms_pmm10(test_data: TestData) -> list[TestChunk]:
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz", "Zicfiss"],
     extra_defines=["#define BOOT_TO_SMODE"],
     params=["SUPPORTED_PMLEN_SMNPM: 16"],
-    seed_name="SmnpmS",
 )
 def make_smnpms_pmm11(test_data: TestData) -> list[TestChunk]:
     return _smnpms_sweep(test_data, 0b11)
@@ -163,7 +160,6 @@ def _smnpms_chunk(
     required_extensions=["Smnpm", "S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="SmnpmSSm",
 )
 def make_smnpmssm(test_data: TestData) -> list[TestChunk]:
     """M-mode half of SmnpmS: MPRV=1 with MPP=S.
@@ -222,7 +218,6 @@ def _smnpmu_sweep(test_data: TestData, pmm: int) -> list[TestChunk]:
     required_extensions=["Smnpm"],
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
-    seed_name="SmnpmU",
 )
 def make_smnpmu_pmm00(test_data: TestData) -> list[TestChunk]:
     return _smnpmu_sweep(test_data, 0b00)
@@ -234,7 +229,6 @@ def make_smnpmu_pmm00(test_data: TestData) -> list[TestChunk]:
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     params=["SUPPORTED_PMLEN_SMNPM: 7"],
-    seed_name="SmnpmU",
 )
 def make_smnpmu_pmm10(test_data: TestData) -> list[TestChunk]:
     return _smnpmu_sweep(test_data, 0b10)
@@ -246,7 +240,6 @@ def make_smnpmu_pmm10(test_data: TestData) -> list[TestChunk]:
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     params=["SUPPORTED_PMLEN_SMNPM: 16"],
-    seed_name="SmnpmU",
 )
 def make_smnpmu_pmm11(test_data: TestData) -> list[TestChunk]:
     return _smnpmu_sweep(test_data, 0b11)
@@ -261,7 +254,6 @@ def make_smnpmu_pmm11(test_data: TestData) -> list[TestChunk]:
     forbidden_extensions=["S"],
     march_extensions=["I", "A", "F", "D", "V", "Zabha", "Zacas", "Zicbom", "Zicbop", "Zicboz"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="SmnpmUSm",
 )
 def make_smnpmusm(test_data: TestData) -> list[TestChunk]:
     """M-mode half of SmnpmU: MPRV=1 with MPP=U on a hart without S-mode.
