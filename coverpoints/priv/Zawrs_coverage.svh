@@ -28,7 +28,6 @@ covergroup Zawrs_Sm_cg with function sample(ins_t ins);
     wrs_ops: coverpoint ins.current.insn {
         bins wrs_nto = {WRS_NTO};
         bins wrs_sto = {WRS_STO};
-
     }
 
     sc_w: coverpoint ins.prev.insn {
@@ -115,7 +114,6 @@ covergroup Zawrs_S_cg with function sample(ins_t ins);
     wrs_ops: coverpoint ins.current.insn {
         bins wrs_nto = {WRS_NTO};
         bins wrs_sto = {WRS_STO};
-
     }
 
     sc_w: coverpoint ins.prev.insn {
@@ -154,13 +152,12 @@ covergroup Zawrs_S_cg with function sample(ins_t ins);
     }
 
     mip_any_ones: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "mtip")[0] ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "meip")[0] ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "msip")[0]
-                           `ifdef S_SUPPORTED
-                        || get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "stip")[0] ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "seip")[0] ||
-                           get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "ssip")[0]
-                           `endif){
+                              get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "meip")[0] ||
+                              get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "msip")[0] ||
+                              get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "stip")[0] ||
+                              get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "seip")[0] ||
+                              get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "mip", "ssip")[0]
+                            ){
         bins any_ones = {1};
     }
 
@@ -253,7 +250,6 @@ covergroup Zawrs_U_cg with function sample(ins_t ins);
     wrs_ops: coverpoint ins.current.insn {
         bins wrs_nto = {WRS_NTO};
         bins wrs_sto = {WRS_STO};
-
     }
 
     sc_w: coverpoint ins.prev.insn {

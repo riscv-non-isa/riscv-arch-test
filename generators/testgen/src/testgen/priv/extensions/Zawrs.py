@@ -2,7 +2,7 @@
 # priv/extensions/Zawrs.py
 #
 # Zawrs privileged extension test generators for the Sm, S and U groups.
-# ellyu@hmc.edu June 2026
+# ellyu@hmc.edu July 2026
 # SPDX-License-Identifier: Apache-2.0
 ##################################
 
@@ -539,7 +539,6 @@ def wrs_timeout_helper(
     "Zawrs",
     required_extensions=["Sm", "Zawrs", "Zalrsc"],
     extra_defines=["#define BOOT_TO_MMODE"],
-    seed_name="ZawrsSm",
 )
 def make_zawrssm(test_data: TestData) -> list[TestChunk]:
     """Generate tests for Zawrs WRS instructions at machine-mode."""
@@ -561,7 +560,6 @@ def make_zawrssm(test_data: TestData) -> list[TestChunk]:
     required_extensions=["S", "Zawrs", "Zalrsc"],
     march_extensions=["H", "Zawrs", "Zalrsc"],
     extra_defines=["#define BOOT_TO_SMODE"],
-    seed_name="ZawrsS",
 )
 def make_zawrss(test_data: TestData) -> list[TestChunk]:
     """Generate tests for Zawrs WRS instructions at S-mode (and H if supported)."""
@@ -583,7 +581,6 @@ def make_zawrss(test_data: TestData) -> list[TestChunk]:
 @add_priv_test_generator(
     "Zawrs",
     required_extensions=["U", "Zawrs", "Zalrsc"],
-    seed_name="ZawrsU",
 )
 def make_zawrsu(test_data: TestData) -> list[TestChunk]:
     """Generate tests for Zawrs WRS instructions at user-mode."""
