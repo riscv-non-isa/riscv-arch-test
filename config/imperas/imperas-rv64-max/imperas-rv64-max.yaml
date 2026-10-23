@@ -607,10 +607,12 @@ params:
   SV48X4_TRANSLATION: true
   SV57_VSMODE_TRANSLATION: true
   SV57X4_TRANSLATION: true
+  # Imperas writes the transformed instruction for final load and store/AMO guest-page faults and zero for
+  # the other load, store and AMO faults (observed on SvH_sv39x4_hedeleg_vs and ExceptionsH_xtinst)
   TINST_VALUE_ON_BREAKPOINT: "always zero"
   TINST_VALUE_ON_FINAL_INSTRUCTION_GUEST_PAGE_FAULT: "always zero"
-  TINST_VALUE_ON_FINAL_LOAD_GUEST_PAGE_FAULT: "always zero"
-  TINST_VALUE_ON_FINAL_STORE_AMO_GUEST_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_FINAL_LOAD_GUEST_PAGE_FAULT: "always transformed standard instruction"
+  TINST_VALUE_ON_FINAL_STORE_AMO_GUEST_PAGE_FAULT: "always transformed standard instruction"
   TINST_VALUE_ON_INSTRUCTION_ADDRESS_MISALIGNED: "always zero"
   TINST_VALUE_ON_LOAD_ACCESS_FAULT: "always zero"
   TINST_VALUE_ON_LOAD_ADDRESS_MISALIGNED: "always zero"

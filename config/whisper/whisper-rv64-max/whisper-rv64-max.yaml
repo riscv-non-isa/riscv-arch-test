@@ -610,19 +610,21 @@ params:
   SV48X4_TRANSLATION: true
   SV57_VSMODE_TRANSLATION: true
   SV57X4_TRANSLATION: true
+  # Whisper writes the transformed instruction for load, store and AMO faults (createTrapInst in Hart.cpp),
+  # except zero for vector, shadow-stack and Zalasr accesses, which these parameters cannot express
   TINST_VALUE_ON_BREAKPOINT: "always zero"
   TINST_VALUE_ON_FINAL_INSTRUCTION_GUEST_PAGE_FAULT: "always zero"
-  TINST_VALUE_ON_FINAL_LOAD_GUEST_PAGE_FAULT: "always zero"
-  TINST_VALUE_ON_FINAL_STORE_AMO_GUEST_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_FINAL_LOAD_GUEST_PAGE_FAULT: "always transformed standard instruction"
+  TINST_VALUE_ON_FINAL_STORE_AMO_GUEST_PAGE_FAULT: "always transformed standard instruction"
   TINST_VALUE_ON_INSTRUCTION_ADDRESS_MISALIGNED: "always zero"
-  TINST_VALUE_ON_LOAD_ACCESS_FAULT: "always zero"
-  TINST_VALUE_ON_LOAD_ADDRESS_MISALIGNED: "always zero"
-  TINST_VALUE_ON_LOAD_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_LOAD_ACCESS_FAULT: "always transformed standard instruction"
+  TINST_VALUE_ON_LOAD_ADDRESS_MISALIGNED: "always transformed standard instruction"
+  TINST_VALUE_ON_LOAD_PAGE_FAULT: "always transformed standard instruction"
   TINST_VALUE_ON_MCALL: "always zero"
   TINST_VALUE_ON_SCALL: "always zero"
-  TINST_VALUE_ON_STORE_AMO_ACCESS_FAULT: "always zero"
-  TINST_VALUE_ON_STORE_AMO_ADDRESS_MISALIGNED: "always zero"
-  TINST_VALUE_ON_STORE_AMO_PAGE_FAULT: "always zero"
+  TINST_VALUE_ON_STORE_AMO_ACCESS_FAULT: "always transformed standard instruction"
+  TINST_VALUE_ON_STORE_AMO_ADDRESS_MISALIGNED: "always transformed standard instruction"
+  TINST_VALUE_ON_STORE_AMO_PAGE_FAULT: "always transformed standard instruction"
   TINST_VALUE_ON_UCALL: "always zero"
   TINST_VALUE_ON_VIRTUAL_INSTRUCTION: "always zero"
   TINST_VALUE_ON_VSCALL: "always zero"
