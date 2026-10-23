@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=testplan.schema.json
-suite: SsstrictSm
+suite: Ssstrict_Sm
 source: https://docs.google.com/spreadsheets/d/1qJsCYdDPaSxNE1R56jsAUyoAiu4OhMlwwAvGysgx790/edit?gid=1987812700#gid=1987812700
 description: |
   The following CSR accesses and instructions should be exercised in machine mode.  All inherently require Zicsr.

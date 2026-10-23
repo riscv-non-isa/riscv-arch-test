@@ -262,17 +262,9 @@
         `cover_info("//      Ssstateen - Enabled");
         `include "Ssstateen_coverage_init.svh"
     `endif
-    `ifdef COVER_SSSTRICTS
-        `cover_info("//      SsstrictS - Enabled");
-        `include "SsstrictS_coverage_init.svh"
-    `endif
-    `ifdef COVER_SSSTRICTSM
-        `cover_info("//      SsstrictSm - Enabled");
-        `include "SsstrictSm_coverage_init.svh"
-    `endif
-    `ifdef COVER_SSSTRICTU
-        `cover_info("//      SsstrictU - Enabled");
-        `include "SsstrictU_coverage_init.svh"
+    `ifdef COVER_SSSTRICT
+        `cover_info("//      Ssstrict - Enabled");
+        `include "Ssstrict_coverage_init.svh"
     `endif
     `ifdef COVER_SSSTRICTV
         `cover_info("//      SsstrictV - Enabled");

@@ -200,14 +200,8 @@
 `ifdef SSSTATEEN_COVERAGE
   `include "Ssstateen_coverage.svh"
 `endif
-`ifdef SSSTRICTS_COVERAGE
-  `include "SsstrictS_coverage.svh"
-`endif
-`ifdef SSSTRICTSM_COVERAGE
-  `include "SsstrictSm_coverage.svh"
-`endif
-`ifdef SSSTRICTU_COVERAGE
-  `include "SsstrictU_coverage.svh"
+`ifdef SSSTRICT_COVERAGE
+  `include "Ssstrict_coverage.svh"
 `endif
 `ifdef SSSTRICTV_COVERAGE
   `include "SsstrictV_coverage.svh"
