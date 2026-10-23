@@ -187,29 +187,17 @@
     `ifdef COVER_SSNPM
         ssnpm_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_SSNPMSM
-        ssnpmsm_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_SSSTATEEN
         ssstateen_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_SSSTRICTS
-        ssstricts_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SSSTRICTSM
-        ssstrictsm_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SSSTRICTU
-        ssstrictu_sample(hart, issue, ins);
+    `ifdef COVER_SSSTRICT
+        ssstrict_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SSSTRICTV
         ssstrictv_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SSTC
         sstc_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SSTCSM
-        sstcsm_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SSTVALA
         sstvala_sample(hart, issue, ins);
@@ -250,17 +238,11 @@
     `ifdef COVER_SVBARE
         svbare_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_SVBARESM
-        svbaresm_sample(hart, issue, ins);
-    `endif
     `ifdef COVER_SVINVAL
         svinval_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SVINVALH
         svinvalh_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_SVINVALSM
-        svinvalsm_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SVNAPOT
         svnapot_sample(hart, issue, ins);
@@ -325,14 +307,8 @@
     `ifdef COVER_ZAMA16B
         zama16b_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_ZAWRSS
-        zawrss_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZAWRSSM
-        zawrssm_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZAWRSU
-        zawrsu_sample(hart, issue, ins);
+    `ifdef COVER_ZAWRS
+        zawrs_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZBA
         zba_sample(hart, issue, ins);
@@ -400,14 +376,8 @@
     `ifdef COVER_ZICCLSM
         zicclsm_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_ZICFILPS
-        zicfilps_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZICFILPSM
-        zicfilpsm_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZICFILPU
-        zicfilpu_sample(hart, issue, ins);
+    `ifdef COVER_ZICFILP
+        zicfilp_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZICNTR
         zicntr_sample(hart, issue, ins);
@@ -457,14 +427,8 @@
     `ifdef COVER_ZKNH
         zknh_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_ZKRS
-        zkrs_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZKRSM
-        zkrsm_sample(hart, issue, ins);
-    `endif
-    `ifdef COVER_ZKRU
-        zkru_sample(hart, issue, ins);
+    `ifdef COVER_ZKR
+        zkr_sample(hart, issue, ins);
     `endif
     `ifdef COVER_ZKSED
         zksed_sample(hart, issue, ins);

@@ -19,8 +19,12 @@ covergroup ExceptionsF_cg with function sample(ins_t ins);
         bins disabled = {2'b00};
     }
     mstatus_FS_status: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mstatus", "fs")[1:0] {
-        bins fs_initial = {2'b01};
-        bins fs_clean   = {2'b10};
+        `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_1
+            bins fs_initial = {2'b01};
+        `endif
+        `ifdef UDB_MSTATUS_FS_LEGAL_VALUES_2
+            bins fs_clean   = {2'b10};
+        `endif
         bins fs_dirty   = {2'b11};
     }
     frm_legal: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "fcsr", "frm")[2:0] {
