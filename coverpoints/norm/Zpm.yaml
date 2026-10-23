@@ -94,7 +94,7 @@ normative_rule_definitions:
       [
         "Smmpm_cg/cp_pm_mprv_mpp_m",
         "Ssnpm_Sm_cg/cp_pm_mprv_mpp_u",
-        "Smnpm_Sm_cg/cp_pm_mprv_mpp_s",
+        "Smnpm_SSm_cg/cp_pm_mprv_mpp_s",
         "Smnpm_USm_cg/cp_pm_mprv_mpp_u",
       ]
 

@@ -92,9 +92,9 @@ include::norm/Zpm_norm_rules.adoc[]
 
 include::{testplansdir}/priv/Smnpm_S.adoc[]
 
-===== Smnpm_Sm
+===== Smnpm_SSm
 
-include::{testplansdir}/priv/Smnpm_Sm.adoc[]
+include::{testplansdir}/priv/Smnpm_SSm.adoc[]
 
 ===== Smnpm_U
 

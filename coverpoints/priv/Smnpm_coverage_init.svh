@@ -8,8 +8,8 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-Smnpm_Sm_cg = new();
-Smnpm_Sm_cg.set_inst_name("obj_Smnpm_Sm");
+Smnpm_SSm_cg = new();
+Smnpm_SSm_cg.set_inst_name("obj_Smnpm_SSm");
 Smnpm_S_cg = new();
 Smnpm_S_cg.set_inst_name("obj_Smnpm_S");
 `ifndef S_SUPPORTED

@@ -37,7 +37,7 @@ from testgen.priv.extensions.ZpmCommon import (
 from testgen.priv.registry import add_priv_test_generator
 
 COVERGROUP_S = "Smnpm_S_cg"
-COVERGROUP_SM = "Smnpm_Sm_cg"
+COVERGROUP_SSM = "Smnpm_SSm_cg"
 COVERGROUP_U = "Smnpm_U_cg"
 COVERGROUP_USM = "Smnpm_USm_cg"
 
@@ -174,7 +174,7 @@ def make_smnpmssm(test_data: TestData) -> list[TestChunk]:
     tc.code = [
         *generate_mprv_lower_mode_tests(
             test_data,
-            COVERGROUP_SM,
+            COVERGROUP_SSM,
             mpp="PRV_S",
             pmm_csr="menvcfg",
             cp="cp_pm_mprv_mpp_s",
