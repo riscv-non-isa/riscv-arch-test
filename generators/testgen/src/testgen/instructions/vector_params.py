@@ -528,6 +528,8 @@ def generate_random_vector_params(
             if instr_type_config.vector_data.random_element_generator:
                 elements = instr_type_config.vector_data.random_element_generator(element_count, eew, register)
                 test_data.register_vector_data(label, eew, elements=elements)
+            elif suite == "length" and 8 <= eew <= 64:
+                test_data.register_pooled_vector_data(label, eew, element_count)
             else:
                 test_data.register_vector_data(label, eew, random_elements=element_count)
 

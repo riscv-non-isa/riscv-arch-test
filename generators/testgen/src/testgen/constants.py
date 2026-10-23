@@ -91,3 +91,7 @@ VLEN_MAX = 1024
 
 # Bytes of vector test data emitted per data directive line
 VECTOR_DATA_BYTES_PER_LINE = 32
+
+# Bytes in each instruction's pool of length-suite operand data. Operands are at most VLEN_MAX bytes (EMUL = 8),
+# so with offsets aligned to operand size the operands of one testcase always fit without overlapping.
+VECTOR_LENGTH_DATA_POOL_BYTES = 8 * VLEN_MAX
