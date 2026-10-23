@@ -178,21 +178,17 @@ include::{testplansdir}/priv/SdtrigSm.adoc[]
 
 include::norm/SdtrigSm_norm_rules.adoc[]
 
-As of 10/22/26, the SdtrigSm, SdtrigS and SdtrigU tests and coverpoints exercise the mcontrol6, icount, itrigger and etrigger trigger types, `textra`,
+As of 10/22/26, the SdtrigSm, SdtrigS and SdtrigU tests and coverpoints exercise the `mcontrol6`, `icount`, `itrigger` and `etrigger` trigger types, `textra`,
 access to the trigger registers, and address matching on scalar, compressed, atomic, vector, cache-block and translated accesses.
-Sail models Sdtrig and is the reference for the Sdtrig tests. Spike and Whisper pass.
-Imperas passes with HMC's engineering build of the model. Stock Imperas, QEMU and XiangShan are excluded because of filed bugs,
-listed in their `ci.yaml` files; the QEMU issues are also tracked
-https://docs.google.com/spreadsheets/d/1EuG4LV1TQDx4wTzYDWEAvq0fwaWjNuxenwDARZmrN-E/edit?gid=0#gid=0[here].
 
-Most Sdtrig features are optional, so the tests take every DUT-specific fact from the Sdtrig parameters of the DUT's https://github.com/riscv/riscv-unified-db[UDB] configuration (added in https://github.com/riscv/riscv-unified-db/pull/2069[riscv-unified-db#2069]).
+Most Sdtrig features are optional, so the tests take every DUT-specific fact from the Sdtrig parameters of the DUT's https://github.com/riscv/riscv-unified-db[UDB] configuration.
 `SDTRIG_NUM_TRIGGERS` gives the number of triggers; the tests exercise up to 16 of them.
-For each trigger, `SDTRIG_<TYPE>_SUPPORTED_TRIGGERS` says whether it supports each type (mcontrol6, icount, itrigger, etrigger).
-Other parameters give the writable `tdata1` fields (`SDTRIG_MCONTROL6_{SELECT,EXECUTE,LOAD,STORE}_WRITABLE`, `SDTRIG_{M,S,U,VS,VU}_WRITABLE`), the legal mcontrol6 `match` and `size` values, `maskmax6` and the maximum chain length, the interrupts and exceptions itrigger and etrigger can select, the icount options, the textra context matches and value widths, and which optional CSRs (`tcontrol`, `tdata2`, `tdata3`, `mcontext`, `scontext`, `hcontext`) exist.
+For each trigger, `SDTRIG_<TYPE>_SUPPORTED_TRIGGERS` says whether it supports each type (`mcontrol6`, `icount`, `itrigger`, `etrigger`).
+Other parameters give the writable `tdata1` fields (`SDTRIG_MCONTROL6_{SELECT,EXECUTE,LOAD,STORE}_WRITABLE`, `SDTRIG_{M,S,U,VS,VU}_WRITABLE`), the legal `mcontrol6` `match` and `size` values, `maskmax6` and the maximum chain length, the interrupts and exceptions `itrigger` and `etrigger` can select, the `icount` options, the `textra` context matches and value widths, and which optional CSRs (`tcontrol`, `tdata2`, `tdata3`, `mcontext`, `scontext`, `hcontext`) exist.
 A test is generated only for values the DUT supports, so a hart with fewer features is still tested, and every absent optional CSR is checked to raise an illegal-instruction exception.
-Sail 0.16, the reference model, accepts mcontrol6 sizes only up to XLEN bits, so larger sizes are not tested.
+Sail 0.16, the reference model, accepts mcontrol6 sizes only up to XLEN bits, so larger sizes are not tested. TODO: change this when Sail supports larger sizes in the next release.
 
-`uncertainen` and `uncertain` are vague and implementation-specific and is thus not tested.  `hit` varies based on timing and is
+`uncertainen` and `uncertain` are vague and implementation-specific and are thus not tested.  `hit` varies based on timing and is
 optional and difficult to check so is presently not tested. Only `action`=0 is tested because the others depend on Sdext or trace or
 implementation-specific external triggers.
 `dmode` is not tested in Sdtrig because it depends on Sdext. `hcontext` depends on the Hypervisor extension, so the Access tests touch it only on configurations that implement it.  Non-maskable interrupts

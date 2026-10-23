@@ -11,7 +11,7 @@
 #   while using mstatus.MIE/SIE for breakpoint reentrancy, which Sail cannot model (it has tcontrol only with
 #   Use_tcontrol, https://github.com/riscv/sail-riscv/issues/2039), so the reference traps on the tcontrol accesses.
 ci_enabled: true
-exclude_extensions: "SdtrigSm_csr_access_common,SdtrigSm_csr_access_global,SdtrigSm_tcontrol,SsstrictSm_CSR,SsstrictS_CSR,Smstateen"
+exclude_extensions: "SdtrigSm_csr_access_common,SdtrigSm_csr_access_global,SdtrigSm_tcontrol,SdtrigS_csr_access_global,SdtrigS_csr_access_common,SsstrictSm_CSR,SsstrictS_CSR,Smstateen"
 install_script: ".github/scripts/install-whisper.sh"
 apt_packages: "libboost-program-options-dev"
 shards: 2
