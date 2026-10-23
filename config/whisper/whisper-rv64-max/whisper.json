@@ -189,13 +189,13 @@
     {
       "reset": [0, 0, 0, "0x1008078"],
       "mask": [
-        "0xfc00000001ffffff",
+        "0xfc00000007ffffff",
         "0xffffffffffffffff",
         "0xffffffffffffffff",
         0
       ],
       "poke_mask": [
-        "0xfc00000001ffffff",
+        "0xfc00000007ffffff",
         "0xffffffffffffffff",
         "0xffffffffffffffff",
         0
@@ -204,13 +204,13 @@
     {
       "reset": [0, 0, 0, "0x1008078"],
       "mask": [
-        "0xfc00000001ffffff",
+        "0xfc00000007ffffff",
         "0xffffffffffffffff",
         "0xffffffffffffffff",
         0
       ],
       "poke_mask": [
-        "0xfc00000001ffffff",
+        "0xfc00000007ffffff",
         "0xffffffffffffffff",
         "0xffffffffffffffff",
         0
@@ -219,13 +219,13 @@
     {
       "reset": [0, 0, 0, "0x1008078"],
       "mask": [
-        "0xfc00000001ffffff",
+        "0xfc00000007ffffff",
         "0xffffffffffffffff",
         "0xffffffffffffffff",
         0
       ],
       "poke_mask": [
-        "0xfc00000001ffffff",
+        "0xfc00000007ffffff",
         "0xffffffffffffffff",
         "0xffffffffffffffff",
         0
@@ -234,13 +234,13 @@
     {
       "reset": [0, 0, 0, "0x1008078"],
       "mask": [
-        "0xfc00000001ffffff",
+        "0xfc00000007ffffff",
         "0xffffffffffffffff",
         "0xffffffffffffffff",
         0
       ],
       "poke_mask": [
-        "0xfc00000001ffffff",
+        "0xfc00000007ffffff",
         "0xffffffffffffffff",
         "0xffffffffffffffff",
         0
