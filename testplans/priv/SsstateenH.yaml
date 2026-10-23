@@ -2,9 +2,10 @@
 suite: SsstateenH
 source: https://docs.google.com/spreadsheets/d/1DWBEoprndjQzLTXQTzPI8jW1HydtkYRR3tg58q59fdk/edit?gid=311784014#gid=311784014
 notes: |
-  SsstateenH boots to HS-mode.  It first sets mstateen0 and hstateen0 to enable only SE0, ENVCFG, JVT and FCSR
-  (with Zfinx), the state these suites control, and enters VS-mode and VU-mode from HS-mode.  It sets and clears
-  bit 63 of mstateen1-3 through T-SBI.  hstateen0 controls VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids raises a
+  SsstateenH boots to HS-mode.  It first sets hstateen0, and mstateen0 through T-SBI when Smstateen is implemented,
+  to enable only SE0, ENVCFG, JVT and FCSR (with Zfinx), the state these suites control, and enters VS-mode and
+  VU-mode from HS-mode.  With Smstateen it sets and clears bit 63 of mstateen1-3 through T-SBI.  hstateen0 controls
+  VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids raises a
   virtual-instruction exception, and so does any VU-mode access to an S or H CSR that HS-mode could make.
   On RV32, SE0 and ENVCFG are in hstateen0h.  Each read that traps records 42 and the trap.
 coverpoints:
@@ -76,3 +77,33 @@ coverpoints:
     description: Read hstateen0 (and hstateen0h on RV32) in VU-mode
     expectation: Virtual instruction, because HS-mode could read it
     bins: 1 CSR (2 on RV32)
+  - heading: Not tested
+  - goal: hstateen0.CSRIND controls VS-mode and VU-mode access to siselect and sireg* (really vsiselect and vsireg*)
+    description: With mstateen0.CSRIND = 1, access siselect and sireg* in VS-mode and VU-mode with hstateen0.CSRIND = 0 and 1.
+    status: Not tested
+    notes: Sail 0.16 has no CSRIND bit in mstateen0 or hstateen0 (both read-only zero), so the reference cannot give the results.  The suites start with hstateen0.CSRIND = 0.
+    rules:
+      - hstateen0_csrind_op
+      - hypervisor_impl_csrs_access_control
+  - goal: hstateen0.IMSIC and AIA control VS-mode access to the guest IMSIC state (stopei, really vstopei) and to the rest of the Ssaia state
+    description: With the mstateen0 bit = 1, access stopei, stopi and the other Ssaia supervisor CSRs in VS-mode with hstateen0.IMSIC and AIA = 0 and 1.
+    status: Not tested
+    notes: Sail 0.16 does not model Ssaia or an IMSIC, and its mstateen0 and hstateen0 have no IMSIC or AIA bit, so the reference cannot give the results.  The suites start with hstateen0.IMSIC = AIA = 0.
+    rules:
+      - hstateen0_imsic_op
+      - hstateen0_aia_op
+  - goal: hstateen0.CTR controls VS-mode access to the supervisor CTR state and SCTRCLR, while qualified transfers keep recording
+    description: With mstateen0.CTR = 1, access sctrctl (really vsctrctl), sctrstatus and the CTR entries through sireg*, and execute SCTRCLR, in VS-mode with hstateen0.CTR = 0 and 1.
+    status: Not tested
+    notes: Sail 0.16 does not model Smctr or Ssctr, and its mstateen0 and hstateen0 have no CTR bit, so the reference cannot give the results.  The suites start with hstateen0.CTR = 0.
+    rules:
+      - hstateen_ctr
+      - hstateen_vs
+      - hstateen0_ctr0_v1_op
+  - goal: hstateen0.JVT and FCSR control VS-mode and VU-mode access to jvt (Zcmt) and fcsr (Zfinx)
+    description: With the mstateen0 bit = 1, read jvt and fcsr in VS-mode and VU-mode with the hstateen0 bit = 0 and 1.
+    status: Not tested
+    notes: Zcmt and Zfinx are incompatible with Zcd and F, which every configuration with H implements.  cp_vs_sstateen0_roz checks that the matching sstateen0 bits read as zero in VS-mode.
+    rules:
+      - stateen0_jvt_op
+      - stateen0_fcsr_op

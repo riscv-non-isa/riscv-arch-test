@@ -89,3 +89,8 @@ normative_rule_definitions:
   - name: H_virtinst_vu_nonhigh_supervisor_allowedhs_tvm0
     coverpoint:
       ["SsstateenH_vu_cg/{cp_vu_sstateen0, cp_vu_senvcfg, cp_vu_stateen123}"]
+  # If the H extension is implemented and mstateen0.CTR=1, the hstateen0.CTR bit controls access to supervisor
+  # CTR state when V=1; VS-mode accesses with hstateen0.CTR=0 raise a virtual-instruction exception, and qualified
+  # control transfers keep updating the entry registers.
+  - names: [hstateen_ctr, hstateen_vs, hstateen0_ctr0_v1_op]
+    coverpoint: ["Not tested: Sail 0.16 does not model Smctr or Ssctr"]
