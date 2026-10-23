@@ -8,8 +8,9 @@
 
 """SsstateenH test generator.
 
-The suite boots to HS-mode and sets mstateen0 and bit 63 of mstateen1-3 through T-SBI.  hstateen0 controls VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids
-raises virtual instruction; so does any VU-mode access to an S or H CSR that HS-mode could make.
+The suite boots to HS-mode and, with Smstateen, sets mstateen0 and bit 63 of mstateen1-3 through T-SBI.  hstateen0
+controls VS-mode and VU-mode access but not HS-mode access.  An access that only hstateen0 forbids raises virtual
+instruction; so does any VU-mode access to an S or H CSR that HS-mode could make.
 """
 
 from testgen.asm.csr import csr_walk_test

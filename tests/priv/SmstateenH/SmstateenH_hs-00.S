@@ -27,6 +27,7 @@
 // Set up test environment and declare main entry point
 RVTEST_BEGIN
 
+#ifdef SMSTATEEN_SUPPORTED
 #if __riscv_xlen == 64
   RVTEST_TSBI_CSR_WRITE(CSR_MSTATEEN0, MSTATEEN_HSTATEEN | MSTATEEN0_HENVCFG | MSTATEEN0_JVT)
 #else
@@ -35,6 +36,7 @@ RVTEST_BEGIN
 #endif
 #ifdef ZFINX_SUPPORTED
   RVTEST_TSBI_CSR_SET(CSR_MSTATEEN0, MSTATEEN0_FCSR)
+#endif
 #endif
 #if __riscv_xlen == 64
   LI(x8, HSTATEEN_SSTATEEN | HSTATEEN0_SENVCFG | HSTATEEN0_JVT | HSTATEEN0_FCSR)
@@ -4218,6 +4220,7 @@ SmstateenH_hs_cg_cp_hs_hstateen0_walk_hstateen0h_clr_bit_63:
 
   csrw hstateen0h, x6            # restore CSR
 #endif
+#ifdef SMSTATEEN_SUPPORTED
 #if __riscv_xlen == 64
   RVTEST_TSBI_CSR_WRITE(CSR_MSTATEEN0, MSTATEEN_HSTATEEN | MSTATEEN0_HENVCFG | MSTATEEN0_JVT)
 #else
@@ -4226,6 +4229,7 @@ SmstateenH_hs_cg_cp_hs_hstateen0_walk_hstateen0h_clr_bit_63:
 #endif
 #ifdef ZFINX_SUPPORTED
   RVTEST_TSBI_CSR_SET(CSR_MSTATEEN0, MSTATEEN0_FCSR)
+#endif
 #endif
 #if __riscv_xlen == 64
   LI(x15, HSTATEEN_SSTATEEN | HSTATEEN0_SENVCFG | HSTATEEN0_JVT | HSTATEEN0_FCSR)

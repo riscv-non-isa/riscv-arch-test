@@ -95,6 +95,7 @@ SsstateenH_vu_cg_cp_vu_senvcfg_senvcfg_henvcfg_1:
 //   Illegal instruction when mstateen bit 63 is 0, else virtual instruction
 /////////////////////////////////
 # mstateen1-3 bit 63 = 0, hstateen1-3 bit 63 = 0
+#ifdef SMSTATEEN_SUPPORTED
 #if __riscv_xlen == 64
   LI(x6, MSTATEEN_HSTATEEN)
   # T-SBI call to execute instruction: csrs mstateen1, x6
@@ -118,6 +119,7 @@ SsstateenH_vu_cg_cp_vu_senvcfg_senvcfg_henvcfg_1:
   mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN3H)
 #endif
+#endif
 #if __riscv_xlen == 64
   LI(x8, HSTATEEN_SSTATEEN)
   csrc hstateen1, x8
@@ -129,6 +131,7 @@ SsstateenH_vu_cg_cp_vu_senvcfg_senvcfg_henvcfg_1:
   csrc hstateen2h, x8
   csrc hstateen3h, x8
 #endif
+#ifdef SMSTATEEN_SUPPORTED
 #if __riscv_xlen == 64
   LI(x14, MSTATEEN_HSTATEEN)
   # T-SBI call to execute instruction: csrc mstateen1, x14
@@ -151,6 +154,7 @@ SsstateenH_vu_cg_cp_vu_senvcfg_senvcfg_henvcfg_1:
   # T-SBI call to execute instruction: csrc mstateen3h, x14
   mv a1, x14
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_CLEAR(CSR_MSTATEEN3H)
+#endif
 #endif
   RVTEST_TSBI_GOTO_VUMODE
   LI(x6, -1)
@@ -369,6 +373,7 @@ SsstateenH_vu_cg_cp_vu_stateen123_hstateen3h_csrs_m0_h0:
 #endif // __riscv_xlen == 32
   RVTEST_TSBI_GOTO_SMODE
 # mstateen1-3 bit 63 = 1, hstateen1-3 bit 63 = 0
+#ifdef SMSTATEEN_SUPPORTED
 #if __riscv_xlen == 64
   LI(x8, MSTATEEN_HSTATEEN)
   # T-SBI call to execute instruction: csrs mstateen1, x8
@@ -391,6 +396,7 @@ SsstateenH_vu_cg_cp_vu_stateen123_hstateen3h_csrs_m0_h0:
   # T-SBI call to execute instruction: csrs mstateen3h, x8
   mv a1, x8
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN3H)
+#endif
 #endif
 #if __riscv_xlen == 64
   LI(x9, HSTATEEN_SSTATEEN)
@@ -620,6 +626,7 @@ SsstateenH_vu_cg_cp_vu_stateen123_hstateen3h_csrs_m1_h0:
 #endif // __riscv_xlen == 32
   RVTEST_TSBI_GOTO_SMODE
 # mstateen1-3 bit 63 = 1, hstateen1-3 bit 63 = 1
+#ifdef SMSTATEEN_SUPPORTED
 #if __riscv_xlen == 64
   LI(x6, MSTATEEN_HSTATEEN)
   # T-SBI call to execute instruction: csrs mstateen1, x6
@@ -642,6 +649,7 @@ SsstateenH_vu_cg_cp_vu_stateen123_hstateen3h_csrs_m1_h0:
   # T-SBI call to execute instruction: csrs mstateen3h, x6
   mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN3H)
+#endif
 #endif
 #if __riscv_xlen == 64
   LI(x9, HSTATEEN_SSTATEEN)
@@ -870,6 +878,7 @@ SsstateenH_vu_cg_cp_vu_stateen123_hstateen3h_csrs_m1_h1:
   RVTEST_SIGUPD(x2, x5, x4, x6, SsstateenH_vu_cg_cp_vu_stateen123_hstateen3h_csrs_m1_h1, SsstateenH_vu_cg_cp_vu_stateen123_hstateen3h_csrs_m1_h1_str)
 #endif // __riscv_xlen == 32
   RVTEST_TSBI_GOTO_SMODE
+#ifdef SMSTATEEN_SUPPORTED
 #if __riscv_xlen == 64
   LI(x6, MSTATEEN_HSTATEEN)
   # T-SBI call to execute instruction: csrs mstateen1, x6
@@ -892,6 +901,7 @@ SsstateenH_vu_cg_cp_vu_stateen123_hstateen3h_csrs_m1_h1:
   # T-SBI call to execute instruction: csrs mstateen3h, x6
   mv a1, x6
   RVTEST_TSBI_CSR_ACCESS TSBI_CSR_SET(CSR_MSTATEEN3H)
+#endif
 #endif
 #if __riscv_xlen == 64
   LI(x8, HSTATEEN_SSTATEEN)

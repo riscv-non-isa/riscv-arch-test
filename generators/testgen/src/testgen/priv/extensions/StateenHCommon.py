@@ -74,9 +74,11 @@ def set_stateen_state(test_data: TestData) -> list[str]:
     Boot enables every standard mstateen0 bit and the matching hstateen0 bits.  The reference model lacks several of
     those features (indirect CSRs, AIA, IMSIC, CTR), so on a hart that has them the hstateen0 walks and reads would see
     writable bits that read as zero in the reference.  These suites therefore start from the state they control.
+    Without Smstateen the mstateen CSRs do not exist and only hstateen0 is written.
     """
     tmp_reg = test_data.int_regs.get_register()
     lines = [
+        "#ifdef SMSTATEEN_SUPPORTED",
         "#if __riscv_xlen == 64",
         "RVTEST_TSBI_CSR_WRITE(CSR_MSTATEEN0, MSTATEEN_HSTATEEN | MSTATEEN0_HENVCFG | MSTATEEN0_JVT)",
         "#else",
@@ -85,6 +87,7 @@ def set_stateen_state(test_data: TestData) -> list[str]:
         "#endif",
         "#ifdef ZFINX_SUPPORTED",
         "RVTEST_TSBI_CSR_SET(CSR_MSTATEEN0, MSTATEEN0_FCSR)",
+        "#endif",
         "#endif",
         "#if __riscv_xlen == 64",
         f"LI(x{tmp_reg}, HSTATEEN_SSTATEEN | HSTATEEN0_SENVCFG | HSTATEEN0_JVT | HSTATEEN0_FCSR)",
@@ -145,16 +148,18 @@ def read_in_mode(
 
 
 def mstateen123_bit63(test_data: TestData, value: int) -> list[str]:
-    """Set (value 1) or clear (value 0) bit 63 of mstateen1-3 through T-SBI."""
+    """Set (value 1) or clear (value 0) bit 63 of mstateen1-3 through T-SBI, where Smstateen is implemented."""
     reg = test_data.int_regs.get_register()
     op = "csrs" if value else "csrc"
     lines = [
+        "#ifdef SMSTATEEN_SUPPORTED",
         "#if __riscv_xlen == 64",
         f"LI(x{reg}, MSTATEEN_HSTATEEN)",
         *[tsbi_call(f"{op} mstateen{n}, x{reg}") for n in STATEEN123_N],
         "#else",
         f"LI(x{reg}, MSTATEENH_HSTATEEN)",
         *[tsbi_call(f"{op} mstateen{n}h, x{reg}") for n in STATEEN123_N],
+        "#endif",
         "#endif",
     ]
     test_data.int_regs.return_register(reg)
