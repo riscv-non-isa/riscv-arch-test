@@ -54,7 +54,7 @@ coverpoints:
       cp_sepc_ialign32_read
       cp_sepc_ialign32_sret
     goal: sepc[1] is masked on reads, including sret's, while IALIGN = 32
-    description: Only with Zca.  Write sepc with bit 1 set, clear misa.C through T-SBI, execute sret with sstatus.SPP = S, then read sepc; then set misa.C again and read sepc.  When misa.C is read-only, the sret is skipped.
+    description: Only with Zca.  Clear misa.C through T-SBI, write sepc with bit 1 set, execute sret with sstatus.SPP = S, then read sepc; then set misa.C again and read sepc.  When misa.C is read-only, the sret is skipped.
     expectation: While misa.C = 0, sepc reads with bit 1 clear and sret returns to the masked address; after misa.C is set again, sepc reads with bit 1 set.  Match reference model.
     bins: "2"
   - heading: SXL tested with EndianS

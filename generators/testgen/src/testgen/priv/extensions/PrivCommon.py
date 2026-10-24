@@ -407,9 +407,9 @@ def xepc_ialign32_tests(test_data: TestData, covergroup: str, mode: str, name: s
     vsepc) names the coverpoints cp_<name>_ialign32_<xret> and cp_<name>_ialign32_read.  misa is accessed before
     xepc is written, because a T-SBI call from VS-mode traps to HS-mode, which writes sepc, and the trace records
     vsepc and sepc alike.  The xret comes before the explicit read, because the trace records the masked value of
-    an explicit read, which coverage would then see as xepc.  After
-    misa.C is set again, xepc[1] reads as 1, because the bit stays writable.  On a hart whose misa.C is read-only,
-    the xret is skipped and xepc keeps reading the address written.
+    an explicit read, which coverage would then see as xepc.  After misa.C is set again, xepc[1] reads as 1, because
+    the bit stays writable.  On a hart whose misa.C is read-only, the xret is skipped and xepc reads the address
+    written.
     """
     epc, xret, status, pp, pie = _XEPC_MODES[mode]
     # T-SBI calls use a0 and a1
@@ -420,7 +420,7 @@ def xepc_ialign32_tests(test_data: TestData, covergroup: str, mode: str, name: s
         f"csrr x{save_epc}, {epc}",
         f"LI(x{c_bit}, 0b100)                # misa.C",
         ".p2align 2                         # misa.C can be cleared only when the next instruction is 4-byte aligned",
-        tsbi_call_or_direct(f"csrc misa, x{c_bit}    # clear misa.C if it is writable", mode),
+        tsbi_call_or_direct(f"csrc misa, x{c_bit}    # clear misa.C if it is writable: IALIGN = 32", mode),
         tsbi_call_or_direct(f"csrr x{save_status}, misa", mode),
         f"and x{c_bit}, x{save_status}, x{c_bit}    # 0 if misa.C was cleared",
         f"csrr x{save_status}, {status}",
@@ -437,7 +437,7 @@ def xepc_ialign32_tests(test_data: TestData, covergroup: str, mode: str, name: s
         ".p2align 2",
         f"{label}_target:",
         f"auipc x{val}, 0",
-        f"sub x{val}, x{val}, x{target}      # 0 when {xret} returned to the masked address",
+        f"sub x{val}, x{val}, x{target}      # 0: {xret} returned to the masked address",
         write_sigupd(val, test_data),
         f"{label}_read:",
         test_data.add_testcase("read", f"cp_{name}_ialign32_read", covergroup),

@@ -40,7 +40,7 @@ coverpoints:
       cp_mepc_ialign32_read
       cp_mepc_ialign32_mret
     goal: mepc[1] is masked on reads, including mret's, while IALIGN = 32
-    description: Only with Zca.  Write mepc with bit 1 set, clear misa.C, execute mret with mstatus.MPP = M, then read mepc; then set misa.C again and read mepc.  When misa.C is read-only, the mret is skipped.
+    description: Only with Zca.  Clear misa.C, write mepc with bit 1 set, execute mret with mstatus.MPP = M, then read mepc; then set misa.C again and read mepc.  When misa.C is read-only, the mret is skipped.
     expectation: While misa.C = 0, mepc reads with bit 1 clear and mret returns to the masked address; after misa.C is set again, mepc reads with bit 1 set.  Match reference model.
     bins: "2"
   - name: cp_csrr_insufficient_priv
