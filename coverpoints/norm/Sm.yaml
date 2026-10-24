@@ -19,7 +19,6 @@ normative_rule_definitions:
         "Sm_mcsr_cg/cp_scsr_from_m",
         "Sm_F_cg/cp_fcsr_access",
         "Sm_V_cg/cp_vcsrrswc",
-        "H_mcsr_cg/cp_hcsr_access",
       ]
 
   # The misa CSR is a WARL read-write register
@@ -1406,7 +1405,7 @@ normative_rule_definitions:
   # it appears to be 0. This masking occurs also for the implicit read by the MRET
   # instruction. Though masked, mepc[1] remains writable when IALIGN=32.
   - name: mepc_bit1_dyn_ialign_op
-    coverpoint: ["Out of scope."]
+    coverpoint: ["Sm_mcsr_cg/{cp_mepc_ialign32_read, cp_mepc_ialign32_mret}"]
 
   # mepc is a WARL register
   - name: mepc_warl
