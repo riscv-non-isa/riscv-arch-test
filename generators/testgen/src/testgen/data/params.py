@@ -79,6 +79,7 @@ class InstructionParams:
     lmul: int | float | None = None
     sew: int | None = None
     vl: int | Literal["vlmax", "random"] | None = None
+    vl_random: int | None = None  # the value behind vl="random", kept so a second testcase can repeat it
     vstart: int | None = None
     vector_suite: Literal["length", "base"] | None = None
     vxrm: str | None = None  # Vector Fixed Point Rounding Mode

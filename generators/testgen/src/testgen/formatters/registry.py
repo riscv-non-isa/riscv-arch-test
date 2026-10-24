@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Literal
 
+from testgen.asm.latency import LatencyRecord, is_latency_checked, latency_key, timed_testcase
 from testgen.data.params import InstructionParams
 from testgen.data.state import TestData
 from testgen.data.test_chunk import TestChunk
@@ -199,15 +200,26 @@ def format_single_testcase(
     label_line = test_data.add_testcase(bin_name, coverpoint)
 
     # Add test and signature update lines
+    data_count = len(tc.data_values)
     setup, test, check = format_instruction(instr_name, instr_type, test_data, params)
-    if setup:
-        tc.code.append(setup)
-    tc.code.extend(
-        [
-            label_line,
-            test,
-        ]
-    )
+    if is_latency_checked(instr_name):
+        # Also check that the latency does not depend on the data (asm/latency.py)
+        key = latency_key(instr_name, setup, params, label_line)
+        tc.code.extend(
+            timed_testcase(
+                test_data, instr_name, setup, test, label_line, len(tc.data_values) - data_count, params.rs1, key
+            )
+        )
+        test_data.latency_records.append(LatencyRecord(key, instr_type, params, desc, bin_name, coverpoint))
+    else:
+        if setup:
+            tc.code.append(setup)
+        tc.code.extend(
+            [
+                label_line,
+                test,
+            ]
+        )
     if check:
         tc.code.append(check)
 

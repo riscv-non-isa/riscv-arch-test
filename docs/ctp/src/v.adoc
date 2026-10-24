@@ -286,6 +286,7 @@ include::norm/Zvbc_norm_rules.adoc[]
 === Zvk* Vector Cryptography Extension
 
 There are several Zvk* vector cryptography extensions.
+The Zvkned, Zvknha, Zvknhb, Zvkg, Zvksed and Zvksh suites also check that every testcase's latency is independent of its data (<<crypto-latency>>).
 
 ==== Zvkb Vector Crypto Bit Manipulation Extension
 

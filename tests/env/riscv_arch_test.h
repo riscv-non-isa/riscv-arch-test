@@ -12,9 +12,9 @@
 #include "utils.h"
 #include "rvmodel_macros.h"
 
-// Select the cycle counter for the timing tests (Zkt): cycle with Zicntr, else mcycle in M-mode. mcycle
-// exists only with standard M-mode CSRs, which rvmodel_macros.h declares (STANDARD_SM_SUPPORTED), so this
-// follows it. With neither, RVTEST_CYCLE_CSR stays undefined and the tests run untimed.
+// Select the cycle counter for the timing tests (the Zkt suite and the data-independent latency checks of
+// the cryptographic instructions): cycle with Zicntr, else mcycle in M-mode. mcycle exists only with
+// standard M-mode CSRs, which rvmodel_macros.h declares (STANDARD_SM_SUPPORTED), so this follows it. With neither, RVTEST_CYCLE_CSR stays undefined and the tests run untimed.
 #ifdef RVTEST_USES_CYCLE_CSR
   #if defined(ZICNTR_SUPPORTED)
     #define RVTEST_CYCLE_CSR cycle

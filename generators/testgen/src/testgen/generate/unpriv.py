@@ -11,6 +11,7 @@
 import re
 from pathlib import Path
 
+from testgen.asm.latency import add_second_testcases, is_latency_checked
 from testgen.constants import INDENT, TESTCASES_PER_FILE, VLEN_MAX, get_flen_for_extensions
 from testgen.coverpoints import generate_tests_for_coverpoint
 from testgen.data.config import TestConfig
@@ -171,6 +172,10 @@ def _generate_unpriv_tests_for_instruction(
             continue
 
         all_test_chunks.extend(generate_tests_for_coverpoint(instr_name, instr_type, coverpoint, test_data))
+
+    # Give each latency baseline a second testcase to compare against (asm/latency.py)
+    if is_latency_checked(instr_name):
+        all_test_chunks = add_second_testcases(instr_name, test_data, all_test_chunks)
 
     # Split into test files and write
     test_files = split_test_chunks(all_test_chunks, TESTCASES_PER_FILE)

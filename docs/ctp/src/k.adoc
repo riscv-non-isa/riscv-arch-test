@@ -31,6 +31,21 @@ include::{testplansdir}/Zksh.adoc[]
 
 include::norm/Zksh_norm_rules.adoc[]
 
+[[crypto-latency]]
+==== Data-Independent Latency of the Cryptographic Instructions
+
+The scalar cryptographic instructions (`aes32*`, `aes64*`, `sha256*`, `sha512*`, `sm3*` and `sm4*`) and the vector cryptographic instructions of Zvkned, Zvknha, Zvknhb, Zvkg, Zvksed and Zvksh must execute with a latency that does not depend on their data, whether or not Zkt or Zvkt is implemented.
+The ordinary Zknd, Zkne, Zknh, Zksed, Zksh, Zvkned, Zvknha, Zvknhb, Zvkg, Zvksed and Zvksh suites therefore time every testcase of these instructions with the sequence of <<zkt-principle-of-operation>>, in addition to checking its result.
+
+* A scalar instruction takes the dependency on the first counter read through _rs1_.
+* A vector instruction has no scalar source, so the testcase reads `vl` and `vtype` and reapplies them with a `vsetvl` whose AVL depends on the first counter read; the vector instruction cannot start before it.
+* The scalar window has 4 instructions, as in Zkt, and the vector window (`sltu`, `add`, `vsetvl`, the instruction under test, `csrr`) is padded with three `nop`{empty}s to 8, so both are even (see the reference model note in <<zkt-principle-of-operation>>).
+* The baseline is the first timed testcase in the same test file with the same instruction and immediate and, for a vector instruction, the same `vl`, LMUL and tail and mask policies, because the latency may legally depend on any of them.
+It is kept in a data word that the first timed testcase writes, and every testcase signs its latency minus the baseline, which must be 0.
+* Most baselines have many testcases with different data, such as the edge-value testcases at `vl` = EGS.
+Where the ordinary coverpoints run an instruction only once with a given encoding, `vl` and `vtype` (for example at `vl` = VLMAX, with a random `vl`, or with an immediate drawn at random), the suite adds a second testcase at the end of the file with the same encoding, `vl` and `vtype` and new random data, so every baseline has a testcase to compare against.
+* The tests read `cycle` with Zicntr, or `mcycle` in M-mode with standard M-mode CSRs. With neither, the testcases run untimed.
+
 ==== Zkt Constant-Time Instructions
 
 Zkt requires the instructions it lists to have data-independent execution latency.

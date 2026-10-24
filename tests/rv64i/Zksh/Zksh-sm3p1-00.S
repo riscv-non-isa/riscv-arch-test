@@ -16,10 +16,10 @@
 ##### END_TEST_CONFIG #####
 
 // Define the size of the signature region
-#define SIGUPD_COUNT 124
+#define SIGUPD_COUNT 238
 
 // Extra defines (if needed) to enable trap handlers, fpu, vector, etc.
-
+#define RVTEST_USES_CYCLE_CSR
 
 // Include framework macros
 #include "riscv_arch_test.h"
@@ -34,235 +34,1547 @@ RVTEST_BEGIN
 /////////////////////////////////
 
 # Testcase cp_rs1 (Test source rs1 = x0)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x15, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x3, x0) # load rs1: x0 = 0x7dfba68563c25276
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x30, x0, x0           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x30, RVTEST_CYCLE_CSR  # first counter read
+  sltu x24, x30, x0           # dep = 0, ready after the first counter read
+  or x0, x0, x24            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b0:
+  sm3p1 x31, x0 # perform operation
+  csrr x18, RVTEST_CYCLE_CSR  # second counter read
+  addi x15, x15, -1
+  bnez x15, 7b
+  addi x3, x3, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x18, x18, x30           # latency of the second run
+  .option push
+  .option norelax
+  lla x30, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x24, 0(x30)
+  bgez x24, 8f                     # baseline already set
+  SREG x18, 0(x30)            # the first timed testcase sets the baseline
+  mv x24, x18
+8:
+  sub x18, x18, x24           # 0 on data-independent hardware
+  # Check if x18 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x18, Zksh_sm3p1_cg_cp_rs1_b0, Zksh_sm3p1_cg_cp_rs1_b0_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x3, x0) # load rs1: x0 = 0x7dfba68563c25276
 Zksh_sm3p1_cg_cp_rs1_b0:
   sm3p1 x31, x0 # perform operation
+#endif
   # Check if x31 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x31, Zksh_sm3p1_cg_cp_rs1_b0, Zksh_sm3p1_cg_cp_rs1_b0_str)
 
 # Testcase cp_rs1 (Test source rs1 = x1)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x11, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x3, x1) # load rs1: x1 = 0x6fda450b6ff4cc74
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x25, x1, x1           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x25, RVTEST_CYCLE_CSR  # first counter read
+  sltu x13, x25, x0           # dep = 0, ready after the first counter read
+  or x1, x1, x13            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b1:
+  sm3p1 x30, x1 # perform operation
+  csrr x24, RVTEST_CYCLE_CSR  # second counter read
+  addi x11, x11, -1
+  bnez x11, 7b
+  addi x3, x3, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x24, x24, x25           # latency of the second run
+  .option push
+  .option norelax
+  lla x25, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x13, 0(x25)
+  bgez x13, 8f                     # baseline already set
+  SREG x24, 0(x25)            # the first timed testcase sets the baseline
+  mv x13, x24
+8:
+  sub x24, x24, x13           # 0 on data-independent hardware
+  # Check if x24 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x2, x5, x4, x24, Zksh_sm3p1_cg_cp_rs1_b1, Zksh_sm3p1_cg_cp_rs1_b1_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x3, x1) # load rs1: x1 = 0x6fda450b6ff4cc74
 Zksh_sm3p1_cg_cp_rs1_b1:
   sm3p1 x30, x1 # perform operation
+#endif
   # Check if x30 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x30, Zksh_sm3p1_cg_cp_rs1_b1, Zksh_sm3p1_cg_cp_rs1_b1_str)
 
   mv x28, x2 # switch signature pointer register to avoid conflict with test
 # Testcase cp_rs1 (Test source rs1 = x2)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x17, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x3, x2) # load rs1: x2 = 0xa85dd212db9a1f4b
+  addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
+  xor x18, x2, x2           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x18, RVTEST_CYCLE_CSR  # first counter read
+  sltu x1, x18, x0           # dep = 0, ready after the first counter read
+  or x2, x2, x1            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b2:
+  sm3p1 x22, x2 # perform operation
+  csrr x30, RVTEST_CYCLE_CSR  # second counter read
+  addi x17, x17, -1
+  bnez x17, 7b
+  addi x3, x3, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x30, x30, x18           # latency of the second run
+  .option push
+  .option norelax
+  lla x18, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x1, 0(x18)
+  bgez x1, 8f                     # baseline already set
+  SREG x30, 0(x18)            # the first timed testcase sets the baseline
+  mv x1, x30
+8:
+  sub x30, x30, x1           # 0 on data-independent hardware
+  # Check if x30 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x30, Zksh_sm3p1_cg_cp_rs1_b2, Zksh_sm3p1_cg_cp_rs1_b2_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x3, x2) # load rs1: x2 = 0xa85dd212db9a1f4b
 Zksh_sm3p1_cg_cp_rs1_b2:
   sm3p1 x22, x2 # perform operation
+#endif
   # Check if x22 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x22, Zksh_sm3p1_cg_cp_rs1_b2, Zksh_sm3p1_cg_cp_rs1_b2_str)
 
   mv x21, x3 # switch data pointer register to avoid conflict with test
 # Testcase cp_rs1 (Test source rs1 = x3)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x30, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x3) # load rs1: x3 = 0x1c8e6a3f070da60b
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x18, x3, x3           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x18, RVTEST_CYCLE_CSR  # first counter read
+  sltu x17, x18, x0           # dep = 0, ready after the first counter read
+  or x3, x3, x17            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b3:
+  sm3p1 x27, x3 # perform operation
+  csrr x14, RVTEST_CYCLE_CSR  # second counter read
+  addi x30, x30, -1
+  bnez x30, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x14, x14, x18           # latency of the second run
+  .option push
+  .option norelax
+  lla x18, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x17, 0(x18)
+  bgez x17, 8f                     # baseline already set
+  SREG x14, 0(x18)            # the first timed testcase sets the baseline
+  mv x17, x14
+8:
+  sub x14, x14, x17           # 0 on data-independent hardware
+  # Check if x14 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x14, Zksh_sm3p1_cg_cp_rs1_b3, Zksh_sm3p1_cg_cp_rs1_b3_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x3) # load rs1: x3 = 0x1c8e6a3f070da60b
 Zksh_sm3p1_cg_cp_rs1_b3:
   sm3p1 x27, x3 # perform operation
+#endif
   # Check if x27 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x27, Zksh_sm3p1_cg_cp_rs1_b3, Zksh_sm3p1_cg_cp_rs1_b3_str)
 
   mv x13, x4 # switch temp register to avoid conflict with test
   mv x14, x5 # switch link pointer register to avoid conflict with test
 # Testcase cp_rs1 (Test source rs1 = x4)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x4) # load rs1: x4 = 0x42d8a276a4f262c2
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x18, x4, x4           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x18, RVTEST_CYCLE_CSR  # first counter read
+  sltu x12, x18, x0           # dep = 0, ready after the first counter read
+  or x4, x4, x12            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b4:
+  sm3p1 x11, x4 # perform operation
+  csrr x7, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x7, x7, x18           # latency of the second run
+  .option push
+  .option norelax
+  lla x18, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x12, 0(x18)
+  bgez x12, 8f                     # baseline already set
+  SREG x7, 0(x18)            # the first timed testcase sets the baseline
+  mv x12, x7
+8:
+  sub x7, x7, x12           # 0 on data-independent hardware
+  # Check if x7 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x7, Zksh_sm3p1_cg_cp_rs1_b4, Zksh_sm3p1_cg_cp_rs1_b4_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x4) # load rs1: x4 = 0x42d8a276a4f262c2
 Zksh_sm3p1_cg_cp_rs1_b4:
   sm3p1 x11, x4 # perform operation
+#endif
   # Check if x11 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x11, Zksh_sm3p1_cg_cp_rs1_b4, Zksh_sm3p1_cg_cp_rs1_b4_str)
 
 # Testcase cp_rs1 (Test source rs1 = x5)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x31, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x5) # load rs1: x5 = 0xbffc54203b0aef1a
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x29, x5, x5           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x29, RVTEST_CYCLE_CSR  # first counter read
+  sltu x26, x29, x0           # dep = 0, ready after the first counter read
+  or x5, x5, x26            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b5:
+  sm3p1 x16, x5 # perform operation
+  csrr x9, RVTEST_CYCLE_CSR  # second counter read
+  addi x31, x31, -1
+  bnez x31, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x9, x9, x29           # latency of the second run
+  .option push
+  .option norelax
+  lla x29, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x26, 0(x29)
+  bgez x26, 8f                     # baseline already set
+  SREG x9, 0(x29)            # the first timed testcase sets the baseline
+  mv x26, x9
+8:
+  sub x9, x9, x26           # 0 on data-independent hardware
+  # Check if x9 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x9, Zksh_sm3p1_cg_cp_rs1_b5, Zksh_sm3p1_cg_cp_rs1_b5_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x5) # load rs1: x5 = 0xbffc54203b0aef1a
 Zksh_sm3p1_cg_cp_rs1_b5:
   sm3p1 x16, x5 # perform operation
+#endif
   # Check if x16 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x16, Zksh_sm3p1_cg_cp_rs1_b5, Zksh_sm3p1_cg_cp_rs1_b5_str)
 
 # Testcase cp_rs1 (Test source rs1 = x6)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x15, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x6) # load rs1: x6 = 0xe4ec7bdfee82cc82
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x23, x6, x6           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x23, RVTEST_CYCLE_CSR  # first counter read
+  sltu x25, x23, x0           # dep = 0, ready after the first counter read
+  or x6, x6, x25            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b6:
+  sm3p1 x26, x6 # perform operation
+  csrr x22, RVTEST_CYCLE_CSR  # second counter read
+  addi x15, x15, -1
+  bnez x15, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x22, x22, x23           # latency of the second run
+  .option push
+  .option norelax
+  lla x23, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x25, 0(x23)
+  bgez x25, 8f                     # baseline already set
+  SREG x22, 0(x23)            # the first timed testcase sets the baseline
+  mv x25, x22
+8:
+  sub x22, x22, x25           # 0 on data-independent hardware
+  # Check if x22 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x22, Zksh_sm3p1_cg_cp_rs1_b6, Zksh_sm3p1_cg_cp_rs1_b6_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x6) # load rs1: x6 = 0xe4ec7bdfee82cc82
 Zksh_sm3p1_cg_cp_rs1_b6:
   sm3p1 x26, x6 # perform operation
+#endif
   # Check if x26 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x26, Zksh_sm3p1_cg_cp_rs1_b6, Zksh_sm3p1_cg_cp_rs1_b6_str)
 
 # Testcase cp_rs1 (Test source rs1 = x7)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x1, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x7) # load rs1: x7 = 0x0b50de1ee15a80af
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x26, x7, x7           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x26, RVTEST_CYCLE_CSR  # first counter read
+  sltu x6, x26, x0           # dep = 0, ready after the first counter read
+  or x7, x7, x6            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b7:
+  sm3p1 x22, x7 # perform operation
+  csrr x20, RVTEST_CYCLE_CSR  # second counter read
+  addi x1, x1, -1
+  bnez x1, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x20, x20, x26           # latency of the second run
+  .option push
+  .option norelax
+  lla x26, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x6, 0(x26)
+  bgez x6, 8f                     # baseline already set
+  SREG x20, 0(x26)            # the first timed testcase sets the baseline
+  mv x6, x20
+8:
+  sub x20, x20, x6           # 0 on data-independent hardware
+  # Check if x20 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x20, Zksh_sm3p1_cg_cp_rs1_b7, Zksh_sm3p1_cg_cp_rs1_b7_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x7) # load rs1: x7 = 0x0b50de1ee15a80af
 Zksh_sm3p1_cg_cp_rs1_b7:
   sm3p1 x22, x7 # perform operation
+#endif
   # Check if x22 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x22, Zksh_sm3p1_cg_cp_rs1_b7, Zksh_sm3p1_cg_cp_rs1_b7_str)
 
 # Testcase cp_rs1 (Test source rs1 = x8)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x8) # load rs1: x8 = 0x03f1c336ec5a9de7
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x6, x8, x8           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x6, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x6, x0           # dep = 0, ready after the first counter read
+  or x8, x8, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b8:
+  sm3p1 x24, x8 # perform operation
+  csrr x30, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x30, x30, x6           # latency of the second run
+  .option push
+  .option norelax
+  lla x6, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x6)
+  bgez x18, 8f                     # baseline already set
+  SREG x30, 0(x6)            # the first timed testcase sets the baseline
+  mv x18, x30
+8:
+  sub x30, x30, x18           # 0 on data-independent hardware
+  # Check if x30 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x30, Zksh_sm3p1_cg_cp_rs1_b8, Zksh_sm3p1_cg_cp_rs1_b8_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x8) # load rs1: x8 = 0x03f1c336ec5a9de7
 Zksh_sm3p1_cg_cp_rs1_b8:
   sm3p1 x24, x8 # perform operation
+#endif
   # Check if x24 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x24, Zksh_sm3p1_cg_cp_rs1_b8, Zksh_sm3p1_cg_cp_rs1_b8_str)
 
 # Testcase cp_rs1 (Test source rs1 = x9)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x9) # load rs1: x9 = 0xacdeadfcbe241427
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x19, x9, x9           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x19, RVTEST_CYCLE_CSR  # first counter read
+  sltu x23, x19, x0           # dep = 0, ready after the first counter read
+  or x9, x9, x23            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b9:
+  sm3p1 x5, x9 # perform operation
+  csrr x20, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x20, x20, x19           # latency of the second run
+  .option push
+  .option norelax
+  lla x19, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x23, 0(x19)
+  bgez x23, 8f                     # baseline already set
+  SREG x20, 0(x19)            # the first timed testcase sets the baseline
+  mv x23, x20
+8:
+  sub x20, x20, x23           # 0 on data-independent hardware
+  # Check if x20 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x20, Zksh_sm3p1_cg_cp_rs1_b9, Zksh_sm3p1_cg_cp_rs1_b9_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x9) # load rs1: x9 = 0xacdeadfcbe241427
 Zksh_sm3p1_cg_cp_rs1_b9:
   sm3p1 x5, x9 # perform operation
+#endif
   # Check if x5 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x5, Zksh_sm3p1_cg_cp_rs1_b9, Zksh_sm3p1_cg_cp_rs1_b9_str)
 
 # Testcase cp_rs1 (Test source rs1 = x10)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x18, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x10) # load rs1: x10 = 0x76a8799779e3b36a
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x3, x10, x10           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x3, RVTEST_CYCLE_CSR  # first counter read
+  sltu x25, x3, x0           # dep = 0, ready after the first counter read
+  or x10, x10, x25            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b10:
+  sm3p1 x17, x10 # perform operation
+  csrr x11, RVTEST_CYCLE_CSR  # second counter read
+  addi x18, x18, -1
+  bnez x18, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x11, x11, x3           # latency of the second run
+  .option push
+  .option norelax
+  lla x3, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x25, 0(x3)
+  bgez x25, 8f                     # baseline already set
+  SREG x11, 0(x3)            # the first timed testcase sets the baseline
+  mv x25, x11
+8:
+  sub x11, x11, x25           # 0 on data-independent hardware
+  # Check if x11 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x11, Zksh_sm3p1_cg_cp_rs1_b10, Zksh_sm3p1_cg_cp_rs1_b10_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x10) # load rs1: x10 = 0x76a8799779e3b36a
 Zksh_sm3p1_cg_cp_rs1_b10:
   sm3p1 x17, x10 # perform operation
+#endif
   # Check if x17 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x17, Zksh_sm3p1_cg_cp_rs1_b10, Zksh_sm3p1_cg_cp_rs1_b10_str)
 
 # Testcase cp_rs1 (Test source rs1 = x11)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x31, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x11) # load rs1: x11 = 0xcf2f8ae4f3372fed
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x25, x11, x11           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x25, RVTEST_CYCLE_CSR  # first counter read
+  sltu x10, x25, x0           # dep = 0, ready after the first counter read
+  or x11, x11, x10            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b11:
+  sm3p1 x2, x11 # perform operation
+  csrr x20, RVTEST_CYCLE_CSR  # second counter read
+  addi x31, x31, -1
+  bnez x31, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x20, x20, x25           # latency of the second run
+  .option push
+  .option norelax
+  lla x25, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x10, 0(x25)
+  bgez x10, 8f                     # baseline already set
+  SREG x20, 0(x25)            # the first timed testcase sets the baseline
+  mv x10, x20
+8:
+  sub x20, x20, x10           # 0 on data-independent hardware
+  # Check if x20 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x20, Zksh_sm3p1_cg_cp_rs1_b11, Zksh_sm3p1_cg_cp_rs1_b11_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x11) # load rs1: x11 = 0xcf2f8ae4f3372fed
 Zksh_sm3p1_cg_cp_rs1_b11:
   sm3p1 x2, x11 # perform operation
+#endif
   # Check if x2 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x2, Zksh_sm3p1_cg_cp_rs1_b11, Zksh_sm3p1_cg_cp_rs1_b11_str)
 
 # Testcase cp_rs1 (Test source rs1 = x12)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x22, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x12) # load rs1: x12 = 0x4632c4307ca6751b
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x1, x12, x12           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x1, RVTEST_CYCLE_CSR  # first counter read
+  sltu x29, x1, x0           # dep = 0, ready after the first counter read
+  or x12, x12, x29            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b12:
+  sm3p1 x23, x12 # perform operation
+  csrr x19, RVTEST_CYCLE_CSR  # second counter read
+  addi x22, x22, -1
+  bnez x22, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x19, x19, x1           # latency of the second run
+  .option push
+  .option norelax
+  lla x1, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x29, 0(x1)
+  bgez x29, 8f                     # baseline already set
+  SREG x19, 0(x1)            # the first timed testcase sets the baseline
+  mv x29, x19
+8:
+  sub x19, x19, x29           # 0 on data-independent hardware
+  # Check if x19 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x28, x14, x13, x19, Zksh_sm3p1_cg_cp_rs1_b12, Zksh_sm3p1_cg_cp_rs1_b12_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x12) # load rs1: x12 = 0x4632c4307ca6751b
 Zksh_sm3p1_cg_cp_rs1_b12:
   sm3p1 x23, x12 # perform operation
+#endif
   # Check if x23 contains the expected result. x28 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x28, x14, x13, x23, Zksh_sm3p1_cg_cp_rs1_b12, Zksh_sm3p1_cg_cp_rs1_b12_str)
 
   mv x4, x13 # switch temp register to avoid conflict with test
   mv x5, x14 # switch link pointer register to avoid conflict with test
 # Testcase cp_rs1 (Test source rs1 = x13)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x30, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x13) # load rs1: x13 = 0x8afdb1d7dff4b3c1
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x8, x13, x13           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x8, RVTEST_CYCLE_CSR  # first counter read
+  sltu x27, x8, x0           # dep = 0, ready after the first counter read
+  or x13, x13, x27            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b13:
+  sm3p1 x18, x13 # perform operation
+  csrr x16, RVTEST_CYCLE_CSR  # second counter read
+  addi x30, x30, -1
+  bnez x30, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x16, x16, x8           # latency of the second run
+  .option push
+  .option norelax
+  lla x8, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x27, 0(x8)
+  bgez x27, 8f                     # baseline already set
+  SREG x16, 0(x8)            # the first timed testcase sets the baseline
+  mv x27, x16
+8:
+  sub x16, x16, x27           # 0 on data-independent hardware
+  # Check if x16 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x16, Zksh_sm3p1_cg_cp_rs1_b13, Zksh_sm3p1_cg_cp_rs1_b13_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x13) # load rs1: x13 = 0x8afdb1d7dff4b3c1
 Zksh_sm3p1_cg_cp_rs1_b13:
   sm3p1 x18, x13 # perform operation
+#endif
   # Check if x18 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x18, Zksh_sm3p1_cg_cp_rs1_b13, Zksh_sm3p1_cg_cp_rs1_b13_str)
 
 # Testcase cp_rs1 (Test source rs1 = x14)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x22, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x14) # load rs1: x14 = 0xda31c37075e11472
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x8, x14, x14           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x8, RVTEST_CYCLE_CSR  # first counter read
+  sltu x19, x8, x0           # dep = 0, ready after the first counter read
+  or x14, x14, x19            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b14:
+  sm3p1 x7, x14 # perform operation
+  csrr x9, RVTEST_CYCLE_CSR  # second counter read
+  addi x22, x22, -1
+  bnez x22, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x9, x9, x8           # latency of the second run
+  .option push
+  .option norelax
+  lla x8, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x19, 0(x8)
+  bgez x19, 8f                     # baseline already set
+  SREG x9, 0(x8)            # the first timed testcase sets the baseline
+  mv x19, x9
+8:
+  sub x9, x9, x19           # 0 on data-independent hardware
+  # Check if x9 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x9, Zksh_sm3p1_cg_cp_rs1_b14, Zksh_sm3p1_cg_cp_rs1_b14_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x14) # load rs1: x14 = 0xda31c37075e11472
 Zksh_sm3p1_cg_cp_rs1_b14:
   sm3p1 x7, x14 # perform operation
+#endif
   # Check if x7 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x7, Zksh_sm3p1_cg_cp_rs1_b14, Zksh_sm3p1_cg_cp_rs1_b14_str)
 
 # Testcase cp_rs1 (Test source rs1 = x15)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x11, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x15) # load rs1: x15 = 0x04a7dbfe289ff82d
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x18, x15, x15           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x18, RVTEST_CYCLE_CSR  # first counter read
+  sltu x2, x18, x0           # dep = 0, ready after the first counter read
+  or x15, x15, x2            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b15:
+  sm3p1 x6, x15 # perform operation
+  csrr x24, RVTEST_CYCLE_CSR  # second counter read
+  addi x11, x11, -1
+  bnez x11, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x24, x24, x18           # latency of the second run
+  .option push
+  .option norelax
+  lla x18, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x2, 0(x18)
+  bgez x2, 8f                     # baseline already set
+  SREG x24, 0(x18)            # the first timed testcase sets the baseline
+  mv x2, x24
+8:
+  sub x24, x24, x2           # 0 on data-independent hardware
+  # Check if x24 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x24, Zksh_sm3p1_cg_cp_rs1_b15, Zksh_sm3p1_cg_cp_rs1_b15_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x15) # load rs1: x15 = 0x04a7dbfe289ff82d
 Zksh_sm3p1_cg_cp_rs1_b15:
   sm3p1 x6, x15 # perform operation
+#endif
   # Check if x6 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x6, Zksh_sm3p1_cg_cp_rs1_b15, Zksh_sm3p1_cg_cp_rs1_b15_str)
 
 # Testcase cp_rs1 (Test source rs1 = x16)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x26, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x16) # load rs1: x16 = 0xba2640a997810d49
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x23, x16, x16           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x23, RVTEST_CYCLE_CSR  # first counter read
+  sltu x25, x23, x0           # dep = 0, ready after the first counter read
+  or x16, x16, x25            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b16:
+  sm3p1 x15, x16 # perform operation
+  csrr x12, RVTEST_CYCLE_CSR  # second counter read
+  addi x26, x26, -1
+  bnez x26, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x12, x12, x23           # latency of the second run
+  .option push
+  .option norelax
+  lla x23, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x25, 0(x23)
+  bgez x25, 8f                     # baseline already set
+  SREG x12, 0(x23)            # the first timed testcase sets the baseline
+  mv x25, x12
+8:
+  sub x12, x12, x25           # 0 on data-independent hardware
+  # Check if x12 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x12, Zksh_sm3p1_cg_cp_rs1_b16, Zksh_sm3p1_cg_cp_rs1_b16_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x16) # load rs1: x16 = 0xba2640a997810d49
 Zksh_sm3p1_cg_cp_rs1_b16:
   sm3p1 x15, x16 # perform operation
+#endif
   # Check if x15 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x15, Zksh_sm3p1_cg_cp_rs1_b16, Zksh_sm3p1_cg_cp_rs1_b16_str)
 
 # Testcase cp_rs1 (Test source rs1 = x17)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x19, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x17) # load rs1: x17 = 0x9911dca9fa521a78
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x10, x17, x17           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x10, RVTEST_CYCLE_CSR  # first counter read
+  sltu x1, x10, x0           # dep = 0, ready after the first counter read
+  or x17, x17, x1            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b17:
+  sm3p1 x20, x17 # perform operation
+  csrr x11, RVTEST_CYCLE_CSR  # second counter read
+  addi x19, x19, -1
+  bnez x19, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x11, x11, x10           # latency of the second run
+  .option push
+  .option norelax
+  lla x10, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x1, 0(x10)
+  bgez x1, 8f                     # baseline already set
+  SREG x11, 0(x10)            # the first timed testcase sets the baseline
+  mv x1, x11
+8:
+  sub x11, x11, x1           # 0 on data-independent hardware
+  # Check if x11 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x11, Zksh_sm3p1_cg_cp_rs1_b17, Zksh_sm3p1_cg_cp_rs1_b17_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x17) # load rs1: x17 = 0x9911dca9fa521a78
 Zksh_sm3p1_cg_cp_rs1_b17:
   sm3p1 x20, x17 # perform operation
+#endif
   # Check if x20 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x20, Zksh_sm3p1_cg_cp_rs1_b17, Zksh_sm3p1_cg_cp_rs1_b17_str)
 
 # Testcase cp_rs1 (Test source rs1 = x18)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x1, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x18) # load rs1: x18 = 0xfa7a6b9c4388ca98
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x24, x18, x18           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x24, RVTEST_CYCLE_CSR  # first counter read
+  sltu x2, x24, x0           # dep = 0, ready after the first counter read
+  or x18, x18, x2            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b18:
+  sm3p1 x9, x18 # perform operation
+  csrr x11, RVTEST_CYCLE_CSR  # second counter read
+  addi x1, x1, -1
+  bnez x1, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x11, x11, x24           # latency of the second run
+  .option push
+  .option norelax
+  lla x24, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x2, 0(x24)
+  bgez x2, 8f                     # baseline already set
+  SREG x11, 0(x24)            # the first timed testcase sets the baseline
+  mv x2, x11
+8:
+  sub x11, x11, x2           # 0 on data-independent hardware
+  # Check if x11 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x11, Zksh_sm3p1_cg_cp_rs1_b18, Zksh_sm3p1_cg_cp_rs1_b18_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x18) # load rs1: x18 = 0xfa7a6b9c4388ca98
 Zksh_sm3p1_cg_cp_rs1_b18:
   sm3p1 x9, x18 # perform operation
+#endif
   # Check if x9 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x9, Zksh_sm3p1_cg_cp_rs1_b18, Zksh_sm3p1_cg_cp_rs1_b18_str)
 
 # Testcase cp_rs1 (Test source rs1 = x19)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x17, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x19) # load rs1: x19 = 0x85a4e70c38e86dd9
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x29, x19, x19           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x29, RVTEST_CYCLE_CSR  # first counter read
+  sltu x7, x29, x0           # dep = 0, ready after the first counter read
+  or x19, x19, x7            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b19:
+  sm3p1 x22, x19 # perform operation
+  csrr x8, RVTEST_CYCLE_CSR  # second counter read
+  addi x17, x17, -1
+  bnez x17, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x8, x8, x29           # latency of the second run
+  .option push
+  .option norelax
+  lla x29, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x7, 0(x29)
+  bgez x7, 8f                     # baseline already set
+  SREG x8, 0(x29)            # the first timed testcase sets the baseline
+  mv x7, x8
+8:
+  sub x8, x8, x7           # 0 on data-independent hardware
+  # Check if x8 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x8, Zksh_sm3p1_cg_cp_rs1_b19, Zksh_sm3p1_cg_cp_rs1_b19_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x19) # load rs1: x19 = 0x85a4e70c38e86dd9
 Zksh_sm3p1_cg_cp_rs1_b19:
   sm3p1 x22, x19 # perform operation
+#endif
   # Check if x22 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x22, Zksh_sm3p1_cg_cp_rs1_b19, Zksh_sm3p1_cg_cp_rs1_b19_str)
 
 # Testcase cp_rs1 (Test source rs1 = x20)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x9, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x21, x20) # load rs1: x20 = 0x7bc8317ef9211d00
+  addi x21, x21, -1*SIG_STRIDE    # rewind data for the second run
+  xor x8, x20, x20           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x8, RVTEST_CYCLE_CSR  # first counter read
+  sltu x6, x8, x0           # dep = 0, ready after the first counter read
+  or x20, x20, x6            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b20:
+  sm3p1 x26, x20 # perform operation
+  csrr x17, RVTEST_CYCLE_CSR  # second counter read
+  addi x9, x9, -1
+  bnez x9, 7b
+  addi x21, x21, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x17, x17, x8           # latency of the second run
+  .option push
+  .option norelax
+  lla x8, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x6, 0(x8)
+  bgez x6, 8f                     # baseline already set
+  SREG x17, 0(x8)            # the first timed testcase sets the baseline
+  mv x6, x17
+8:
+  sub x17, x17, x6           # 0 on data-independent hardware
+  # Check if x17 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x17, Zksh_sm3p1_cg_cp_rs1_b20, Zksh_sm3p1_cg_cp_rs1_b20_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x21, x20) # load rs1: x20 = 0x7bc8317ef9211d00
 Zksh_sm3p1_cg_cp_rs1_b20:
   sm3p1 x26, x20 # perform operation
+#endif
   # Check if x26 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x26, Zksh_sm3p1_cg_cp_rs1_b20, Zksh_sm3p1_cg_cp_rs1_b20_str)
 
   mv x10, x21 # switch data pointer register to avoid conflict with test
 # Testcase cp_rs1 (Test source rs1 = x21)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x19, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x21) # load rs1: x21 = 0xb7cdfe2134583e37
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x6, x21, x21           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x6, RVTEST_CYCLE_CSR  # first counter read
+  sltu x13, x6, x0           # dep = 0, ready after the first counter read
+  or x21, x21, x13            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b21:
+  sm3p1 x17, x21 # perform operation
+  csrr x8, RVTEST_CYCLE_CSR  # second counter read
+  addi x19, x19, -1
+  bnez x19, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x8, x8, x6           # latency of the second run
+  .option push
+  .option norelax
+  lla x6, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x13, 0(x6)
+  bgez x13, 8f                     # baseline already set
+  SREG x8, 0(x6)            # the first timed testcase sets the baseline
+  mv x13, x8
+8:
+  sub x8, x8, x13           # 0 on data-independent hardware
+  # Check if x8 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x8, Zksh_sm3p1_cg_cp_rs1_b21, Zksh_sm3p1_cg_cp_rs1_b21_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x21) # load rs1: x21 = 0xb7cdfe2134583e37
 Zksh_sm3p1_cg_cp_rs1_b21:
   sm3p1 x17, x21 # perform operation
+#endif
   # Check if x17 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x17, Zksh_sm3p1_cg_cp_rs1_b21, Zksh_sm3p1_cg_cp_rs1_b21_str)
 
 # Testcase cp_rs1 (Test source rs1 = x22)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x7, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x22) # load rs1: x22 = 0x791abbaed5724846
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x19, x22, x22           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x19, RVTEST_CYCLE_CSR  # first counter read
+  sltu x20, x19, x0           # dep = 0, ready after the first counter read
+  or x22, x22, x20            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b22:
+  sm3p1 x3, x22 # perform operation
+  csrr x14, RVTEST_CYCLE_CSR  # second counter read
+  addi x7, x7, -1
+  bnez x7, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x14, x14, x19           # latency of the second run
+  .option push
+  .option norelax
+  lla x19, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x20, 0(x19)
+  bgez x20, 8f                     # baseline already set
+  SREG x14, 0(x19)            # the first timed testcase sets the baseline
+  mv x20, x14
+8:
+  sub x14, x14, x20           # 0 on data-independent hardware
+  # Check if x14 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x14, Zksh_sm3p1_cg_cp_rs1_b22, Zksh_sm3p1_cg_cp_rs1_b22_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x22) # load rs1: x22 = 0x791abbaed5724846
 Zksh_sm3p1_cg_cp_rs1_b22:
   sm3p1 x3, x22 # perform operation
+#endif
   # Check if x3 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x3, Zksh_sm3p1_cg_cp_rs1_b22, Zksh_sm3p1_cg_cp_rs1_b22_str)
 
 # Testcase cp_rs1 (Test source rs1 = x23)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x23) # load rs1: x23 = 0x4f01908421e969ea
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x19, x23, x23           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x19, RVTEST_CYCLE_CSR  # first counter read
+  sltu x9, x19, x0           # dep = 0, ready after the first counter read
+  or x23, x23, x9            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b23:
+  sm3p1 x17, x23 # perform operation
+  csrr x13, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x13, x13, x19           # latency of the second run
+  .option push
+  .option norelax
+  lla x19, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x9, 0(x19)
+  bgez x9, 8f                     # baseline already set
+  SREG x13, 0(x19)            # the first timed testcase sets the baseline
+  mv x9, x13
+8:
+  sub x13, x13, x9           # 0 on data-independent hardware
+  # Check if x13 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x13, Zksh_sm3p1_cg_cp_rs1_b23, Zksh_sm3p1_cg_cp_rs1_b23_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x23) # load rs1: x23 = 0x4f01908421e969ea
 Zksh_sm3p1_cg_cp_rs1_b23:
   sm3p1 x17, x23 # perform operation
+#endif
   # Check if x17 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x17, Zksh_sm3p1_cg_cp_rs1_b23, Zksh_sm3p1_cg_cp_rs1_b23_str)
 
 # Testcase cp_rs1 (Test source rs1 = x24)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x1, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x24) # load rs1: x24 = 0xf139024ef86b818c
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x22, x24, x24           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x22, RVTEST_CYCLE_CSR  # first counter read
+  sltu x7, x22, x0           # dep = 0, ready after the first counter read
+  or x24, x24, x7            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b24:
+  sm3p1 x30, x24 # perform operation
+  csrr x9, RVTEST_CYCLE_CSR  # second counter read
+  addi x1, x1, -1
+  bnez x1, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x9, x9, x22           # latency of the second run
+  .option push
+  .option norelax
+  lla x22, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x7, 0(x22)
+  bgez x7, 8f                     # baseline already set
+  SREG x9, 0(x22)            # the first timed testcase sets the baseline
+  mv x7, x9
+8:
+  sub x9, x9, x7           # 0 on data-independent hardware
+  # Check if x9 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x9, Zksh_sm3p1_cg_cp_rs1_b24, Zksh_sm3p1_cg_cp_rs1_b24_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x24) # load rs1: x24 = 0xf139024ef86b818c
 Zksh_sm3p1_cg_cp_rs1_b24:
   sm3p1 x30, x24 # perform operation
+#endif
   # Check if x30 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x30, Zksh_sm3p1_cg_cp_rs1_b24, Zksh_sm3p1_cg_cp_rs1_b24_str)
 
 # Testcase cp_rs1 (Test source rs1 = x25)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x25) # load rs1: x25 = 0x7037be4532f7ba05
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x7, x25, x25           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x7, RVTEST_CYCLE_CSR  # first counter read
+  sltu x2, x7, x0           # dep = 0, ready after the first counter read
+  or x25, x25, x2            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b25:
+  sm3p1 x21, x25 # perform operation
+  csrr x27, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x27, x27, x7           # latency of the second run
+  .option push
+  .option norelax
+  lla x7, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x2, 0(x7)
+  bgez x2, 8f                     # baseline already set
+  SREG x27, 0(x7)            # the first timed testcase sets the baseline
+  mv x2, x27
+8:
+  sub x27, x27, x2           # 0 on data-independent hardware
+  # Check if x27 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x27, Zksh_sm3p1_cg_cp_rs1_b25, Zksh_sm3p1_cg_cp_rs1_b25_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x25) # load rs1: x25 = 0x7037be4532f7ba05
 Zksh_sm3p1_cg_cp_rs1_b25:
   sm3p1 x21, x25 # perform operation
+#endif
   # Check if x21 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x21, Zksh_sm3p1_cg_cp_rs1_b25, Zksh_sm3p1_cg_cp_rs1_b25_str)
 
 # Testcase cp_rs1 (Test source rs1 = x26)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x26) # load rs1: x26 = 0x1f052165adaf413d
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x29, x26, x26           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x29, RVTEST_CYCLE_CSR  # first counter read
+  sltu x25, x29, x0           # dep = 0, ready after the first counter read
+  or x26, x26, x25            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b26:
+  sm3p1 x6, x26 # perform operation
+  csrr x16, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x16, x16, x29           # latency of the second run
+  .option push
+  .option norelax
+  lla x29, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x25, 0(x29)
+  bgez x25, 8f                     # baseline already set
+  SREG x16, 0(x29)            # the first timed testcase sets the baseline
+  mv x25, x16
+8:
+  sub x16, x16, x25           # 0 on data-independent hardware
+  # Check if x16 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x16, Zksh_sm3p1_cg_cp_rs1_b26, Zksh_sm3p1_cg_cp_rs1_b26_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x26) # load rs1: x26 = 0x1f052165adaf413d
 Zksh_sm3p1_cg_cp_rs1_b26:
   sm3p1 x6, x26 # perform operation
+#endif
   # Check if x6 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x6, Zksh_sm3p1_cg_cp_rs1_b26, Zksh_sm3p1_cg_cp_rs1_b26_str)
 
 # Testcase cp_rs1 (Test source rs1 = x27)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x18, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x27) # load rs1: x27 = 0xdc582bffe1228662
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x29, x27, x27           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x29, RVTEST_CYCLE_CSR  # first counter read
+  sltu x16, x29, x0           # dep = 0, ready after the first counter read
+  or x27, x27, x16            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b27:
+  sm3p1 x25, x27 # perform operation
+  csrr x23, RVTEST_CYCLE_CSR  # second counter read
+  addi x18, x18, -1
+  bnez x18, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x23, x23, x29           # latency of the second run
+  .option push
+  .option norelax
+  lla x29, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x16, 0(x29)
+  bgez x16, 8f                     # baseline already set
+  SREG x23, 0(x29)            # the first timed testcase sets the baseline
+  mv x16, x23
+8:
+  sub x23, x23, x16           # 0 on data-independent hardware
+  # Check if x23 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x28, x5, x4, x23, Zksh_sm3p1_cg_cp_rs1_b27, Zksh_sm3p1_cg_cp_rs1_b27_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x27) # load rs1: x27 = 0xdc582bffe1228662
 Zksh_sm3p1_cg_cp_rs1_b27:
   sm3p1 x25, x27 # perform operation
+#endif
   # Check if x25 contains the expected result. x28 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x28, x5, x4, x25, Zksh_sm3p1_cg_cp_rs1_b27, Zksh_sm3p1_cg_cp_rs1_b27_str)
 
   mv x31, x28 # switch signature pointer register to avoid conflict with test
 # Testcase cp_rs1 (Test source rs1 = x28)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x7, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x28) # load rs1: x28 = 0x484a1c0837fb7df7
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x28, x28           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x20, RVTEST_CYCLE_CSR  # first counter read
+  sltu x15, x20, x0           # dep = 0, ready after the first counter read
+  or x28, x28, x15            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b28:
+  sm3p1 x22, x28 # perform operation
+  csrr x19, RVTEST_CYCLE_CSR  # second counter read
+  addi x7, x7, -1
+  bnez x7, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x19, x19, x20           # latency of the second run
+  .option push
+  .option norelax
+  lla x20, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x15, 0(x20)
+  bgez x15, 8f                     # baseline already set
+  SREG x19, 0(x20)            # the first timed testcase sets the baseline
+  mv x15, x19
+8:
+  sub x19, x19, x15           # 0 on data-independent hardware
+  # Check if x19 contains the expected result. x31 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x31, x5, x4, x19, Zksh_sm3p1_cg_cp_rs1_b28, Zksh_sm3p1_cg_cp_rs1_b28_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x28) # load rs1: x28 = 0x484a1c0837fb7df7
 Zksh_sm3p1_cg_cp_rs1_b28:
   sm3p1 x22, x28 # perform operation
+#endif
   # Check if x22 contains the expected result. x31 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x31, x5, x4, x22, Zksh_sm3p1_cg_cp_rs1_b28, Zksh_sm3p1_cg_cp_rs1_b28_str)
 
 # Testcase cp_rs1 (Test source rs1 = x29)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x29) # load rs1: x29 = 0xfa320e2e857eeb6f
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x15, x29, x29           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x15, RVTEST_CYCLE_CSR  # first counter read
+  sltu x2, x15, x0           # dep = 0, ready after the first counter read
+  or x29, x29, x2            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b29:
+  sm3p1 x19, x29 # perform operation
+  csrr x16, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x16, x16, x15           # latency of the second run
+  .option push
+  .option norelax
+  lla x15, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x2, 0(x15)
+  bgez x2, 8f                     # baseline already set
+  SREG x16, 0(x15)            # the first timed testcase sets the baseline
+  mv x2, x16
+8:
+  sub x16, x16, x2           # 0 on data-independent hardware
+  # Check if x16 contains the expected result. x31 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x31, x5, x4, x16, Zksh_sm3p1_cg_cp_rs1_b29, Zksh_sm3p1_cg_cp_rs1_b29_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x29) # load rs1: x29 = 0xfa320e2e857eeb6f
 Zksh_sm3p1_cg_cp_rs1_b29:
   sm3p1 x19, x29 # perform operation
+#endif
   # Check if x19 contains the expected result. x31 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x31, x5, x4, x19, Zksh_sm3p1_cg_cp_rs1_b29, Zksh_sm3p1_cg_cp_rs1_b29_str)
 
 # Testcase cp_rs1 (Test source rs1 = x30)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x8, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x30) # load rs1: x30 = 0x94e68ec364b84655
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x24, x30, x30           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x24, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x24, x0           # dep = 0, ready after the first counter read
+  or x30, x30, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b30:
+  sm3p1 x14, x30 # perform operation
+  csrr x9, RVTEST_CYCLE_CSR  # second counter read
+  addi x8, x8, -1
+  bnez x8, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x9, x9, x24           # latency of the second run
+  .option push
+  .option norelax
+  lla x24, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x24)
+  bgez x18, 8f                     # baseline already set
+  SREG x9, 0(x24)            # the first timed testcase sets the baseline
+  mv x18, x9
+8:
+  sub x9, x9, x18           # 0 on data-independent hardware
+  # Check if x9 contains the expected result. x31 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x31, x5, x4, x9, Zksh_sm3p1_cg_cp_rs1_b30, Zksh_sm3p1_cg_cp_rs1_b30_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x30) # load rs1: x30 = 0x94e68ec364b84655
 Zksh_sm3p1_cg_cp_rs1_b30:
   sm3p1 x14, x30 # perform operation
+#endif
   # Check if x14 contains the expected result. x31 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x31, x5, x4, x14, Zksh_sm3p1_cg_cp_rs1_b30, Zksh_sm3p1_cg_cp_rs1_b30_str)
 
   mv x27, x31 # switch signature pointer register to avoid conflict with test
 # Testcase cp_rs1 (Test source rs1 = x31)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x31) # load rs1: x31 = 0xc343c0c6eb489292
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x14, x31, x31           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x14, RVTEST_CYCLE_CSR  # first counter read
+  sltu x25, x14, x0           # dep = 0, ready after the first counter read
+  or x31, x31, x25            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_b31:
+  sm3p1 x8, x31 # perform operation
+  csrr x20, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x20, x20, x14           # latency of the second run
+  .option push
+  .option norelax
+  lla x14, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x25, 0(x14)
+  bgez x25, 8f                     # baseline already set
+  SREG x20, 0(x14)            # the first timed testcase sets the baseline
+  mv x25, x20
+8:
+  sub x20, x20, x25           # 0 on data-independent hardware
+  # Check if x20 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x20, Zksh_sm3p1_cg_cp_rs1_b31, Zksh_sm3p1_cg_cp_rs1_b31_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x31) # load rs1: x31 = 0xc343c0c6eb489292
 Zksh_sm3p1_cg_cp_rs1_b31:
   sm3p1 x8, x31 # perform operation
+#endif
   # Check if x8 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x8, Zksh_sm3p1_cg_cp_rs1_b31, Zksh_sm3p1_cg_cp_rs1_b31_str)
 
@@ -271,234 +1583,1546 @@ Zksh_sm3p1_cg_cp_rs1_b31:
 /////////////////////////////////
 
 # Testcase cp_rd (Test destination rd = x0)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x31) # load rs1: x31 = 0x30c73636bb72a20a
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x7, x31, x31           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x7, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x7, x0           # dep = 0, ready after the first counter read
+  or x31, x31, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b0:
+  sm3p1 x0, x31 # perform operation
+  csrr x17, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x17, x17, x7           # latency of the second run
+  .option push
+  .option norelax
+  lla x7, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x7)
+  bgez x18, 8f                     # baseline already set
+  SREG x17, 0(x7)            # the first timed testcase sets the baseline
+  mv x18, x17
+8:
+  sub x17, x17, x18           # 0 on data-independent hardware
+  # Check if x17 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x17, Zksh_sm3p1_cg_cp_rd_b0, Zksh_sm3p1_cg_cp_rd_b0_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x31) # load rs1: x31 = 0x30c73636bb72a20a
 Zksh_sm3p1_cg_cp_rd_b0:
   sm3p1 x0, x31 # perform operation
+#endif
   # Check if x0 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x0, Zksh_sm3p1_cg_cp_rd_b0, Zksh_sm3p1_cg_cp_rd_b0_str)
 
 # Testcase cp_rd (Test destination rd = x1)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x16, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x7) # load rs1: x7 = 0x26b5e81f6fa04cb0
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x17, x7, x7           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x17, RVTEST_CYCLE_CSR  # first counter read
+  sltu x28, x17, x0           # dep = 0, ready after the first counter read
+  or x7, x7, x28            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b1:
+  sm3p1 x1, x7 # perform operation
+  csrr x23, RVTEST_CYCLE_CSR  # second counter read
+  addi x16, x16, -1
+  bnez x16, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x23, x23, x17           # latency of the second run
+  .option push
+  .option norelax
+  lla x17, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x28, 0(x17)
+  bgez x28, 8f                     # baseline already set
+  SREG x23, 0(x17)            # the first timed testcase sets the baseline
+  mv x28, x23
+8:
+  sub x23, x23, x28           # 0 on data-independent hardware
+  # Check if x23 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x23, Zksh_sm3p1_cg_cp_rd_b1, Zksh_sm3p1_cg_cp_rd_b1_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x7) # load rs1: x7 = 0x26b5e81f6fa04cb0
 Zksh_sm3p1_cg_cp_rd_b1:
   sm3p1 x1, x7 # perform operation
+#endif
   # Check if x1 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x1, Zksh_sm3p1_cg_cp_rd_b1, Zksh_sm3p1_cg_cp_rd_b1_str)
 
 # Testcase cp_rd (Test destination rd = x2)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x9, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x15) # load rs1: x15 = 0x46bf5e3b1cc1774e
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x8, x15, x15           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x8, RVTEST_CYCLE_CSR  # first counter read
+  sltu x23, x8, x0           # dep = 0, ready after the first counter read
+  or x15, x15, x23            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b2:
+  sm3p1 x2, x15 # perform operation
+  csrr x17, RVTEST_CYCLE_CSR  # second counter read
+  addi x9, x9, -1
+  bnez x9, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x17, x17, x8           # latency of the second run
+  .option push
+  .option norelax
+  lla x8, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x23, 0(x8)
+  bgez x23, 8f                     # baseline already set
+  SREG x17, 0(x8)            # the first timed testcase sets the baseline
+  mv x23, x17
+8:
+  sub x17, x17, x23           # 0 on data-independent hardware
+  # Check if x17 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x17, Zksh_sm3p1_cg_cp_rd_b2, Zksh_sm3p1_cg_cp_rd_b2_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x15) # load rs1: x15 = 0x46bf5e3b1cc1774e
 Zksh_sm3p1_cg_cp_rd_b2:
   sm3p1 x2, x15 # perform operation
+#endif
   # Check if x2 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x2, Zksh_sm3p1_cg_cp_rd_b2, Zksh_sm3p1_cg_cp_rd_b2_str)
 
 # Testcase cp_rd (Test destination rd = x3)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x13, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x7) # load rs1: x7 = 0x35268ccbc7c7073c
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x29, x7, x7           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x29, RVTEST_CYCLE_CSR  # first counter read
+  sltu x2, x29, x0           # dep = 0, ready after the first counter read
+  or x7, x7, x2            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b3:
+  sm3p1 x3, x7 # perform operation
+  csrr x30, RVTEST_CYCLE_CSR  # second counter read
+  addi x13, x13, -1
+  bnez x13, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x30, x30, x29           # latency of the second run
+  .option push
+  .option norelax
+  lla x29, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x2, 0(x29)
+  bgez x2, 8f                     # baseline already set
+  SREG x30, 0(x29)            # the first timed testcase sets the baseline
+  mv x2, x30
+8:
+  sub x30, x30, x2           # 0 on data-independent hardware
+  # Check if x30 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x30, Zksh_sm3p1_cg_cp_rd_b3, Zksh_sm3p1_cg_cp_rd_b3_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x7) # load rs1: x7 = 0x35268ccbc7c7073c
 Zksh_sm3p1_cg_cp_rd_b3:
   sm3p1 x3, x7 # perform operation
+#endif
   # Check if x3 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x3, Zksh_sm3p1_cg_cp_rd_b3, Zksh_sm3p1_cg_cp_rd_b3_str)
 
   mv x7, x4 # switch temp register to avoid conflict with test
   mv x8, x5 # switch link pointer register to avoid conflict with test
 # Testcase cp_rd (Test destination rd = x4)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x21, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x31) # load rs1: x31 = 0x4914c26e7d66116c
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x24, x31, x31           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x24, RVTEST_CYCLE_CSR  # first counter read
+  sltu x25, x24, x0           # dep = 0, ready after the first counter read
+  or x31, x31, x25            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b4:
+  sm3p1 x4, x31 # perform operation
+  csrr x11, RVTEST_CYCLE_CSR  # second counter read
+  addi x21, x21, -1
+  bnez x21, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x11, x11, x24           # latency of the second run
+  .option push
+  .option norelax
+  lla x24, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x25, 0(x24)
+  bgez x25, 8f                     # baseline already set
+  SREG x11, 0(x24)            # the first timed testcase sets the baseline
+  mv x25, x11
+8:
+  sub x11, x11, x25           # 0 on data-independent hardware
+  # Check if x11 contains the expected result. x27 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
+  RVTEST_SIGUPD(x27, x8, x7, x11, Zksh_sm3p1_cg_cp_rd_b4, Zksh_sm3p1_cg_cp_rd_b4_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x31) # load rs1: x31 = 0x4914c26e7d66116c
 Zksh_sm3p1_cg_cp_rd_b4:
   sm3p1 x4, x31 # perform operation
+#endif
   # Check if x4 contains the expected result. x27 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
   RVTEST_SIGUPD(x27, x8, x7, x4, Zksh_sm3p1_cg_cp_rd_b4, Zksh_sm3p1_cg_cp_rd_b4_str)
 
 # Testcase cp_rd (Test destination rd = x5)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x18, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x23) # load rs1: x23 = 0xd09cac424e8400f4
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x11, x23, x23           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x11, RVTEST_CYCLE_CSR  # first counter read
+  sltu x9, x11, x0           # dep = 0, ready after the first counter read
+  or x23, x23, x9            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b5:
+  sm3p1 x5, x23 # perform operation
+  csrr x20, RVTEST_CYCLE_CSR  # second counter read
+  addi x18, x18, -1
+  bnez x18, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x20, x20, x11           # latency of the second run
+  .option push
+  .option norelax
+  lla x11, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x9, 0(x11)
+  bgez x9, 8f                     # baseline already set
+  SREG x20, 0(x11)            # the first timed testcase sets the baseline
+  mv x9, x20
+8:
+  sub x20, x20, x9           # 0 on data-independent hardware
+  # Check if x20 contains the expected result. x27 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
+  RVTEST_SIGUPD(x27, x8, x7, x20, Zksh_sm3p1_cg_cp_rd_b5, Zksh_sm3p1_cg_cp_rd_b5_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x23) # load rs1: x23 = 0xd09cac424e8400f4
 Zksh_sm3p1_cg_cp_rd_b5:
   sm3p1 x5, x23 # perform operation
+#endif
   # Check if x5 contains the expected result. x27 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
   RVTEST_SIGUPD(x27, x8, x7, x5, Zksh_sm3p1_cg_cp_rd_b5, Zksh_sm3p1_cg_cp_rd_b5_str)
 
 # Testcase cp_rd (Test destination rd = x6)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x26, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x9) # load rs1: x9 = 0xeaa6d54579048d94
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x13, x9, x9           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x13, RVTEST_CYCLE_CSR  # first counter read
+  sltu x1, x13, x0           # dep = 0, ready after the first counter read
+  or x9, x9, x1            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b6:
+  sm3p1 x6, x9 # perform operation
+  csrr x20, RVTEST_CYCLE_CSR  # second counter read
+  addi x26, x26, -1
+  bnez x26, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x20, x20, x13           # latency of the second run
+  .option push
+  .option norelax
+  lla x13, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x1, 0(x13)
+  bgez x1, 8f                     # baseline already set
+  SREG x20, 0(x13)            # the first timed testcase sets the baseline
+  mv x1, x20
+8:
+  sub x20, x20, x1           # 0 on data-independent hardware
+  # Check if x20 contains the expected result. x27 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
+  RVTEST_SIGUPD(x27, x8, x7, x20, Zksh_sm3p1_cg_cp_rd_b6, Zksh_sm3p1_cg_cp_rd_b6_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x9) # load rs1: x9 = 0xeaa6d54579048d94
 Zksh_sm3p1_cg_cp_rd_b6:
   sm3p1 x6, x9 # perform operation
+#endif
   # Check if x6 contains the expected result. x27 is the signature ptr, x8 is the link ptr, x7 is a temp reg.
   RVTEST_SIGUPD(x27, x8, x7, x6, Zksh_sm3p1_cg_cp_rd_b6, Zksh_sm3p1_cg_cp_rd_b6_str)
 
   mv x4, x7 # switch temp register to avoid conflict with test
   mv x5, x8 # switch link pointer register to avoid conflict with test
 # Testcase cp_rd (Test destination rd = x7)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x13, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x11) # load rs1: x11 = 0x26a469c576ab0e32
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x1, x11, x11           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x1, RVTEST_CYCLE_CSR  # first counter read
+  sltu x8, x1, x0           # dep = 0, ready after the first counter read
+  or x11, x11, x8            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b7:
+  sm3p1 x7, x11 # perform operation
+  csrr x31, RVTEST_CYCLE_CSR  # second counter read
+  addi x13, x13, -1
+  bnez x13, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x31, x31, x1           # latency of the second run
+  .option push
+  .option norelax
+  lla x1, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x8, 0(x1)
+  bgez x8, 8f                     # baseline already set
+  SREG x31, 0(x1)            # the first timed testcase sets the baseline
+  mv x8, x31
+8:
+  sub x31, x31, x8           # 0 on data-independent hardware
+  # Check if x31 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x31, Zksh_sm3p1_cg_cp_rd_b7, Zksh_sm3p1_cg_cp_rd_b7_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x11) # load rs1: x11 = 0x26a469c576ab0e32
 Zksh_sm3p1_cg_cp_rd_b7:
   sm3p1 x7, x11 # perform operation
+#endif
   # Check if x7 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x7, Zksh_sm3p1_cg_cp_rd_b7, Zksh_sm3p1_cg_cp_rd_b7_str)
 
 # Testcase cp_rd (Test destination rd = x8)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x22, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x0) # load rs1: x0 = 0x471b9dcefd257b96
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x7, x0, x0           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x7, RVTEST_CYCLE_CSR  # first counter read
+  sltu x21, x7, x0           # dep = 0, ready after the first counter read
+  or x0, x0, x21            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b8:
+  sm3p1 x8, x0 # perform operation
+  csrr x30, RVTEST_CYCLE_CSR  # second counter read
+  addi x22, x22, -1
+  bnez x22, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x30, x30, x7           # latency of the second run
+  .option push
+  .option norelax
+  lla x7, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x21, 0(x7)
+  bgez x21, 8f                     # baseline already set
+  SREG x30, 0(x7)            # the first timed testcase sets the baseline
+  mv x21, x30
+8:
+  sub x30, x30, x21           # 0 on data-independent hardware
+  # Check if x30 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x30, Zksh_sm3p1_cg_cp_rd_b8, Zksh_sm3p1_cg_cp_rd_b8_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x0) # load rs1: x0 = 0x471b9dcefd257b96
 Zksh_sm3p1_cg_cp_rd_b8:
   sm3p1 x8, x0 # perform operation
+#endif
   # Check if x8 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x8, Zksh_sm3p1_cg_cp_rd_b8, Zksh_sm3p1_cg_cp_rd_b8_str)
 
 # Testcase cp_rd (Test destination rd = x9)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x26, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x10, x6) # load rs1: x6 = 0x74ded32c187029af
+  addi x10, x10, -1*SIG_STRIDE    # rewind data for the second run
+  xor x12, x6, x6           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x12, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x12, x0           # dep = 0, ready after the first counter read
+  or x6, x6, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b9:
+  sm3p1 x9, x6 # perform operation
+  csrr x8, RVTEST_CYCLE_CSR  # second counter read
+  addi x26, x26, -1
+  bnez x26, 7b
+  addi x10, x10, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x8, x8, x12           # latency of the second run
+  .option push
+  .option norelax
+  lla x12, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x12)
+  bgez x18, 8f                     # baseline already set
+  SREG x8, 0(x12)            # the first timed testcase sets the baseline
+  mv x18, x8
+8:
+  sub x8, x8, x18           # 0 on data-independent hardware
+  # Check if x8 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x8, Zksh_sm3p1_cg_cp_rd_b9, Zksh_sm3p1_cg_cp_rd_b9_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x10, x6) # load rs1: x6 = 0x74ded32c187029af
 Zksh_sm3p1_cg_cp_rd_b9:
   sm3p1 x9, x6 # perform operation
+#endif
   # Check if x9 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x9, Zksh_sm3p1_cg_cp_rd_b9, Zksh_sm3p1_cg_cp_rd_b9_str)
 
   mv x12, x10 # switch data pointer register to avoid conflict with test
 # Testcase cp_rd (Test destination rd = x10)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x8, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x6) # load rs1: x6 = 0xe7c0392ea5f64300
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x16, x6, x6           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x16, RVTEST_CYCLE_CSR  # first counter read
+  sltu x28, x16, x0           # dep = 0, ready after the first counter read
+  or x6, x6, x28            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b10:
+  sm3p1 x10, x6 # perform operation
+  csrr x17, RVTEST_CYCLE_CSR  # second counter read
+  addi x8, x8, -1
+  bnez x8, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x17, x17, x16           # latency of the second run
+  .option push
+  .option norelax
+  lla x16, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x28, 0(x16)
+  bgez x28, 8f                     # baseline already set
+  SREG x17, 0(x16)            # the first timed testcase sets the baseline
+  mv x28, x17
+8:
+  sub x17, x17, x28           # 0 on data-independent hardware
+  # Check if x17 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x17, Zksh_sm3p1_cg_cp_rd_b10, Zksh_sm3p1_cg_cp_rd_b10_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x6) # load rs1: x6 = 0xe7c0392ea5f64300
 Zksh_sm3p1_cg_cp_rd_b10:
   sm3p1 x10, x6 # perform operation
+#endif
   # Check if x10 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x10, Zksh_sm3p1_cg_cp_rd_b10, Zksh_sm3p1_cg_cp_rd_b10_str)
 
 # Testcase cp_rd (Test destination rd = x11)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x31, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x14) # load rs1: x14 = 0xda397fccf71a389a
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x28, x14, x14           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x28, RVTEST_CYCLE_CSR  # first counter read
+  sltu x9, x28, x0           # dep = 0, ready after the first counter read
+  or x14, x14, x9            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b11:
+  sm3p1 x11, x14 # perform operation
+  csrr x1, RVTEST_CYCLE_CSR  # second counter read
+  addi x31, x31, -1
+  bnez x31, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x1, x1, x28           # latency of the second run
+  .option push
+  .option norelax
+  lla x28, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x9, 0(x28)
+  bgez x9, 8f                     # baseline already set
+  SREG x1, 0(x28)            # the first timed testcase sets the baseline
+  mv x9, x1
+8:
+  sub x1, x1, x9           # 0 on data-independent hardware
+  # Check if x1 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x1, Zksh_sm3p1_cg_cp_rd_b11, Zksh_sm3p1_cg_cp_rd_b11_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x14) # load rs1: x14 = 0xda397fccf71a389a
 Zksh_sm3p1_cg_cp_rd_b11:
   sm3p1 x11, x14 # perform operation
+#endif
   # Check if x11 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x11, Zksh_sm3p1_cg_cp_rd_b11, Zksh_sm3p1_cg_cp_rd_b11_str)
 
   mv x30, x12 # switch data pointer register to avoid conflict with test
 # Testcase cp_rd (Test destination rd = x12)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x0) # load rs1: x0 = 0x173fe7a5ac8b6eda
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x21, x0, x0           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x21, RVTEST_CYCLE_CSR  # first counter read
+  sltu x31, x21, x0           # dep = 0, ready after the first counter read
+  or x0, x0, x31            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b12:
+  sm3p1 x12, x0 # perform operation
+  csrr x7, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x7, x7, x21           # latency of the second run
+  .option push
+  .option norelax
+  lla x21, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x31, 0(x21)
+  bgez x31, 8f                     # baseline already set
+  SREG x7, 0(x21)            # the first timed testcase sets the baseline
+  mv x31, x7
+8:
+  sub x7, x7, x31           # 0 on data-independent hardware
+  # Check if x7 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x7, Zksh_sm3p1_cg_cp_rd_b12, Zksh_sm3p1_cg_cp_rd_b12_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x0) # load rs1: x0 = 0x173fe7a5ac8b6eda
 Zksh_sm3p1_cg_cp_rd_b12:
   sm3p1 x12, x0 # perform operation
+#endif
   # Check if x12 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x12, Zksh_sm3p1_cg_cp_rd_b12, Zksh_sm3p1_cg_cp_rd_b12_str)
 
 # Testcase cp_rd (Test destination rd = x13)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x22, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x20) # load rs1: x20 = 0x146f0a20198fbfcc
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x23, x20, x20           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x23, RVTEST_CYCLE_CSR  # first counter read
+  sltu x1, x23, x0           # dep = 0, ready after the first counter read
+  or x20, x20, x1            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b13:
+  sm3p1 x13, x20 # perform operation
+  csrr x2, RVTEST_CYCLE_CSR  # second counter read
+  addi x22, x22, -1
+  bnez x22, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x2, x2, x23           # latency of the second run
+  .option push
+  .option norelax
+  lla x23, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x1, 0(x23)
+  bgez x1, 8f                     # baseline already set
+  SREG x2, 0(x23)            # the first timed testcase sets the baseline
+  mv x1, x2
+8:
+  sub x2, x2, x1           # 0 on data-independent hardware
+  # Check if x2 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x2, Zksh_sm3p1_cg_cp_rd_b13, Zksh_sm3p1_cg_cp_rd_b13_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x20) # load rs1: x20 = 0x146f0a20198fbfcc
 Zksh_sm3p1_cg_cp_rd_b13:
   sm3p1 x13, x20 # perform operation
+#endif
   # Check if x13 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x13, Zksh_sm3p1_cg_cp_rd_b13, Zksh_sm3p1_cg_cp_rd_b13_str)
 
 # Testcase cp_rd (Test destination rd = x14)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x28, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x29) # load rs1: x29 = 0x6f7f57a096ebee17
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x21, x29, x29           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x21, RVTEST_CYCLE_CSR  # first counter read
+  sltu x10, x21, x0           # dep = 0, ready after the first counter read
+  or x29, x29, x10            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b14:
+  sm3p1 x14, x29 # perform operation
+  csrr x1, RVTEST_CYCLE_CSR  # second counter read
+  addi x28, x28, -1
+  bnez x28, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x1, x1, x21           # latency of the second run
+  .option push
+  .option norelax
+  lla x21, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x10, 0(x21)
+  bgez x10, 8f                     # baseline already set
+  SREG x1, 0(x21)            # the first timed testcase sets the baseline
+  mv x10, x1
+8:
+  sub x1, x1, x10           # 0 on data-independent hardware
+  # Check if x1 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x1, Zksh_sm3p1_cg_cp_rd_b14, Zksh_sm3p1_cg_cp_rd_b14_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x29) # load rs1: x29 = 0x6f7f57a096ebee17
 Zksh_sm3p1_cg_cp_rd_b14:
   sm3p1 x14, x29 # perform operation
+#endif
   # Check if x14 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x14, Zksh_sm3p1_cg_cp_rd_b14, Zksh_sm3p1_cg_cp_rd_b14_str)
 
 # Testcase cp_rd (Test destination rd = x15)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x7, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x20) # load rs1: x20 = 0x3c5ebaab01c7bfa7
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x1, x20, x20           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x1, RVTEST_CYCLE_CSR  # first counter read
+  sltu x24, x1, x0           # dep = 0, ready after the first counter read
+  or x20, x20, x24            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b15:
+  sm3p1 x15, x20 # perform operation
+  csrr x21, RVTEST_CYCLE_CSR  # second counter read
+  addi x7, x7, -1
+  bnez x7, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x21, x21, x1           # latency of the second run
+  .option push
+  .option norelax
+  lla x1, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x24, 0(x1)
+  bgez x24, 8f                     # baseline already set
+  SREG x21, 0(x1)            # the first timed testcase sets the baseline
+  mv x24, x21
+8:
+  sub x21, x21, x24           # 0 on data-independent hardware
+  # Check if x21 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x21, Zksh_sm3p1_cg_cp_rd_b15, Zksh_sm3p1_cg_cp_rd_b15_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x20) # load rs1: x20 = 0x3c5ebaab01c7bfa7
 Zksh_sm3p1_cg_cp_rd_b15:
   sm3p1 x15, x20 # perform operation
+#endif
   # Check if x15 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x15, Zksh_sm3p1_cg_cp_rd_b15, Zksh_sm3p1_cg_cp_rd_b15_str)
 
 # Testcase cp_rd (Test destination rd = x16)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x15, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x0) # load rs1: x0 = 0x7398c42381439965
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x0, x0           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x20, RVTEST_CYCLE_CSR  # first counter read
+  sltu x8, x20, x0           # dep = 0, ready after the first counter read
+  or x0, x0, x8            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b16:
+  sm3p1 x16, x0 # perform operation
+  csrr x23, RVTEST_CYCLE_CSR  # second counter read
+  addi x15, x15, -1
+  bnez x15, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x23, x23, x20           # latency of the second run
+  .option push
+  .option norelax
+  lla x20, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x8, 0(x20)
+  bgez x8, 8f                     # baseline already set
+  SREG x23, 0(x20)            # the first timed testcase sets the baseline
+  mv x8, x23
+8:
+  sub x23, x23, x8           # 0 on data-independent hardware
+  # Check if x23 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x23, Zksh_sm3p1_cg_cp_rd_b16, Zksh_sm3p1_cg_cp_rd_b16_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x0) # load rs1: x0 = 0x7398c42381439965
 Zksh_sm3p1_cg_cp_rd_b16:
   sm3p1 x16, x0 # perform operation
+#endif
   # Check if x16 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x16, Zksh_sm3p1_cg_cp_rd_b16, Zksh_sm3p1_cg_cp_rd_b16_str)
 
 # Testcase cp_rd (Test destination rd = x17)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x1, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x19) # load rs1: x19 = 0xa101b9bc627586e9
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x28, x19, x19           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x28, RVTEST_CYCLE_CSR  # first counter read
+  sltu x29, x28, x0           # dep = 0, ready after the first counter read
+  or x19, x19, x29            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b17:
+  sm3p1 x17, x19 # perform operation
+  csrr x10, RVTEST_CYCLE_CSR  # second counter read
+  addi x1, x1, -1
+  bnez x1, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x10, x10, x28           # latency of the second run
+  .option push
+  .option norelax
+  lla x28, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x29, 0(x28)
+  bgez x29, 8f                     # baseline already set
+  SREG x10, 0(x28)            # the first timed testcase sets the baseline
+  mv x29, x10
+8:
+  sub x10, x10, x29           # 0 on data-independent hardware
+  # Check if x10 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x10, Zksh_sm3p1_cg_cp_rd_b17, Zksh_sm3p1_cg_cp_rd_b17_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x19) # load rs1: x19 = 0xa101b9bc627586e9
 Zksh_sm3p1_cg_cp_rd_b17:
   sm3p1 x17, x19 # perform operation
+#endif
   # Check if x17 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x17, Zksh_sm3p1_cg_cp_rd_b17, Zksh_sm3p1_cg_cp_rd_b17_str)
 
 # Testcase cp_rd (Test destination rd = x18)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x15, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x25) # load rs1: x25 = 0x9e536253f964158c
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x19, x25, x25           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x19, RVTEST_CYCLE_CSR  # first counter read
+  sltu x21, x19, x0           # dep = 0, ready after the first counter read
+  or x25, x25, x21            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b18:
+  sm3p1 x18, x25 # perform operation
+  csrr x1, RVTEST_CYCLE_CSR  # second counter read
+  addi x15, x15, -1
+  bnez x15, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x1, x1, x19           # latency of the second run
+  .option push
+  .option norelax
+  lla x19, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x21, 0(x19)
+  bgez x21, 8f                     # baseline already set
+  SREG x1, 0(x19)            # the first timed testcase sets the baseline
+  mv x21, x1
+8:
+  sub x1, x1, x21           # 0 on data-independent hardware
+  # Check if x1 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x1, Zksh_sm3p1_cg_cp_rd_b18, Zksh_sm3p1_cg_cp_rd_b18_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x25) # load rs1: x25 = 0x9e536253f964158c
 Zksh_sm3p1_cg_cp_rd_b18:
   sm3p1 x18, x25 # perform operation
+#endif
   # Check if x18 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x18, Zksh_sm3p1_cg_cp_rd_b18, Zksh_sm3p1_cg_cp_rd_b18_str)
 
 # Testcase cp_rd (Test destination rd = x19)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x12, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x17) # load rs1: x17 = 0x81c5200198622b83
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x7, x17, x17           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x7, RVTEST_CYCLE_CSR  # first counter read
+  sltu x24, x7, x0           # dep = 0, ready after the first counter read
+  or x17, x17, x24            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b19:
+  sm3p1 x19, x17 # perform operation
+  csrr x31, RVTEST_CYCLE_CSR  # second counter read
+  addi x12, x12, -1
+  bnez x12, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x31, x31, x7           # latency of the second run
+  .option push
+  .option norelax
+  lla x7, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x24, 0(x7)
+  bgez x24, 8f                     # baseline already set
+  SREG x31, 0(x7)            # the first timed testcase sets the baseline
+  mv x24, x31
+8:
+  sub x31, x31, x24           # 0 on data-independent hardware
+  # Check if x31 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x31, Zksh_sm3p1_cg_cp_rd_b19, Zksh_sm3p1_cg_cp_rd_b19_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x17) # load rs1: x17 = 0x81c5200198622b83
 Zksh_sm3p1_cg_cp_rd_b19:
   sm3p1 x19, x17 # perform operation
+#endif
   # Check if x19 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x19, Zksh_sm3p1_cg_cp_rd_b19, Zksh_sm3p1_cg_cp_rd_b19_str)
 
 # Testcase cp_rd (Test destination rd = x20)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x2, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x6) # load rs1: x6 = 0x07cfeb4432341216
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x12, x6, x6           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x12, RVTEST_CYCLE_CSR  # first counter read
+  sltu x21, x12, x0           # dep = 0, ready after the first counter read
+  or x6, x6, x21            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b20:
+  sm3p1 x20, x6 # perform operation
+  csrr x28, RVTEST_CYCLE_CSR  # second counter read
+  addi x2, x2, -1
+  bnez x2, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x28, x28, x12           # latency of the second run
+  .option push
+  .option norelax
+  lla x12, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x21, 0(x12)
+  bgez x21, 8f                     # baseline already set
+  SREG x28, 0(x12)            # the first timed testcase sets the baseline
+  mv x21, x28
+8:
+  sub x28, x28, x21           # 0 on data-independent hardware
+  # Check if x28 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x28, Zksh_sm3p1_cg_cp_rd_b20, Zksh_sm3p1_cg_cp_rd_b20_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x6) # load rs1: x6 = 0x07cfeb4432341216
 Zksh_sm3p1_cg_cp_rd_b20:
   sm3p1 x20, x6 # perform operation
+#endif
   # Check if x20 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x20, Zksh_sm3p1_cg_cp_rd_b20, Zksh_sm3p1_cg_cp_rd_b20_str)
 
 # Testcase cp_rd (Test destination rd = x21)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x31, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x10) # load rs1: x10 = 0x3612c823d685fe10
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x10, x10           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x20, RVTEST_CYCLE_CSR  # first counter read
+  sltu x13, x20, x0           # dep = 0, ready after the first counter read
+  or x10, x10, x13            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b21:
+  sm3p1 x21, x10 # perform operation
+  csrr x2, RVTEST_CYCLE_CSR  # second counter read
+  addi x31, x31, -1
+  bnez x31, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x2, x2, x20           # latency of the second run
+  .option push
+  .option norelax
+  lla x20, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x13, 0(x20)
+  bgez x13, 8f                     # baseline already set
+  SREG x2, 0(x20)            # the first timed testcase sets the baseline
+  mv x13, x2
+8:
+  sub x2, x2, x13           # 0 on data-independent hardware
+  # Check if x2 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x2, Zksh_sm3p1_cg_cp_rd_b21, Zksh_sm3p1_cg_cp_rd_b21_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x10) # load rs1: x10 = 0x3612c823d685fe10
 Zksh_sm3p1_cg_cp_rd_b21:
   sm3p1 x21, x10 # perform operation
+#endif
   # Check if x21 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x21, Zksh_sm3p1_cg_cp_rd_b21, Zksh_sm3p1_cg_cp_rd_b21_str)
 
 # Testcase cp_rd (Test destination rd = x22)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x23, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x18) # load rs1: x18 = 0xcbe1de8bc1bc2242
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x26, x18, x18           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x26, RVTEST_CYCLE_CSR  # first counter read
+  sltu x13, x26, x0           # dep = 0, ready after the first counter read
+  or x18, x18, x13            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b22:
+  sm3p1 x22, x18 # perform operation
+  csrr x17, RVTEST_CYCLE_CSR  # second counter read
+  addi x23, x23, -1
+  bnez x23, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x17, x17, x26           # latency of the second run
+  .option push
+  .option norelax
+  lla x26, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x13, 0(x26)
+  bgez x13, 8f                     # baseline already set
+  SREG x17, 0(x26)            # the first timed testcase sets the baseline
+  mv x13, x17
+8:
+  sub x17, x17, x13           # 0 on data-independent hardware
+  # Check if x17 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x17, Zksh_sm3p1_cg_cp_rd_b22, Zksh_sm3p1_cg_cp_rd_b22_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x18) # load rs1: x18 = 0xcbe1de8bc1bc2242
 Zksh_sm3p1_cg_cp_rd_b22:
   sm3p1 x22, x18 # perform operation
+#endif
   # Check if x22 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x22, Zksh_sm3p1_cg_cp_rd_b22, Zksh_sm3p1_cg_cp_rd_b22_str)
 
 # Testcase cp_rd (Test destination rd = x23)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x11, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x24) # load rs1: x24 = 0x48e0c23653f26424
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x1, x24, x24           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x1, RVTEST_CYCLE_CSR  # first counter read
+  sltu x10, x1, x0           # dep = 0, ready after the first counter read
+  or x24, x24, x10            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b23:
+  sm3p1 x23, x24 # perform operation
+  csrr x3, RVTEST_CYCLE_CSR  # second counter read
+  addi x11, x11, -1
+  bnez x11, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x3, x3, x1           # latency of the second run
+  .option push
+  .option norelax
+  lla x1, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x10, 0(x1)
+  bgez x10, 8f                     # baseline already set
+  SREG x3, 0(x1)            # the first timed testcase sets the baseline
+  mv x10, x3
+8:
+  sub x3, x3, x10           # 0 on data-independent hardware
+  # Check if x3 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x3, Zksh_sm3p1_cg_cp_rd_b23, Zksh_sm3p1_cg_cp_rd_b23_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x24) # load rs1: x24 = 0x48e0c23653f26424
 Zksh_sm3p1_cg_cp_rd_b23:
   sm3p1 x23, x24 # perform operation
+#endif
   # Check if x23 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x23, Zksh_sm3p1_cg_cp_rd_b23, Zksh_sm3p1_cg_cp_rd_b23_str)
 
 # Testcase cp_rd (Test destination rd = x24)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x13, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x0) # load rs1: x0 = 0xc0a4d3d817e4bb76
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x18, x0, x0           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x18, RVTEST_CYCLE_CSR  # first counter read
+  sltu x3, x18, x0           # dep = 0, ready after the first counter read
+  or x0, x0, x3            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b24:
+  sm3p1 x24, x0 # perform operation
+  csrr x25, RVTEST_CYCLE_CSR  # second counter read
+  addi x13, x13, -1
+  bnez x13, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x25, x25, x18           # latency of the second run
+  .option push
+  .option norelax
+  lla x18, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x3, 0(x18)
+  bgez x3, 8f                     # baseline already set
+  SREG x25, 0(x18)            # the first timed testcase sets the baseline
+  mv x3, x25
+8:
+  sub x25, x25, x3           # 0 on data-independent hardware
+  # Check if x25 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x25, Zksh_sm3p1_cg_cp_rd_b24, Zksh_sm3p1_cg_cp_rd_b24_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x0) # load rs1: x0 = 0xc0a4d3d817e4bb76
 Zksh_sm3p1_cg_cp_rd_b24:
   sm3p1 x24, x0 # perform operation
+#endif
   # Check if x24 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x24, Zksh_sm3p1_cg_cp_rd_b24, Zksh_sm3p1_cg_cp_rd_b24_str)
 
 # Testcase cp_rd (Test destination rd = x25)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x10, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x31) # load rs1: x31 = 0x2b19408c7cfd6b27
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x13, x31, x31           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x13, RVTEST_CYCLE_CSR  # first counter read
+  sltu x19, x13, x0           # dep = 0, ready after the first counter read
+  or x31, x31, x19            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b25:
+  sm3p1 x25, x31 # perform operation
+  csrr x3, RVTEST_CYCLE_CSR  # second counter read
+  addi x10, x10, -1
+  bnez x10, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x3, x3, x13           # latency of the second run
+  .option push
+  .option norelax
+  lla x13, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x19, 0(x13)
+  bgez x19, 8f                     # baseline already set
+  SREG x3, 0(x13)            # the first timed testcase sets the baseline
+  mv x19, x3
+8:
+  sub x3, x3, x19           # 0 on data-independent hardware
+  # Check if x3 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x3, Zksh_sm3p1_cg_cp_rd_b25, Zksh_sm3p1_cg_cp_rd_b25_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x31) # load rs1: x31 = 0x2b19408c7cfd6b27
 Zksh_sm3p1_cg_cp_rd_b25:
   sm3p1 x25, x31 # perform operation
+#endif
   # Check if x25 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x25, Zksh_sm3p1_cg_cp_rd_b25, Zksh_sm3p1_cg_cp_rd_b25_str)
 
 # Testcase cp_rd (Test destination rd = x26)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x22, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x12) # load rs1: x12 = 0x99fee4e17141ee7e
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x23, x12, x12           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x23, RVTEST_CYCLE_CSR  # first counter read
+  sltu x21, x23, x0           # dep = 0, ready after the first counter read
+  or x12, x12, x21            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b26:
+  sm3p1 x26, x12 # perform operation
+  csrr x11, RVTEST_CYCLE_CSR  # second counter read
+  addi x22, x22, -1
+  bnez x22, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x11, x11, x23           # latency of the second run
+  .option push
+  .option norelax
+  lla x23, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x21, 0(x23)
+  bgez x21, 8f                     # baseline already set
+  SREG x11, 0(x23)            # the first timed testcase sets the baseline
+  mv x21, x11
+8:
+  sub x11, x11, x21           # 0 on data-independent hardware
+  # Check if x11 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x27, x5, x4, x11, Zksh_sm3p1_cg_cp_rd_b26, Zksh_sm3p1_cg_cp_rd_b26_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x12) # load rs1: x12 = 0x99fee4e17141ee7e
 Zksh_sm3p1_cg_cp_rd_b26:
   sm3p1 x26, x12 # perform operation
+#endif
   # Check if x26 contains the expected result. x27 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x27, x5, x4, x26, Zksh_sm3p1_cg_cp_rd_b26, Zksh_sm3p1_cg_cp_rd_b26_str)
 
   mv x26, x27 # switch signature pointer register to avoid conflict with test
 # Testcase cp_rd (Test destination rd = x27)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x29, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x10) # load rs1: x10 = 0x0cbe7a85967021ba
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x2, x10, x10           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x2, RVTEST_CYCLE_CSR  # first counter read
+  sltu x31, x2, x0           # dep = 0, ready after the first counter read
+  or x10, x10, x31            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b27:
+  sm3p1 x27, x10 # perform operation
+  csrr x1, RVTEST_CYCLE_CSR  # second counter read
+  addi x29, x29, -1
+  bnez x29, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x1, x1, x2           # latency of the second run
+  .option push
+  .option norelax
+  lla x2, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x31, 0(x2)
+  bgez x31, 8f                     # baseline already set
+  SREG x1, 0(x2)            # the first timed testcase sets the baseline
+  mv x31, x1
+8:
+  sub x1, x1, x31           # 0 on data-independent hardware
+  # Check if x1 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x1, Zksh_sm3p1_cg_cp_rd_b27, Zksh_sm3p1_cg_cp_rd_b27_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x10) # load rs1: x10 = 0x0cbe7a85967021ba
 Zksh_sm3p1_cg_cp_rd_b27:
   sm3p1 x27, x10 # perform operation
+#endif
   # Check if x27 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x27, Zksh_sm3p1_cg_cp_rd_b27, Zksh_sm3p1_cg_cp_rd_b27_str)
 
 # Testcase cp_rd (Test destination rd = x28)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x15, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x31) # load rs1: x31 = 0x523ab8ce0bd2dfc6
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x27, x31, x31           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x27, RVTEST_CYCLE_CSR  # first counter read
+  sltu x22, x27, x0           # dep = 0, ready after the first counter read
+  or x31, x31, x22            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b28:
+  sm3p1 x28, x31 # perform operation
+  csrr x29, RVTEST_CYCLE_CSR  # second counter read
+  addi x15, x15, -1
+  bnez x15, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x29, x29, x27           # latency of the second run
+  .option push
+  .option norelax
+  lla x27, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x22, 0(x27)
+  bgez x22, 8f                     # baseline already set
+  SREG x29, 0(x27)            # the first timed testcase sets the baseline
+  mv x22, x29
+8:
+  sub x29, x29, x22           # 0 on data-independent hardware
+  # Check if x29 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x29, Zksh_sm3p1_cg_cp_rd_b28, Zksh_sm3p1_cg_cp_rd_b28_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x31) # load rs1: x31 = 0x523ab8ce0bd2dfc6
 Zksh_sm3p1_cg_cp_rd_b28:
   sm3p1 x28, x31 # perform operation
+#endif
   # Check if x28 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x28, Zksh_sm3p1_cg_cp_rd_b28, Zksh_sm3p1_cg_cp_rd_b28_str)
 
 # Testcase cp_rd (Test destination rd = x29)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x7, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x30, x25) # load rs1: x25 = 0x18e636b1bc4c4f95
+  addi x30, x30, -1*SIG_STRIDE    # rewind data for the second run
+  xor x6, x25, x25           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x6, RVTEST_CYCLE_CSR  # first counter read
+  sltu x24, x6, x0           # dep = 0, ready after the first counter read
+  or x25, x25, x24            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b29:
+  sm3p1 x29, x25 # perform operation
+  csrr x19, RVTEST_CYCLE_CSR  # second counter read
+  addi x7, x7, -1
+  bnez x7, 7b
+  addi x30, x30, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x19, x19, x6           # latency of the second run
+  .option push
+  .option norelax
+  lla x6, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x24, 0(x6)
+  bgez x24, 8f                     # baseline already set
+  SREG x19, 0(x6)            # the first timed testcase sets the baseline
+  mv x24, x19
+8:
+  sub x19, x19, x24           # 0 on data-independent hardware
+  # Check if x19 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x19, Zksh_sm3p1_cg_cp_rd_b29, Zksh_sm3p1_cg_cp_rd_b29_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x30, x25) # load rs1: x25 = 0x18e636b1bc4c4f95
 Zksh_sm3p1_cg_cp_rd_b29:
   sm3p1 x29, x25 # perform operation
+#endif
   # Check if x29 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x29, Zksh_sm3p1_cg_cp_rd_b29, Zksh_sm3p1_cg_cp_rd_b29_str)
 
   mv x6, x30 # switch data pointer register to avoid conflict with test
 # Testcase cp_rd (Test destination rd = x30)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x1, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x19) # load rs1: x19 = 0x783a1b916cb6c9e7
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x24, x19, x19           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x24, RVTEST_CYCLE_CSR  # first counter read
+  sltu x31, x24, x0           # dep = 0, ready after the first counter read
+  or x19, x19, x31            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b30:
+  sm3p1 x30, x19 # perform operation
+  csrr x8, RVTEST_CYCLE_CSR  # second counter read
+  addi x1, x1, -1
+  bnez x1, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x8, x8, x24           # latency of the second run
+  .option push
+  .option norelax
+  lla x24, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x31, 0(x24)
+  bgez x31, 8f                     # baseline already set
+  SREG x8, 0(x24)            # the first timed testcase sets the baseline
+  mv x31, x8
+8:
+  sub x8, x8, x31           # 0 on data-independent hardware
+  # Check if x8 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x8, Zksh_sm3p1_cg_cp_rd_b30, Zksh_sm3p1_cg_cp_rd_b30_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x19) # load rs1: x19 = 0x783a1b916cb6c9e7
 Zksh_sm3p1_cg_cp_rd_b30:
   sm3p1 x30, x19 # perform operation
+#endif
   # Check if x30 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x30, Zksh_sm3p1_cg_cp_rd_b30, Zksh_sm3p1_cg_cp_rd_b30_str)
 
 # Testcase cp_rd (Test destination rd = x31)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x25, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x22) # load rs1: x22 = 0x2e8f47486d2b3f62
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x22, x22           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x20, RVTEST_CYCLE_CSR  # first counter read
+  sltu x17, x20, x0           # dep = 0, ready after the first counter read
+  or x22, x22, x17            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rd_b31:
+  sm3p1 x31, x22 # perform operation
+  csrr x14, RVTEST_CYCLE_CSR  # second counter read
+  addi x25, x25, -1
+  bnez x25, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x14, x14, x20           # latency of the second run
+  .option push
+  .option norelax
+  lla x20, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x17, 0(x20)
+  bgez x17, 8f                     # baseline already set
+  SREG x14, 0(x20)            # the first timed testcase sets the baseline
+  mv x17, x14
+8:
+  sub x14, x14, x17           # 0 on data-independent hardware
+  # Check if x14 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x14, Zksh_sm3p1_cg_cp_rd_b31, Zksh_sm3p1_cg_cp_rd_b31_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x22) # load rs1: x22 = 0x2e8f47486d2b3f62
 Zksh_sm3p1_cg_cp_rd_b31:
   sm3p1 x31, x22 # perform operation
+#endif
   # Check if x31 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x31, Zksh_sm3p1_cg_cp_rd_b31, Zksh_sm3p1_cg_cp_rd_b31_str)
 
@@ -507,128 +3131,866 @@ Zksh_sm3p1_cg_cp_rd_b31:
 /////////////////////////////////
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x0000000000000000)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x8, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x16) # load rs1: x16 = 0x0000000000000000
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x21, x16, x16           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x21, RVTEST_CYCLE_CSR  # first counter read
+  sltu x19, x21, x0           # dep = 0, ready after the first counter read
+  or x16, x16, x19            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x0:
+  sm3p1 x13, x16 # perform operation
+  csrr x30, RVTEST_CYCLE_CSR  # second counter read
+  addi x8, x8, -1
+  bnez x8, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x30, x30, x21           # latency of the second run
+  .option push
+  .option norelax
+  lla x21, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x19, 0(x21)
+  bgez x19, 8f                     # baseline already set
+  SREG x30, 0(x21)            # the first timed testcase sets the baseline
+  mv x19, x30
+8:
+  sub x30, x30, x19           # 0 on data-independent hardware
+  # Check if x30 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x30, Zksh_sm3p1_cg_cp_rs1_edges_0x0, Zksh_sm3p1_cg_cp_rs1_edges_0x0_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x16) # load rs1: x16 = 0x0000000000000000
 Zksh_sm3p1_cg_cp_rs1_edges_0x0:
   sm3p1 x13, x16 # perform operation
+#endif
   # Check if x13 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x13, Zksh_sm3p1_cg_cp_rs1_edges_0x0, Zksh_sm3p1_cg_cp_rs1_edges_0x0_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x0000000000000001)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x27, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x29) # load rs1: x29 = 0x0000000000000001
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x8, x29, x29           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x8, RVTEST_CYCLE_CSR  # first counter read
+  sltu x12, x8, x0           # dep = 0, ready after the first counter read
+  or x29, x29, x12            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x1:
+  sm3p1 x19, x29 # perform operation
+  csrr x17, RVTEST_CYCLE_CSR  # second counter read
+  addi x27, x27, -1
+  bnez x27, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x17, x17, x8           # latency of the second run
+  .option push
+  .option norelax
+  lla x8, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x12, 0(x8)
+  bgez x12, 8f                     # baseline already set
+  SREG x17, 0(x8)            # the first timed testcase sets the baseline
+  mv x12, x17
+8:
+  sub x17, x17, x12           # 0 on data-independent hardware
+  # Check if x17 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x17, Zksh_sm3p1_cg_cp_rs1_edges_0x1, Zksh_sm3p1_cg_cp_rs1_edges_0x1_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x29) # load rs1: x29 = 0x0000000000000001
 Zksh_sm3p1_cg_cp_rs1_edges_0x1:
   sm3p1 x19, x29 # perform operation
+#endif
   # Check if x19 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x19, Zksh_sm3p1_cg_cp_rs1_edges_0x1, Zksh_sm3p1_cg_cp_rs1_edges_0x1_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x0000000000000002)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x14, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x9) # load rs1: x9 = 0x0000000000000002
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x19, x9, x9           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x19, RVTEST_CYCLE_CSR  # first counter read
+  sltu x31, x19, x0           # dep = 0, ready after the first counter read
+  or x9, x9, x31            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x2:
+  sm3p1 x8, x9 # perform operation
+  csrr x28, RVTEST_CYCLE_CSR  # second counter read
+  addi x14, x14, -1
+  bnez x14, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x28, x28, x19           # latency of the second run
+  .option push
+  .option norelax
+  lla x19, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x31, 0(x19)
+  bgez x31, 8f                     # baseline already set
+  SREG x28, 0(x19)            # the first timed testcase sets the baseline
+  mv x31, x28
+8:
+  sub x28, x28, x31           # 0 on data-independent hardware
+  # Check if x28 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x28, Zksh_sm3p1_cg_cp_rs1_edges_0x2, Zksh_sm3p1_cg_cp_rs1_edges_0x2_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x9) # load rs1: x9 = 0x0000000000000002
 Zksh_sm3p1_cg_cp_rs1_edges_0x2:
   sm3p1 x8, x9 # perform operation
+#endif
   # Check if x8 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x8, Zksh_sm3p1_cg_cp_rs1_edges_0x2, Zksh_sm3p1_cg_cp_rs1_edges_0x2_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x8000000000000000)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x30, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x17) # load rs1: x17 = 0x8000000000000000
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x27, x17, x17           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x27, RVTEST_CYCLE_CSR  # first counter read
+  sltu x1, x27, x0           # dep = 0, ready after the first counter read
+  or x17, x17, x1            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000000:
+  sm3p1 x31, x17 # perform operation
+  csrr x12, RVTEST_CYCLE_CSR  # second counter read
+  addi x30, x30, -1
+  bnez x30, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x12, x12, x27           # latency of the second run
+  .option push
+  .option norelax
+  lla x27, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x1, 0(x27)
+  bgez x1, 8f                     # baseline already set
+  SREG x12, 0(x27)            # the first timed testcase sets the baseline
+  mv x1, x12
+8:
+  sub x12, x12, x1           # 0 on data-independent hardware
+  # Check if x12 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x12, Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000000, Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000000_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x17) # load rs1: x17 = 0x8000000000000000
 Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000000:
   sm3p1 x31, x17 # perform operation
+#endif
   # Check if x31 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x31, Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000000, Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000000_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x8000000000000001)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x2, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x12) # load rs1: x12 = 0x8000000000000001
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x31, x12, x12           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x31, RVTEST_CYCLE_CSR  # first counter read
+  sltu x19, x31, x0           # dep = 0, ready after the first counter read
+  or x12, x12, x19            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000001:
+  sm3p1 x25, x12 # perform operation
+  csrr x1, RVTEST_CYCLE_CSR  # second counter read
+  addi x2, x2, -1
+  bnez x2, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x1, x1, x31           # latency of the second run
+  .option push
+  .option norelax
+  lla x31, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x19, 0(x31)
+  bgez x19, 8f                     # baseline already set
+  SREG x1, 0(x31)            # the first timed testcase sets the baseline
+  mv x19, x1
+8:
+  sub x1, x1, x19           # 0 on data-independent hardware
+  # Check if x1 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x1, Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000001, Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000001_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x12) # load rs1: x12 = 0x8000000000000001
 Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000001:
   sm3p1 x25, x12 # perform operation
+#endif
   # Check if x25 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x25, Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000001, Zksh_sm3p1_cg_cp_rs1_edges_0x8000000000000001_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x7fffffffffffffff)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x18, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x1) # load rs1: x1 = 0x7fffffffffffffff
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x3, x1, x1           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x3, RVTEST_CYCLE_CSR  # first counter read
+  sltu x7, x3, x0           # dep = 0, ready after the first counter read
+  or x1, x1, x7            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffffffffffff:
+  sm3p1 x29, x1 # perform operation
+  csrr x19, RVTEST_CYCLE_CSR  # second counter read
+  addi x18, x18, -1
+  bnez x18, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x19, x19, x3           # latency of the second run
+  .option push
+  .option norelax
+  lla x3, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x7, 0(x3)
+  bgez x7, 8f                     # baseline already set
+  SREG x19, 0(x3)            # the first timed testcase sets the baseline
+  mv x7, x19
+8:
+  sub x19, x19, x7           # 0 on data-independent hardware
+  # Check if x19 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x19, Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffffffffffff, Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffffffffffff_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x1) # load rs1: x1 = 0x7fffffffffffffff
 Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffffffffffff:
   sm3p1 x29, x1 # perform operation
+#endif
   # Check if x29 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x29, Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffffffffffff, Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffffffffffff_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x7ffffffffffffffe)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x7, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x31) # load rs1: x31 = 0x7ffffffffffffffe
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x19, x31, x31           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x19, RVTEST_CYCLE_CSR  # first counter read
+  sltu x21, x19, x0           # dep = 0, ready after the first counter read
+  or x31, x31, x21            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x7ffffffffffffffe:
+  sm3p1 x2, x31 # perform operation
+  csrr x18, RVTEST_CYCLE_CSR  # second counter read
+  addi x7, x7, -1
+  bnez x7, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x18, x18, x19           # latency of the second run
+  .option push
+  .option norelax
+  lla x19, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x21, 0(x19)
+  bgez x21, 8f                     # baseline already set
+  SREG x18, 0(x19)            # the first timed testcase sets the baseline
+  mv x21, x18
+8:
+  sub x18, x18, x21           # 0 on data-independent hardware
+  # Check if x18 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x18, Zksh_sm3p1_cg_cp_rs1_edges_0x7ffffffffffffffe, Zksh_sm3p1_cg_cp_rs1_edges_0x7ffffffffffffffe_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x31) # load rs1: x31 = 0x7ffffffffffffffe
 Zksh_sm3p1_cg_cp_rs1_edges_0x7ffffffffffffffe:
   sm3p1 x2, x31 # perform operation
+#endif
   # Check if x2 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x2, Zksh_sm3p1_cg_cp_rs1_edges_0x7ffffffffffffffe, Zksh_sm3p1_cg_cp_rs1_edges_0x7ffffffffffffffe_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0xffffffffffffffff)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x21, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x18) # load rs1: x18 = 0xffffffffffffffff
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x17, x18, x18           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x17, RVTEST_CYCLE_CSR  # first counter read
+  sltu x8, x17, x0           # dep = 0, ready after the first counter read
+  or x18, x18, x8            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0xffffffffffffffff:
+  sm3p1 x30, x18 # perform operation
+  csrr x3, RVTEST_CYCLE_CSR  # second counter read
+  addi x21, x21, -1
+  bnez x21, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x3, x3, x17           # latency of the second run
+  .option push
+  .option norelax
+  lla x17, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x8, 0(x17)
+  bgez x8, 8f                     # baseline already set
+  SREG x3, 0(x17)            # the first timed testcase sets the baseline
+  mv x8, x3
+8:
+  sub x3, x3, x8           # 0 on data-independent hardware
+  # Check if x3 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x3, Zksh_sm3p1_cg_cp_rs1_edges_0xffffffffffffffff, Zksh_sm3p1_cg_cp_rs1_edges_0xffffffffffffffff_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x18) # load rs1: x18 = 0xffffffffffffffff
 Zksh_sm3p1_cg_cp_rs1_edges_0xffffffffffffffff:
   sm3p1 x30, x18 # perform operation
+#endif
   # Check if x30 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x30, Zksh_sm3p1_cg_cp_rs1_edges_0xffffffffffffffff, Zksh_sm3p1_cg_cp_rs1_edges_0xffffffffffffffff_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0xfffffffffffffffe)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x21, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x17) # load rs1: x17 = 0xfffffffffffffffe
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x3, x17, x17           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x3, RVTEST_CYCLE_CSR  # first counter read
+  sltu x8, x3, x0           # dep = 0, ready after the first counter read
+  or x17, x17, x8            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffffffffffe:
+  sm3p1 x31, x17 # perform operation
+  csrr x18, RVTEST_CYCLE_CSR  # second counter read
+  addi x21, x21, -1
+  bnez x21, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x18, x18, x3           # latency of the second run
+  .option push
+  .option norelax
+  lla x3, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x8, 0(x3)
+  bgez x8, 8f                     # baseline already set
+  SREG x18, 0(x3)            # the first timed testcase sets the baseline
+  mv x8, x18
+8:
+  sub x18, x18, x8           # 0 on data-independent hardware
+  # Check if x18 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x18, Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffffffffffe, Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffffffffffe_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x17) # load rs1: x17 = 0xfffffffffffffffe
 Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffffffffffe:
   sm3p1 x31, x17 # perform operation
+#endif
   # Check if x31 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x31, Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffffffffffe, Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffffffffffe_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x5bbc887763ae86f2)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x1, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x18) # load rs1: x18 = 0x5bbc887763ae86f2
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x22, x18, x18           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x22, RVTEST_CYCLE_CSR  # first counter read
+  sltu x30, x22, x0           # dep = 0, ready after the first counter read
+  or x18, x18, x30            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x5bbc887763ae86f2:
+  sm3p1 x3, x18 # perform operation
+  csrr x9, RVTEST_CYCLE_CSR  # second counter read
+  addi x1, x1, -1
+  bnez x1, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x9, x9, x22           # latency of the second run
+  .option push
+  .option norelax
+  lla x22, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x30, 0(x22)
+  bgez x30, 8f                     # baseline already set
+  SREG x9, 0(x22)            # the first timed testcase sets the baseline
+  mv x30, x9
+8:
+  sub x9, x9, x30           # 0 on data-independent hardware
+  # Check if x9 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x9, Zksh_sm3p1_cg_cp_rs1_edges_0x5bbc887763ae86f2, Zksh_sm3p1_cg_cp_rs1_edges_0x5bbc887763ae86f2_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x18) # load rs1: x18 = 0x5bbc887763ae86f2
 Zksh_sm3p1_cg_cp_rs1_edges_0x5bbc887763ae86f2:
   sm3p1 x3, x18 # perform operation
+#endif
   # Check if x3 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x3, Zksh_sm3p1_cg_cp_rs1_edges_0x5bbc887763ae86f2, Zksh_sm3p1_cg_cp_rs1_edges_0x5bbc887763ae86f2_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0xaaaaaaaaaaaaaaaa)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x31, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x8) # load rs1: x8 = 0xaaaaaaaaaaaaaaaa
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x1, x8, x8           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x1, RVTEST_CYCLE_CSR  # first counter read
+  sltu x23, x1, x0           # dep = 0, ready after the first counter read
+  or x8, x8, x23            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa:
+  sm3p1 x20, x8 # perform operation
+  csrr x30, RVTEST_CYCLE_CSR  # second counter read
+  addi x31, x31, -1
+  bnez x31, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x30, x30, x1           # latency of the second run
+  .option push
+  .option norelax
+  lla x1, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x23, 0(x1)
+  bgez x23, 8f                     # baseline already set
+  SREG x30, 0(x1)            # the first timed testcase sets the baseline
+  mv x23, x30
+8:
+  sub x30, x30, x23           # 0 on data-independent hardware
+  # Check if x30 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x30, Zksh_sm3p1_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa, Zksh_sm3p1_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x8) # load rs1: x8 = 0xaaaaaaaaaaaaaaaa
 Zksh_sm3p1_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa:
   sm3p1 x20, x8 # perform operation
+#endif
   # Check if x20 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x20, Zksh_sm3p1_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa, Zksh_sm3p1_cg_cp_rs1_edges_0xaaaaaaaaaaaaaaaa_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x5555555555555555)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x2, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x29) # load rs1: x29 = 0x5555555555555555
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x31, x29, x29           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x31, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x31, x0           # dep = 0, ready after the first counter read
+  or x29, x29, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x5555555555555555:
+  sm3p1 x1, x29 # perform operation
+  csrr x22, RVTEST_CYCLE_CSR  # second counter read
+  addi x2, x2, -1
+  bnez x2, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x22, x22, x31           # latency of the second run
+  .option push
+  .option norelax
+  lla x31, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x31)
+  bgez x18, 8f                     # baseline already set
+  SREG x22, 0(x31)            # the first timed testcase sets the baseline
+  mv x18, x22
+8:
+  sub x22, x22, x18           # 0 on data-independent hardware
+  # Check if x22 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x22, Zksh_sm3p1_cg_cp_rs1_edges_0x5555555555555555, Zksh_sm3p1_cg_cp_rs1_edges_0x5555555555555555_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x29) # load rs1: x29 = 0x5555555555555555
 Zksh_sm3p1_cg_cp_rs1_edges_0x5555555555555555:
   sm3p1 x1, x29 # perform operation
+#endif
   # Check if x1 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x1, Zksh_sm3p1_cg_cp_rs1_edges_0x5555555555555555, Zksh_sm3p1_cg_cp_rs1_edges_0x5555555555555555_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x00000000ffffffff)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x21) # load rs1: x21 = 0x00000000ffffffff
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x1, x21, x21           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x1, RVTEST_CYCLE_CSR  # first counter read
+  sltu x2, x1, x0           # dep = 0, ready after the first counter read
+  or x21, x21, x2            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0xffffffff:
+  sm3p1 x29, x21 # perform operation
+  csrr x17, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x17, x17, x1           # latency of the second run
+  .option push
+  .option norelax
+  lla x1, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x2, 0(x1)
+  bgez x2, 8f                     # baseline already set
+  SREG x17, 0(x1)            # the first timed testcase sets the baseline
+  mv x2, x17
+8:
+  sub x17, x17, x2           # 0 on data-independent hardware
+  # Check if x17 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x17, Zksh_sm3p1_cg_cp_rs1_edges_0xffffffff, Zksh_sm3p1_cg_cp_rs1_edges_0xffffffff_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x21) # load rs1: x21 = 0x00000000ffffffff
 Zksh_sm3p1_cg_cp_rs1_edges_0xffffffff:
   sm3p1 x29, x21 # perform operation
+#endif
   # Check if x29 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x29, Zksh_sm3p1_cg_cp_rs1_edges_0xffffffff, Zksh_sm3p1_cg_cp_rs1_edges_0xffffffff_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x00000000fffffffe)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x7, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x2) # load rs1: x2 = 0x00000000fffffffe
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x19, x2, x2           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x19, RVTEST_CYCLE_CSR  # first counter read
+  sltu x25, x19, x0           # dep = 0, ready after the first counter read
+  or x2, x2, x25            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffe:
+  sm3p1 x1, x2 # perform operation
+  csrr x8, RVTEST_CYCLE_CSR  # second counter read
+  addi x7, x7, -1
+  bnez x7, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x8, x8, x19           # latency of the second run
+  .option push
+  .option norelax
+  lla x19, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x25, 0(x19)
+  bgez x25, 8f                     # baseline already set
+  SREG x8, 0(x19)            # the first timed testcase sets the baseline
+  mv x25, x8
+8:
+  sub x8, x8, x25           # 0 on data-independent hardware
+  # Check if x8 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x8, Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffe, Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffe_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x2) # load rs1: x2 = 0x00000000fffffffe
 Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffe:
   sm3p1 x1, x2 # perform operation
+#endif
   # Check if x1 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x1, Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffe, Zksh_sm3p1_cg_cp_rs1_edges_0xfffffffe_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x0000000100000000)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x31) # load rs1: x31 = 0x0000000100000000
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x3, x31, x31           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x3, RVTEST_CYCLE_CSR  # first counter read
+  sltu x12, x3, x0           # dep = 0, ready after the first counter read
+  or x31, x31, x12            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x100000000:
+  sm3p1 x17, x31 # perform operation
+  csrr x2, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x2, x2, x3           # latency of the second run
+  .option push
+  .option norelax
+  lla x3, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x12, 0(x3)
+  bgez x12, 8f                     # baseline already set
+  SREG x2, 0(x3)            # the first timed testcase sets the baseline
+  mv x12, x2
+8:
+  sub x2, x2, x12           # 0 on data-independent hardware
+  # Check if x2 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x2, Zksh_sm3p1_cg_cp_rs1_edges_0x100000000, Zksh_sm3p1_cg_cp_rs1_edges_0x100000000_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x31) # load rs1: x31 = 0x0000000100000000
 Zksh_sm3p1_cg_cp_rs1_edges_0x100000000:
   sm3p1 x17, x31 # perform operation
+#endif
   # Check if x17 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x17, Zksh_sm3p1_cg_cp_rs1_edges_0x100000000, Zksh_sm3p1_cg_cp_rs1_edges_0x100000000_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x0000000100000001)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x15, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x2) # load rs1: x2 = 0x0000000100000001
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x25, x2, x2           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x25, RVTEST_CYCLE_CSR  # first counter read
+  sltu x12, x25, x0           # dep = 0, ready after the first counter read
+  or x2, x2, x12            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x100000001:
+  sm3p1 x3, x2 # perform operation
+  csrr x14, RVTEST_CYCLE_CSR  # second counter read
+  addi x15, x15, -1
+  bnez x15, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x14, x14, x25           # latency of the second run
+  .option push
+  .option norelax
+  lla x25, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x12, 0(x25)
+  bgez x12, 8f                     # baseline already set
+  SREG x14, 0(x25)            # the first timed testcase sets the baseline
+  mv x12, x14
+8:
+  sub x14, x14, x12           # 0 on data-independent hardware
+  # Check if x14 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x14, Zksh_sm3p1_cg_cp_rs1_edges_0x100000001, Zksh_sm3p1_cg_cp_rs1_edges_0x100000001_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x2) # load rs1: x2 = 0x0000000100000001
 Zksh_sm3p1_cg_cp_rs1_edges_0x100000001:
   sm3p1 x3, x2 # perform operation
+#endif
   # Check if x3 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x3, Zksh_sm3p1_cg_cp_rs1_edges_0x100000001, Zksh_sm3p1_cg_cp_rs1_edges_0x100000001_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x0000000080000000)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x31, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x12) # load rs1: x12 = 0x0000000080000000
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x14, x12, x12           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x14, RVTEST_CYCLE_CSR  # first counter read
+  sltu x15, x14, x0           # dep = 0, ready after the first counter read
+  or x12, x12, x15            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x80000000:
+  sm3p1 x23, x12 # perform operation
+  csrr x10, RVTEST_CYCLE_CSR  # second counter read
+  addi x31, x31, -1
+  bnez x31, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x10, x10, x14           # latency of the second run
+  .option push
+  .option norelax
+  lla x14, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x15, 0(x14)
+  bgez x15, 8f                     # baseline already set
+  SREG x10, 0(x14)            # the first timed testcase sets the baseline
+  mv x15, x10
+8:
+  sub x10, x10, x15           # 0 on data-independent hardware
+  # Check if x10 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x10, Zksh_sm3p1_cg_cp_rs1_edges_0x80000000, Zksh_sm3p1_cg_cp_rs1_edges_0x80000000_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x12) # load rs1: x12 = 0x0000000080000000
 Zksh_sm3p1_cg_cp_rs1_edges_0x80000000:
   sm3p1 x23, x12 # perform operation
+#endif
   # Check if x23 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x23, Zksh_sm3p1_cg_cp_rs1_edges_0x80000000, Zksh_sm3p1_cg_cp_rs1_edges_0x80000000_str)
 
 # Testcase cp_rs1_edges (Test source rs1 value = 0x000000007fffffff)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x21, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x10) # load rs1: x10 = 0x000000007fffffff
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x31, x10, x10           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x31, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x31, x0           # dep = 0, ready after the first counter read
+  or x10, x10, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffff:
+  sm3p1 x13, x10 # perform operation
+  csrr x16, RVTEST_CYCLE_CSR  # second counter read
+  addi x21, x21, -1
+  bnez x21, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x16, x16, x31           # latency of the second run
+  .option push
+  .option norelax
+  lla x31, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x31)
+  bgez x18, 8f                     # baseline already set
+  SREG x16, 0(x31)            # the first timed testcase sets the baseline
+  mv x18, x16
+8:
+  sub x16, x16, x18           # 0 on data-independent hardware
+  # Check if x16 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x16, Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffff, Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffff_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x10) # load rs1: x10 = 0x000000007fffffff
 Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffff:
   sm3p1 x13, x10 # perform operation
+#endif
   # Check if x13 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x13, Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffff, Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffff_str)
 
@@ -637,234 +3999,1546 @@ Zksh_sm3p1_cg_cp_rs1_edges_0x7fffffff:
 /////////////////////////////////
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x0)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x11, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x0) # load rs1: x0 = 0xdbd5fb3cdf5dd3d8
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x1, x0, x0           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x1, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x1, x0           # dep = 0, ready after the first counter read
+  or x0, x0, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b0:
+  sm3p1 x0, x0 # perform operation
+  csrr x12, RVTEST_CYCLE_CSR  # second counter read
+  addi x11, x11, -1
+  bnez x11, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x12, x12, x1           # latency of the second run
+  .option push
+  .option norelax
+  lla x1, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x1)
+  bgez x18, 8f                     # baseline already set
+  SREG x12, 0(x1)            # the first timed testcase sets the baseline
+  mv x18, x12
+8:
+  sub x12, x12, x18           # 0 on data-independent hardware
+  # Check if x12 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x12, Zksh_sm3p1_cg_cmp_rd_rs1_b0, Zksh_sm3p1_cg_cmp_rd_rs1_b0_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x0) # load rs1: x0 = 0xdbd5fb3cdf5dd3d8
 Zksh_sm3p1_cg_cmp_rd_rs1_b0:
   sm3p1 x0, x0 # perform operation
+#endif
   # Check if x0 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x0, Zksh_sm3p1_cg_cmp_rd_rs1_b0, Zksh_sm3p1_cg_cmp_rd_rs1_b0_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x1)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x8, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x1) # load rs1: x1 = 0xc133121c0022fcb8
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x2, x1, x1           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x2, RVTEST_CYCLE_CSR  # first counter read
+  sltu x23, x2, x0           # dep = 0, ready after the first counter read
+  or x1, x1, x23            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b1:
+  sm3p1 x1, x1 # perform operation
+  csrr x19, RVTEST_CYCLE_CSR  # second counter read
+  addi x8, x8, -1
+  bnez x8, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x19, x19, x2           # latency of the second run
+  .option push
+  .option norelax
+  lla x2, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x23, 0(x2)
+  bgez x23, 8f                     # baseline already set
+  SREG x19, 0(x2)            # the first timed testcase sets the baseline
+  mv x23, x19
+8:
+  sub x19, x19, x23           # 0 on data-independent hardware
+  # Check if x19 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x19, Zksh_sm3p1_cg_cmp_rd_rs1_b1, Zksh_sm3p1_cg_cmp_rd_rs1_b1_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x1) # load rs1: x1 = 0xc133121c0022fcb8
 Zksh_sm3p1_cg_cmp_rd_rs1_b1:
   sm3p1 x1, x1 # perform operation
+#endif
   # Check if x1 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x1, Zksh_sm3p1_cg_cmp_rd_rs1_b1, Zksh_sm3p1_cg_cmp_rd_rs1_b1_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x2)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x22, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x2) # load rs1: x2 = 0xf34a360c0439919d
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x23, x2, x2           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x23, RVTEST_CYCLE_CSR  # first counter read
+  sltu x19, x23, x0           # dep = 0, ready after the first counter read
+  or x2, x2, x19            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b2:
+  sm3p1 x2, x2 # perform operation
+  csrr x14, RVTEST_CYCLE_CSR  # second counter read
+  addi x22, x22, -1
+  bnez x22, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x14, x14, x23           # latency of the second run
+  .option push
+  .option norelax
+  lla x23, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x19, 0(x23)
+  bgez x19, 8f                     # baseline already set
+  SREG x14, 0(x23)            # the first timed testcase sets the baseline
+  mv x19, x14
+8:
+  sub x14, x14, x19           # 0 on data-independent hardware
+  # Check if x14 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x14, Zksh_sm3p1_cg_cmp_rd_rs1_b2, Zksh_sm3p1_cg_cmp_rd_rs1_b2_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x2) # load rs1: x2 = 0xf34a360c0439919d
 Zksh_sm3p1_cg_cmp_rd_rs1_b2:
   sm3p1 x2, x2 # perform operation
+#endif
   # Check if x2 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x2, Zksh_sm3p1_cg_cmp_rd_rs1_b2, Zksh_sm3p1_cg_cmp_rd_rs1_b2_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x3)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x12, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x3) # load rs1: x3 = 0x60d7123e1eb8bf6c
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x29, x3, x3           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x29, RVTEST_CYCLE_CSR  # first counter read
+  sltu x20, x29, x0           # dep = 0, ready after the first counter read
+  or x3, x3, x20            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b3:
+  sm3p1 x3, x3 # perform operation
+  csrr x13, RVTEST_CYCLE_CSR  # second counter read
+  addi x12, x12, -1
+  bnez x12, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x13, x13, x29           # latency of the second run
+  .option push
+  .option norelax
+  lla x29, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x20, 0(x29)
+  bgez x20, 8f                     # baseline already set
+  SREG x13, 0(x29)            # the first timed testcase sets the baseline
+  mv x20, x13
+8:
+  sub x13, x13, x20           # 0 on data-independent hardware
+  # Check if x13 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x13, Zksh_sm3p1_cg_cmp_rd_rs1_b3, Zksh_sm3p1_cg_cmp_rd_rs1_b3_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x3) # load rs1: x3 = 0x60d7123e1eb8bf6c
 Zksh_sm3p1_cg_cmp_rd_rs1_b3:
   sm3p1 x3, x3 # perform operation
+#endif
   # Check if x3 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x3, Zksh_sm3p1_cg_cmp_rd_rs1_b3, Zksh_sm3p1_cg_cmp_rd_rs1_b3_str)
 
   mv x13, x4 # switch temp register to avoid conflict with test
   mv x14, x5 # switch link pointer register to avoid conflict with test
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x4)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x4) # load rs1: x4 = 0xb7268eea22747781
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x15, x4, x4           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x15, RVTEST_CYCLE_CSR  # first counter read
+  sltu x22, x15, x0           # dep = 0, ready after the first counter read
+  or x4, x4, x22            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b4:
+  sm3p1 x4, x4 # perform operation
+  csrr x12, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x12, x12, x15           # latency of the second run
+  .option push
+  .option norelax
+  lla x15, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x22, 0(x15)
+  bgez x22, 8f                     # baseline already set
+  SREG x12, 0(x15)            # the first timed testcase sets the baseline
+  mv x22, x12
+8:
+  sub x12, x12, x22           # 0 on data-independent hardware
+  # Check if x12 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x12, Zksh_sm3p1_cg_cmp_rd_rs1_b4, Zksh_sm3p1_cg_cmp_rd_rs1_b4_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x4) # load rs1: x4 = 0xb7268eea22747781
 Zksh_sm3p1_cg_cmp_rd_rs1_b4:
   sm3p1 x4, x4 # perform operation
+#endif
   # Check if x4 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x4, Zksh_sm3p1_cg_cmp_rd_rs1_b4, Zksh_sm3p1_cg_cmp_rd_rs1_b4_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x5)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x31, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x6, x5) # load rs1: x5 = 0x032b362b2391709d
+  addi x6, x6, -1*SIG_STRIDE    # rewind data for the second run
+  xor x4, x5, x5           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x4, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x4, x0           # dep = 0, ready after the first counter read
+  or x5, x5, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b5:
+  sm3p1 x5, x5 # perform operation
+  csrr x15, RVTEST_CYCLE_CSR  # second counter read
+  addi x31, x31, -1
+  bnez x31, 7b
+  addi x6, x6, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x15, x15, x4           # latency of the second run
+  .option push
+  .option norelax
+  lla x4, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x4)
+  bgez x18, 8f                     # baseline already set
+  SREG x15, 0(x4)            # the first timed testcase sets the baseline
+  mv x18, x15
+8:
+  sub x15, x15, x18           # 0 on data-independent hardware
+  # Check if x15 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x15, Zksh_sm3p1_cg_cmp_rd_rs1_b5, Zksh_sm3p1_cg_cmp_rd_rs1_b5_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x6, x5) # load rs1: x5 = 0x032b362b2391709d
 Zksh_sm3p1_cg_cmp_rd_rs1_b5:
   sm3p1 x5, x5 # perform operation
+#endif
   # Check if x5 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x5, Zksh_sm3p1_cg_cmp_rd_rs1_b5, Zksh_sm3p1_cg_cmp_rd_rs1_b5_str)
 
   mv x9, x6 # switch data pointer register to avoid conflict with test
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x6)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x16, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x9, x6) # load rs1: x6 = 0x5c56654b4b89a62d
+  addi x9, x9, -1*SIG_STRIDE    # rewind data for the second run
+  xor x17, x6, x6           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x17, RVTEST_CYCLE_CSR  # first counter read
+  sltu x24, x17, x0           # dep = 0, ready after the first counter read
+  or x6, x6, x24            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b6:
+  sm3p1 x6, x6 # perform operation
+  csrr x19, RVTEST_CYCLE_CSR  # second counter read
+  addi x16, x16, -1
+  bnez x16, 7b
+  addi x9, x9, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x19, x19, x17           # latency of the second run
+  .option push
+  .option norelax
+  lla x17, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x24, 0(x17)
+  bgez x24, 8f                     # baseline already set
+  SREG x19, 0(x17)            # the first timed testcase sets the baseline
+  mv x24, x19
+8:
+  sub x19, x19, x24           # 0 on data-independent hardware
+  # Check if x19 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x19, Zksh_sm3p1_cg_cmp_rd_rs1_b6, Zksh_sm3p1_cg_cmp_rd_rs1_b6_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x9, x6) # load rs1: x6 = 0x5c56654b4b89a62d
 Zksh_sm3p1_cg_cmp_rd_rs1_b6:
   sm3p1 x6, x6 # perform operation
+#endif
   # Check if x6 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x6, Zksh_sm3p1_cg_cmp_rd_rs1_b6, Zksh_sm3p1_cg_cmp_rd_rs1_b6_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x7)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x12, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x9, x7) # load rs1: x7 = 0xf11d356660994f00
+  addi x9, x9, -1*SIG_STRIDE    # rewind data for the second run
+  xor x24, x7, x7           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x24, RVTEST_CYCLE_CSR  # first counter read
+  sltu x23, x24, x0           # dep = 0, ready after the first counter read
+  or x7, x7, x23            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b7:
+  sm3p1 x7, x7 # perform operation
+  csrr x25, RVTEST_CYCLE_CSR  # second counter read
+  addi x12, x12, -1
+  bnez x12, 7b
+  addi x9, x9, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x25, x25, x24           # latency of the second run
+  .option push
+  .option norelax
+  lla x24, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x23, 0(x24)
+  bgez x23, 8f                     # baseline already set
+  SREG x25, 0(x24)            # the first timed testcase sets the baseline
+  mv x23, x25
+8:
+  sub x25, x25, x23           # 0 on data-independent hardware
+  # Check if x25 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x25, Zksh_sm3p1_cg_cmp_rd_rs1_b7, Zksh_sm3p1_cg_cmp_rd_rs1_b7_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x9, x7) # load rs1: x7 = 0xf11d356660994f00
 Zksh_sm3p1_cg_cmp_rd_rs1_b7:
   sm3p1 x7, x7 # perform operation
+#endif
   # Check if x7 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x7, Zksh_sm3p1_cg_cmp_rd_rs1_b7, Zksh_sm3p1_cg_cmp_rd_rs1_b7_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x8)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x7, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x9, x8) # load rs1: x8 = 0x155691d44eeb3f0b
+  addi x9, x9, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x8, x8           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x20, RVTEST_CYCLE_CSR  # first counter read
+  sltu x3, x20, x0           # dep = 0, ready after the first counter read
+  or x8, x8, x3            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b8:
+  sm3p1 x8, x8 # perform operation
+  csrr x6, RVTEST_CYCLE_CSR  # second counter read
+  addi x7, x7, -1
+  bnez x7, 7b
+  addi x9, x9, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x6, x6, x20           # latency of the second run
+  .option push
+  .option norelax
+  lla x20, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x3, 0(x20)
+  bgez x3, 8f                     # baseline already set
+  SREG x6, 0(x20)            # the first timed testcase sets the baseline
+  mv x3, x6
+8:
+  sub x6, x6, x3           # 0 on data-independent hardware
+  # Check if x6 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x6, Zksh_sm3p1_cg_cmp_rd_rs1_b8, Zksh_sm3p1_cg_cmp_rd_rs1_b8_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x9, x8) # load rs1: x8 = 0x155691d44eeb3f0b
 Zksh_sm3p1_cg_cmp_rd_rs1_b8:
   sm3p1 x8, x8 # perform operation
+#endif
   # Check if x8 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x8, Zksh_sm3p1_cg_cmp_rd_rs1_b8, Zksh_sm3p1_cg_cmp_rd_rs1_b8_str)
 
   mv x23, x9 # switch data pointer register to avoid conflict with test
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x9)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x27, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x9) # load rs1: x9 = 0xabc0fb9179422ec1
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x3, x9, x9           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x3, RVTEST_CYCLE_CSR  # first counter read
+  sltu x30, x3, x0           # dep = 0, ready after the first counter read
+  or x9, x9, x30            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b9:
+  sm3p1 x9, x9 # perform operation
+  csrr x11, RVTEST_CYCLE_CSR  # second counter read
+  addi x27, x27, -1
+  bnez x27, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x11, x11, x3           # latency of the second run
+  .option push
+  .option norelax
+  lla x3, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x30, 0(x3)
+  bgez x30, 8f                     # baseline already set
+  SREG x11, 0(x3)            # the first timed testcase sets the baseline
+  mv x30, x11
+8:
+  sub x11, x11, x30           # 0 on data-independent hardware
+  # Check if x11 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x11, Zksh_sm3p1_cg_cmp_rd_rs1_b9, Zksh_sm3p1_cg_cmp_rd_rs1_b9_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x9) # load rs1: x9 = 0xabc0fb9179422ec1
 Zksh_sm3p1_cg_cmp_rd_rs1_b9:
   sm3p1 x9, x9 # perform operation
+#endif
   # Check if x9 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x9, Zksh_sm3p1_cg_cmp_rd_rs1_b9, Zksh_sm3p1_cg_cmp_rd_rs1_b9_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x10)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x22, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x10) # load rs1: x10 = 0x445fdf92a8376b0a
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x7, x10, x10           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x7, RVTEST_CYCLE_CSR  # first counter read
+  sltu x20, x7, x0           # dep = 0, ready after the first counter read
+  or x10, x10, x20            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b10:
+  sm3p1 x10, x10 # perform operation
+  csrr x9, RVTEST_CYCLE_CSR  # second counter read
+  addi x22, x22, -1
+  bnez x22, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x9, x9, x7           # latency of the second run
+  .option push
+  .option norelax
+  lla x7, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x20, 0(x7)
+  bgez x20, 8f                     # baseline already set
+  SREG x9, 0(x7)            # the first timed testcase sets the baseline
+  mv x20, x9
+8:
+  sub x9, x9, x20           # 0 on data-independent hardware
+  # Check if x9 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x9, Zksh_sm3p1_cg_cmp_rd_rs1_b10, Zksh_sm3p1_cg_cmp_rd_rs1_b10_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x10) # load rs1: x10 = 0x445fdf92a8376b0a
 Zksh_sm3p1_cg_cmp_rd_rs1_b10:
   sm3p1 x10, x10 # perform operation
+#endif
   # Check if x10 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x10, Zksh_sm3p1_cg_cmp_rd_rs1_b10, Zksh_sm3p1_cg_cmp_rd_rs1_b10_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x11)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x20, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x7ec4195efcaedef5
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x9, x11, x11           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x9, RVTEST_CYCLE_CSR  # first counter read
+  sltu x5, x9, x0           # dep = 0, ready after the first counter read
+  or x11, x11, x5            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b11:
+  sm3p1 x11, x11 # perform operation
+  csrr x22, RVTEST_CYCLE_CSR  # second counter read
+  addi x20, x20, -1
+  bnez x20, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x22, x22, x9           # latency of the second run
+  .option push
+  .option norelax
+  lla x9, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x5, 0(x9)
+  bgez x5, 8f                     # baseline already set
+  SREG x22, 0(x9)            # the first timed testcase sets the baseline
+  mv x5, x22
+8:
+  sub x22, x22, x5           # 0 on data-independent hardware
+  # Check if x22 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x22, Zksh_sm3p1_cg_cmp_rd_rs1_b11, Zksh_sm3p1_cg_cmp_rd_rs1_b11_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x11) # load rs1: x11 = 0x7ec4195efcaedef5
 Zksh_sm3p1_cg_cmp_rd_rs1_b11:
   sm3p1 x11, x11 # perform operation
+#endif
   # Check if x11 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x11, Zksh_sm3p1_cg_cmp_rd_rs1_b11, Zksh_sm3p1_cg_cmp_rd_rs1_b11_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x12)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x28, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x12) # load rs1: x12 = 0x67631d2083305b36
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x27, x12, x12           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x27, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x27, x0           # dep = 0, ready after the first counter read
+  or x12, x12, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b12:
+  sm3p1 x12, x12 # perform operation
+  csrr x2, RVTEST_CYCLE_CSR  # second counter read
+  addi x28, x28, -1
+  bnez x28, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x2, x2, x27           # latency of the second run
+  .option push
+  .option norelax
+  lla x27, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x27)
+  bgez x18, 8f                     # baseline already set
+  SREG x2, 0(x27)            # the first timed testcase sets the baseline
+  mv x18, x2
+8:
+  sub x2, x2, x18           # 0 on data-independent hardware
+  # Check if x2 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
+  RVTEST_SIGUPD(x26, x14, x13, x2, Zksh_sm3p1_cg_cmp_rd_rs1_b12, Zksh_sm3p1_cg_cmp_rd_rs1_b12_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x12) # load rs1: x12 = 0x67631d2083305b36
 Zksh_sm3p1_cg_cmp_rd_rs1_b12:
   sm3p1 x12, x12 # perform operation
+#endif
   # Check if x12 contains the expected result. x26 is the signature ptr, x14 is the link ptr, x13 is a temp reg.
   RVTEST_SIGUPD(x26, x14, x13, x12, Zksh_sm3p1_cg_cmp_rd_rs1_b12, Zksh_sm3p1_cg_cmp_rd_rs1_b12_str)
 
   mv x4, x13 # switch temp register to avoid conflict with test
   mv x5, x14 # switch link pointer register to avoid conflict with test
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x13)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x27, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0x67158a6cb1b0eacd
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x12, x13, x13           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x12, RVTEST_CYCLE_CSR  # first counter read
+  sltu x24, x12, x0           # dep = 0, ready after the first counter read
+  or x13, x13, x24            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b13:
+  sm3p1 x13, x13 # perform operation
+  csrr x14, RVTEST_CYCLE_CSR  # second counter read
+  addi x27, x27, -1
+  bnez x27, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x14, x14, x12           # latency of the second run
+  .option push
+  .option norelax
+  lla x12, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x24, 0(x12)
+  bgez x24, 8f                     # baseline already set
+  SREG x14, 0(x12)            # the first timed testcase sets the baseline
+  mv x24, x14
+8:
+  sub x14, x14, x24           # 0 on data-independent hardware
+  # Check if x14 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x14, Zksh_sm3p1_cg_cmp_rd_rs1_b13, Zksh_sm3p1_cg_cmp_rd_rs1_b13_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x13) # load rs1: x13 = 0x67158a6cb1b0eacd
 Zksh_sm3p1_cg_cmp_rd_rs1_b13:
   sm3p1 x13, x13 # perform operation
+#endif
   # Check if x13 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x13, Zksh_sm3p1_cg_cmp_rd_rs1_b13, Zksh_sm3p1_cg_cmp_rd_rs1_b13_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x14)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x28, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x14) # load rs1: x14 = 0xf06600a7146a63ef
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x9, x14, x14           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x9, RVTEST_CYCLE_CSR  # first counter read
+  sltu x12, x9, x0           # dep = 0, ready after the first counter read
+  or x14, x14, x12            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b14:
+  sm3p1 x14, x14 # perform operation
+  csrr x6, RVTEST_CYCLE_CSR  # second counter read
+  addi x28, x28, -1
+  bnez x28, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x6, x6, x9           # latency of the second run
+  .option push
+  .option norelax
+  lla x9, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x12, 0(x9)
+  bgez x12, 8f                     # baseline already set
+  SREG x6, 0(x9)            # the first timed testcase sets the baseline
+  mv x12, x6
+8:
+  sub x6, x6, x12           # 0 on data-independent hardware
+  # Check if x6 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x6, Zksh_sm3p1_cg_cmp_rd_rs1_b14, Zksh_sm3p1_cg_cmp_rd_rs1_b14_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x14) # load rs1: x14 = 0xf06600a7146a63ef
 Zksh_sm3p1_cg_cmp_rd_rs1_b14:
   sm3p1 x14, x14 # perform operation
+#endif
   # Check if x14 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x14, Zksh_sm3p1_cg_cmp_rd_rs1_b14, Zksh_sm3p1_cg_cmp_rd_rs1_b14_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x15)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x17, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x15) # load rs1: x15 = 0xd69f98cf4e09f618
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x6, x15, x15           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x6, RVTEST_CYCLE_CSR  # first counter read
+  sltu x28, x6, x0           # dep = 0, ready after the first counter read
+  or x15, x15, x28            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b15:
+  sm3p1 x15, x15 # perform operation
+  csrr x18, RVTEST_CYCLE_CSR  # second counter read
+  addi x17, x17, -1
+  bnez x17, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x18, x18, x6           # latency of the second run
+  .option push
+  .option norelax
+  lla x6, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x28, 0(x6)
+  bgez x28, 8f                     # baseline already set
+  SREG x18, 0(x6)            # the first timed testcase sets the baseline
+  mv x28, x18
+8:
+  sub x18, x18, x28           # 0 on data-independent hardware
+  # Check if x18 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x18, Zksh_sm3p1_cg_cmp_rd_rs1_b15, Zksh_sm3p1_cg_cmp_rd_rs1_b15_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x15) # load rs1: x15 = 0xd69f98cf4e09f618
 Zksh_sm3p1_cg_cmp_rd_rs1_b15:
   sm3p1 x15, x15 # perform operation
+#endif
   # Check if x15 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x15, Zksh_sm3p1_cg_cmp_rd_rs1_b15, Zksh_sm3p1_cg_cmp_rd_rs1_b15_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x16)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x10, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x16) # load rs1: x16 = 0xf2731e241b23e0a2
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x28, x16, x16           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x28, RVTEST_CYCLE_CSR  # first counter read
+  sltu x17, x28, x0           # dep = 0, ready after the first counter read
+  or x16, x16, x17            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b16:
+  sm3p1 x16, x16 # perform operation
+  csrr x7, RVTEST_CYCLE_CSR  # second counter read
+  addi x10, x10, -1
+  bnez x10, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x7, x7, x28           # latency of the second run
+  .option push
+  .option norelax
+  lla x28, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x17, 0(x28)
+  bgez x17, 8f                     # baseline already set
+  SREG x7, 0(x28)            # the first timed testcase sets the baseline
+  mv x17, x7
+8:
+  sub x7, x7, x17           # 0 on data-independent hardware
+  # Check if x7 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x7, Zksh_sm3p1_cg_cmp_rd_rs1_b16, Zksh_sm3p1_cg_cmp_rd_rs1_b16_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x16) # load rs1: x16 = 0xf2731e241b23e0a2
 Zksh_sm3p1_cg_cmp_rd_rs1_b16:
   sm3p1 x16, x16 # perform operation
+#endif
   # Check if x16 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x16, Zksh_sm3p1_cg_cmp_rd_rs1_b16, Zksh_sm3p1_cg_cmp_rd_rs1_b16_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x17)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x25, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x17) # load rs1: x17 = 0x59ed4ef6b0bd1ca4
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x10, x17, x17           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x10, RVTEST_CYCLE_CSR  # first counter read
+  sltu x18, x10, x0           # dep = 0, ready after the first counter read
+  or x17, x17, x18            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b17:
+  sm3p1 x17, x17 # perform operation
+  csrr x16, RVTEST_CYCLE_CSR  # second counter read
+  addi x25, x25, -1
+  bnez x25, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x16, x16, x10           # latency of the second run
+  .option push
+  .option norelax
+  lla x10, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x18, 0(x10)
+  bgez x18, 8f                     # baseline already set
+  SREG x16, 0(x10)            # the first timed testcase sets the baseline
+  mv x18, x16
+8:
+  sub x16, x16, x18           # 0 on data-independent hardware
+  # Check if x16 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x16, Zksh_sm3p1_cg_cmp_rd_rs1_b17, Zksh_sm3p1_cg_cmp_rd_rs1_b17_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x17) # load rs1: x17 = 0x59ed4ef6b0bd1ca4
 Zksh_sm3p1_cg_cmp_rd_rs1_b17:
   sm3p1 x17, x17 # perform operation
+#endif
   # Check if x17 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x17, Zksh_sm3p1_cg_cmp_rd_rs1_b17, Zksh_sm3p1_cg_cmp_rd_rs1_b17_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x18)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x18) # load rs1: x18 = 0xf5ce8c9ca49b71b8
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x21, x18, x18           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x21, RVTEST_CYCLE_CSR  # first counter read
+  sltu x13, x21, x0           # dep = 0, ready after the first counter read
+  or x18, x18, x13            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b18:
+  sm3p1 x18, x18 # perform operation
+  csrr x30, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x30, x30, x21           # latency of the second run
+  .option push
+  .option norelax
+  lla x21, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x13, 0(x21)
+  bgez x13, 8f                     # baseline already set
+  SREG x30, 0(x21)            # the first timed testcase sets the baseline
+  mv x13, x30
+8:
+  sub x30, x30, x13           # 0 on data-independent hardware
+  # Check if x30 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x30, Zksh_sm3p1_cg_cmp_rd_rs1_b18, Zksh_sm3p1_cg_cmp_rd_rs1_b18_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x18) # load rs1: x18 = 0xf5ce8c9ca49b71b8
 Zksh_sm3p1_cg_cmp_rd_rs1_b18:
   sm3p1 x18, x18 # perform operation
+#endif
   # Check if x18 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x18, Zksh_sm3p1_cg_cmp_rd_rs1_b18, Zksh_sm3p1_cg_cmp_rd_rs1_b18_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x19)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x27, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x19) # load rs1: x19 = 0xd195920e15f3d218
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x17, x19, x19           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x17, RVTEST_CYCLE_CSR  # first counter read
+  sltu x20, x17, x0           # dep = 0, ready after the first counter read
+  or x19, x19, x20            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b19:
+  sm3p1 x19, x19 # perform operation
+  csrr x6, RVTEST_CYCLE_CSR  # second counter read
+  addi x27, x27, -1
+  bnez x27, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x6, x6, x17           # latency of the second run
+  .option push
+  .option norelax
+  lla x17, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x20, 0(x17)
+  bgez x20, 8f                     # baseline already set
+  SREG x6, 0(x17)            # the first timed testcase sets the baseline
+  mv x20, x6
+8:
+  sub x6, x6, x20           # 0 on data-independent hardware
+  # Check if x6 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x6, Zksh_sm3p1_cg_cmp_rd_rs1_b19, Zksh_sm3p1_cg_cmp_rd_rs1_b19_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x19) # load rs1: x19 = 0xd195920e15f3d218
 Zksh_sm3p1_cg_cmp_rd_rs1_b19:
   sm3p1 x19, x19 # perform operation
+#endif
   # Check if x19 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x19, Zksh_sm3p1_cg_cmp_rd_rs1_b19, Zksh_sm3p1_cg_cmp_rd_rs1_b19_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x20)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0xf27be71582fdcdcc
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x14, x20, x20           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x14, RVTEST_CYCLE_CSR  # first counter read
+  sltu x1, x14, x0           # dep = 0, ready after the first counter read
+  or x20, x20, x1            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b20:
+  sm3p1 x20, x20 # perform operation
+  csrr x22, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x22, x22, x14           # latency of the second run
+  .option push
+  .option norelax
+  lla x14, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x1, 0(x14)
+  bgez x1, 8f                     # baseline already set
+  SREG x22, 0(x14)            # the first timed testcase sets the baseline
+  mv x1, x22
+8:
+  sub x22, x22, x1           # 0 on data-independent hardware
+  # Check if x22 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x22, Zksh_sm3p1_cg_cmp_rd_rs1_b20, Zksh_sm3p1_cg_cmp_rd_rs1_b20_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x20) # load rs1: x20 = 0xf27be71582fdcdcc
 Zksh_sm3p1_cg_cmp_rd_rs1_b20:
   sm3p1 x20, x20 # perform operation
+#endif
   # Check if x20 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x20, Zksh_sm3p1_cg_cmp_rd_rs1_b20, Zksh_sm3p1_cg_cmp_rd_rs1_b20_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x21)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x19, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x21) # load rs1: x21 = 0x1d36c442925e585c
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x1, x21, x21           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x1, RVTEST_CYCLE_CSR  # first counter read
+  sltu x8, x1, x0           # dep = 0, ready after the first counter read
+  or x21, x21, x8            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b21:
+  sm3p1 x21, x21 # perform operation
+  csrr x28, RVTEST_CYCLE_CSR  # second counter read
+  addi x19, x19, -1
+  bnez x19, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x28, x28, x1           # latency of the second run
+  .option push
+  .option norelax
+  lla x1, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x8, 0(x1)
+  bgez x8, 8f                     # baseline already set
+  SREG x28, 0(x1)            # the first timed testcase sets the baseline
+  mv x8, x28
+8:
+  sub x28, x28, x8           # 0 on data-independent hardware
+  # Check if x28 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x28, Zksh_sm3p1_cg_cmp_rd_rs1_b21, Zksh_sm3p1_cg_cmp_rd_rs1_b21_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x21) # load rs1: x21 = 0x1d36c442925e585c
 Zksh_sm3p1_cg_cmp_rd_rs1_b21:
   sm3p1 x21, x21 # perform operation
+#endif
   # Check if x21 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x21, Zksh_sm3p1_cg_cmp_rd_rs1_b21, Zksh_sm3p1_cg_cmp_rd_rs1_b21_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x22)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x21, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x655ca9f206968da5
+  addi x23, x23, -1*SIG_STRIDE    # rewind data for the second run
+  xor x10, x22, x22           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x10, RVTEST_CYCLE_CSR  # first counter read
+  sltu x12, x10, x0           # dep = 0, ready after the first counter read
+  or x22, x22, x12            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b22:
+  sm3p1 x22, x22 # perform operation
+  csrr x19, RVTEST_CYCLE_CSR  # second counter read
+  addi x21, x21, -1
+  bnez x21, 7b
+  addi x23, x23, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x19, x19, x10           # latency of the second run
+  .option push
+  .option norelax
+  lla x10, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x12, 0(x10)
+  bgez x12, 8f                     # baseline already set
+  SREG x19, 0(x10)            # the first timed testcase sets the baseline
+  mv x12, x19
+8:
+  sub x19, x19, x12           # 0 on data-independent hardware
+  # Check if x19 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x19, Zksh_sm3p1_cg_cmp_rd_rs1_b22, Zksh_sm3p1_cg_cmp_rd_rs1_b22_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x23, x22) # load rs1: x22 = 0x655ca9f206968da5
 Zksh_sm3p1_cg_cmp_rd_rs1_b22:
   sm3p1 x22, x22 # perform operation
+#endif
   # Check if x22 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x22, Zksh_sm3p1_cg_cmp_rd_rs1_b22, Zksh_sm3p1_cg_cmp_rd_rs1_b22_str)
 
   mv x12, x23 # switch data pointer register to avoid conflict with test
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x23)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x11, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x23) # load rs1: x23 = 0xc96f1afd3e3902b2
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x6, x23, x23           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x6, RVTEST_CYCLE_CSR  # first counter read
+  sltu x9, x6, x0           # dep = 0, ready after the first counter read
+  or x23, x23, x9            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b23:
+  sm3p1 x23, x23 # perform operation
+  csrr x20, RVTEST_CYCLE_CSR  # second counter read
+  addi x11, x11, -1
+  bnez x11, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x20, x20, x6           # latency of the second run
+  .option push
+  .option norelax
+  lla x6, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x9, 0(x6)
+  bgez x9, 8f                     # baseline already set
+  SREG x20, 0(x6)            # the first timed testcase sets the baseline
+  mv x9, x20
+8:
+  sub x20, x20, x9           # 0 on data-independent hardware
+  # Check if x20 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x20, Zksh_sm3p1_cg_cmp_rd_rs1_b23, Zksh_sm3p1_cg_cmp_rd_rs1_b23_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x23) # load rs1: x23 = 0xc96f1afd3e3902b2
 Zksh_sm3p1_cg_cmp_rd_rs1_b23:
   sm3p1 x23, x23 # perform operation
+#endif
   # Check if x23 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x23, Zksh_sm3p1_cg_cmp_rd_rs1_b23, Zksh_sm3p1_cg_cmp_rd_rs1_b23_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x24)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x6, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x24) # load rs1: x24 = 0xb4df367ccd04a6e6
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x15, x24, x24           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x15, RVTEST_CYCLE_CSR  # first counter read
+  sltu x14, x15, x0           # dep = 0, ready after the first counter read
+  or x24, x24, x14            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b24:
+  sm3p1 x24, x24 # perform operation
+  csrr x28, RVTEST_CYCLE_CSR  # second counter read
+  addi x6, x6, -1
+  bnez x6, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x28, x28, x15           # latency of the second run
+  .option push
+  .option norelax
+  lla x15, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x14, 0(x15)
+  bgez x14, 8f                     # baseline already set
+  SREG x28, 0(x15)            # the first timed testcase sets the baseline
+  mv x14, x28
+8:
+  sub x28, x28, x14           # 0 on data-independent hardware
+  # Check if x28 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x28, Zksh_sm3p1_cg_cmp_rd_rs1_b24, Zksh_sm3p1_cg_cmp_rd_rs1_b24_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x24) # load rs1: x24 = 0xb4df367ccd04a6e6
 Zksh_sm3p1_cg_cmp_rd_rs1_b24:
   sm3p1 x24, x24 # perform operation
+#endif
   # Check if x24 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x24, Zksh_sm3p1_cg_cmp_rd_rs1_b24, Zksh_sm3p1_cg_cmp_rd_rs1_b24_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x25)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x24, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x25) # load rs1: x25 = 0xd29f1f771cd4e486
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x20, x25, x25           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x20, RVTEST_CYCLE_CSR  # first counter read
+  sltu x30, x20, x0           # dep = 0, ready after the first counter read
+  or x25, x25, x30            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b25:
+  sm3p1 x25, x25 # perform operation
+  csrr x7, RVTEST_CYCLE_CSR  # second counter read
+  addi x24, x24, -1
+  bnez x24, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x7, x7, x20           # latency of the second run
+  .option push
+  .option norelax
+  lla x20, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x30, 0(x20)
+  bgez x30, 8f                     # baseline already set
+  SREG x7, 0(x20)            # the first timed testcase sets the baseline
+  mv x30, x7
+8:
+  sub x7, x7, x30           # 0 on data-independent hardware
+  # Check if x7 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x26, x5, x4, x7, Zksh_sm3p1_cg_cmp_rd_rs1_b25, Zksh_sm3p1_cg_cmp_rd_rs1_b25_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x25) # load rs1: x25 = 0xd29f1f771cd4e486
 Zksh_sm3p1_cg_cmp_rd_rs1_b25:
   sm3p1 x25, x25 # perform operation
+#endif
   # Check if x25 contains the expected result. x26 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x26, x5, x4, x25, Zksh_sm3p1_cg_cmp_rd_rs1_b25, Zksh_sm3p1_cg_cmp_rd_rs1_b25_str)
 
   mv x24, x26 # switch signature pointer register to avoid conflict with test
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x26)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x26) # load rs1: x26 = 0x464464efe0402dc8
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x17, x26, x26           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x17, RVTEST_CYCLE_CSR  # first counter read
+  sltu x13, x17, x0           # dep = 0, ready after the first counter read
+  or x26, x26, x13            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b26:
+  sm3p1 x26, x26 # perform operation
+  csrr x23, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x23, x23, x17           # latency of the second run
+  .option push
+  .option norelax
+  lla x17, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x13, 0(x17)
+  bgez x13, 8f                     # baseline already set
+  SREG x23, 0(x17)            # the first timed testcase sets the baseline
+  mv x13, x23
+8:
+  sub x23, x23, x13           # 0 on data-independent hardware
+  # Check if x23 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x24, x5, x4, x23, Zksh_sm3p1_cg_cmp_rd_rs1_b26, Zksh_sm3p1_cg_cmp_rd_rs1_b26_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x26) # load rs1: x26 = 0x464464efe0402dc8
 Zksh_sm3p1_cg_cmp_rd_rs1_b26:
   sm3p1 x26, x26 # perform operation
+#endif
   # Check if x26 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x24, x5, x4, x26, Zksh_sm3p1_cg_cmp_rd_rs1_b26, Zksh_sm3p1_cg_cmp_rd_rs1_b26_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x27)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x3, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x27) # load rs1: x27 = 0x979dad449eff0b4d
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x19, x27, x27           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x19, RVTEST_CYCLE_CSR  # first counter read
+  sltu x15, x19, x0           # dep = 0, ready after the first counter read
+  or x27, x27, x15            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b27:
+  sm3p1 x27, x27 # perform operation
+  csrr x2, RVTEST_CYCLE_CSR  # second counter read
+  addi x3, x3, -1
+  bnez x3, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x2, x2, x19           # latency of the second run
+  .option push
+  .option norelax
+  lla x19, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x15, 0(x19)
+  bgez x15, 8f                     # baseline already set
+  SREG x2, 0(x19)            # the first timed testcase sets the baseline
+  mv x15, x2
+8:
+  sub x2, x2, x15           # 0 on data-independent hardware
+  # Check if x2 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x24, x5, x4, x2, Zksh_sm3p1_cg_cmp_rd_rs1_b27, Zksh_sm3p1_cg_cmp_rd_rs1_b27_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x27) # load rs1: x27 = 0x979dad449eff0b4d
 Zksh_sm3p1_cg_cmp_rd_rs1_b27:
   sm3p1 x27, x27 # perform operation
+#endif
   # Check if x27 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x24, x5, x4, x27, Zksh_sm3p1_cg_cmp_rd_rs1_b27, Zksh_sm3p1_cg_cmp_rd_rs1_b27_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x28)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x17, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x28) # load rs1: x28 = 0x8e848be37f434af6
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x15, x28, x28           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x15, RVTEST_CYCLE_CSR  # first counter read
+  sltu x30, x15, x0           # dep = 0, ready after the first counter read
+  or x28, x28, x30            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b28:
+  sm3p1 x28, x28 # perform operation
+  csrr x21, RVTEST_CYCLE_CSR  # second counter read
+  addi x17, x17, -1
+  bnez x17, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x21, x21, x15           # latency of the second run
+  .option push
+  .option norelax
+  lla x15, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x30, 0(x15)
+  bgez x30, 8f                     # baseline already set
+  SREG x21, 0(x15)            # the first timed testcase sets the baseline
+  mv x30, x21
+8:
+  sub x21, x21, x30           # 0 on data-independent hardware
+  # Check if x21 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x24, x5, x4, x21, Zksh_sm3p1_cg_cmp_rd_rs1_b28, Zksh_sm3p1_cg_cmp_rd_rs1_b28_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x28) # load rs1: x28 = 0x8e848be37f434af6
 Zksh_sm3p1_cg_cmp_rd_rs1_b28:
   sm3p1 x28, x28 # perform operation
+#endif
   # Check if x28 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x24, x5, x4, x28, Zksh_sm3p1_cg_cmp_rd_rs1_b28, Zksh_sm3p1_cg_cmp_rd_rs1_b28_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x29)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x2, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x29) # load rs1: x29 = 0xdb404ffa2f647e18
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x11, x29, x29           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x11, RVTEST_CYCLE_CSR  # first counter read
+  sltu x10, x11, x0           # dep = 0, ready after the first counter read
+  or x29, x29, x10            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b29:
+  sm3p1 x29, x29 # perform operation
+  csrr x27, RVTEST_CYCLE_CSR  # second counter read
+  addi x2, x2, -1
+  bnez x2, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x27, x27, x11           # latency of the second run
+  .option push
+  .option norelax
+  lla x11, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x10, 0(x11)
+  bgez x10, 8f                     # baseline already set
+  SREG x27, 0(x11)            # the first timed testcase sets the baseline
+  mv x10, x27
+8:
+  sub x27, x27, x10           # 0 on data-independent hardware
+  # Check if x27 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x24, x5, x4, x27, Zksh_sm3p1_cg_cmp_rd_rs1_b29, Zksh_sm3p1_cg_cmp_rd_rs1_b29_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x29) # load rs1: x29 = 0xdb404ffa2f647e18
 Zksh_sm3p1_cg_cmp_rd_rs1_b29:
   sm3p1 x29, x29 # perform operation
+#endif
   # Check if x29 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x24, x5, x4, x29, Zksh_sm3p1_cg_cmp_rd_rs1_b29, Zksh_sm3p1_cg_cmp_rd_rs1_b29_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x30)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x7, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x30) # load rs1: x30 = 0x36e040c84531584b
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x10, x30, x30           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x10, RVTEST_CYCLE_CSR  # first counter read
+  sltu x27, x10, x0           # dep = 0, ready after the first counter read
+  or x30, x30, x27            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b30:
+  sm3p1 x30, x30 # perform operation
+  csrr x21, RVTEST_CYCLE_CSR  # second counter read
+  addi x7, x7, -1
+  bnez x7, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x21, x21, x10           # latency of the second run
+  .option push
+  .option norelax
+  lla x10, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x27, 0(x10)
+  bgez x27, 8f                     # baseline already set
+  SREG x21, 0(x10)            # the first timed testcase sets the baseline
+  mv x27, x21
+8:
+  sub x21, x21, x27           # 0 on data-independent hardware
+  # Check if x21 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x24, x5, x4, x21, Zksh_sm3p1_cg_cmp_rd_rs1_b30, Zksh_sm3p1_cg_cmp_rd_rs1_b30_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x30) # load rs1: x30 = 0x36e040c84531584b
 Zksh_sm3p1_cg_cmp_rd_rs1_b30:
   sm3p1 x30, x30 # perform operation
+#endif
   # Check if x30 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x24, x5, x4, x30, Zksh_sm3p1_cg_cmp_rd_rs1_b30, Zksh_sm3p1_cg_cmp_rd_rs1_b30_str)
 
 # Testcase cmp_rd_rs1 (Test rd = rs1 = x31)
+#ifdef RVTEST_CYCLE_CSR
+# Data-independent latency (see asm/latency.py): run twice, time the second run, and sign the
+# latency minus the first timed testcase's with the same encoding (and vl and vtype), which must be 0.
+  .ifndef rvtest_latency_base_sm3p1
+  .pushsection .data
+  .balign 8
+rvtest_latency_base_sm3p1: .dword -1           # baseline latency; -1 until the first timed testcase sets it
+  .popsection
+  .endif
+  LI(x25, 2)              # two runs; the second is timed
+7:
+  RVTEST_TESTDATA_LOAD_INT(x12, x31) # load rs1: x31 = 0x0f1117283aca4ce0
+  addi x12, x12, -1*SIG_STRIDE    # rewind data for the second run
+  xor x27, x31, x31           # drain: loads finish first
+  j 9f                        # skip the padding rather than execute it
+  .balign 64                  # keep the timed window in one cache line
+9:
+  csrr x27, RVTEST_CYCLE_CSR  # first counter read
+  sltu x3, x27, x0           # dep = 0, ready after the first counter read
+  or x31, x31, x3            # operand depends on the first counter read
+Zksh_sm3p1_cg_cmp_rd_rs1_b31:
+  sm3p1 x31, x31 # perform operation
+  csrr x17, RVTEST_CYCLE_CSR  # second counter read
+  addi x25, x25, -1
+  bnez x25, 7b
+  addi x12, x12, 1*SIG_STRIDE   # advance past this testcase's data
+  sub x17, x17, x27           # latency of the second run
+  .option push
+  .option norelax
+  lla x27, rvtest_latency_base_sm3p1
+  .option pop
+  LREG x3, 0(x27)
+  bgez x3, 8f                     # baseline already set
+  SREG x17, 0(x27)            # the first timed testcase sets the baseline
+  mv x3, x17
+8:
+  sub x17, x17, x3           # 0 on data-independent hardware
+  # Check if x17 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
+  RVTEST_SIGUPD(x24, x5, x4, x17, Zksh_sm3p1_cg_cmp_rd_rs1_b31, Zksh_sm3p1_cg_cmp_rd_rs1_b31_str)
+#else
   RVTEST_TESTDATA_LOAD_INT(x12, x31) # load rs1: x31 = 0x0f1117283aca4ce0
 Zksh_sm3p1_cg_cmp_rd_rs1_b31:
   sm3p1 x31, x31 # perform operation
+#endif
   # Check if x31 contains the expected result. x24 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x24, x5, x4, x31, Zksh_sm3p1_cg_cmp_rd_rs1_b31, Zksh_sm3p1_cg_cmp_rd_rs1_b31_str)
 

@@ -272,7 +272,9 @@ def prep_base_v(
     if params.vl == "random":
         temp_reg, vlmax_reg = test_data.int_regs.get_registers(2, exclude_regs=[0])
 
-        randomVl = random_int(32, signed=False)
+        if params.vl_random is None:
+            params.vl_random = random_int(32, signed=False)
+        randomVl = params.vl_random
         lines.extend(
             [
                 "# Load Vl=Random",
@@ -542,7 +544,9 @@ def generate_random_vl(params: InstructionParams, test_data: TestData, egs: int)
 
     temp_reg = test_data.int_regs.get_register(exclude_regs=[0])
 
-    randomVl = random_int(32, signed=False)
+    if params.vl_random is None:
+        params.vl_random = random_int(32, signed=False)
+    randomVl = params.vl_random
     code.extend(
         [
             "# Load vl=random",
