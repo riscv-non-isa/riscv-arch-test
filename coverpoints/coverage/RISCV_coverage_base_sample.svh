@@ -109,8 +109,8 @@
     `ifdef COVER_F
         f_sample(hart, issue, ins);
     `endif
-    `ifdef COVER_HV
-        hv_sample(hart, issue, ins);
+    `ifdef COVER_H
+        h_sample(hart, issue, ins);
     `endif
     `ifdef COVER_I
         i_sample(hart, issue, ins);
@@ -162,6 +162,24 @@
     `endif
     `ifdef COVER_SDTRIGU
         sdtrigu_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_SHCOUNTERENW
+        shcounterenw_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_SHGATPA
+        shgatpa_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_SHTVALA
+        shtvala_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_SHVSATPA
+        shvsatpa_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_SHVSTVALA
+        shvstvala_sample(hart, issue, ins);
+    `endif
+    `ifdef COVER_SHVSTVECD
+        shvstvecd_sample(hart, issue, ins);
     `endif
     `ifdef COVER_SM
         sm_sample(hart, issue, ins);

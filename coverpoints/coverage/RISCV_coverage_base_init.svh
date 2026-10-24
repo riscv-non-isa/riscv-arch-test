@@ -142,9 +142,9 @@
         `cover_info("//      F - Enabled");
         `include "F_coverage_init.svh"
     `endif
-    `ifdef COVER_HV
-        `cover_info("//      HV - Enabled");
-        `include "HV_coverage_init.svh"
+    `ifdef COVER_H
+        `cover_info("//      H - Enabled");
+        `include "H_coverage_init.svh"
     `endif
     `ifdef COVER_I
         `cover_info("//      I - Enabled");
@@ -213,6 +213,30 @@
     `ifdef COVER_SDTRIGU
         `cover_info("//      SdtrigU - Enabled");
         `include "SdtrigU_coverage_init.svh"
+    `endif
+    `ifdef COVER_SHCOUNTERENW
+        `cover_info("//      Shcounterenw - Enabled");
+        `include "Shcounterenw_coverage_init.svh"
+    `endif
+    `ifdef COVER_SHGATPA
+        `cover_info("//      Shgatpa - Enabled");
+        `include "Shgatpa_coverage_init.svh"
+    `endif
+    `ifdef COVER_SHTVALA
+        `cover_info("//      Shtvala - Enabled");
+        `include "Shtvala_coverage_init.svh"
+    `endif
+    `ifdef COVER_SHVSATPA
+        `cover_info("//      Shvsatpa - Enabled");
+        `include "Shvsatpa_coverage_init.svh"
+    `endif
+    `ifdef COVER_SHVSTVALA
+        `cover_info("//      Shvstvala - Enabled");
+        `include "Shvstvala_coverage_init.svh"
+    `endif
+    `ifdef COVER_SHVSTVECD
+        `cover_info("//      Shvstvecd - Enabled");
+        `include "Shvstvecd_coverage_init.svh"
     `endif
     `ifdef COVER_SM
         `cover_info("//      Sm - Enabled");

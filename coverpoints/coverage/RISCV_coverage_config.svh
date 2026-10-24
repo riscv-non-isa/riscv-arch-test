@@ -110,8 +110,8 @@
 `ifdef F_COVERAGE
   `include "F_coverage.svh"
 `endif
-`ifdef HV_COVERAGE
-  `include "HV_coverage.svh"
+`ifdef H_COVERAGE
+  `include "H_coverage.svh"
 `endif
 `ifdef I_COVERAGE
   `include "I_coverage.svh"
@@ -163,6 +163,24 @@
 `endif
 `ifdef SDTRIGU_COVERAGE
   `include "SdtrigU_coverage.svh"
+`endif
+`ifdef SHCOUNTERENW_COVERAGE
+  `include "Shcounterenw_coverage.svh"
+`endif
+`ifdef SHGATPA_COVERAGE
+  `include "Shgatpa_coverage.svh"
+`endif
+`ifdef SHTVALA_COVERAGE
+  `include "Shtvala_coverage.svh"
+`endif
+`ifdef SHVSATPA_COVERAGE
+  `include "Shvsatpa_coverage.svh"
+`endif
+`ifdef SHVSTVALA_COVERAGE
+  `include "Shvstvala_coverage.svh"
+`endif
+`ifdef SHVSTVECD_COVERAGE
+  `include "Shvstvecd_coverage.svh"
 `endif
 `ifdef SM_COVERAGE
   `include "Sm_coverage.svh"
