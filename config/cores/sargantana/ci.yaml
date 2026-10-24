@@ -56,9 +56,11 @@ ci_enabled: true
 #   Shtvala-, Shtvala_amo, Shtvala_hlsv
 #                 a guest-page fault on the implicit read of a VS-stage PTE writes htval from the table's guest page
 #                 number and the virtual address's low bits instead of the PTE's guest physical address: mmu:ptw.sv#L560-L567
+#                 (https://github.com/bsc-loca/sargantana/issues/123)
 #   Shvstvala_page_fault
 #                 a VS-stage leaf that denies the access raises a guest-page fault instead of a page fault when its
 #                 guest physical address is unmapped: mmu:ptw.sv#L537-L550 skips the leaf permission check
+#                 (https://github.com/bsc-loca/sargantana/issues/124)
 exclude_extensions: "F-fmadd.s,F-fmsub.s,F-fnmadd.s,F-fnmsub.s,ZicsrF,Zfa-fleq.s,Zfa-fltq.s,ZfaD-fcvtmod.w.d,ZfaD-fleq.d,ZfaD-fleq.s,ZfaD-fltq.d,ZfaD-fltq.s,ZfaD-fround.s,ZfaD-froundnx.s,ZfaD-fmaxm.s,ZfaD-fminm.s,Zfhmin-fcvt.h.s,Zfhmin-fcvt.s.h,ZfhminD-fcvt.d.h,ZfhminD-fcvt.h.d,ZfhminD-fcvt.s.h,Zicntr,Sm_Zicntr,S_Zicntr,U_Zicntr,Sm_F,Sm_mcsr_access,Sm_mcsr_walk,Sm_scsr,Sm_shadow,S_F,S_scsr-,S_scsr_addr,U_F,InterruptsSm_priority_mideleg,InterruptsSm_trigger,Sscofpmf_Sm_mcounteren,Sv_sv39_canonical,Sv_sv39_nleaf_pte_DAU,Sv_sv39_nleaf_pte_reserved,Sv_sv39_pte_reserved,Sv_sv39_svnapot,Sv_sv39_svpbmt,SvZicbo_sv39_zicbom,SvZicbo_sv39_zicboz,ExceptionsSv,ExceptionsSvSm,ExceptionsSvZalrsc,H,Shtvala-,Shtvala_amo,Shtvala_hlsv,Shvstvala_page_fault"
 
 apt_packages: "autoconf flex bison help2man libfl-dev ccache device-tree-compiler libboost-dev libboost-regex-dev libboost-system-dev"
