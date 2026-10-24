@@ -38,13 +38,16 @@ RVTEST_BEGIN
 # first testcase's (x15), which must be 0. See the Zkt section of the CTP.
 # The first run warms the instruction cache and branch predictor. Only the second run is timed.
 # A dependency on the first cycle read stops the instruction from starting early.
-# .balign 64 keeps the timed window in one cache line.
+# .balign 64 keeps the timed window in one cache line; a jump skips the padding.
 # The second cycle read has no dependency. Writing cycle or mcycle is illegal or changes the count.
 
 # Testcase cp_zkt_pc (timed)
+#ifdef RVTEST_CYCLE_CSR
   LI(x19, 2)  # two runs; the second is timed
 1:
+  j 2f                        # skip the padding rather than execute it
   .balign 64                  # keep the timed window in one cache line
+2:
   csrr x10, RVTEST_CYCLE_CSR  # first cycle read
 Zkt_auipc_cg_cp_zkt_pc_timed:
   auipc x6, 825427 # perform operation
@@ -54,10 +57,16 @@ Zkt_auipc_cg_cp_zkt_pc_timed:
   sub x8, x8, x10           # latency of the second run
   mv x15, x8                 # first testcase sets the baseline
   sub x8, x8, x15           # 0 on data-independent hardware
+#else
+Zkt_auipc_cg_cp_zkt_pc_timed:
+  auipc x6, 825427 # perform operation
+#endif
   # Check if x6 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x6, Zkt_auipc_cg_cp_zkt_pc_timed, Zkt_auipc_cg_cp_zkt_pc_timed_str)
+#ifdef RVTEST_CYCLE_CSR
   # Check if x8 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x8, Zkt_auipc_cg_cp_zkt_pc_timed, Zkt_auipc_cg_cp_zkt_pc_timed_str)
+#endif
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
