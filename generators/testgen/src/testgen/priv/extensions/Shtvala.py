@@ -30,6 +30,12 @@ FAULTS = [
     ("sw", "cp_store_guest_page_fault"),
     ("jalr", "cp_instr_guest_page_fault"),
 ]
+# (instruction, coverpoint) of the hypervisor loads and stores from HS-mode and U-mode
+HLSV_FAULTS = [
+    ("hlv.w", "cp_hlv_guest_page_fault"),
+    ("hlvx.wu", "cp_hlvx_guest_page_fault"),
+    ("hsv.w", "cp_hsv_guest_page_fault"),
+]
 # (instruction, coverpoint, extension) of the atomic accesses, each compiled only with its extension
 ATOMIC_FAULTS = [
     ("amoswap.w", "cp_amo_guest_page_fault", "ZAAMO"),
@@ -114,13 +120,16 @@ def make_shtvala(test_data: TestData) -> list[TestChunk]:
         )
     tc = test_data.new_test_chunk(test_chunks, "hlsv")
     tc.code.extend(_hlsv_tests(test_data))
+    tc = test_data.new_test_chunk(test_chunks, "fetch_straddle")
+    tc.code.extend(_fetch_straddle_tests(test_data, tc))
     test_chunks.append(test_data.end_test_chunk())
     return test_chunks
 
 
 def _hlsv_tests(test_data: TestData) -> list[str]:
-    """hlv.w and hsv.w from HS-mode and from U-mode (hstatus.HU = 1) with hstatus.SPVP = 0, where the final access
-    or the implicit VS-stage PTE read has an unmapped guest physical address.  A faulting hlv.w leaves rd unchanged."""
+    """hlv.w, hlvx.wu and hsv.w from HS-mode and from U-mode (hstatus.HU = 1) with hstatus.SPVP = 0, where the final
+    access or the implicit VS-stage PTE read has an unmapped guest physical address.  The VS-stage and G-stage leaves
+    allow execution, so hlvx.wu also takes a load guest-page fault.  A faulting load leaves rd unchanged."""
 
     def mappings(g: SvMode, vs: SvMode) -> list[str]:
         pte, addr, tmp = test_data.int_regs.get_registers(3)
@@ -131,8 +140,8 @@ def _hlsv_tests(test_data: TestData) -> list[str]:
     addr, rd = test_data.int_regs.get_registers(2)
     lines = [
         comment_banner(
-            "cp_hlv_guest_page_fault, cp_hsv_guest_page_fault",
-            "In HS-mode and U-mode, hlv.w and hsv.w where the final access or the implicit VS-stage PTE read has an\n"
+            "cp_hlv_guest_page_fault, cp_hlvx_guest_page_fault, cp_hsv_guest_page_fault",
+            "In HS-mode and U-mode, hlv.w, hlvx.wu and hsv.w where the final access or the implicit VS-stage PTE read has an\n"
             "unmapped guest physical address",
         ),
         f"#if {TWO_STAGE_GATE}",
@@ -147,7 +156,7 @@ def _hlsv_tests(test_data: TestData) -> list[str]:
         if mode == "u":
             lines.append("RVTEST_TSBI_GOTO_UMODE")
         for access, address in (("final", lambda vs: int(vs.data_va, 16)), ("implicit", _implicit_va)):
-            for instr, coverpoint in (("hlv.w", "cp_hlv_guest_page_fault"), ("hsv.w", "cp_hsv_guest_page_fault")):
+            for instr, coverpoint in HLSV_FAULTS:
                 lines.extend(
                     [
                         *per_xlen(lambda _, vs, va=address: [f"LI(x{addr}, {va(vs):#x})"]),
@@ -177,9 +186,11 @@ def _straddle_va(vs: SvMode) -> int:
     return int(vs.data_va, 16) - _STRADDLE_OFFSET
 
 
-def _straddle_leaves(g: SvMode, vs: SvMode, user: bool, regs: tuple[int, int, int]) -> list[str]:
+def _straddle_leaves(
+    g: SvMode, vs: SvMode, user: bool, regs: tuple[int, int, int], page: str = "shtvala_straddle_page"
+) -> list[str]:
     """A VS-stage superpage leaf at vs.data_va to the guest physical superpage of g.data_va, where a G-stage kilopage
-    maps the page below g.data_va to shtvala_straddle_page and leaves g.data_va unmapped."""
+    maps the page below g.data_va to page and leaves g.data_va unmapped."""
     return [
         *write_pte(
             vs,
@@ -196,7 +207,7 @@ def _straddle_leaves(g: SvMode, vs: SvMode, user: bool, regs: tuple[int, int, in
             leaf_level=0,
             leaf_flags=PteFlags(user=True),
             virtual_address=f"({g.data_va} - 0x1000)",
-            physical_address="shtvala_straddle_page",
+            physical_address=page,
             regs=regs,
         ),
     ]
@@ -249,6 +260,40 @@ def _hs_straddle_tests(test_data: TestData) -> list[str]:
         )
     test_data.int_regs.return_registers([addr, rd, tinst, zero])
     return [*lines, *guest_translation_teardown(test_data), f"#endif // {TWO_STAGE_GATE}"]
+
+
+def _fetch_straddle_tests(test_data: TestData, tc: TestChunk) -> list[str]:
+    """A fetch in VS-mode and VU-mode of a 32-bit instruction two bytes below the end of a mapped guest page whose
+    successor has an unmapped guest physical address.  The first half of an addi is in the last two bytes of
+    shtvala_fetch_page, so the fetch faults on the second half: stval holds the page-boundary address, htval its guest
+    physical address and sepc the start of the instruction.  Only with Zca, so that jalr can reach a pc that is not
+    4-byte aligned."""
+    tc.raw_data.extend(
+        [
+            "#ifdef ZCA_SUPPORTED",
+            *guest_table_data(),
+            ".p2align 12",
+            "shtvala_fetch_page:",
+            f".zero {4096 - _STRADDLE_OFFSET}",
+            ".half 0x0013    # first half of addi x0, x0, 0",
+            "#endif",
+        ]
+    )
+
+    def leaves(g: SvMode, vs: SvMode, user: bool, regs: tuple[int, int, int]) -> list[str]:
+        return _straddle_leaves(g, vs, user, regs, page="shtvala_fetch_page")
+
+    faults = [("straddle", "cp_instr_straddle_guest_page_fault", "jalr", _straddle_va)]
+    return [
+        comment_banner(
+            "cp_instr_straddle_guest_page_fault",
+            "In VS-mode and VU-mode, jump to a 32-bit instruction two bytes below the end of a mapped guest page whose\n"
+            "successor has an unmapped guest physical address",
+        ),
+        "#ifdef ZCA_SUPPORTED",
+        *guest_fault_tests(test_data, COVERGROUP, "htval", leaves, faults),
+        "#endif",
+    ]
 
 
 @add_priv_test_generator(

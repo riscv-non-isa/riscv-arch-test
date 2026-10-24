@@ -56,6 +56,9 @@ covergroup Shtvala_cg with function sample(ins_t ins);
         hsv_w : coverpoint ins.current.insn {
             wildcard bins hsv_w = {HSV_W};
         }
+        hlvx_wu : coverpoint ins.current.insn {
+            wildcard bins hlvx_wu = {HLVX_WU};
+        }
         // As htval_gpa, for HLV, HSV, AMOs and LR, whose address is rs1 alone
         htval_gpa_hlsv : coverpoint {
             ins.current.csr[CSR_HTINST] == (`UDB_MXLEN == 64 ? 'h3000 : 'h2000),
@@ -71,6 +74,7 @@ covergroup Shtvala_cg with function sample(ins_t ins);
         cp_instr_guest_page_fault: cross priv_mode_vs_vu, jalr, instr_guest_page_fault, htval_gpa;
         // HLV and HSV from HS-mode and U-mode (hstatus.HU = 1)
         cp_hlv_guest_page_fault:   cross priv_mode_s_u, hlv_w, load_guest_page_fault,  htval_gpa_hlsv;
+        cp_hlvx_guest_page_fault:  cross priv_mode_s_u, hlvx_wu, load_guest_page_fault, htval_gpa_hlsv;
         cp_hsv_guest_page_fault:   cross priv_mode_s_u, hsv_w, store_guest_page_fault, htval_gpa_hlsv;
 
         `ifdef ZAAMO_SUPPORTED
@@ -84,6 +88,20 @@ covergroup Shtvala_cg with function sample(ins_t ins);
                 wildcard bins lr_w = {LR_W};
             }
             cp_lr_guest_page_fault:  cross priv_mode_vs_vu, lr_w, load_guest_page_fault, htval_gpa_hlsv;
+        `endif
+
+        // A 32-bit instruction two bytes below the end of a page, which IALIGN = 16 allows.  The fetch faults on its
+        // second half: htval holds the guest physical address of the page boundary.  As straddle and
+        // htval_page_boundary below, which only misaligned-access harts compile.
+        `ifdef ZCA_SUPPORTED
+            straddle_fetch : coverpoint ((ins.current.rs1_val + ins.current.imm) & 'hFFF) {
+                bins page_end = {'hFFE};
+            }
+            htval_page_boundary_fetch : coverpoint ((get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "htval", "htval") << 2) & 'hFFF) {
+                bins page_boundary = {0};
+            }
+            cp_instr_straddle_guest_page_fault: cross priv_mode_vs_vu, jalr, instr_guest_page_fault, straddle_fetch,
+                                                      htval_page_boundary_fetch;
         `endif
 
         `ifdef UDB_MISALIGNED_LDST
