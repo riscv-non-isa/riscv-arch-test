@@ -43,9 +43,8 @@ ci_enabled: true
 #    an illegal instruction instead of a virtual instruction exception
 #    (https://gitlab.com/qemu-project/qemu/-/issues/4620). QEMU has further hypervisor bugs
 #    filed the same day, 4611 through 4617, so this exclusion will be needed for a while.
-# Shtvala, Shvstvala: the same mstatus.MPV bug keeps the guest accesses out of VS-mode and VU-mode, and in
-#    Shtvala_hlsv hlvx.wu raises an instruction page fault instead of a load guest-page fault
-#    (https://gitlab.com/qemu-project/qemu/-/work_items/4595).
+# Shtvala, Shvstvala: mstatus.MPV read-only, so no VS/VU-mode (https://gitlab.com/qemu-project/qemu/-/work_items/4588);
+#    hlvx.wu raises the wrong fault (https://gitlab.com/qemu-project/qemu/-/work_items/4595)
 # Svadu_sv39/48/57_Svadu_fault: with ADUE=1, QEMU sets A/D on a PTE with a reserved Svnapot encoding before raising the page fault
 #    (https://gitlab.com/qemu-project/qemu/-/work_items/4636)
 # Ssnpm_*/SmnpmS_* (bare pmm00/pmm10 and sv* pmm10/pmm11 sweep groups), Smmpm_pmm00/pmm10 sweeps, SmnpmU, SmnpmUSm: QEMU CBOs do not fault on inaccessible addresses in bare mode, shifting trap signatures;
