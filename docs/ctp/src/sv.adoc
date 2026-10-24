@@ -24,13 +24,7 @@ It covers `mstatus.MPRV` accesses, `mstatus.TVM` trapping of `satp` and `SFENCE.
 page-table accesses, and M-mode access to `satp`. The `mstatus.SBE` tests are generated but not run until a
 big-endian configuration is available.
 
-====== Sv_Sm_satp
-
-include::{testplansdir}/priv/Sv_Sm_satp.adoc[]
-
-====== Sv_Sm_mstatus_mprv
-
-include::{testplansdir}/priv/Sv_Sm_mstatus_mprv.adoc[]
+include::{testplansdir}/priv/Sv_Sm.adoc[]
 
 ===== Sv_Zicbo VirtMem + CBOM/CBOZ
 

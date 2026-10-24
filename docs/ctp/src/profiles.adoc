@@ -118,8 +118,6 @@ All privileged suites require at least version 1.12 of the privileged specificat
 |PMPZalrsc|LR/SC PMP|<<t-PMPZalrsc-coverpoints>>|||x|x|x
 |Svbare|No Virtual Memory|<<t-Svbare-coverpoints>>|||x|x|x
 |Sv|Sv32/39/48/57 Virtual Memory|<<t-Sv-coverpoints>>|||x|x|x
-|Sv_Sm_satp|Machine-Mode satp Access|<<t-Sv_Sm_satp-coverpoints>>|||x|x|x
-|Sv_Sm_mstatus_mprv|Machine-Mode Virtual Memory|<<t-Sv_Sm_mstatus_mprv-coverpoints>>|||x|x|x
 |Svinval|TLB Invalidation|<<t-Svinval-coverpoints>>|||x|x|x
 |SvPMP|VM + PMP|<<t-SvPMP-coverpoints>>|||x|x|x
 |Sv_Zicbo|VM + CBOM/CBOZ|<<t-Sv_Zicbo-coverpoints>>|||x|x|x
