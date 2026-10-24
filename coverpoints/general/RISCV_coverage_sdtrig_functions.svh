@@ -204,7 +204,7 @@ endfunction
 // an address that is 2 mod 4 and an addi target at 0 mod 4, so tdata2[1] names a target that did not retire.
 function automatic logic [3:0] sdtrig_exec_adr_size_case(ins_t ins);
     logic [2:0] size = get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "tdata1", "size")[2:0];
-    if (sdtrig_exec_fired(ins) && ins.current.csr[CSR_MEPC] == ins.current.csr[CSR_TDATA2])
+    if (sdtrig_exec_fired(ins) && sdtrig_bp_epc(ins) == ins.current.csr[CSR_TDATA2])
         return {size, ins.current.csr[CSR_TDATA2][1]};
     if (ins.current.pc_rdata != ins.current.csr[CSR_TDATA2]) return 4'd0;
     if (ins.current.insn == 32'h00008013) return {size, 1'b0};
