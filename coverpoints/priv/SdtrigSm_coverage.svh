@@ -134,6 +134,7 @@ covergroup SdtrigSm_tcontrol_cg with function sample(ins_t ins);
     cp_tcontrol_mtrap:      cross priv_mode_m, mte, mpte, illegal_insn_trap;                                                  // 2 mte * 2 mpte
     cp_tcontrol_mret:       cross priv_mode_m, mte, mpte, mret;                                                               // 2 mte * 2 mpte
 endgroup
+`endif
 
 covergroup SdtrigSm_access_cg with function sample(ins_t ins);
     option.per_instance = 0;
