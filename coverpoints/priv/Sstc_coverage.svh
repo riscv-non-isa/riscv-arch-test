@@ -126,9 +126,242 @@ covergroup Sstc_Sm_cg with function sample(ins_t ins);
 endgroup
 `endif
 
+// H and HSm groups need the hypervisor extension.  menvcfg.STCE, henvcfg.STCE, mcounteren.TM and hcounteren.TM
+// before the instruction; henvcfg.STCE is read-only zero while menvcfg.STCE = 0, so the STCE pair has three
+// reachable values.
+`ifdef H_SUPPORTED
+`ifdef UDB_MXLEN_64
+    `define SSTC_STCE_PAIR {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfg", "stce")[0], \
+                            get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "henvcfg", "stce")[0]}
+    `define SSTC_VSTIMECMP get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstimecmp", "vstimecmp")
+    `define SSTC_HTIMEDELTA get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "htimedelta", "htimedelta")
+`else
+    `define SSTC_STCE_PAIR {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "menvcfgh", "stce")[0], \
+                            get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "henvcfgh", "stce")[0]}
+    `define SSTC_VSTIMECMP {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstimecmph", "vstimecmph"), \
+                            get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "vstimecmp", "vstimecmp")}
+    `define SSTC_HTIMEDELTA {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "htimedeltah", "htimedeltah"), \
+                             get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "htimedelta", "htimedelta")}
+`endif
+`define SSTC_TM_PAIR {get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mcounteren", "tm")[0], \
+                      get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hcounteren", "tm")[0]}
+
+covergroup Sstc_H_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+
+    // building blocks for the main coverpoints
+    stce_pair: coverpoint `SSTC_STCE_PAIR {
+        bins m0_h0 = {2'b00};
+        bins m1_h0 = {2'b10};
+        bins m1_h1 = {2'b11};
+    }
+    stce_pair_ones: coverpoint `SSTC_STCE_PAIR {
+        bins m1_h1 = {2'b11};
+    }
+    stce_pair_m1_h0: coverpoint `SSTC_STCE_PAIR {
+        bins m1_h0 = {2'b10};
+    }
+    tm_pair: coverpoint `SSTC_TM_PAIR {
+        bins m0_h0 = {2'b00};
+        bins m0_h1 = {2'b01};
+        bins m1_h0 = {2'b10};
+        bins m1_h1 = {2'b11};
+    }
+    tm_pair_ones: coverpoint `SSTC_TM_PAIR {
+        bins m1_h1 = {2'b11};
+    }
+    tm_pair_m1_h0: coverpoint `SSTC_TM_PAIR {
+        bins m1_h0 = {2'b10};
+    }
+    csrr: coverpoint ins.current.insn {
+        wildcard bins csrr = {CSRR};
+    }
+    stimecmp_csrs: coverpoint ins.current.insn[31:20] {
+        bins stimecmp = {CSR_STIMECMP};
+        `ifdef UDB_MXLEN_32
+            bins stimecmph = {CSR_STIMECMPH};
+        `endif
+    }
+    vstimecmp_csrs: coverpoint ins.current.insn[31:20] {
+        bins vstimecmp = {CSR_VSTIMECMP};
+        `ifdef UDB_MXLEN_32
+            bins vstimecmph = {CSR_VSTIMECMPH};
+        `endif
+    }
+    timecmp_csrs: coverpoint ins.current.insn[31:20] {
+        bins stimecmp  = {CSR_STIMECMP};
+        bins vstimecmp = {CSR_VSTIMECMP};
+        `ifdef UDB_MXLEN_32
+            bins stimecmph  = {CSR_STIMECMPH};
+            bins vstimecmph = {CSR_VSTIMECMPH};
+        `endif
+    }
+    // Accesses of csr_access_test: csrrw all 1s, csrrw 0s, csrrs all 1s, csrrc all 1s, csrr
+    csraccesses: coverpoint ins.current.insn {
+        wildcard bins csrrc_all = {CSRRC} iff (ins.current.rs1_val == '1);
+        wildcard bins csrrw0    = {CSRRW} iff (ins.current.rs1_val ==  0);
+        wildcard bins csrrw1    = {CSRRW} iff (ins.current.rs1_val == '1);
+        wildcard bins csrrs_all = {CSRRS} iff (ins.current.rs1_val == '1);
+        wildcard bins csrr      = {CSRR}  iff (ins.current.rs1_val ==  0);
+    }
+    // A csrw of vstimecmp arming it at once (0) or soon (time + htimedelta + delay); all 1s disarms it
+    csrrw: coverpoint ins.current.insn {
+        wildcard bins csrrw = {CSRRW};
+    }
+    vstimecmp_low: coverpoint ins.current.insn[31:20] {
+        bins vstimecmp = {CSR_VSTIMECMP};
+    }
+    vstimecmp_arm: coverpoint (ins.current.rs1_val == 0 ? 0 : ins.current.rs1_val == '1 ? 2 : 1) {
+        bins now  = {0};
+        bins soon = {1};
+    }
+    hideleg_vstip: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hideleg", "vstip")[0] {
+        // autofill 0/1
+    }
+    hie_vstie_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hie", "vstie")[0] {
+        bins one = {1};
+    }
+
+    // main coverpoints
+    // HS-mode reaches vstimecmp only with menvcfg.STCE = mcounteren.TM = 1
+    cp_hs_vstimecmp_accessible:   cross priv_mode_hs, csrr, vstimecmp_csrs, stce_pair, tm_pair;
+    cp_hs_vstimecmp_accesses:     cross priv_mode_hs, csraccesses, vstimecmp_csrs, stce_pair_m1_h0, tm_pair_m1_h0;
+    // vstimecmp armed in HS-mode at once or soon with hie.VSTIE = 1 raises VSTI in HS-mode or, delegated by hideleg,
+    // STI in VS-mode
+    cp_vstimecmp_int:             cross priv_mode_hs, csrrw, vstimecmp_low, vstimecmp_arm, hideleg_vstip, hie_vstie_one, stce_pair_ones;
+    // stimecmp is vstimecmp in VS-mode, gated by both STCE and both TM bits; vstimecmp by its own name is never
+    // accessible in VS-mode
+    cp_vs_stimecmp_accessible:    cross priv_mode_vs, csrr, stimecmp_csrs, stce_pair, tm_pair;
+    cp_vs_vstimecmp_inaccessible: cross priv_mode_vs, csrr, vstimecmp_csrs, stce_pair, tm_pair;
+    cp_vs_stimecmp_accesses:      cross priv_mode_vs, csraccesses, stimecmp_csrs, stce_pair_ones, tm_pair_ones;
+    // Illegal instruction when HS-mode could not access them, else virtual instruction in VU-mode; always illegal
+    // instruction in U-mode
+    cp_vu_timecmp_inaccessible:   cross priv_mode_vu, csrr, timecmp_csrs, stce_pair, tm_pair;
+    cp_u_timecmp_inaccessible:    cross priv_mode_u, csrr, timecmp_csrs, stce_pair, tm_pair;
+endgroup
+
+// Sm tests are not part of a certificate without Sm (EXCLUDE_SM), so neither is their covergroup
+`ifndef EXCLUDE_SM
+covergroup Sstc_HSm_cg with function sample(ins_t ins);
+    option.per_instance = 0;
+    `include "general/RISCV_coverage_standard_coverpoints.svh"
+
+    // building blocks for the main coverpoints
+    stce_pair: coverpoint `SSTC_STCE_PAIR {
+        bins m0_h0 = {2'b00};
+        bins m1_h0 = {2'b10};
+        bins m1_h1 = {2'b11};
+    }
+    stce_pair_ones: coverpoint `SSTC_STCE_PAIR {
+        bins m1_h1 = {2'b11};
+    }
+    stce_pair_m1_h0: coverpoint `SSTC_STCE_PAIR {
+        bins m1_h0 = {2'b10};
+    }
+    tm_pair: coverpoint `SSTC_TM_PAIR {
+        bins m0_h0 = {2'b00};
+        bins m0_h1 = {2'b01};
+        bins m1_h0 = {2'b10};
+        bins m1_h1 = {2'b11};
+    }
+    tm_pair_zeros: coverpoint `SSTC_TM_PAIR {
+        bins m0_h0 = {2'b00};
+    }
+    csrr: coverpoint ins.current.insn {
+        wildcard bins csrr = {CSRR};
+    }
+    vstimecmp_csrs: coverpoint ins.current.insn[31:20] {
+        bins vstimecmp = {CSR_VSTIMECMP};
+        `ifdef UDB_MXLEN_32
+            bins vstimecmph = {CSR_VSTIMECMPH};
+        `endif
+    }
+    // Accesses of csr_access_test: csrrw all 1s, csrrw 0s, csrrs all 1s, csrrc all 1s, csrr
+    csraccesses: coverpoint ins.current.insn {
+        wildcard bins csrrc_all = {CSRRC} iff (ins.current.rs1_val == '1);
+        wildcard bins csrrw0    = {CSRRW} iff (ins.current.rs1_val ==  0);
+        wildcard bins csrrw1    = {CSRRW} iff (ins.current.rs1_val == '1);
+        wildcard bins csrrs_all = {CSRRS} iff (ins.current.rs1_val == '1);
+        wildcard bins csrr      = {CSRR}  iff (ins.current.rs1_val ==  0);
+    }
+    hip: coverpoint ins.current.insn[31:20] {
+        bins hip = {CSR_HIP};
+    }
+    hvip_vstip: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hvip", "vstip")[0] {
+        // autofill 0/1
+    }
+    vstimecmp_val: coverpoint `SSTC_VSTIMECMP {
+        bins zero = {64'h0};
+        bins max  = {64'hFFFFFFFFFFFFFFFF};
+    }
+    vstimecmp_delta: coverpoint `SSTC_VSTIMECMP {
+        bins zero    = {64'h0};
+        bins p2_29   = {64'h0000000020000000};
+        bins p2_31   = {64'h0000000080000000};
+        bins p2_61   = {64'h2000000000000000};
+        bins neg2_29 = {64'hFFFFFFFFE0000000};
+        bins neg2_31 = {64'hFFFFFFFF80000000};
+        bins neg2_61 = {64'hE000000000000000};
+    }
+    htimedelta_val: coverpoint `SSTC_HTIMEDELTA {
+        bins zero    = {64'h0};
+        bins p2_30   = {64'h0000000040000000};
+        bins p2_32m1 = {64'h00000000FFFFFFFF};
+        bins p2_60   = {64'h1000000000000000};
+        bins neg1    = {64'hFFFFFFFFFFFFFFFF};
+        bins neg2_30 = {64'hFFFFFFFFC0000000};
+        bins neg2_60 = {64'hF000000000000000};
+    }
+    htimedelta_zero: coverpoint `SSTC_HTIMEDELTA {
+        bins zero = {64'h0};
+    }
+    // A csrw of vstimecmp arming it at once (0) or soon (time + htimedelta + delay); all 1s disarms it
+    csrrw: coverpoint ins.current.insn {
+        wildcard bins csrrw = {CSRRW};
+    }
+    vstimecmp_low: coverpoint ins.current.insn[31:20] {
+        bins vstimecmp = {CSR_VSTIMECMP};
+    }
+    vstimecmp_arm: coverpoint (ins.current.rs1_val == 0 ? 0 : ins.current.rs1_val == '1 ? 2 : 1) {
+        bins now  = {0};
+        bins soon = {1};
+    }
+    hideleg_vstip: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hideleg", "vstip")[0] {
+        // autofill 0/1
+    }
+    hie_vstie_one: coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "hie", "vstie")[0] {
+        bins one = {1};
+    }
+
+    // main coverpoints
+    // hip.VSTIP is hvip.VSTIP | (menvcfg.STCE & henvcfg.STCE & time + htimedelta >= vstimecmp), unsigned
+    cp_vstip:                  cross priv_mode_m, csrr, hip, stce_pair, hvip_vstip, vstimecmp_val, htimedelta_zero;
+    cp_htimedelta:             cross priv_mode_m, csrr, hip, stce_pair_ones, htimedelta_val, vstimecmp_delta;
+    // M-mode reaches vstimecmp whatever the enables hold
+    cp_m_vstimecmp_accessible: cross priv_mode_m, csrr, vstimecmp_csrs, stce_pair, tm_pair;
+    cp_m_vstimecmp_accesses:   cross priv_mode_m, csraccesses, vstimecmp_csrs, stce_pair_m1_h0, tm_pair_zeros;
+    // vstimecmp armed from M-mode at once or soon with hie.VSTIE = 1 raises VSTI in HS-mode or, delegated by
+    // hideleg, STI in VS-mode
+    cp_vstimecmp_int:          cross priv_mode_m, csrrw, vstimecmp_low, vstimecmp_arm, hideleg_vstip, hie_vstie_one, stce_pair_ones;
+endgroup
+`endif
+
+`undef SSTC_STCE_PAIR
+`undef SSTC_TM_PAIR
+`undef SSTC_VSTIMECMP
+`undef SSTC_HTIMEDELTA
+`endif
+
 function void sstc_sample(int hart, int issue, ins_t ins);
     Sstc_cg.sample(ins);
     `ifndef EXCLUDE_SM
         Sstc_Sm_cg.sample(ins);
+    `endif
+    `ifdef H_SUPPORTED
+        Sstc_H_cg.sample(ins);
+        `ifndef EXCLUDE_SM
+            Sstc_HSm_cg.sample(ins);
+        `endif
     `endif
 endfunction
