@@ -58,6 +58,13 @@ include::norm/U_norm_rules.adoc[]
 These test CSRs when the Zkr entropy extension is supported.  The seed CSR tests run once per
 privilege mode: Zkr_Sm in M-mode, Zkr_S in S-mode, and Zkr_U in U-mode.
 
+The `seed` read latency must not depend on the value `seed` returns.
+`cp_zkr_seed_entropy_zero_non_es16` times the second `seed` read of each of its 100 passes with the sequence of <<zkt-principle-of-operation>>, the read's source register being a zero that depends on the first counter read.
+The first pass warms up and the second sets the baseline.
+The later passes OR their latency minus the baseline into one signature word, which must be 0.
+The timed window spans 4 instructions (one of them a `nop`), a multiple of the 2 instructions per cycle that the reference model counts.
+Zkr_Sm reads `cycle`, or `mcycle` without Zicntr; Zkr_S and Zkr_U time the reads only with Zicntr, because `mcycle` cannot be read there.
+
 ===== Zkr_Sm
 
 include::{testplansdir}/priv/Zkr_Sm.adoc[]

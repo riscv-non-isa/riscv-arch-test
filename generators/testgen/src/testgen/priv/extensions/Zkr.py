@@ -132,6 +132,12 @@ def gen_seed_entropy_zero_non_es16_tests(test_data: TestData, covergroup: str, m
     """Read seed twice in a row using csrrw, 100 times.
     Fail on OPST == DEAD. If OPST is WAIT/BIST, fail when entropy bits are nonzero.
     Always SIGUPD 0xB0BA on success so the scorecard does not depend on OPST.
+
+    The second read of each pass is also timed with the method of the Zkt suite: its latency must not
+    depend on the value seed returns. The first pass warms up, the second sets the baseline, and the later
+    passes OR their latency minus the baseline into a data word that is signed after the loop and must be 0.
+    M-mode reads cycle, or mcycle without Zicntr. S-mode and U-mode time the reads only
+    with Zicntr, because mcycle cannot be read there.
     """
     coverpoint = "cp_zkr_seed_entropy_zero_non_es16"
 
@@ -142,6 +148,9 @@ def gen_seed_entropy_zero_non_es16_tests(test_data: TestData, covergroup: str, m
     loop_reg = test_data.int_regs.get_register()
 
     sseed_useed_enabled = (1 << 9) | (1 << 8)
+    # Timing temporaries: opst_reg and entropy_reg are computed after the timed read, and cmp_reg is a scratch
+    counter, timed = ("RVTEST_CYCLE_CSR", "RVTEST_CYCLE_CSR") if mode == "M" else ("cycle", "ZICNTR_SUPPORTED")
+    start_reg, end_reg = opst_reg, entropy_reg
     lines = [
         comment_banner(coverpoint, gen_seed_entropy_zero_non_es16_tests.__doc__),
         *_gate(
@@ -153,10 +162,41 @@ def gen_seed_entropy_zero_non_es16_tests(test_data: TestData, covergroup: str, m
             ],
         ),
         test_data.add_testcase(f"{mode}_es16", coverpoint, covergroup),
+        f"#ifdef {timed}",
+        ".pushsection .data",
+        ".balign 8",
+        "zkr_seed_latency_base: .dword -1  # latency of the second pass; -1 until it is set",
+        "zkr_seed_latency_acc: .dword 0    # OR of every later pass's latency minus the baseline",
+        ".popsection",
+        "#endif",
         f"LI(x{loop_reg}, {loop_count})",
         ".Lzkr_seed_entropy_loop:",
         f"csrrw x{read_reg}, seed, zero",
+        f"#ifdef {timed}",
+        ".balign 64                  # keep the timed window in one cache line",
+        f"csrr x{start_reg}, {counter}  # first counter read",
+        f"sltu x{end_reg}, x{start_reg}, x0  # 0, ready after the first counter read",
+        f"csrrw x{read_reg}, seed, x{end_reg}  # timed read; writes 0 like csrrw seed, zero",
+        "nop  # the window spans 4 instructions, a multiple of the reference model's instructions per cycle tick",
+        f"csrr x{end_reg}, {counter}  # second counter read",
+        f"sub x{end_reg}, x{end_reg}, x{start_reg}  # latency of this read",
+        f"LI(x{cmp_reg}, {loop_count})",
+        f"beq x{loop_reg}, x{cmp_reg}, .Lzkr_seed_latency_next  # the first pass only warms up",
+        f"LA(x{cmp_reg}, zkr_seed_latency_base)",
+        f"LREG x{start_reg}, 0(x{cmp_reg})",
+        f"bgez x{start_reg}, .Lzkr_seed_latency_base_set",
+        f"SREG x{end_reg}, 0(x{cmp_reg})  # the second pass sets the baseline",
+        f"mv x{start_reg}, x{end_reg}",
+        ".Lzkr_seed_latency_base_set:",
+        f"sub x{end_reg}, x{end_reg}, x{start_reg}",
+        f"LA(x{cmp_reg}, zkr_seed_latency_acc)",
+        f"LREG x{start_reg}, 0(x{cmp_reg})",
+        f"or x{start_reg}, x{start_reg}, x{end_reg}  # stays 0 on data-independent hardware",
+        f"SREG x{start_reg}, 0(x{cmp_reg})",
+        ".Lzkr_seed_latency_next:",
+        "#else",
         f"csrrw x{read_reg}, seed, zero",
+        "#endif",
         "# OPST bits",
         f"srli x{opst_reg}, x{read_reg}, 0x1E",
         "# entropy bits",
@@ -186,6 +226,12 @@ def gen_seed_entropy_zero_non_es16_tests(test_data: TestData, covergroup: str, m
         "# Nonzero entropy while WAIT/BIST: SIGUPD leaked bits vs Sail 0xB0BA",
         write_sigupd(entropy_reg, test_data),
         ".Lzkr_seed_entropy_done:",
+        f"#ifdef {timed}",
+        "# seed read latency: 0 when no later pass took longer or shorter than the second",
+        f"LA(x{cmp_reg}, zkr_seed_latency_acc)",
+        f"LREG x{cmp_reg}, 0(x{cmp_reg})",
+        write_sigupd(cmp_reg, test_data),
+        "#endif",
         *_gate(mode, [tsbi_call_or_direct(f"csrw mseccfg, x{save_reg}", mode)]),
     ]
 
