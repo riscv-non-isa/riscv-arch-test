@@ -57,7 +57,7 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
             f"# first testcase's (x{baseline}), which must be 0. See the Zkt section of the CTP.",
             "# The first run warms the instruction cache and branch predictor. Only the second run is timed.",
             "# A dependency on the first cycle read stops the instruction from starting early.",
-            "# .balign 64 keeps the timed window in one cache line.",
+            "# .balign 64 keeps the timed window in one cache line; a jump skips the padding.",
             "# The second cycle read has no dependency. Writing cycle or mcycle is illegal or changes the count.",
         ]
     )
@@ -70,32 +70,34 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
         data_count = len(tc.data_values)
         setup, test, check = format_instruction(instr_name, instr_type, test_data, case_params)
         data_bytes = f"{len(tc.data_values) - data_count}*SIG_STRIDE"
-        # Run twice and time the second run (see the CTP)
-        tc.code.extend([f"LI(x{runs}, 2)  # two runs; the second is timed", "1:"])
+        # Run twice and time the second run (see the CTP). Without a readable counter, run once untimed.
+        timed = [f"LI(x{runs}, 2)  # two runs; the second is timed", "1:"]
         if setup:
-            tc.code.extend(
+            timed.extend(
                 [
                     setup,
                     f"addi x{data_reg}, x{data_reg}, -{data_bytes}    # rewind data for the second run",
                 ]
             )
         if loaded_regs:
-            tc.code.append(f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}           # drain: loads finish first")
+            timed.append(f"xor x{start}, x{loaded_regs[0]}, x{loaded_regs[-1]}           # drain: loads finish first")
         # Zero-valued dependency on the first cycle read
-        tc.code.extend(
+        timed.extend(
             [
+                "j 2f                        # skip the padding rather than execute it",
                 ".balign 64                  # keep the timed window in one cache line",
+                "2:",
                 f"csrr x{start}, RVTEST_CYCLE_CSR  # first cycle read",
             ]
         )
         if dep_src is not None:
-            tc.code.extend(
+            timed.extend(
                 [
                     f"sltu x{dep}, x{start}, x0           # dep = 0, ready after the first cycle read",
                     f"or x{dep_src}, x{dep_src}, x{dep}            # operand depends on the first cycle read",
                 ]
             )
-        tc.code.extend(
+        timed.extend(
             [
                 label_line,
                 test,
@@ -105,14 +107,16 @@ def make_cp_zkt(instr_name: str, instr_type: str, coverpoint: str, test_data: Te
             ]
         )
         if setup:
-            tc.code.append(f"addi x{data_reg}, x{data_reg}, {data_bytes}   # advance past this testcase's data")
-        tc.code.append(f"sub x{end}, x{end}, x{start}           # latency of the second run")
+            timed.append(f"addi x{data_reg}, x{data_reg}, {data_bytes}   # advance past this testcase's data")
+        timed.append(f"sub x{end}, x{end}, x{start}           # latency of the second run")
         if case == 0:
-            tc.code.append(f"mv x{baseline}, x{end}                 # first testcase sets the baseline")
-        tc.code.append(f"sub x{end}, x{end}, x{baseline}           # 0 on data-independent hardware")
+            timed.append(f"mv x{baseline}, x{end}                 # first testcase sets the baseline")
+        timed.append(f"sub x{end}, x{end}, x{baseline}           # 0 on data-independent hardware")
+        untimed = [line for line in (setup, label_line, test) if line]
+        tc.code.extend(["#ifdef RVTEST_CYCLE_CSR", *timed, "#else", *untimed, "#endif"])
         if check:
             tc.code.append(check)
-        tc.code.append(write_sigupd(end, test_data, "int"))
+        tc.code.extend(["#ifdef RVTEST_CYCLE_CSR", write_sigupd(end, test_data, "int"), "#endif"])
 
     return_testcase_registers(test_data, params)
     test_data.int_regs.return_registers([start, end, baseline, runs, dep])

@@ -38,16 +38,19 @@ RVTEST_BEGIN
 # first testcase's (x11), which must be 0. See the Zkt section of the CTP.
 # The first run warms the instruction cache and branch predictor. Only the second run is timed.
 # A dependency on the first cycle read stops the instruction from starting early.
-# .balign 64 keeps the timed window in one cache line.
+# .balign 64 keeps the timed window in one cache line; a jump skips the padding.
 # The second cycle read has no dependency. Writing cycle or mcycle is illegal or changes the count.
 
 # Testcase cp_zkt_pc (timed)
+#ifdef RVTEST_CYCLE_CSR
   LI(x12, 2)  # two runs; the second is timed
 1:
   RVTEST_TESTDATA_LOAD_INT(x3, x23) # load rd/rs1: x23 = 0x57c6673275b42288
   addi x3, x3, -1*SIG_STRIDE    # rewind data for the second run
   xor x31, x23, x23           # drain: loads finish first
+  j 2f                        # skip the padding rather than execute it
   .balign 64                  # keep the timed window in one cache line
+2:
   csrr x31, RVTEST_CYCLE_CSR  # first cycle read
 ZktZca_c_lui_cg_cp_zkt_pc_timed:
   c.lui x23, 0xfffff # perform operation
@@ -58,10 +61,17 @@ ZktZca_c_lui_cg_cp_zkt_pc_timed:
   sub x1, x1, x31           # latency of the second run
   mv x11, x1                 # first testcase sets the baseline
   sub x1, x1, x11           # 0 on data-independent hardware
+#else
+  RVTEST_TESTDATA_LOAD_INT(x3, x23) # load rd/rs1: x23 = 0x57c6673275b42288
+ZktZca_c_lui_cg_cp_zkt_pc_timed:
+  c.lui x23, 0xfffff # perform operation
+#endif
   # Check if x23 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x23, ZktZca_c_lui_cg_cp_zkt_pc_timed, ZktZca_c_lui_cg_cp_zkt_pc_timed_str)
+#ifdef RVTEST_CYCLE_CSR
   # Check if x1 contains the expected result. x2 is the signature ptr, x5 is the link ptr, x4 is a temp reg.
   RVTEST_SIGUPD(x2, x5, x4, x1, ZktZca_c_lui_cg_cp_zkt_pc_timed, ZktZca_c_lui_cg_cp_zkt_pc_timed_str)
+#endif
 
 // Instantiate trap handlers and other epilog code, call RVMODEL_HALT at end of test
 RVTEST_CODE_END
