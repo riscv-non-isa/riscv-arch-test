@@ -32,6 +32,7 @@ from testgen.priv.extensions.HCommon import (
     replica_write,
     sret_tests,
 )
+from testgen.priv.extensions.PrivCommon import xepc_ialign32_tests
 from testgen.priv.extensions.S import scause_write_tests, sstatus_sd_tests
 from testgen.priv.registry import add_priv_test_generator
 
@@ -367,6 +368,20 @@ def make_h(test_data: TestData) -> list[TestChunk]:
                 "implicit VS-stage access; the trap records hold htval and htinst",
             ),
             *guest_page_fault_tests(test_data, INST_CG),
+        ]
+    )
+
+    tc = test_data.new_test_chunk(test_chunks, "vsepc")
+    tc.code.extend(
+        [
+            comment_banner(
+                "cp_vsepc_ialign32_read, cp_vsepc_ialign32_sret",
+                "In VS-mode, with vsepc[1] = 1, clear misa.C through T-SBI.  While IALIGN = 32, vsepc[1] reads as 0,\n"
+                "and sret returns to the masked address",
+            ),
+            "RVTEST_TSBI_GOTO_VSMODE",
+            *xepc_ialign32_tests(test_data, VS_CG, "VS", "vsepc"),
+            "RVTEST_TSBI_GOTO_SMODE",
         ]
     )
 

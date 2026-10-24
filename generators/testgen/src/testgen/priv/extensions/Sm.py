@@ -24,6 +24,7 @@ from testgen.priv.extensions.PrivCommon import (
     addr_csr_tests,
     csr_insufficient_priv_tests,
     csr_ro_write_tests,
+    xepc_ialign32_tests,
     xtval_value_tests,
 )
 from testgen.priv.extensions.VCommon import gen_v_tests
@@ -1322,6 +1323,19 @@ def _generate_mcsr_tests(test_data: TestData, test_chunks: list) -> None:
 
     test_data.int_regs.return_registers([r_msip, r_msipaddr])
     tc.code.append("#endif // SM1P13P0_OR_LATER_SUPPORTED")
+
+    ######################################
+    # cp_mepc_ialign32_read, cp_mepc_ialign32_mret
+    ######################################
+
+    tc = test_data.new_test_chunk(test_chunks, "misa")
+    tc.section_header = comment_banner(
+        "cp_mepc_ialign32_read, cp_mepc_ialign32_mret",
+        "With mepc[1] = 1, clear misa.C.  While IALIGN = 32, mepc[1] reads as 0, and mret returns to the masked\n"
+        "address.  After misa.C is set again, mepc[1] reads as 1, because the bit stays writable.  On a hart whose\n"
+        "misa.C is read-only, mepc keeps reading the address written, and the mret is skipped",
+    )
+    tc.code.extend(xepc_ialign32_tests(test_data, covergroup, "M", "mepc"))
 
     test_chunks.append(test_data.end_test_chunk())
 

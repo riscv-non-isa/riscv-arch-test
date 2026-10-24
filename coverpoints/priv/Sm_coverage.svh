@@ -623,6 +623,24 @@ covergroup Sm_mcsr_cg with function sample(ins_t ins);
     cp_misa_dependencies :      cross priv_mode_m, csrrw, misa, misa_dependencies;
     cp_misa_clear_c :           cross priv_mode_m, csrc, misa_c_0, pc_1;
 
+    // mepc[1] is masked on reads, including mret's, while misa.C = 0 makes IALIGN = 32
+    `ifdef ZCA_SUPPORTED
+        csrr_mepc : coverpoint ins.current.insn {
+            wildcard bins csrr_mepc = {CSRRS} iff (ins.current.insn[31:20] == CSR_MEPC && ins.current.insn[19:15] == 0);
+        }
+        mret_insn : coverpoint ins.current.insn {
+            wildcard bins mret = {MRET};
+        }
+        misa_c_off : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "misa", "exts")[2] {
+            bins off = {1'b0};
+        }
+        mepc_bit1 : coverpoint get_csr_val(ins.hart, ins.issue, `SAMPLE_BEFORE, "mepc", "mepc")[1] {
+            bins set = {1'b1};
+        }
+        cp_mepc_ialign32_read :  cross priv_mode_m, csrr_mepc, misa_c_off, mepc_bit1;
+        cp_mepc_ialign32_mret :  cross priv_mode_m, mret_insn, misa_c_off, mepc_bit1;
+    `endif
+
     cp_mtime_write :            cross priv_mode_m, csrr,  time_csr; // assumes mtime has been written
     `ifdef UDB_MXLEN_32
         cp_mtimeh_write :       cross priv_mode_m, csrr,  timeh_csr; // assumes mtimeh has been written
