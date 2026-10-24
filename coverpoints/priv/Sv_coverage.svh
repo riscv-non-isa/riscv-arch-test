@@ -694,6 +694,49 @@ covergroup Sv_vm_permissions_cg with function sample(ins_t ins);
             ignore_bins ig1 = binsof(PTE_canonical_i.leaflvl_s);
         }
     `endif
+
+    // A 32-bit instruction two bytes below the end of a page, which IALIGN = 16 allows, whose next page is invalid
+    // or not executable.  The fetch faults on the second half of the instruction: stval holds the page-boundary
+    // address and sepc the start of the instruction.  The jalr samples the trap CSRs, which Sail logs with it.
+    `ifdef ZCA_SUPPORTED
+        jalr: coverpoint ins.current.insn {
+            wildcard bins jalr = {JALR};
+        }
+        straddle_fetch: coverpoint ((ins.current.rs1_val + ins.current.imm) & 'hFFF) {
+            bins page_end = {'hFFE};
+        }
+        stval_page_boundary_fetch: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stval", "stval") == ins.current.rs1_val + ins.current.imm + 2) {
+            bins page_boundary = {1};
+        }
+        sepc_instr_start: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "sepc", "sepc") == ins.current.rs1_val + ins.current.imm) {
+            bins instr_start = {1};
+        }
+        cp_straddle_exec_s: cross priv_mode_s, jalr, straddle_fetch, ins_page_fault, stval_page_boundary_fetch, sepc_instr_start, mode;
+        cp_straddle_exec_u: cross priv_mode_u, jalr, straddle_fetch, ins_page_fault, stval_page_boundary_fetch, sepc_instr_start, mode;
+    `endif
+
+    // A word two bytes below the end of a page whose next page is invalid or execute-only.  A hart that splits the
+    // access into bytes faults on the first byte in the next page, so stval holds the page-boundary address.
+    `ifdef UDB_MISALIGNED_LDST
+    `ifdef UDB_MISALIGNED_SPLIT_STRATEGY_SEQUENTIAL_BYTES
+        lw: coverpoint ins.current.insn {
+            wildcard bins lw = {LW};
+        }
+        sw: coverpoint ins.current.insn {
+            wildcard bins sw = {SW};
+        }
+        straddle: coverpoint ((ins.current.rs1_val + ins.current.imm) & 'hFFF) {
+            bins page_end = {'hFFE};
+        }
+        stval_page_boundary: coverpoint (get_csr_val(ins.hart, ins.issue, `SAMPLE_AFTER, "stval", "stval") == ins.current.rs1_val + ins.current.imm + 2) {
+            bins page_boundary = {1};
+        }
+        cp_straddle_read_s:  cross priv_mode_s, lw, straddle, load_page_fault,  stval_page_boundary, mode;
+        cp_straddle_read_u:  cross priv_mode_u, lw, straddle, load_page_fault,  stval_page_boundary, mode;
+        cp_straddle_write_s: cross priv_mode_s, sw, straddle, store_page_fault, stval_page_boundary, mode;
+        cp_straddle_write_u: cross priv_mode_u, sw, straddle, store_page_fault, stval_page_boundary, mode;
+    `endif
+    `endif
 endgroup
 
 covergroup Sv_res_global_pte_cg with function sample(ins_t ins);
