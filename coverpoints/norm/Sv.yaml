@@ -583,16 +583,6 @@ normative_rule_definitions:
   - name: mstatus_mxr_sum_op_acc_fault
     coverpoint: ["TODO: combine MXR/SUM with a PMA or PMP access fault"]
 
-  # The satp CSR is an SXLEN-bit read/write register, formatted as shown in for SXLEN=32
-  # and for SXLEN=64, which controls supervisor-mode address translation and protection.
-  # This register holds the physical page number (PPN) of the root page table, i.e., its
-  # supervisor physical address divided by 4 KiB; an address space identifier (ASID),
-  # which facilitates address-translation fences on a per-address-space basis; and the
-  # MODE field, which selects the current address-translation scheme. Further details on
-  # the access to this register are described in .
-  - name: satp
-    coverpoint: ["Sv_Sm_satp_cg/cp_access_m"]
-
   # When csr::[mprv]=0, explicit memory accesses behave as normal, using the translation
   # and protection mechanisms of the current privilege mode. When csr::[mprv]=1, load
   # and store memory addresses are translated and protected, and endianness is applied,
@@ -731,7 +721,12 @@ normative_rule_definitions:
   # priority than load/store/AMO page-fault and access-fault exceptions.
   - name: mcause_exccode_priority_misaligned
     coverpoint:
-      ["Sv_Exceptions_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}"]
+      [
+        "Sv_Exceptions_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
+        "Sv_ExceptionsSm_cg/cp_misaligned_priority_m",
+        "Sv_ExceptionsZaamo_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
+        "Sv_ExceptionsZalrsc_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
+      ]
 
   # Priority|Exc.Code|Description === Highest|3|Instruction address breakpoint¶|12,
   # 1|During instruction address translation: First encountered page fault or access
@@ -747,6 +742,9 @@ normative_rule_definitions:
     coverpoint:
       [
         "Sv_Exceptions_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u, cp_misaligned_priority_fetch_s, cp_misaligned_priority_fetch_u}",
+        "Sv_ExceptionsSm_cg/cp_misaligned_priority_m",
+        "Sv_ExceptionsZaamo_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
+        "Sv_ExceptionsZalrsc_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
       ]
 
   # If an instruction access-fault or instruction page-fault exception occurs on
@@ -757,24 +755,6 @@ normative_rule_definitions:
       [
         "Sv_Exceptions_cg/{cp_misaligned_priority_fetch_s, cp_misaligned_priority_fetch_u}",
       ]
-
-  # Load/store/AMO address-misaligned exceptions may have either higher or lower
-  # priority than load/store/AMO page-fault and access-fault exceptions.
-  - name: mcause_exccode_priority_misaligned
-    coverpoint: ["Sv_ExceptionsSm_cg/cp_misaligned_priority_m"]
-
-  # Priority|Exc.Code|Description === Highest|3|Instruction address breakpoint¶|12,
-  # 1|During instruction address translation: First encountered page fault or access
-  # fault¶|1|With physical address for instruction: Instruction access fault¶|2 0
-  # 8,9,11 3 3|Illegal instruction Instruction address misaligned Environment call
-  # Environment break Load/store/AMO address breakpoint¶|4,6|Optionally:
-  # Load/store/AMO address misaligned¶|13, 15, 5, 7|During address translation for
-  # an explicit memory access: First encountered page fault or access
-  # fault¶|5,7|With physical address for an explicit memory access: Load/store/AMO
-  # access fault¶Lowest|4,6|If not higher priority: Load/store/AMO address
-  # misaligned ===
-  - name: exc_priority
-    coverpoint: ["Sv_ExceptionsSm_cg/cp_misaligned_priority_m"]
 
   # For AMOs, the Zaamo extension requires that the address held in rs1 be naturally
   # aligned to the size of the operand (i.e., eight-byte aligned for doublewords and
@@ -794,30 +774,6 @@ normative_rule_definitions:
         "Sv_ExceptionsZaamo_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
       ]
 
-  # Priority|Exc.Code|Description === Highest|3|Instruction address breakpoint¶|12,
-  # 1|During instruction address translation: First encountered page fault or access
-  # fault¶|1|With physical address for instruction: Instruction access fault¶|2 0
-  # 8,9,11 3 3|Illegal instruction Instruction address misaligned Environment call
-  # Environment break Load/store/AMO address breakpoint¶|4,6|Optionally:
-  # Load/store/AMO address misaligned¶|13, 15, 5, 7|During address translation for
-  # an explicit memory access: First encountered page fault or access
-  # fault¶|5,7|With physical address for an explicit memory access: Load/store/AMO
-  # access fault¶Lowest|4,6|If not higher priority: Load/store/AMO address
-  # misaligned ===
-  - name: exc_priority
-    coverpoint:
-      [
-        "Sv_ExceptionsZaamo_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
-      ]
-
-  # Load/store/AMO address-misaligned exceptions may have either higher or lower
-  # priority than load/store/AMO page-fault and access-fault exceptions.
-  - name: mcause_exccode_priority_misaligned
-    coverpoint:
-      [
-        "Sv_ExceptionsZaamo_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
-      ]
-
   # No sc.w instruction shall retire unless it passes memory permission checks,
   # The sc.w has no reservation, yet it must still raise the page fault or access fault.
   - name: sc_retire_permission
@@ -830,30 +786,6 @@ normative_rule_definitions:
   # aligned to the size of the operand. If the address is not naturally aligned, an
   # address-misaligned exception or an access-fault exception will be generated.
   - name: lr_sc_alignment
-    coverpoint:
-      [
-        "Sv_ExceptionsZalrsc_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
-      ]
-
-  # Priority|Exc.Code|Description === Highest|3|Instruction address breakpoint¶|12,
-  # 1|During instruction address translation: First encountered page fault or access
-  # fault¶|1|With physical address for instruction: Instruction access fault¶|2 0
-  # 8,9,11 3 3|Illegal instruction Instruction address misaligned Environment call
-  # Environment break Load/store/AMO address breakpoint¶|4,6|Optionally:
-  # Load/store/AMO address misaligned¶|13, 15, 5, 7|During address translation for
-  # an explicit memory access: First encountered page fault or access
-  # fault¶|5,7|With physical address for an explicit memory access: Load/store/AMO
-  # access fault¶Lowest|4,6|If not higher priority: Load/store/AMO address
-  # misaligned ===
-  - name: exc_priority
-    coverpoint:
-      [
-        "Sv_ExceptionsZalrsc_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
-      ]
-
-  # Load/store/AMO address-misaligned exceptions may have either higher or lower
-  # priority than load/store/AMO page-fault and access-fault exceptions.
-  - name: mcause_exccode_priority_misaligned
     coverpoint:
       [
         "Sv_ExceptionsZalrsc_cg/{cp_misaligned_priority_s, cp_misaligned_priority_u}",
