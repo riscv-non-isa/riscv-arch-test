@@ -12,12 +12,6 @@
 
 `define COVER_SV
 
-`ifdef SV32_SUPPORTED
-    `define SV_EXCEPTIONS_SUPPORTED
-`elsif SV39_SUPPORTED
-    `define SV_EXCEPTIONS_SUPPORTED
-`endif
-
 `ifdef ZICBOM_SUPPORTED
     `define SV_ZICBO_ANY
 `elsif ZICBOZ_SUPPORTED
@@ -1414,7 +1408,6 @@ covergroup Sv_Zicbo_cg with function sample(ins_t ins);
 endgroup
 `endif // SV_ZICBO_ANY
 
-`ifdef SV_EXCEPTIONS_SUPPORTED
 covergroup Sv_Exceptions_cg with function sample(ins_t ins);
     option.per_instance = 0;
     `include "general/RISCV_coverage_standard_coverpoints.svh"
@@ -1531,9 +1524,7 @@ covergroup Sv_Exceptions_cg with function sample(ins_t ins);
     `endif
 
 endgroup
-`endif // SV_EXCEPTIONS_SUPPORTED
 
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifndef EXCLUDE_SM
 covergroup Sv_ExceptionsSm_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -1627,9 +1618,7 @@ covergroup Sv_ExceptionsSm_cg with function sample(ins_t ins);
     `endif
 endgroup
 `endif // EXCLUDE_SM
-`endif // SV_EXCEPTIONS_SUPPORTED
 
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifdef ZAAMO_SUPPORTED
 covergroup Sv_ExceptionsZaamo_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -1679,9 +1668,7 @@ covergroup Sv_ExceptionsZaamo_cg with function sample(ins_t ins);
 
 endgroup
 `endif // ZAAMO_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
 
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifdef ZAAMO_SUPPORTED
 `ifndef EXCLUDE_SM
 covergroup Sv_ExceptionsZaamoSm_cg with function sample(ins_t ins);
@@ -1750,9 +1737,7 @@ covergroup Sv_ExceptionsZaamoSm_cg with function sample(ins_t ins);
 endgroup
 `endif // EXCLUDE_SM
 `endif // ZAAMO_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
 
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifdef ZALRSC_SUPPORTED
 covergroup Sv_ExceptionsZalrsc_cg with function sample(ins_t ins);
     option.per_instance = 0;
@@ -1803,9 +1788,7 @@ covergroup Sv_ExceptionsZalrsc_cg with function sample(ins_t ins);
     `endif
 endgroup
 `endif // ZALRSC_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
 
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifdef ZALRSC_SUPPORTED
 `ifndef EXCLUDE_SM
 covergroup Sv_ExceptionsZalrscSm_cg with function sample(ins_t ins);
@@ -1875,7 +1858,6 @@ covergroup Sv_ExceptionsZalrscSm_cg with function sample(ins_t ins);
 endgroup
 `endif // EXCLUDE_SM
 `endif // ZALRSC_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
 
 function void sv_sample(int hart, int issue, ins_t ins);
     Sv_satp_cg.sample(ins);
@@ -1891,36 +1873,20 @@ function void sv_sample(int hart, int issue, ins_t ins);
 `ifdef SV_ZICBO_ANY
     Sv_Zicbo_cg.sample(ins);
 `endif // SV_ZICBO_ANY
-`ifdef SV_EXCEPTIONS_SUPPORTED
     Sv_Exceptions_cg.sample(ins);
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifndef EXCLUDE_SM
     Sv_ExceptionsSm_cg.sample(ins);
 `endif // EXCLUDE_SM
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifdef ZAAMO_SUPPORTED
     Sv_ExceptionsZaamo_cg.sample(ins);
+    `ifndef EXCLUDE_SM
+        Sv_ExceptionsZaamoSm_cg.sample(ins);
+    `endif // EXCLUDE_SM
 `endif // ZAAMO_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
-`ifdef ZAAMO_SUPPORTED
-`ifndef EXCLUDE_SM
-    Sv_ExceptionsZaamoSm_cg.sample(ins);
-`endif // EXCLUDE_SM
-`endif // ZAAMO_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifdef ZALRSC_SUPPORTED
     Sv_ExceptionsZalrsc_cg.sample(ins);
+    `ifndef EXCLUDE_SM
+        Sv_ExceptionsZalrscSm_cg.sample(ins);
+    `endif // EXCLUDE_SM
 `endif // ZALRSC_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
-`ifdef ZALRSC_SUPPORTED
-`ifndef EXCLUDE_SM
-    Sv_ExceptionsZalrscSm_cg.sample(ins);
-`endif // EXCLUDE_SM
-`endif // ZALRSC_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
 endfunction

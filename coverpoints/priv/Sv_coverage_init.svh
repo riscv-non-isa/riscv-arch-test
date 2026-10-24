@@ -21,35 +21,19 @@
 `ifdef SV_ZICBO_ANY
     Sv_Zicbo_cg = new(); Sv_Zicbo_cg.set_inst_name("obj_Sv_Zicbo");
 `endif // SV_ZICBO_ANY
-`ifdef SV_EXCEPTIONS_SUPPORTED
     Sv_Exceptions_cg = new(); Sv_Exceptions_cg.set_inst_name("obj_Sv_Exceptions");
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifndef EXCLUDE_SM
     Sv_ExceptionsSm_cg = new(); Sv_ExceptionsSm_cg.set_inst_name("obj_Sv_ExceptionsSm");
 `endif // EXCLUDE_SM
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifdef ZAAMO_SUPPORTED
     Sv_ExceptionsZaamo_cg = new(); Sv_ExceptionsZaamo_cg.set_inst_name("obj_Sv_ExceptionsZaamo");
+    `ifndef EXCLUDE_SM
+        Sv_ExceptionsZaamoSm_cg = new(); Sv_ExceptionsZaamoSm_cg.set_inst_name("obj_Sv_ExceptionsZaamoSm");
+    `endif // EXCLUDE_SM
 `endif // ZAAMO_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
-`ifdef ZAAMO_SUPPORTED
-`ifndef EXCLUDE_SM
-    Sv_ExceptionsZaamoSm_cg = new(); Sv_ExceptionsZaamoSm_cg.set_inst_name("obj_Sv_ExceptionsZaamoSm");
-`endif // EXCLUDE_SM
-`endif // ZAAMO_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
 `ifdef ZALRSC_SUPPORTED
     Sv_ExceptionsZalrsc_cg = new(); Sv_ExceptionsZalrsc_cg.set_inst_name("obj_Sv_ExceptionsZalrsc");
+    `ifndef EXCLUDE_SM
+        Sv_ExceptionsZalrscSm_cg = new(); Sv_ExceptionsZalrscSm_cg.set_inst_name("obj_Sv_ExceptionsZalrscSm");
+    `endif // EXCLUDE_SM
 `endif // ZALRSC_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
-`ifdef SV_EXCEPTIONS_SUPPORTED
-`ifdef ZALRSC_SUPPORTED
-`ifndef EXCLUDE_SM
-    Sv_ExceptionsZalrscSm_cg = new(); Sv_ExceptionsZalrscSm_cg.set_inst_name("obj_Sv_ExceptionsZalrscSm");
-`endif // EXCLUDE_SM
-`endif // ZALRSC_SUPPORTED
-`endif // SV_EXCEPTIONS_SUPPORTED
