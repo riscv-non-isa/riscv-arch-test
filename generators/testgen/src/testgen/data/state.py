@@ -51,6 +51,8 @@ class TestData:
         self._vec_regs = VectorRegisterFile()
         self._test_count = 0
         self._current_testcase_label = ""
+        # Timed testcases of instructions whose latency is checked (asm/latency.py)
+        self.latency_records: list = []
         self._fp_load_size: Literal["single", "double", "half", "quad"] | None = None
         self.test_chunk: TestChunk | None = None
         self._vector_labels: dict[str, tuple[list[int], int]] = {}
